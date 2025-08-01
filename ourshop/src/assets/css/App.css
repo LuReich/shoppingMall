@@ -1,0 +1,24 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    background-color: #fff;
+    color: #333;
+}
+
+.main-content {
+    padding-top: 80px;
+    /* 고정 헤더 높이만큼 */
+    min-height: calc(100vh - 300px);
+    /* 전체 화면 높이 - (헤더+푸터 대략적인 높이) */
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    font-size: 1.2rem;
+    color: #888;
+}

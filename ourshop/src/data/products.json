@@ -1,0 +1,191 @@
+[
+    {
+        "id": 1,
+        "name": "신선 햇 양파 1kg",
+        "price": 3500,
+        "originalPrice": 4000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "양파",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "아삭하고 단맛이 일품인 신선한 햇 양파",
+        "description": "언제 어디서나 간단하게 볶고 끓여도, 맛있게 먹을 수 있는 햇 양파입니다.",
+        "details": "원산지: 국내산\n보관방법: 서늘하고 통풍이 잘 되는 곳\n내용물: 1kg\n\n[영양 정보 (100g 기준)]\n칼로리: 40kcal\n탄수화물: 9g\n단백질: 1g\n지방: 0.1g",
+        "rating": 4.5,
+        "reviewCount": 88,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": false,
+            "weekly": true,
+            "monthly": true
+        }
+    },
+    {
+        "id": 2,
+        "name": "프리미엄 노르웨이 연어 200g",
+        "price": 12000,
+        "originalPrice": 15000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "연어",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "항공 직송으로 신선함을 그대로 담은 노르웨이 연어",
+        "description": "부드러운 식감과 풍부한 오메가-3를 자랑하는 최고급 연어입니다.",
+        "details": "원산지: 노르웨이\n보관방법: 수령 즉시 냉장보관\n내용물: 200g (1인분)\n\n[영양 정보 (100g 기준)]\n칼로리: 208kcal\n탄수화물: 0g\n단백질: 20g\n지방: 13g",
+        "rating": 4.9,
+        "reviewCount": 210,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": true,
+            "weekly": true,
+            "monthly": false
+        }
+    },
+    {
+        "id": 3,
+        "name": "프리미엄 된장찌개",
+        "price": 8000,
+        "originalPrice": 10000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "국/찌개",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "간편하고 맛있는 된장찌개!!!",
+        "description": "언제 어디서나 간단하게 끓이기만 해도, 맛있게 먹을 수 있는 된장찌개!!!",
+        "details": "원산지: 국산\n보관방법: 냉장보관\n내용물: 1인분 당 300g\n유통기한: 구매일로부터 약 한 달\n\n[영양 정보 (100g 기준)]\n칼로리: 500kcal\n탄수화물: 40g\n단백질: 40g\n지방: 30g",
+        "rating": 4.8,
+        "reviewCount": 127,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": false,
+            "weekly": true,
+            "monthly": true
+        }
+    },
+    {
+        "id": 11,
+        "name": "유기농 브로콜리 1송이",
+        "price": 3200,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "농산물",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "신선하고 건강한 유기농 브로콜리",
+        "description": "믿을 수 있는 농가에서 재배한 친환경 유기농 브로콜리입니다.",
+        "details": "인증: 유기농 인증 제 12-34-567호\n원산지: 국내산\n보관방법: 냉장보관\n\n[영양 정보 (100g 기준)]\n칼로리: 34kcal\n탄수화물: 7g\n단백질: 2.8g\n비타민C: 89.2mg",
+        "rating": 4.9,
+        "reviewCount": 98,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": false,
+            "weekly": true,
+            "monthly": false
+        }
+    },
+    {
+        "id": 12,
+        "name": "고메 바삭 튀겨낸 돈카츠 450g",
+        "price": 9500,
+        "originalPrice": 11000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "냉동 식품",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "에어프라이어 15분 완성! 전문점 수준의 돈카츠",
+        "description": "통등심을 사용하여 육즙이 가득하고, 생빵가루를 입혀 더욱 바삭합니다.",
+        "details": "조리법: 에어프라이어 180도에서 15~20분\n보관방법: -18℃ 이하 냉동보관\n내용물: 450g\n\n[영양 정보 (100g 기준)]\n칼로리: 250kcal\n탄수화물: 15g\n단백질: 18g\n지방: 13g",
+        "rating": 4.7,
+        "reviewCount": 320,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": false,
+            "weekly": false,
+            "monthly": true
+        }
+    },
+    {
+        "id": 9,
+        "name": "편안한 사무용 의자",
+        "price": 89000,
+        "originalPrice": 120000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "의자",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "허리를 편안하게 받쳐주는 인체공학적 디자인",
+        "description": "장시간 앉아 있어도 편안함을 유지해주는 프리미엄 사무용 의자입니다.",
+        "details": "재질: 메쉬, 스틸\n색상: 블랙\n특징: 높이조절, 틸팅기능\n제조국: 중국",
+        "rating": 4.6,
+        "reviewCount": 75,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": false,
+            "weekly": false,
+            "monthly": false
+        }
+    },
+    {
+        "id": 10,
+        "name": "저소음 선풍기",
+        "price": 45000,
+        "originalPrice": 60000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "선풍기",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "조용하고 강력한 바람, 저소음 BLDC 모터 사용",
+        "description": "도서관보다 조용한 저소음 모터로 여름밤을 시원하고 편안하게 보내세요.",
+        "details": "소비전력: 25W\n특징: 리모컨 포함, 12단계 풍속조절\n제조국: 베트남",
+        "rating": 4.8,
+        "reviewCount": 180,
+        "galleryImages": [
+            "/images/placeholder.png",
+            "/images/placeholder-2.png",
+            "/images/placeholder-3.png",
+            "/images/placeholder-4.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": false,
+            "weekly": false,
+            "monthly": false
+        }
+    }
+]
