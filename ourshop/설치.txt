@@ -1,0 +1,3 @@
+npm install
+
+npm install --save react-router-dom react-slick slick-carousel react-paginate

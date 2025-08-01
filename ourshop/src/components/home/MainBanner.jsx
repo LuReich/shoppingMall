@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../assets/css/MainBanner.css';
 
-// ... (NextArrow, PrevArrow 컴포넌트는 변경 없음)
 function NextArrow(props) {
     const { onClick } = props;
     return <button className="slick-arrow-custom next-btn" onClick={onClick} />;

@@ -94,7 +94,7 @@
 
 .mega-menu {
     position: absolute;
-    /* ✨✨✨ 핵심 수정: 버튼 바로 아래에 붙도록 top 값을 100%로 변경 ✨✨✨ */
+    /*  핵심 수정: 버튼 바로 아래에 붙도록 top 값을 100%로 변경  */
     top: 100%;
     left: 0;
     background-color: white;
