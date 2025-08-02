@@ -4,6 +4,7 @@
     padding: 0 20px;
 }
 
+/* 브레드크럼 */
 .breadcrumb {
     font-size: 14px;
     color: #888;
@@ -19,31 +20,22 @@
     text-decoration: underline;
 }
 
+/* 메인 상품 정보 (2단 레이아웃) */
 .product-detail-main {
     display: flex;
     gap: 50px;
     margin-bottom: 80px;
 }
 
-.info-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-
-/* ✨✨✨ 이미지 갤러리 (크기 고정) ✨✨✨ */
+/* 왼쪽: 이미지 갤러리 */
 .image-gallery {
     width: 550px;
-    /* 컨테이너 너비 고정 */
     flex-shrink: 0;
-    /* flex 아이템이 줄어들지 않도록 설정 */
 }
 
 .main-image-container {
     width: 550px;
     height: 550px;
-    /* 컨테이너 높이 고정 */
     border: 1px solid #eee;
     border-radius: 8px;
     overflow: hidden;
@@ -54,7 +46,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* 이미지가 컨테이너를 꽉 채우도록 설정 (비율 유지, 잘림 발생) */
 }
 
 .thumbnail-list {
@@ -81,7 +72,13 @@
     object-fit: cover;
 }
 
-/* ... (나머지 CSS는 이전 답변과 동일) ... */
+/* 오른쪽: 정보 패널 */
+.info-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .info-panel h1 {
     font-size: 28px;
     font-weight: 600;
@@ -111,6 +108,7 @@
     font-weight: 500;
 }
 
+/* 가격 섹션 */
 .price-section {
     display: flex;
     align-items: baseline;
@@ -140,6 +138,7 @@
     text-decoration: line-through;
 }
 
+/* 정기배송 및 수량 선택 */
 .subscription-selector,
 .quantity-selector {
     display: flex;
@@ -147,6 +146,7 @@
     gap: 20px;
     padding: 15px 0;
     border-bottom: 1px solid #f0f0f0;
+    position: relative;
 }
 
 .subscription-selector .label,
@@ -206,12 +206,84 @@
     cursor: pointer;
 }
 
-.quantity-controls span {
+.quantity-input {
     width: 40px;
+    height: 35px;
     text-align: center;
     font-size: 16px;
+    border: none;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 0;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
 }
 
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity-input:focus {
+    outline: none;
+}
+
+.stock-info {
+    margin-left: auto;
+    font-size: 14px;
+    color: #888;
+}
+
+/* 툴팁 스타일 */
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 80px;
+    margin-bottom: 10px;
+    background-color: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    white-space: nowrap;
+    z-index: 20;
+    animation: fadeInOut 2.5s ease-in-out forwards;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* 장바구니, 구매 버튼 */
 .action-buttons {
     display: flex;
     gap: 10px;
@@ -240,6 +312,7 @@
     border: 1px solid #ddd;
 }
 
+/* 배송 정보 */
 .shipping-info {
     list-style: none;
     padding: 0;
@@ -257,6 +330,7 @@
     color: #888;
 }
 
+/* 탭 섹션 */
 .product-extra-details {
     margin-top: 100px;
 }
@@ -300,6 +374,7 @@
     margin-bottom: 40px;
 }
 
+/* 리뷰 섹션 */
 .customer-reviews-section .section-header {
     display: flex;
     justify-content: space-between;
@@ -331,6 +406,7 @@
     font-weight: 500;
 }
 
+/* 반응형 */
 @media (max-width: 992px) {
     .product-detail-main {
         flex-direction: column;
@@ -340,8 +416,7 @@
         width: 100%;
     }
 
-    .main-image-container,
-    .main-image {
+    .main-image-container {
         width: 100%;
         height: auto;
         aspect-ratio: 1/1;

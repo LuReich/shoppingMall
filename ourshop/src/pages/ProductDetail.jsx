@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import productsData from '../data/products.json';
 import categoriesData from '../data/categories.json';
 import '../assets/css/ProductDetail.css';
 
-// ... (findCategoryPath 헬퍼 함수는 이전과 동일하여 여기에선 생략)
+// 카테고리 ID로 전체 경로(배열)를 찾는 헬퍼 함수
 const findCategoryPath = (categoryId, categories) => {
     const search = (id, currentCategories, path) => {
         for (const category of currentCategories) {
@@ -36,16 +36,17 @@ const findCategoryPath = (categoryId, categories) => {
 const ProductDetail = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
-    const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState('1');
     const [activeImage, setActiveImage] = useState('');
     const [activeTab, setActiveTab] = useState('info');
     const [selectedSubscription, setSelectedSubscription] = useState('instant');
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [tooltipMessage, setTooltipMessage] = useState('');
+    const tooltipTimer = useRef(null);
 
     const subscriptionTypes = [
-        { key: 'instant', label: '일시' },
-        { key: 'daily', label: '매일' },
-        { key: 'weekly', label: '매주' },
-        { key: 'monthly', label: '매달' }
+        { key: 'instant', label: '일시' }, { key: 'daily', label: '매일' },
+        { key: 'weekly', label: '매주' }, { key: 'monthly', label: '매달' }
     ];
 
     useEffect(() => {
@@ -53,11 +54,8 @@ const ProductDetail = () => {
         setProduct(foundProduct);
         if (foundProduct) {
             setActiveImage(foundProduct.galleryImages[0] || foundProduct.imageUrl);
-            // 기본 선택 옵션을 활성화된 첫번째 옵션으로 설정
             const firstAvailable = subscriptionTypes.find(type => foundProduct.subscriptionOptions?.[type.key]);
-            if (firstAvailable) {
-                setSelectedSubscription(firstAvailable.key);
-            }
+            if (firstAvailable) setSelectedSubscription(firstAvailable.key);
         }
         window.scrollTo(0, 0);
     }, [id]);
@@ -67,13 +65,41 @@ const ProductDetail = () => {
         return findCategoryPath(product.category, categoriesData);
     }, [product]);
 
-    if (!product) {
-        return <div className="loading">상품 정보를 불러오는 중입니다...</div>;
-    }
+    const triggerTooltip = (message) => {
+        if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
+        setTooltipMessage(message);
+        setShowTooltip(true);
+        tooltipTimer.current = setTimeout(() => setShowTooltip(false), 2500);
+    };
 
     const handleQuantityChange = (amount) => {
-        setQuantity(prev => Math.max(1, prev + amount));
+        let currentVal = parseInt(quantity) || 0;
+        let newVal = currentVal + amount;
+        if (newVal < 1) newVal = 1;
+        else if (newVal > product.itemCount) {
+            newVal = product.itemCount;
+            triggerTooltip(`선택 가능 최대 수량은 ${product.itemCount}개입니다.`);
+        }
+        setQuantity(String(newVal));
     };
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        if (/^[0-9]*$/.test(value)) {
+            if (value === '') { setQuantity(''); return; }
+            let numValue = parseInt(value);
+            if (numValue > product.itemCount) {
+                triggerTooltip(`선택 가능 최대 수량은 ${product.itemCount}개입니다.`);
+                setQuantity(String(product.itemCount));
+            } else { setQuantity(value); }
+        }
+    };
+
+    const handleInputBlur = (e) => {
+        if (e.target.value === '' || parseInt(e.target.value) < 1) setQuantity('1');
+    };
+
+    if (!product) return <div className="loading">상품 정보를 불러오는 중입니다...</div>;
 
     const discountRate = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
     const origin = product.details?.split('\n')[0].split(':')[1]?.trim() || '정보 없음';
@@ -122,7 +148,6 @@ const ProductDetail = () => {
                         {product.originalPrice && <span className="original-price">{product.originalPrice.toLocaleString()}원</span>}
                     </div>
 
-                    {/*  정기배송 옵션 섹션으로 변경  */}
                     <div className="subscription-selector">
                         <span className="label">정기배송</span>
                         <div className="subscription-options">
@@ -152,9 +177,19 @@ const ProductDetail = () => {
                         <span className="label">수량</span>
                         <div className="quantity-controls">
                             <button onClick={() => handleQuantityChange(-1)}>-</button>
-                            <span>{quantity}</span>
+                            <input
+                                type="text"
+                                value={quantity}
+                                onChange={handleInputChange}
+                                onBlur={handleInputBlur}
+                                className="quantity-input"
+                            />
                             <button onClick={() => handleQuantityChange(1)}>+</button>
                         </div>
+                        <div className="stock-info">
+                            남은 재고: {product.itemCount}개
+                        </div>
+                        {showTooltip && <div className="tooltip">{tooltipMessage}</div>}
                     </div>
 
                     <div className="action-buttons">
