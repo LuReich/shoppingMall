@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="footer-content">
                 <div className="footer-left">
                     <h3 className="footer-logo">우리샵</h3>
-                    <p>언제나 집밥 같은 마음으로 배송해 드립니다.</p>
+                    <p>언제나 신속하고 정확하게 배송해 드립니다.</p>
                 </div>
                 <div className="footer-right">
                     <div className="footer-links">
