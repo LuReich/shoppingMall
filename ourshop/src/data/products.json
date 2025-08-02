@@ -7,24 +7,21 @@
         "imageUrl": "/images/placeholder.png",
         "category": "양파",
         "isNew": true,
-        "isRecommended": false,
-        "shortDescription": "아삭하고 단맛이 일품인 신선한 햇 양파",
+        "isRecommended": true,
+        "shortDescription": "아삭하고 단맛이 일품",
         "description": "언제 어디서나 간단하게 볶고 끓여도, 맛있게 먹을 수 있는 햇 양파입니다.",
-        "details": "원산지: 국내산\n보관방법: 서늘하고 통풍이 잘 되는 곳\n내용물: 1kg\n\n[영양 정보 (100g 기준)]\n칼로리: 40kcal\n탄수화물: 9g\n단백질: 1g\n지방: 0.1g",
+        "details": "원산지: 국내산\n보관방법: 서늘한 곳 보관",
         "rating": 4.5,
         "reviewCount": 88,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
             "instant": true,
-            "daily": false,
             "weekly": true,
             "monthly": true
-        }
+        },
+        "uploadedAt": "2024-05-20T10:00:00Z"
     },
     {
         "id": 2,
@@ -35,23 +32,20 @@
         "category": "연어",
         "isNew": true,
         "isRecommended": true,
-        "shortDescription": "항공 직송으로 신선함을 그대로 담은 노르웨이 연어",
+        "shortDescription": "항공 직송으로 신선함을 그대로",
         "description": "부드러운 식감과 풍부한 오메가-3를 자랑하는 최고급 연어입니다.",
-        "details": "원산지: 노르웨이\n보관방법: 수령 즉시 냉장보관\n내용물: 200g (1인분)\n\n[영양 정보 (100g 기준)]\n칼로리: 208kcal\n탄수화물: 0g\n단백질: 20g\n지방: 13g",
+        "details": "원산지: 노르웨이\n보관방법: 냉장보관",
         "rating": 4.9,
         "reviewCount": 210,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
             "instant": true,
             "daily": true,
-            "weekly": true,
-            "monthly": false
-        }
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-21T11:00:00Z"
     },
     {
         "id": 3,
@@ -64,75 +58,134 @@
         "isRecommended": true,
         "shortDescription": "간편하고 맛있는 된장찌개!!!",
         "description": "언제 어디서나 간단하게 끓이기만 해도, 맛있게 먹을 수 있는 된장찌개!!!",
-        "details": "원산지: 국산\n보관방법: 냉장보관\n내용물: 1인분 당 300g\n유통기한: 구매일로부터 약 한 달\n\n[영양 정보 (100g 기준)]\n칼로리: 500kcal\n탄수화물: 40g\n단백질: 40g\n지방: 30g",
+        "details": "원산지: 국산\n보관방법: 냉장보관",
         "rating": 4.8,
         "reviewCount": 127,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
             "instant": true,
-            "daily": false,
             "weekly": true,
             "monthly": true
-        }
+        },
+        "uploadedAt": "2024-05-22T09:30:00Z"
     },
     {
-        "id": 11,
-        "name": "유기농 브로콜리 1송이",
-        "price": 3200,
-        "originalPrice": null,
+        "id": 4,
+        "name": "싱싱한 대파 1단",
+        "price": 2500,
+        "originalPrice": 3000,
         "imageUrl": "/images/placeholder.png",
-        "category": "농산물",
-        "isNew": false,
-        "isRecommended": true,
-        "shortDescription": "신선하고 건강한 유기농 브로콜리",
-        "description": "믿을 수 있는 농가에서 재배한 친환경 유기농 브로콜리입니다.",
-        "details": "인증: 유기농 인증 제 12-34-567호\n원산지: 국내산\n보관방법: 냉장보관\n\n[영양 정보 (100g 기준)]\n칼로리: 34kcal\n탄수화물: 7g\n단백질: 2.8g\n비타민C: 89.2mg",
-        "rating": 4.9,
-        "reviewCount": 98,
+        "category": "대파",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "요리의 풍미를 더해주는 신선한 대파",
+        "description": "국, 찌개, 볶음 등 어떤 요리에나 잘 어울리는 만능 식재료입니다.",
+        "details": "원산지: 국내산\n보관방법: 냉장보관",
+        "rating": 4.6,
+        "reviewCount": 95,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
             "instant": true,
-            "daily": false,
-            "weekly": true,
-            "monthly": false
-        }
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-19T15:00:00Z"
     },
     {
-        "id": 12,
-        "name": "고메 바삭 튀겨낸 돈카츠 450g",
-        "price": 9500,
-        "originalPrice": 11000,
+        "id": 5,
+        "name": "손질 오징어 2마리 (냉동)",
+        "price": 9900,
+        "originalPrice": 12000,
         "imageUrl": "/images/placeholder.png",
-        "category": "냉동 식품",
+        "category": "오징어",
         "isNew": true,
         "isRecommended": true,
-        "shortDescription": "에어프라이어 15분 완성! 전문점 수준의 돈카츠",
-        "description": "통등심을 사용하여 육즙이 가득하고, 생빵가루를 입혀 더욱 바삭합니다.",
-        "details": "조리법: 에어프라이어 180도에서 15~20분\n보관방법: -18℃ 이하 냉동보관\n내용물: 450g\n\n[영양 정보 (100g 기준)]\n칼로리: 250kcal\n탄수화물: 15g\n단백질: 18g\n지방: 13g",
+        "shortDescription": "깨끗하게 손질되어 바로 요리하기 좋은 오징어",
+        "description": "동해안에서 갓 잡아올린 싱싱한 오징어를 깨끗하게 손질하여 보내드립니다.",
+        "details": "원산지: 국내산(동해)\n보관방법: 냉동보관",
         "rating": 4.7,
-        "reviewCount": 320,
+        "reviewCount": 150,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
             "instant": true,
-            "daily": false,
-            "weekly": false,
             "monthly": true
-        }
+        },
+        "uploadedAt": "2024-05-22T14:00:00Z"
+    },
+    {
+        "id": 6,
+        "name": "고당도 성주참외 1.5kg",
+        "price": 18000,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "사과",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "아삭하고 달콤한 명품 성주참외",
+        "description": "참외의 고장, 성주에서 재배되어 당도가 매우 높고 과즙이 풍부합니다.",
+        "details": "원산지: 경북 성주\n보관방법: 냉장보관",
+        "rating": 4.9,
+        "reviewCount": 112,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-21T18:00:00Z"
+    },
+    {
+        "id": 7,
+        "name": "바삭한 모짜렐라 치즈볼 (냉동)",
+        "price": 8900,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "튀김류",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "쭉 늘어나는 모짜렐라 치즈가 듬뿍!",
+        "description": "에어프라이어에 간편하게 조리하여 즐기는 최고의 간식입니다.",
+        "details": "조리법: 에어프라이어 180도에서 8~10분",
+        "rating": 4.8,
+        "reviewCount": 250,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-20T12:00:00Z"
+    },
+    {
+        "id": 8,
+        "name": "국내산 자반 고등어",
+        "price": 7000,
+        "originalPrice": 8500,
+        "imageUrl": "/images/placeholder.png",
+        "category": "고등어",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "밥도둑! 짭조름한 국내산 자반 고등어",
+        "description": "기름기가 적당히 돌아 고소하고 짭조름한 맛이 일품입니다.",
+        "details": "원산지: 국내산\n보관방법: 냉동보관",
+        "rating": 4.7,
+        "reviewCount": 188,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-18T10:00:00Z"
     },
     {
         "id": 9,
@@ -145,21 +198,16 @@
         "isRecommended": true,
         "shortDescription": "허리를 편안하게 받쳐주는 인체공학적 디자인",
         "description": "장시간 앉아 있어도 편안함을 유지해주는 프리미엄 사무용 의자입니다.",
-        "details": "재질: 메쉬, 스틸\n색상: 블랙\n특징: 높이조절, 틸팅기능\n제조국: 중국",
+        "details": "재질: 메쉬, 스틸\n색상: 블랙",
         "rating": 4.6,
         "reviewCount": 75,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
-            "instant": true,
-            "daily": false,
-            "weekly": false,
-            "monthly": false
-        }
+            "instant": true
+        },
+        "uploadedAt": "2024-04-10T10:00:00Z"
     },
     {
         "id": 10,
@@ -170,22 +218,473 @@
         "category": "선풍기",
         "isNew": false,
         "isRecommended": true,
-        "shortDescription": "조용하고 강력한 바람, 저소음 BLDC 모터 사용",
+        "shortDescription": "조용하고 강력한 바람, BLDC 모터 사용",
         "description": "도서관보다 조용한 저소음 모터로 여름밤을 시원하고 편안하게 보내세요.",
-        "details": "소비전력: 25W\n특징: 리모컨 포함, 12단계 풍속조절\n제조국: 베트남",
+        "details": "소비전력: 25W\n특징: 리모컨 포함",
         "rating": 4.8,
         "reviewCount": 180,
         "galleryImages": [
-            "/images/placeholder.png",
-            "/images/placeholder-2.png",
-            "/images/placeholder-3.png",
-            "/images/placeholder-4.png"
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-05-01T10:00:00Z"
+    },
+    {
+        "id": 11,
+        "name": "유기농 브로콜리 1송이",
+        "price": 3200,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "양파",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "신선하고 건강한 유기농 브로콜리",
+        "description": "믿을 수 있는 농가에서 재배한 친환경 유기농 브로콜리입니다.",
+        "details": "인증: 유기농 인증 제 12-34-567호",
+        "rating": 4.9,
+        "reviewCount": 98,
+        "galleryImages": [
+            "/images/placeholder.png"
         ],
         "subscriptionOptions": {
             "instant": true,
-            "daily": false,
-            "weekly": false,
-            "monthly": false
-        }
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-22T17:00:00Z"
+    },
+    {
+        "id": 12,
+        "name": "고메 바삭 튀겨낸 돈카츠 450g",
+        "price": 9500,
+        "originalPrice": 11000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "냉동 식품",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "에어프라이어 15분 완성! 전문점 수준의 돈카츠",
+        "description": "통등심을 사용하여 육즙이 가득하고, 생빵가루를 입혀 더욱 바삭합니다.",
+        "details": "조리법: 에어프라이어 180도 15분",
+        "rating": 4.7,
+        "reviewCount": 320,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-15T10:00:00Z"
+    },
+    {
+        "id": 13,
+        "name": "모던 와이드 책상 1200",
+        "price": 119000,
+        "originalPrice": 140000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "책상",
+        "isNew": false,
+        "isRecommended": false,
+        "shortDescription": "넓고 튼튼한 상판의 모던 디자인 책상",
+        "description": "재택 근무와 학습에 최적화된 넓은 작업 공간을 제공합니다.",
+        "details": "사이즈: 1200x600x720mm\n색상: 화이트",
+        "rating": 4.5,
+        "reviewCount": 60,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-04-20T10:00:00Z"
+    },
+    {
+        "id": 14,
+        "name": "초고속 스마트 세탁기 21kg",
+        "price": 890000,
+        "originalPrice": 1100000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "세탁기",
+        "isNew": false,
+        "isRecommended": false,
+        "shortDescription": "AI 맞춤 세탁으로 더 스마트하게",
+        "description": "세탁물의 무게와 오염도를 감지하여 최적의 세탁 코스를 추천합니다.",
+        "details": "용량: 21kg\n에너지효율: 1등급",
+        "rating": 4.9,
+        "reviewCount": 150,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-03-10T10:00:00Z"
+    },
+    {
+        "id": 15,
+        "name": "매콤한 국물 떡볶이 밀키트",
+        "price": 6500,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "국/찌개",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "학교 앞 분식점의 바로 그 맛!",
+        "description": "쫄깃한 쌀떡과 매콤달콤한 특제 소스가 어우러진 국물 떡볶이입니다.",
+        "details": "구성: 쌀떡, 어묵, 소스, 대파",
+        "rating": 4.8,
+        "reviewCount": 450,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-21T09:00:00Z"
+    },
+    {
+        "id": 16,
+        "name": "제주산 활전복 1kg (8-10미)",
+        "price": 35000,
+        "originalPrice": 42000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "수산물",
+        "isNew": false,
+        "isRecommended": false,
+        "shortDescription": "청정 제주 바다의 신선함을 그대로",
+        "description": "산지에서 바로 배송하여 살아있는 활전복을 집에서 받아보실 수 있습니다.",
+        "details": "원산지: 제주도\n내용물: 1kg (8~10마리 내외)",
+        "rating": 4.9,
+        "reviewCount": 80,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-22T12:00:00Z"
+    },
+    {
+        "id": 17,
+        "name": "무농약 GAP인증 꿀사과 2kg",
+        "price": 19900,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "사과",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "안심하고 먹는 아삭한 무농약 꿀사과",
+        "description": "GAP 인증을 받은 농가에서 정성껏 키워 안심하고 껍질째 드실 수 있습니다.",
+        "details": "인증: GAP (농산물우수관리) 인증",
+        "rating": 4.8,
+        "reviewCount": 130,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-20T16:00:00Z"
+    },
+    {
+        "id": 18,
+        "name": "한우 사골곰탕 (냉동)",
+        "price": 12000,
+        "originalPrice": 15000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "냉동 식품",
+        "isNew": false,
+        "isRecommended": false,
+        "shortDescription": "24시간 정성껏 고아낸 진한 국물",
+        "description": "100% 한우 사골만을 사용하여 다른 첨가물 없이 진하고 구수한 맛을 냈습니다.",
+        "details": "원재료: 한우 사골 100%(국내산)",
+        "rating": 4.9,
+        "reviewCount": 220,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-17T10:00:00Z"
+    },
+    {
+        "id": 19,
+        "name": "우리쌀로 만든 야채튀김",
+        "price": 5500,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "튀김류",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "다양한 야채가 듬뿍! 우리쌀로 만든 튀김",
+        "description": "국내산 야채와 우리쌀 튀김가루를 사용하여 더욱 건강하고 바삭합니다.",
+        "details": "주재료: 양파, 당근, 깻잎, 고구마",
+        "rating": 4.6,
+        "reviewCount": 85,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-05-23T11:00:00Z"
+    },
+    {
+        "id": 20,
+        "name": "1등급 한우 등심 300g",
+        "price": 28000,
+        "originalPrice": 35000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "대파",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "마블링이 뛰어난 1등급 한우 등심",
+        "description": "부드러운 육질과 풍부한 육즙을 자랑하는 최상급 한우 등심 구이용입니다.",
+        "details": "등급: 1등급 한우(국내산)\n내용물: 300g",
+        "rating": 5.0,
+        "reviewCount": 99,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-23T10:00:00Z"
+    },
+    {
+        "id": 21,
+        "name": "제주 감귤 5kg",
+        "price": 25000,
+        "originalPrice": 28000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "사과",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "새콤달콤, 비타민C 가득한 제주 감귤",
+        "description": "겨울철 최고의 간식, 제주 노지 감귤을 산지 직송으로 보내드립니다.",
+        "details": "원산지: 제주 서귀포\n내용물: 5kg",
+        "rating": 4.8,
+        "reviewCount": 310,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-16T10:00:00Z"
+    },
+    {
+        "id": 22,
+        "name": "프리미엄 김치찌개 밀키트",
+        "price": 9000,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "국/찌개",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "잘 익은 김치로 끓여낸 깊은 맛",
+        "description": "돼지고기가 듬뿍 들어가 더욱 든든하고 맛있는 김치찌개입니다.",
+        "details": "구성: 숙성김치, 돼지고기, 두부, 육수",
+        "rating": 4.9,
+        "reviewCount": 180,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-20T11:00:00Z"
+    },
+    {
+        "id": 23,
+        "name": "완도산 햇 미역 100g",
+        "price": 5000,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "수산물",
+        "isNew": false,
+        "isRecommended": false,
+        "shortDescription": "부드럽고 향긋한 완도산 미역",
+        "description": "청정해역 완도에서 채취하여 해풍에 말려 맛과 향이 뛰어납니다.",
+        "details": "원산지: 전남 완도\n용도: 미역국, 무침용",
+        "rating": 4.7,
+        "reviewCount": 77,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "monthly": true
+        },
+        "uploadedAt": "2024-05-10T10:00:00Z"
+    },
+    {
+        "id": 24,
+        "name": "해물 모듬 (냉동) 500g",
+        "price": 13000,
+        "originalPrice": 16000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "냉동 식품",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "다양한 해물이 한번에!",
+        "description": "새우, 오징어, 홍합 등 다양한 해물이 손질되어 있어 찌개나 볶음에 간편하게 사용할 수 있습니다.",
+        "details": "구성: 새우, 오징어, 홍합살, 바지락살",
+        "rating": 4.6,
+        "reviewCount": 125,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-05-12T10:00:00Z"
+    },
+    {
+        "id": 25,
+        "name": "슬림 디자인 책상 의자",
+        "price": 65000,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "의자",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "좁은 공간에도 어울리는 컴팩트한 디자인",
+        "description": "모던하고 심플한 디자인으로 어떤 인테리어에도 잘 어울립니다.",
+        "details": "색상: 화이트, 핑크, 그레이\n재질: 패브릭, 스틸",
+        "rating": 4.4,
+        "reviewCount": 45,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-05-23T15:00:00Z"
+    },
+    {
+        "id": 26,
+        "name": "게이밍 전용 데스크",
+        "price": 199000,
+        "originalPrice": 250000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "책상",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "최적의 게이밍 환경을 위한 책상",
+        "description": "헤드셋 걸이, 컵 홀더, 케이블 정리 홀 등 게이머를 위한 편의 기능을 갖췄습니다.",
+        "details": "사이즈: 1400x700x750mm\n특징: 카본 패턴 상판",
+        "rating": 4.8,
+        "reviewCount": 89,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-04-15T10:00:00Z"
+    },
+    {
+        "id": 27,
+        "name": "벽걸이형 에어 서큘레이터",
+        "price": 78000,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "선풍기",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "공간 활용도를 높인 벽걸이형 선풍기",
+        "description": "강력한 회오리 바람으로 실내 공기를 빠르게 순환시켜 줍니다.",
+        "details": "특징: 리모컨 포함, 3단계 바람세기",
+        "rating": 4.7,
+        "reviewCount": 110,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-05-22T18:00:00Z"
+    },
+    {
+        "id": 28,
+        "name": "통돌이 세탁기 15kg",
+        "price": 450000,
+        "originalPrice": 550000,
+        "imageUrl": "/images/placeholder.png",
+        "category": "세탁기",
+        "isNew": false,
+        "isRecommended": true,
+        "shortDescription": "강력한 물살로 깨끗하게!",
+        "description": "강력하고 입체적인 물살이 빨랫감을 효과적으로 세탁해줍니다.",
+        "details": "용량: 15kg\n에너지효율: 2등급",
+        "rating": 4.6,
+        "reviewCount": 230,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true
+        },
+        "uploadedAt": "2024-03-25T10:00:00Z"
+    },
+    {
+        "id": 29,
+        "name": "국내산 햇 감자 1kg",
+        "price": 4500,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "양파",
+        "isNew": true,
+        "isRecommended": false,
+        "shortDescription": "포슬포슬 맛있는 햇감자",
+        "description": "조림, 튀김, 찜 등 어떤 요리를 해도 맛있는 만능 식재료입니다.",
+        "details": "원산지: 강원도\n보관방법: 서늘하고 어두운 곳 보관",
+        "rating": 4.8,
+        "reviewCount": 155,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-23T13:00:00Z"
+    },
+    {
+        "id": 30,
+        "name": "유기농 상추 200g",
+        "price": 2800,
+        "originalPrice": null,
+        "imageUrl": "/images/placeholder.png",
+        "category": "대파",
+        "isNew": true,
+        "isRecommended": true,
+        "shortDescription": "아삭하고 신선한 유기농 쌈채소",
+        "description": "쌈밥이나 샐러드에 활용하기 좋은 신선한 유기농 상추입니다.",
+        "details": "인증: 유기농 인증\n보관방법: 냉장보관",
+        "rating": 4.9,
+        "reviewCount": 120,
+        "galleryImages": [
+            "/images/placeholder.png"
+        ],
+        "subscriptionOptions": {
+            "instant": true,
+            "daily": true,
+            "weekly": true
+        },
+        "uploadedAt": "2024-05-23T16:00:00Z"
     }
 ]

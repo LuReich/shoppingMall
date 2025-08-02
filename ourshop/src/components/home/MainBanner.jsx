@@ -62,7 +62,7 @@ const MainBanner = () => {
             </Slider>
 
             <div className="dots-container">
-                {/* ✨✨✨ Dot 그룹의 완벽한 중앙 정렬을 위한 가상 버튼 ✨✨✨ */}
+                {/*  Dot 그룹의 완벽한 중앙 정렬을 위한 가상 버튼  */}
                 <button className="play-pause-btn dummy">
                     {isPaused ? '▶' : '❚❚'}
                 </button>

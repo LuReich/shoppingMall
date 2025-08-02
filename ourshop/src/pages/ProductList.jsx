@@ -6,47 +6,57 @@ import categoriesData from '../data/categories.json';
 import ProductCard from '../components/common/ProductCard';
 import '../assets/css/ProductList.css';
 
-// ... (getLeafCategoryNames, getCategoryNameById 헬퍼 함수는 이전과 동일)
+//  특정 카테고리와 그 하위의 모든 리프 카테고리 이름(실제 상품 카테고리)을 찾는 재귀 함수 (수정됨) 
 const getLeafCategoryNames = (categoryId, categories) => {
     let leafNames = [];
-    const findLeaves = (items) => {
-        for (const item of items) {
-            let found = false;
-            if (item.id === categoryId) { found = true; }
-            if (found) {
-                const collectAllLeaves = (node) => {
-                    if (!node.children || node.children.length === 0) { leafNames.push(node.name); }
-                    else { node.children.forEach(collectAllLeaves); }
-                };
-                collectAllLeaves(item);
-                return;
+
+    const findNodeById = (nodes, id) => {
+        for (const node of nodes) {
+            if (node.id === id) return node;
+            if (node.children) {
+                const found = findNodeById(node.children, id);
+                if (found) return found;
             }
-            if (item.children) { findLeaves(item.children); }
+        }
+        return null;
+    };
+
+    const collectAllLeaves = (node) => {
+        if (!node.children || node.children.length === 0) {
+            leafNames.push(node.name);
+        } else {
+            node.children.forEach(collectAllLeaves);
         }
     };
-    findLeaves(categories);
+
+    const startNode = findNodeById(categories, categoryId);
+    if (startNode) {
+        collectAllLeaves(startNode);
+    }
+
     return leafNames;
 };
+
 const getCategoryNameById = (categoryId, categories) => {
     for (const category of categories) {
-        if (category.id === categoryId) { return category.name; }
+        if (category.id === categoryId) return category.name;
         if (category.children) {
             const foundName = getCategoryNameById(categoryId, category.children);
-            if (foundName) { return foundName; }
+            if (foundName) return foundName;
         }
     }
     return null;
-}
+};
 
-
-const ITEMS_PER_PAGE = 8; // 한 페이지에 보여줄 상품 수
+const ITEMS_PER_PAGE = 8;
 
 const ProductList = () => {
     const { categoryId } = useParams();
+    const [itemOffset, setItemOffset] = useState(0);
 
     const categoryName = useMemo(() => {
         const name = getCategoryNameById(categoryId, categoriesData);
-        return name || "카테고리";
+        return name || "전체 상품";
     }, [categoryId]);
 
     const filteredProducts = useMemo(() => {
@@ -60,7 +70,11 @@ const ProductList = () => {
     // --- 페이지네이션 상태 관리 ---
     const [currentItems, setCurrentItems] = useState([]);
     const [pageCount, setPageCount] = useState(0);
-    const [itemOffset, setItemOffset] = useState(0);
+
+    //  카테고리가 변경될 때 itemOffset을 0으로 초기화하는 로직 
+    useEffect(() => {
+        setItemOffset(0);
+    }, [categoryId]);
 
     useEffect(() => {
         const endOffset = itemOffset + ITEMS_PER_PAGE;
@@ -71,8 +85,11 @@ const ProductList = () => {
     const handlePageClick = (event) => {
         const newOffset = (event.selected * ITEMS_PER_PAGE) % filteredProducts.length;
         setItemOffset(newOffset);
-        window.scrollTo(0, 0); // 페이지 이동 시 맨 위로 스크롤
+        window.scrollTo(0, 0);
     };
+
+    // 카테고리가 바뀔 때 ReactPaginate 컴포넌트 자체를 리셋하기 위한 key
+    const paginationKey = useMemo(() => categoryId, [categoryId]);
 
     return (
         <div className="product-list-container">
@@ -85,6 +102,7 @@ const ProductList = () => {
                         ))}
                     </div>
                     <ReactPaginate
+                        key={paginationKey} // 카테고리 변경 시 컴포넌트를 강제로 다시 렌더링하여 페이지를 1로 초기화
                         breakLabel="..."
                         nextLabel=">"
                         onPageChange={handlePageClick}

@@ -122,7 +122,7 @@ const ProductDetail = () => {
                         {product.originalPrice && <span className="original-price">{product.originalPrice.toLocaleString()}원</span>}
                     </div>
 
-                    {/* ✨✨✨ 정기배송 옵션 섹션으로 변경 ✨✨✨ */}
+                    {/*  정기배송 옵션 섹션으로 변경  */}
                     <div className="subscription-selector">
                         <span className="label">정기배송</span>
                         <div className="subscription-options">
