@@ -8,16 +8,16 @@
                 "name": "농산물",
                 "children": [
                     {
-                        "id": "onion",
-                        "name": "양파"
+                        "id": "vegetable",
+                        "name": "채소"
                     },
                     {
-                        "id": "green-onion",
-                        "name": "대파"
+                        "id": "fruit",
+                        "name": "과일"
                     },
                     {
-                        "id": "apple",
-                        "name": "사과"
+                        "id": "meat",
+                        "name": "정육/계란"
                     }
                 ]
             },
@@ -26,16 +26,16 @@
                 "name": "수산물",
                 "children": [
                     {
-                        "id": "mackerel",
-                        "name": "고등어"
+                        "id": "fish",
+                        "name": "생선"
                     },
                     {
-                        "id": "squid",
-                        "name": "오징어"
+                        "id": "shellfish",
+                        "name": "조개/갑각류"
                     },
                     {
-                        "id": "salmon",
-                        "name": "연어"
+                        "id": "seaweed",
+                        "name": "해조류"
                     }
                 ]
             },
@@ -64,24 +64,28 @@
         "name": "가전",
         "children": [
             {
-                "id": "washing-machine",
-                "name": "세탁기",
+                "id": "kitchen-appliances",
+                "name": "주방가전",
                 "children": []
             },
             {
-                "id": "fan",
-                "name": "선풍기",
+                "id": "home-appliances",
+                "name": "생활가전",
                 "children": []
             },
             {
-                "id": "chair",
-                "name": "의자",
-                "children": []
-            },
-            {
-                "id": "desk",
-                "name": "책상",
-                "children": []
+                "id": "furniture",
+                "name": "가구",
+                "children": [
+                    {
+                        "id": "chair",
+                        "name": "의자"
+                    },
+                    {
+                        "id": "desk",
+                        "name": "책상"
+                    }
+                ]
             }
         ]
     }
