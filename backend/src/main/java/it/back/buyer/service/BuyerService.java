@@ -1,0 +1,50 @@
+package it.back.buyer.service;
+
+import it.back.buyer.dto.BuyerDTO;
+import it.back.buyer.entity.Buyer;
+import it.back.buyer.entity.BuyerDetail;
+import it.back.buyer.repository.BuyerRepository;
+import it.back.common.dto.LoginRequestDTO;
+import it.back.common.utils.JWTUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class BuyerService {
+
+    private final BuyerRepository buyerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTUtils jwtUtils;
+
+    public String login(LoginRequestDTO dto) {
+        Buyer buyer = buyerRepository.findByUserId(dto.getLoginId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!passwordEncoder.matches(dto.getPassword(), buyer.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        return jwtUtils.createJwt(buyer.getUserId(), "BUYER", 10 * 60 * 60 * 1000L);
+    }
+
+    @Transactional
+    public Buyer registerBuyer(BuyerDTO buyerDto) {
+        Buyer buyer = new Buyer();
+        buyer.setUserId(buyerDto.getUserId());
+        buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Hashing added
+        buyer.setNickname(buyerDto.getNickname());
+
+        BuyerDetail detail = new BuyerDetail();
+        detail.setPhoneNumber(buyerDto.getPhoneNumber());
+        detail.setAddress(buyerDto.getAddress());
+        detail.setAddressDetail(buyerDto.getAddressDetail());
+
+        detail.setBuyer(buyer);
+        buyer.setBuyerDetail(detail);
+
+        return buyerRepository.save(buyer);
+    }
+}

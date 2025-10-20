@@ -1,0 +1,40 @@
+package it.back.buyer.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "buyer_detail")
+@Getter
+@Setter
+public class BuyerDetail {
+
+    @Id
+    @Column(name = "buyer_uid")
+    private Long buyerUid;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "buyer_uid")
+    private Buyer buyer;
+
+    @Column(name = "phone_number", unique = true, nullable = false, length = 20)
+    private String phoneNumber;
+
+    @Column(nullable = false, length = 255)
+    private String address;
+
+    @Column(name = "address_detail", length = 255)
+    private String addressDetail;
+
+    private LocalDate birth;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    public enum Gender {
+        MALE, FEMALE
+    }
+}
