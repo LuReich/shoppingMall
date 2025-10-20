@@ -42,11 +42,11 @@ public class BuyerController {
         dto.setLoginId(loginId);
         dto.setPassword(password);
         String jwt = buyerService.login(dto);
-        
+
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Login successful");
-        responseBody.put("token", "Bearer " + jwt);
-        
+        responseBody.put("token", "bearer: " + jwt);
+
         return ResponseEntity.ok().body(responseBody);
     }
 

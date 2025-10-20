@@ -28,7 +28,7 @@ public class AdminController {
         
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Login successful");
-        responseBody.put("token", "Bearer " + jwt);
+        responseBody.put("token", "Bearer: " + jwt);
         
         return ResponseEntity.ok().body(responseBody);
     }
