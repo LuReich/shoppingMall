@@ -10,28 +10,28 @@ import lombok.Setter;
 @Setter
 public class UserSummaryDTO {
     private String role;
-    private Long id;
+    private Long uid;
     private String loginId;
     private String name;
 
     public UserSummaryDTO(Admin admin) {
         this.role = "ADMIN";
-        this.id = admin.getAdminUid().longValue();
+        this.uid = admin.getAdminUid().longValue();
         this.loginId = admin.getAdminId();
         this.name = admin.getAdminName();
     }
 
     public UserSummaryDTO(Buyer buyer) {
         this.role = "BUYER";
-        this.id = buyer.getBuyerUid();
-        this.loginId = buyer.getUserId();
+        this.uid = buyer.getBuyerUid();
+        this.loginId = buyer.getBuyerId();
         this.name = buyer.getNickname(); // Buyer has nickname
     }
 
     public UserSummaryDTO(Seller seller) {
         this.role = "SELLER";
-        this.id = seller.getSellerUid();
-        this.loginId = seller.getUserId();
+        this.uid = seller.getSellerUid();
+        this.loginId = seller.getSellerId();
         this.name = seller.getCompanyName(); // Seller has company name
     }
 }

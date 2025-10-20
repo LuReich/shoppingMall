@@ -6,9 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SellerDTO {
-    private String userId;
+    private String sellerId;
     private String password;
     private String companyName;
+    private Boolean isVerified;
+    private Boolean isActive;
     // SellerDetail info
     private String businessRegistrationNumber;
     private String phone;

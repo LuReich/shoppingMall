@@ -5,6 +5,9 @@ import it.back.admin.entity.Admin;
 import it.back.buyer.entity.Buyer;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.entity.Seller;
+import it.back.admin.repository.AdminRepository;
+import it.back.buyer.repository.BuyerRepository;
+import it.back.seller.repository.SellerRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +25,9 @@ import java.util.Collections;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtils jwtUtils;
+    private final AdminRepository adminRepository;
+    private final BuyerRepository buyerRepository;
+    private final SellerRepository sellerRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -55,17 +61,20 @@ public class JWTFilter extends OncePerRequestFilter {
         // to ensure they still exist and are active. But for setting security context,
         // info from a trusted JWT is often sufficient.
         if ("ADMIN".equals(role)) {
-            Admin admin = new Admin();
-            admin.setAdminId(loginId);
-            return new UserSummaryDTO(admin);
+            Admin admin = adminRepository.findByAdminId(loginId).orElse(null);
+            if (admin != null) {
+                return new UserSummaryDTO(admin);
+            }
         } else if ("BUYER".equals(role)) {
-            Buyer buyer = new Buyer();
-            buyer.setUserId(loginId);
-            return new UserSummaryDTO(buyer);
+            Buyer buyer = buyerRepository.findByBuyerId(loginId).orElse(null);
+            if (buyer != null) {
+                return new UserSummaryDTO(buyer);
+            }
         } else if ("SELLER".equals(role)) {
-            Seller seller = new Seller();
-            seller.setUserId(loginId);
-            return new UserSummaryDTO(seller);
+            Seller seller = sellerRepository.findBySellerId(loginId).orElse(null);
+            if (seller != null) {
+                return new UserSummaryDTO(seller);
+            }
         }
         return null;
     }

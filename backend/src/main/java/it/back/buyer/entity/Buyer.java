@@ -18,8 +18,8 @@ public class Buyer {
     @Column(name = "buyer_uid")
     private Long buyerUid;
 
-    @Column(name = "user_id", unique = true, nullable = false, length = 50)
-    private String userId;
+    @Column(name = "buyer_id", unique = true, nullable = false, length = 50)
+    private String buyerId;
 
     @Column(nullable = false, length = 255)
     private String password;
@@ -35,7 +35,7 @@ public class Buyer {
     @Column(name = "update_at")
     private LocalDateTime updateAt;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
     @Enumerated(EnumType.STRING)

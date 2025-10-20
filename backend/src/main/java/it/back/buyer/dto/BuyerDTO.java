@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BuyerDTO {
-    private String userId;
+    private String buyerId;
     private String password;
     private String nickname;
     // BuyerDetail info

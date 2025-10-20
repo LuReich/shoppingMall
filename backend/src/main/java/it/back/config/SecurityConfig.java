@@ -1,8 +1,7 @@
 package it.back.config;
 
-import it.back.common.utils.JWTUtils;
-import it.back.filter.JWTFilter;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +16,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import it.back.common.utils.JWTUtils;
+import it.back.filter.JWTFilter;
+import it.back.admin.repository.AdminRepository;
+import it.back.buyer.repository.BuyerRepository;
+import it.back.seller.repository.SellerRepository;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +29,9 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JWTUtils jwtUtils;
+    private final AdminRepository adminRepository;
+    private final BuyerRepository buyerRepository;
+    private final SellerRepository sellerRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,24 +39,30 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JWTFilter jwtFilter() {
+    return new JWTFilter(jwtUtils, adminRepository, buyerRepository, sellerRepository);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable);
+    http.csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .formLogin(AbstractHttpConfigurer::disable)
+        .httpBasic(AbstractHttpConfigurer::disable);
 
-        http.addFilterBefore(new JWTFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/buyers/register", "/api/buyers/login").permitAll()
-                .requestMatchers("/api/sellers/register", "/api/sellers/login").permitAll()
-                .requestMatchers("/api/admin/login").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-        );
+    http.authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/buyers/register", "/api/buyers/login").permitAll()
+        .requestMatchers("/api/sellers/register", "/api/sellers/login").permitAll()
+        .requestMatchers("/api/admin/login").permitAll()
+        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+        .requestMatchers("/**").hasAnyRole("ADMIN")
+        .anyRequest().authenticated()
+    );
 
-        return http.build();
+    return http.build();
     }
 
     @Bean

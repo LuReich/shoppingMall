@@ -1,10 +1,9 @@
 /* ================================================================= */
-/* 3조 도소매업 사이트: 최종 데이터베이스 생성 스크립트 (MariaDB)      */
-/* (PK를 _uid로, 로그인 ID를 _id로 변경)                             */
-/* (오류 수정 및 DROP TABLE IF EXISTS 추가)                        */
+/* 3조 도소매업 사이트: 최종 데이터베이스 생성 및 가짜 데이터 삽입 스크립트 (MariaDB) */
+/* (PK를 _uid로, 로그인 ID를 _id로 변경, 오류 수정 및 DROP/CREATE/INSERT 통합) */
 /* ================================================================= */
 
--- 기존 테이블이 존재하면 삭제 (역순으로 삭제하여 FK 제약 조건 문제 방지)
+/* 기존 테이블이 존재하면 삭제 (역순으로 삭제하여 FK 제약 조건 문제 방지) */
 DROP TABLE IF EXISTS `faq`;
 DROP TABLE IF EXISTS `seller_inquiry`;
 DROP TABLE IF EXISTS `buyer_inquiry`;
@@ -12,7 +11,7 @@ DROP TABLE IF EXISTS `ad`;
 DROP TABLE IF EXISTS `product_like`;
 DROP TABLE IF EXISTS `review`;
 DROP TABLE IF EXISTS `order_detail`;
-DROP TABLE IF EXISTS `order`; -- 'order'는 예약어이므로 백틱으로 감쌈
+DROP TABLE IF EXISTS `order`; /* 'order'는 예약어이므로 백틱으로 감쌈 */
 DROP TABLE IF EXISTS `cart`;
 DROP TABLE IF EXISTS `product_image`;
 DROP TABLE IF EXISTS `product_detail`;
@@ -44,7 +43,7 @@ create table admin (
 /* ----------------------------------------------------- */
 create table buyer (
     buyer_uid bigint primary key auto_increment comment '구매자 고유 식별자 (PK)',
-    user_id varchar(50) unique not null comment '로그인 아이디',
+    buyer_id varchar(50) unique not null comment '로그인 아이디',
     password varchar(255) not null comment '비밀번호 (암호화 저장)',
     nickname varchar(50) unique not null comment '닉네임',
     create_at datetime default now() comment '가입일',
@@ -74,7 +73,7 @@ create table buyer_detail (
 /* ----------------------------------------------------- */
 create table seller (
     seller_uid bigint primary key auto_increment comment '판매자 고유 식별자 (PK)',
-    user_id varchar(50) unique not null comment '로그인 아이디',
+    seller_id varchar(50) unique not null comment '로그인 아이디',
     password varchar(255) not null comment '비밀번호 (암호화 저장)',
     company_name varchar(100) not null comment '업체명 (대표 식별자)',
     create_at datetime default now() comment '가입일',
@@ -172,7 +171,7 @@ create table cart (
 /* ----------------------------------------------------- */
 /* table `order` (주문 테이블)                             */
 /* ----------------------------------------------------- */
--- 'order'는 SQL 예약어이므로 백틱(`)으로 감싸줍니다.
+/* 'order'는 SQL 예약어이므로 백틱(`)으로 감싸줍니다. */
 create table `order` (
     order_id bigint primary key auto_increment comment '주문 고유 번호',
     buyer_uid bigint not null comment '구매자 고유 식별자 (FK)',
@@ -293,10 +292,149 @@ create table seller_inquiry (
 create table faq (
     faq_id int primary key auto_increment comment 'FAQ 고유 번호',
     faq_target enum('BUYER', 'SELLER', 'ALL') not null comment 'FAQ 대상 (구매자, 판매자, 전체)',
-    faq_category enum('ACCOUNT', 'PAYMENT', 'SHIPPING', 'PRODUCT', 'ETC') not null comment 'FAQ 카테고리',
+    faq_category enum('ACCOUNT', 'PAYMENT', 'SHIPPING', 'PRODUCT', 'ETC', 'VERIFICATION') not null comment 'FAQ 카테고리', /* 'VERIFICATION' 추가 */
     faq_question varchar(255) not null comment '질문',
     faq_answer text not null comment '답변',
-    sort_order int default 0 comment '표시 순서', -- 콤마(,) 추가
+    sort_order int default 0 comment '표시 순서',
     create_at datetime default now() comment '등록 시간',
-    update_at datetime default current_timestamp on update current_timestamp comment '수정 시간' -- DEFAULT 및 ON UPDATE 추가 (선택 사항)
+    update_at datetime default current_timestamp on update current_timestamp comment '수정 시간'
 ) comment '자주 묻는 질문(FAQ) 테이블';
+
+
+/* ================================================================= */
+/* 3조 도소매업 사이트: 가짜 데이터 삽입 스크립트 (MariaDB)          */
+/* ================================================================= */
+
+/* 관리자 계정 (admin) */
+INSERT INTO admin (admin_id, admin_password, admin_name, permission_level) VALUES
+('admin01', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '최고관리자', 1),
+('admin02', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '부관리자', 3);
+
+/* 구매자 계정 (buyer) */
+INSERT INTO buyer (buyer_id, password, nickname) VALUES
+('buyer01', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉1'),
+('buyer02', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉2'),
+('buyer03', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉3_탈퇴');
+
+/* 구매자 상세 정보 (buyer_detail) */
+INSERT INTO buyer_detail (buyer_uid, phone_number, address, address_detail, birth, gender) VALUES
+(1, '010-1111-2222', '서울특별시 강남구 테헤란로 123', '101호', '1990-05-15', 'MALE'),
+(2, '010-3333-4444', '경기도 성남시 분당구 판교역로 456', '202동 303호', '1992-11-20', 'FEMALE'),
+(3, '010-5555-6666', '부산광역시 해운대구 센텀동로 789', '404호', '1988-01-01', 'MALE');
+
+/* 판매자 계정 (seller) */
+INSERT INTO seller (seller_id, password, company_name, is_verified) VALUES
+('seller01', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '알파상사', TRUE),
+('seller02', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '베타유통', TRUE),
+('seller03', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '감마셀러_미인증', FALSE);
+
+/* 판매자 상세 정보 (seller_detail) */
+INSERT INTO seller_detail (seller_uid, business_registration_number, company_info, phone, address, address_detail) VALUES
+(1, '123-45-67890', '최고의 품질을 약속하는 알파상사입니다.', '02-1234-5678', '서울특별시 서초구 서초대로 1', '알파빌딩 5층'),
+(2, '987-65-43210', '다양한 상품을 저렴하게 판매하는 베타유통입니다.', '031-9876-5432', '경기도 수원시 영통구 광교중앙로 2', '베타타워 10층'),
+(3, '111-22-33333', '새로운 판매자 감마셀러입니다.', '070-1234-5678', '인천광역시 연수구 송도과학로 3', '감마오피스 707호');
+
+/* 카테고리 (category) */
+INSERT INTO category (category_id, parent_id, category_name) VALUES
+(1, NULL, '전자기기'),
+(2, 1, '노트북/PC'),
+(3, 1, '스마트폰/태블릿'),
+(4, 1, 'TV/가전'),
+(5, NULL, '식료품'),
+(6, 5, '신선식품'),
+(7, 5, '가공식품'),
+(8, 5, '음료/주류'),
+(9, NULL, '의류'),
+(10, 9, '남성의류'),
+(11, 9, '여성의류'),
+(12, 9, '유아/아동의류'),
+(13, NULL, '도서'),
+(14, 13, '소설/에세이'),
+(15, 13, '자기계발'),
+(16, 13, 'IT/과학');
+
+/* 상품 기본 정보 (product) */
+INSERT INTO product (seller_uid, category_id, product_name, price, stock, thumbnail_url) VALUES
+(1, 4, '삼성 65인치 QLED TV', 1800000, 80, '/images/qled_tv_thumbnail.jpg'), /* TV/가전 (category_id 4) */
+(1, 2, 'LG그램 16인치 노트북', 1600000, 120, '/images/lg_gram_thumbnail.jpg'), /* 노트북/PC (category_id 2) */
+(2, 10, '남성 옥스포드 셔츠', 55000, 150, '/images/mens_oxford_shirt_thumbnail.jpg'), /* 남성의류 (category_id 10) */
+(2, 11, '여성 플리츠 스커트', 68000, 100, '/images/womens_skirt_thumbnail.jpg'), /* 여성의류 (category_id 11) */
+(1, 6, '제주 감귤 3kg', 18000, 250, '/images/tangerine_thumbnail.jpg'), /* 신선식품 (category_id 6) */
+(2, 14, '책 이름은 아직 정해지지 않았다', 15000, 50, '/images/book_novel_thumbnail.jpg'); /* 소설/에세이 (category_id 14) */
+
+
+/* 상품 상세 정보 (product_detail) */
+INSERT INTO product_detail (product_id, description, shipping_info) VALUES
+(1, '최신 QLED 기술이 적용된 65인치 TV로 생생한 화질을 경험하세요.', '무료배송, 벽걸이 설치 별도'),
+(2, '가볍고 강력한 성능의 16인치 노트북, 업무와 학습에 최적화.', '무료배송'),
+(3, '클래식한 디자인의 남성 옥스포드 셔츠, 데일리룩으로 안성맞춤.', '2,500원 (5만원 이상 무료배송)'),
+(4, '세련된 디자인의 여성 플리츠 스커트, 다양한 스타일 연출 가능.', '2,500원 (5만원 이상 무료배송)'),
+(5, 'GAP 인증 받은 신선한 제주 감귤, 비타민C 가득한 제철 과일.', '신선식품은 냉장 배송됩니다. (배송비 3,000원)'),
+(6, '2023년 베스트셀러, 마음을 울리는 감동적인 이야기.', '2,500원 (3만원 이상 무료배송)');
+
+
+/* 상품 추가 이미지 (product_image) */
+INSERT INTO product_image (product_id, image_url, sort_order) VALUES
+(1, '/images/qled_tv_detail_1.jpg', 0),
+(1, '/images/qled_tv_detail_2.jpg', 1),
+(2, '/images/lg_gram_detail_1.jpg', 0),
+(3, '/images/mens_oxford_shirt_detail_1.jpg', 0),
+(3, '/images/mens_oxford_shirt_detail_2.jpg', 1),
+(6, '/images/book_novel_detail_1.jpg', 0);
+
+
+/* 장바구니 (cart) */
+INSERT INTO cart (buyer_uid, product_id, quantity) VALUES
+(1, 3, 1), /* 구매자1: 남성 옥스포드 셔츠 1개 (product_id 3) */
+(1, 5, 2), /* 구매자1: 제주 감귤 2개 (product_id 5) */
+(2, 4, 1); /* 구매자2: 여성 플리츠 스커트 1개 (product_id 4) */
+
+
+/* 주문 (order) - 백틱(`)으로 테이블 이름 감싸기 */
+INSERT INTO `order` (buyer_uid, total_price, recipient_name, recipient_address, recipient_address_detail, order_status) VALUES
+(1, 55000, '김철수', '서울특별시 강남구 테헤란로 123', '101호', 'DELIVERED'), /* 구매자1의 완료된 주문 (상품3 1개) */
+(2, 68000, '박영희', '경기도 성남시 분당구 판교역로 456', '202동 303호', 'SHIPPING'); /* 구매자2의 배송 중인 주문 (상품4 1개) */
+
+
+/* 주문 상세 (order_detail) */
+INSERT INTO order_detail (order_id, product_id, quantity, price_per_item) VALUES
+(1, 3, 1, 55000), /* 주문1: 남성 옥스포드 셔츠 1개 (product_id 3) */
+(2, 4, 1, 68000); /* 주문2: 여성 플리츠 스커트 1개 (product_id 4) */
+
+
+/* 리뷰 (review) */
+INSERT INTO review (product_id, buyer_uid, order_detail_id, rating, content) VALUES
+(3, 1, 1, 5, '셔츠 재질이 아주 좋아요. 배송도 빠르고 만족합니다.'), /* 상품3에 대한 구매자1의 리뷰 */
+(4, 2, 2, 4, '스커트 디자인이 예뻐요. 생각보다 편하고 좋아요.'); /* 상품4에 대한 구매자2의 리뷰 */
+
+
+/* 상품 좋아요 (product_like) */
+INSERT INTO product_like (buyer_uid, product_id) VALUES
+(1, 1), /* 구매자1이 QLED TV에 좋아요 (product_id 1) */
+(1, 4), /* 구매자1이 플리츠 스커트에 좋아요 (product_id 4) */
+(2, 2), /* 구매자2가 LG그램 노트북에 좋아요 (product_id 2) */
+(2, 6); /* 구매자2가 소설 책에 좋아요 (product_id 6) */
+
+
+/* 광고 (ad) */
+INSERT INTO ad (seller_uid, title, image_url, link_url, ad_location, start_date, end_date, is_active) VALUES
+(1, '최신 TV 특별 할인!', '/ads/alpha_tv_ad.jpg', 'http://localhost/products/1', 'MAIN_BANNER', '2023-01-01', '2023-12-31', TRUE), /* product_id 1 (QLED TV) */
+(2, '베타유통 패션위크!', '/ads/beta_clothes_ad.jpg', 'http://localhost/categories/9', 'CATEGORY_SIDEBAR', '2023-02-01', '2023-03-31', TRUE), /* category_id 9 (의류) */
+(NULL, '새로운 책 입고!', '/ads/new_book_ad.jpg', 'http://localhost/categories/13', 'POPUP', '2023-01-01', '2023-01-31', FALSE); /* category_id 13 (도서) */
+
+
+/* 구매자 1:1 문의 (buyer_inquiry) */
+INSERT INTO buyer_inquiry (buyer_uid, inquiry_type, title, question_content, inquiry_status, answer_content, answer_at) VALUES
+(1, 'SHIPPING', '주문 상품 배송 문의', '지난주에 주문했는데 언제쯤 받아볼 수 있을까요?', 'ANSWERED', '고객님의 주문 상품은 현재 배송 준비 중이며, 내일 출고 예정입니다.', NOW()),
+(2, 'PAYMENT', '결제 오류 문의', '결제 시도 중 오류가 발생하여 다시 시도했는데 중복 결제된 것 같습니다.', 'PENDING', NULL, NULL);
+
+/* 판매자 1:1 문의 (seller_inquiry) */
+INSERT INTO seller_inquiry (seller_uid, inquiry_type, title, question_content, inquiry_status) VALUES
+(1, 'PRODUCT', '신상품 등록 문의', '새로운 상품을 등록하려고 하는데 카테고리 설정에 어려움이 있습니다.', 'PENDING'),
+(2, 'VERIFICATION', '판매자 인증 서류 확인 요청', '사업자 등록증을 재제출했는데 확인 부탁드립니다.', 'ANSWERED');
+
+/* FAQ (faq) */
+INSERT INTO faq (faq_target, faq_category, faq_question, faq_answer, sort_order) VALUES
+('BUYER', 'ACCOUNT', '회원가입은 어떻게 하나요?', '메인 페이지 우측 상단의 회원가입 버튼을 클릭하여 진행하실 수 있습니다.', 1),
+('SELLER', 'VERIFICATION', '판매자 인증은 어떻게 받나요?', '판매자 정보에서 사업자 등록증을 제출하시면 관리자 확인 후 인증이 완료됩니다.', 1),
+('ALL', 'SHIPPING', '배송비는 얼마인가요?', '기본 배송비는 2,500원이며, 상품 및 구매 금액에 따라 무료배송 혜택이 적용될 수 있습니다.', 1);

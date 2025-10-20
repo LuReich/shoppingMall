@@ -14,26 +14,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BuyerService {
+    public java.util.List<Buyer> getAllBuyers() {
+        return buyerRepository.findAll();
+    }
 
     private final BuyerRepository buyerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
 
     public String login(LoginRequestDTO dto) {
-        Buyer buyer = buyerRepository.findByUserId(dto.getLoginId())
+        Buyer buyer = buyerRepository.findByBuyerId(dto.getLoginId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (!passwordEncoder.matches(dto.getPassword(), buyer.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        return jwtUtils.createJwt(buyer.getUserId(), "BUYER", 10 * 60 * 60 * 1000L);
+        return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
     }
 
     @Transactional
     public Buyer registerBuyer(BuyerDTO buyerDto) {
         Buyer buyer = new Buyer();
-        buyer.setUserId(buyerDto.getUserId());
+    buyer.setBuyerId(buyerDto.getBuyerId());
         buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Hashing added
         buyer.setNickname(buyerDto.getNickname());
 
