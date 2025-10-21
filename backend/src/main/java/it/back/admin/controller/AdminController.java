@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +52,7 @@ public class AdminController {
     }
 
     @GetMapping("/buyer")
-    public ResponseEntity<PageResponseDTO<UserSummaryDTO>> getAllBuyers(Pageable pageable) {
+    public ResponseEntity<PageResponseDTO<UserSummaryDTO>> getAllBuyers(@PageableDefault(size = 10) Pageable pageable) {
         Page<UserSummaryDTO> page = adminService.findAllBuyers(pageable);
 
         PageResponseDTO<UserSummaryDTO> response = new PageResponseDTO<>(
@@ -66,7 +67,7 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/buyer/list")
-    public ResponseEntity<PageResponseDTO<BuyerResponseDTO>> getAllBuyersFull(Pageable pageable) {
+    public ResponseEntity<PageResponseDTO<BuyerResponseDTO>> getAllBuyersFull(@PageableDefault(size = 10) Pageable pageable) {
         Page<BuyerResponseDTO> page = adminService.findAllBuyersFull(pageable);
         PageResponseDTO<BuyerResponseDTO> response = new PageResponseDTO<>(
             page.getContent(),
