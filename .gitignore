@@ -1,0 +1,19 @@
+# 병합 충돌 위험 파일/폴더 무시
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.bak
+*.orig
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+node_modules/
+dist/
+build/
+out/
+# 로그 파일 및 폴더 무시
+logs/
+*.log
