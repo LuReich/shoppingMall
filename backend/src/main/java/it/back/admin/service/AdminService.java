@@ -1,3 +1,4 @@
+
 package it.back.admin.service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import it.back.admin.dto.UserSummaryDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
+import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
@@ -20,6 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+    // ...existing code...
+    public Page<BuyerResponseDTO> findAllBuyersFull(Pageable pageable) {
+        return buyerRepository.findAll(pageable)
+                .map(BuyerResponseDTO::new);
+    }
 
     private final AdminRepository adminRepository;
     private final BuyerRepository buyerRepository;
