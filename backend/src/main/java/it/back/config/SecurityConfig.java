@@ -54,8 +54,8 @@ public class SecurityConfig {
     http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
     http.authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/buyers/register", "/api/buyers/login").permitAll()
-        .requestMatchers("/api/sellers/register", "/api/sellers/login").permitAll()
+        .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
+        .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
         .requestMatchers("/api/admin/login").permitAll()
         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
         .requestMatchers("/**").hasAnyRole("ADMIN")
