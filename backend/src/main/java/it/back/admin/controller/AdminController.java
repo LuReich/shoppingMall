@@ -65,7 +65,7 @@ public class AdminController {
 
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/buyer/full")
+    @GetMapping("/buyer/list")
     public ResponseEntity<Page<BuyerResponseDTO>> getAllBuyersFull(Pageable pageable) {
         Page<BuyerResponseDTO> page = adminService.findAllBuyersFull(pageable);
         return ResponseEntity.ok(page);

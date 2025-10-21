@@ -2,6 +2,7 @@ package it.back.buyer.dto;
 
 import java.time.LocalDateTime;
 
+import it.back.buyer.entity.BuyerEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ public class BuyerResponseDTO {
     private boolean isActive;
     // 필요시 Buyer 엔티티의 모든 필드 추가
 
-    public BuyerResponseDTO(it.back.buyer.entity.BuyerEntity buyer) {
+    public BuyerResponseDTO(BuyerEntity buyer) {
         this.buyerUid = buyer.getBuyerUid();
         this.buyerId = buyer.getBuyerId();
         this.password = buyer.getPassword();
