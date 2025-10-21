@@ -1,16 +1,21 @@
 package it.back.admin.controller;
 
-import it.back.admin.service.AdminService;
-import it.back.common.dto.LoginRequestDTO;
-import it.back.admin.dto.UserSummaryDTO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import it.back.admin.dto.UserSummaryDTO;
+import it.back.admin.service.AdminService;
+import it.back.common.dto.LoginRequestDTO;
+import it.back.seller.service.SellerService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -18,6 +23,7 @@ import java.util.HashMap;
 public class AdminController {
 
     private final AdminService adminService;
+    private final SellerService sellerService;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestParam("loginId") String loginId, @RequestParam("password") String password) {
@@ -34,19 +40,21 @@ public class AdminController {
     }
 
 
-    @GetMapping("/admins")
+    @GetMapping("/admin")
     public ResponseEntity<List<UserSummaryDTO>> getAllAdmins() {
         return ResponseEntity.ok(adminService.findAllAdmins());
     }
 
 
-    @GetMapping("/buyers")
+    @GetMapping("/buyer")
     public ResponseEntity<List<UserSummaryDTO>> getAllBuyers() {
         return ResponseEntity.ok(adminService.findAllBuyers());
     }
 
-    @GetMapping("/sellers")
+    @GetMapping("/seller")
     public ResponseEntity<List<UserSummaryDTO>> getAllSellers() {
         return ResponseEntity.ok(adminService.findAllSellers());
     }
+
+    
 }

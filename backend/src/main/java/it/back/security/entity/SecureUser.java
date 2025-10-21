@@ -39,8 +39,13 @@ public class SecureUser implements UserDetails {
         return password;
     }
 
+    // UserDetails 인터페이스는 getUsername()만 요구하므로, getUserId()는 별도 추가
     @Override
     public String getUsername() {
+        return loginId;
+    }
+
+    public String getUserId() {
         return loginId;
     }
 

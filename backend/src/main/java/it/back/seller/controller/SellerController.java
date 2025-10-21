@@ -11,31 +11,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/api/sellers")
+@RequestMapping("/api/seller")
 @RequiredArgsConstructor
 public class SellerController {
-
-    @GetMapping("/list")
-    public ResponseEntity<java.util.List<SellerDTO>> getAllSellers() {
-        java.util.List<SellerDTO> dtos = sellerService.getAllSellers().stream()
-            .map(seller -> {
-                SellerDTO dto = new SellerDTO();
-                dto.setSellerId(seller.getSellerId());
-                dto.setCompanyName(seller.getCompanyName());
-                dto.setIsVerified(seller.isVerified());
-                dto.setIsActive(seller.isActive());
-                dto.setPassword(null); // 비밀번호는 반환하지 않음
-                if (seller.getSellerDetail() != null) {
-                    dto.setBusinessRegistrationNumber(seller.getSellerDetail().getBusinessRegistrationNumber());
-                    dto.setPhone(seller.getSellerDetail().getPhone());
-                    dto.setAddress(seller.getSellerDetail().getAddress());
-                    dto.setAddressDetail(seller.getSellerDetail().getAddressDetail());
-                }
-                return dto;
-            })
-            .toList();
-        return ResponseEntity.ok(dtos);
-    }
 
     private final SellerService sellerService;
 

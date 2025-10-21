@@ -8,7 +8,7 @@ import lombok.Setter;
 @Table(name = "seller_detail")
 @Getter
 @Setter
-public class SellerDetail {
+public class SellerDetailEntity {
 
     @Id
     @Column(name = "seller_uid")
@@ -17,7 +17,7 @@ public class SellerDetail {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "seller_uid")
-    private Seller seller;
+    private SellerEntity seller;
 
     @Column(name = "business_registration_number", unique = true, nullable = false, length = 20)
     private String businessRegistrationNumber;

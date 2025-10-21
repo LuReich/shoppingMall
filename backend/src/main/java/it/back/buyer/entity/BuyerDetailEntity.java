@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Table(name = "buyer_detail")
 @Getter
 @Setter
-public class BuyerDetail {
+public class BuyerDetailEntity {
 
     @Id
     @Column(name = "buyer_uid")
@@ -18,7 +18,7 @@ public class BuyerDetail {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "buyer_uid")
-    private Buyer buyer;
+    private BuyerEntity buyer;
 
     @Column(name = "phone_number", unique = true, nullable = false, length = 20)
     private String phoneNumber;

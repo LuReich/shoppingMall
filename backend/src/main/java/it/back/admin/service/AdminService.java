@@ -1,7 +1,7 @@
 package it.back.admin.service;
 
 import it.back.admin.dto.UserSummaryDTO;
-import it.back.admin.entity.Admin;
+import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
@@ -25,15 +25,15 @@ public class AdminService {
     private final JWTUtils jwtUtils;
 
     public String login(LoginRequestDTO dto) {
-        Admin admin = adminRepository.findByAdminId(dto.getLoginId())
+    AdminEntity admin = adminRepository.findByAdminId(dto.getLoginId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (!passwordEncoder.matches(dto.getPassword(), admin.getAdminPassword())) {
+    if (!passwordEncoder.matches(dto.getPassword(), admin.getAdminPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
 
         // 10 hours token validity
-        return jwtUtils.createJwt(admin.getAdminId(), "ADMIN", 10 * 60 * 60 * 1000L);
+    return jwtUtils.createJwt(admin.getAdminId(), "ADMIN", 10 * 60 * 60 * 1000L);
     }
 
     public List<UserSummaryDTO> findAllAdmins() {

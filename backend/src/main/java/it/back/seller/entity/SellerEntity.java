@@ -1,4 +1,4 @@
-package it.back.buyer.entity;
+package it.back.seller.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,24 +8,24 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "buyer")
+@Table(name = "seller")
 @Getter
 @Setter
-public class Buyer {
+public class SellerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "buyer_uid")
-    private Long buyerUid;
+    @Column(name = "seller_uid")
+    private Long sellerUid;
 
-    @Column(name = "buyer_id", unique = true, nullable = false, length = 50)
-    private String buyerId;
+    @Column(name = "seller_id", unique = true, nullable = false, length = 50)
+    private String sellerId;
 
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(unique = true, nullable = false, length = 50)
-    private String nickname;
+    @Column(name = "company_name", nullable = false, length = 100)
+    private String companyName;
 
     @CreationTimestamp
     @Column(name = "create_at", updatable = false)
@@ -34,6 +34,9 @@ public class Buyer {
     @UpdateTimestamp
     @Column(name = "update_at")
     private LocalDateTime updateAt;
+
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified = false;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
@@ -45,8 +48,8 @@ public class Buyer {
     @Column(name = "withdrawal_reason", columnDefinition = "TEXT")
     private String withdrawalReason;
 
-    @OneToOne(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private BuyerDetail buyerDetail;
+    @OneToOne(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private SellerDetailEntity sellerDetail;
 
     public enum WithdrawalStatus {
         VOLUNTARY, FORCED_BY_ADMIN

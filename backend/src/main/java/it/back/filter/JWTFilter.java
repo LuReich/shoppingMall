@@ -1,13 +1,14 @@
 package it.back.filter;
 
 import it.back.admin.dto.UserSummaryDTO;
-import it.back.admin.entity.Admin;
-import it.back.buyer.entity.Buyer;
-import it.back.common.utils.JWTUtils;
-import it.back.seller.entity.Seller;
-import it.back.admin.repository.AdminRepository;
+// Admin, Buyer import 제거 (Entity 네이밍만 사용)
+import it.back.admin.entity.AdminEntity;
+import it.back.buyer.entity.BuyerEntity;
+import it.back.seller.entity.SellerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.seller.repository.SellerRepository;
+import it.back.common.utils.JWTUtils;
+import it.back.admin.repository.AdminRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,17 +62,17 @@ public class JWTFilter extends OncePerRequestFilter {
         // to ensure they still exist and are active. But for setting security context,
         // info from a trusted JWT is often sufficient.
         if ("ADMIN".equals(role)) {
-            Admin admin = adminRepository.findByAdminId(loginId).orElse(null);
+            AdminEntity admin = adminRepository.findByAdminId(loginId).orElse(null);
             if (admin != null) {
                 return new UserSummaryDTO(admin);
             }
         } else if ("BUYER".equals(role)) {
-            Buyer buyer = buyerRepository.findByBuyerId(loginId).orElse(null);
+            BuyerEntity buyer = buyerRepository.findByBuyerId(loginId).orElse(null);
             if (buyer != null) {
                 return new UserSummaryDTO(buyer);
             }
         } else if ("SELLER".equals(role)) {
-            Seller seller = sellerRepository.findBySellerId(loginId).orElse(null);
+            SellerEntity seller = sellerRepository.findBySellerId(loginId).orElse(null);
             if (seller != null) {
                 return new UserSummaryDTO(seller);
             }

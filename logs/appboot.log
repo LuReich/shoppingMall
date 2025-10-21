@@ -1,0 +1,1170 @@
+[2025-10-21 11:47:50:1370][background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+[2025-10-21 11:47:50:1442][restartedMain] INFO  it.back.BackAppApplication - Starting BackAppApplication using Java 21.0.7 with PID 18768 (C:\regular_class\full_stack\shoppingMall\backend\build\classes\java\main started by ITSC in C:\regular_class\full_stack\shoppingMall)
+[2025-10-21 11:47:50:1443][restartedMain] INFO  it.back.BackAppApplication - No active profile set, falling back to 1 default profile: "default"
+[2025-10-21 11:47:50:1503][restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[2025-10-21 11:47:50:1503][restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[2025-10-21 11:47:51:2424][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2025-10-21 11:47:51:2500][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 67 ms. Found 5 JPA repository interfaces.
+[2025-10-21 11:47:52:3444][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9090 (http)
+[2025-10-21 11:47:52:3465][restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9090"]
+[2025-10-21 11:47:52:3469][restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2025-10-21 11:47:52:3469][restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+[2025-10-21 11:47:52:3575][restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2025-10-21 11:47:52:3575][restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2072 ms
+[2025-10-21 11:47:53:3998][restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+[2025-10-21 11:47:53:4062][restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.29.Final
+[2025-10-21 11:47:53:4111][restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+[2025-10-21 11:47:53:4334][restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+[2025-10-21 11:47:53:4355][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+[2025-10-21 11:47:53:4440][restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.Connection@14252abc
+[2025-10-21 11:47:53:4442][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+[2025-10-21 11:47:53:4463][restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+[2025-10-21 11:47:53:4483][restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'p6SpyDataSourceDecorator [com.p6spy.engine.spy.P6DataSource] -> dataSource [com.zaxxer.hikari.HikariDataSource]']
+	Database driver: undefined/unknown
+	Database version: 11.8.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@54596e8b) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2a58a353)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3dde6f26) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3b22fba7)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2410f77e) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4b3d9a94)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@5547b8a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@29074744)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@a8ffe1d) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2d413ce2)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@b6f8aeb) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@18c1d1a5)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6d4babb6) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@49492cd1)
+[2025-10-21 11:47:53:4493][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3e06dfc1) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@28dc7d5d)
+[2025-10-21 11:47:53:4494][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@18fa75eb) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@1855fd81)
+[2025-10-21 11:47:54:5372][restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2025-10-21 11:47:54:5405][restartedMain] INFO  p6spy - 2025-10-21 11:47:54 | OperationTime : 6ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        table_name 
+    from
+        information_schema.TABLES 
+    where
+        table_schema=database() 
+        and table_type='SEQUENCE'
+[2025-10-21 11:47:54:5441][restartedMain] INFO  p6spy - 2025-10-21 11:47:54 | OperationTime : 1ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 11:47:54:5448][restartedMain] INFO  p6spy - 2025-10-21 11:47:54 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`category` 
+    where
+        1=0
+[2025-10-21 11:47:54:5449][restartedMain] INFO  p6spy - 2025-10-21 11:47:54 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 11:47:54:5451][restartedMain] INFO  p6spy - 2025-10-21 11:47:54 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 11:47:54:5453][restartedMain] INFO  p6spy - 2025-10-21 11:47:54 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 11:47:54:5455][restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 11:47:55:6235][restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name secureUserService
+[2025-10-21 11:47:56:6849][restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[2025-10-21 11:47:56:6874][restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9090"]
+[2025-10-21 11:47:56:6892][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9090 (http) with context path '/'
+[2025-10-21 11:47:56:6903][restartedMain] INFO  it.back.BackAppApplication - Started BackAppApplication in 6.019 seconds (process running for 7.493)
+[2025-10-21 11:48:34:45350][http-nio-9090-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2025-10-21 11:48:34:45350][http-nio-9090-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[2025-10-21 11:48:34:45351][http-nio-9090-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+[2025-10-21 11:48:42:52809][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 11:48:42:52813][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 11:48:42 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 11:48:42:52864][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0
+[2025-10-21 11:48:42:52865][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 11:48:42 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0
+[2025-10-21 11:48:42:52873][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 11:48:42 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 11:49:16:87264][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 11:49:16:87265][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 11:49:16 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 11:49:16:87282][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0 
+    where
+        pe1_0.product_id=?
+[2025-10-21 11:49:16:87285][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 11:49:16 | OperationTime : 1ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0 
+    where
+        pe1_0.product_id=1
+[2025-10-21 11:49:16:87287][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 11:49:16 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 11:49:18:89266][http-nio-9090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 11:49:18:89267][http-nio-9090-exec-5] INFO  p6spy - 2025-10-21 11:49:18 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 11:49:18:89269][http-nio-9090-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0
+[2025-10-21 11:49:18:89270][http-nio-9090-exec-5] INFO  p6spy - 2025-10-21 11:49:18 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0
+[2025-10-21 11:49:18:89272][http-nio-9090-exec-5] INFO  p6spy - 2025-10-21 11:49:18 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 11:50:20:150914][File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 62 class path changes (0 additions, 62 deletions, 0 modifications)
+[2025-10-21 11:50:20:150917][Thread-11] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+[2025-10-21 11:50:20:150918][tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-9090"]
+[2025-10-21 11:50:20:150922][tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+[2025-10-21 11:50:20:150923][Thread-11] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-9090"]
+[2025-10-21 11:50:20:150928][Thread-11] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 11:50:20:150932][Thread-11] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+[2025-10-21 11:50:20:150938][Thread-11] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+[2025-10-21 11:50:24:155250][restartedMain] INFO  it.back.BackAppApplication - Starting BackAppApplication using Java 21.0.7 with PID 18768 (C:\regular_class\full_stack\shoppingMall\backend\build\classes\java\main started by ITSC in C:\regular_class\full_stack\shoppingMall)
+[2025-10-21 11:50:24:155251][restartedMain] INFO  it.back.BackAppApplication - No active profile set, falling back to 1 default profile: "default"
+[2025-10-21 11:50:24:155513][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2025-10-21 11:50:24:155549][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 35 ms. Found 5 JPA repository interfaces.
+[2025-10-21 11:50:25:155748][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9090 (http)
+[2025-10-21 11:50:25:155749][restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2025-10-21 11:50:25:155750][restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+[2025-10-21 11:50:25:155785][restartedMain] INFO  o.a.c.c.C.[.[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2025-10-21 11:50:25:155785][restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 532 ms
+[2025-10-21 11:50:25:155881][restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+[2025-10-21 11:50:25:155886][restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+[2025-10-21 11:50:25:155902][restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+[2025-10-21 11:50:25:155903][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+[2025-10-21 11:50:25:155912][restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.mariadb.jdbc.Connection@554f9cb
+[2025-10-21 11:50:25:155913][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+[2025-10-21 11:50:25:155915][restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+[2025-10-21 11:50:25:155917][restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'p6SpyDataSourceDecorator [com.p6spy.engine.spy.P6DataSource] -> dataSource [com.zaxxer.hikari.HikariDataSource]']
+	Database driver: undefined/unknown
+	Database version: 11.8.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@36604a1) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@25b26581)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@254910b1) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@46c9b1cd)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@7539e6b9) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@43111bf2)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2e3057b9) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@25fccc6b)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@1f4afa43) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@54cfbcd3)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@78eea46c) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3b32b08e)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@73e2dd49) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@5ae2cec2)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@57a2dc36) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@793aa08c)
+[2025-10-21 11:50:25:155918][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@1cd73277) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@508f6bf1)
+[2025-10-21 11:50:25:156214][restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2025-10-21 11:50:25:156218][restartedMain] INFO  p6spy - 2025-10-21 11:50:25 | OperationTime : 1ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        table_name 
+    from
+        information_schema.TABLES 
+    where
+        table_schema=database() 
+        and table_type='SEQUENCE'
+[2025-10-21 11:50:25:156246][restartedMain] INFO  p6spy - 2025-10-21 11:50:25 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 11:50:25:156249][restartedMain] INFO  p6spy - 2025-10-21 11:50:25 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`category` 
+    where
+        1=0
+[2025-10-21 11:50:25:156250][restartedMain] INFO  p6spy - 2025-10-21 11:50:25 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 11:50:25:156252][restartedMain] INFO  p6spy - 2025-10-21 11:50:25 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 11:50:25:156253][restartedMain] INFO  p6spy - 2025-10-21 11:50:25 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 11:50:25:156254][restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 11:50:25:156551][restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name secureUserService
+[2025-10-21 11:50:25:156664][restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[2025-10-21 11:50:25:156673][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9090 (http) with context path '/'
+[2025-10-21 11:50:26:156680][restartedMain] INFO  it.back.BackAppApplication - Started BackAppApplication in 1.489 seconds (process running for 157.269)
+[2025-10-21 11:50:26:156683][restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+[2025-10-21 11:50:31:162229][File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 62 class path changes (0 additions, 62 deletions, 0 modifications)
+[2025-10-21 11:50:31:162230][Thread-13] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+[2025-10-21 11:50:31:162234][tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+[2025-10-21 11:50:31:162237][Thread-13] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 11:50:31:162238][Thread-13] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+[2025-10-21 11:50:31:162241][Thread-13] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+[2025-10-21 11:50:37:168594][restartedMain] INFO  it.back.BackAppApplication - Starting BackAppApplication using Java 21.0.7 with PID 18768 (C:\regular_class\full_stack\shoppingMall\backend\build\classes\java\main started by ITSC in C:\regular_class\full_stack\shoppingMall)
+[2025-10-21 11:50:37:168594][restartedMain] INFO  it.back.BackAppApplication - No active profile set, falling back to 1 default profile: "default"
+[2025-10-21 11:50:38:168862][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2025-10-21 11:50:38:168893][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 29 ms. Found 5 JPA repository interfaces.
+[2025-10-21 11:50:38:168999][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9090 (http)
+[2025-10-21 11:50:38:168999][restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2025-10-21 11:50:38:168999][restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+[2025-10-21 11:50:38:169022][restartedMain] INFO  o.a.c.c.C.[.[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2025-10-21 11:50:38:169022][restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 426 ms
+[2025-10-21 11:50:38:169065][restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+[2025-10-21 11:50:38:169068][restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+[2025-10-21 11:50:38:169075][restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+[2025-10-21 11:50:38:169076][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+[2025-10-21 11:50:38:169078][restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection org.mariadb.jdbc.Connection@2dfe809f
+[2025-10-21 11:50:38:169078][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+[2025-10-21 11:50:38:169079][restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+[2025-10-21 11:50:38:169080][restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'p6SpyDataSourceDecorator [com.p6spy.engine.spy.P6DataSource] -> dataSource [com.zaxxer.hikari.HikariDataSource]']
+	Database driver: undefined/unknown
+	Database version: 11.8.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2025-10-21 11:50:38:169080][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3c9bbe58) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2988a0e9)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@69e234f8) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6c8e7fe1)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@d066556) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@616513f7)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@19d8aed7) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6b6bb7a)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3824522f) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@71970477)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2d65b284) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@1e3bb139)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4942dfb) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4de925a2)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4d185f09) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@e698dea)
+[2025-10-21 11:50:38:169081][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2b378229) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2f7766d8)
+[2025-10-21 11:50:38:169217][restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2025-10-21 11:50:38:169219][restartedMain] INFO  p6spy - 2025-10-21 11:50:38 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        table_name 
+    from
+        information_schema.TABLES 
+    where
+        table_schema=database() 
+        and table_type='SEQUENCE'
+[2025-10-21 11:50:38:169238][restartedMain] INFO  p6spy - 2025-10-21 11:50:38 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 11:50:38:169240][restartedMain] INFO  p6spy - 2025-10-21 11:50:38 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`category` 
+    where
+        1=0
+[2025-10-21 11:50:38:169242][restartedMain] INFO  p6spy - 2025-10-21 11:50:38 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 11:50:38:169243][restartedMain] INFO  p6spy - 2025-10-21 11:50:38 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 11:50:38:169244][restartedMain] INFO  p6spy - 2025-10-21 11:50:38 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 11:50:38:169245][restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 11:50:38:169415][restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name secureUserService
+[2025-10-21 11:50:38:169474][restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[2025-10-21 11:50:38:169482][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9090 (http) with context path '/'
+[2025-10-21 11:50:38:169484][restartedMain] INFO  it.back.BackAppApplication - Started BackAppApplication in 0.937 seconds (process running for 170.073)
+[2025-10-21 11:50:38:169484][restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+[2025-10-21 12:13:04:1515365][http-nio-9090-exec-2] INFO  o.a.c.c.C.[.[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2025-10-21 12:13:04:1515365][http-nio-9090-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[2025-10-21 12:13:04:1515366][http-nio-9090-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+[2025-10-21 12:13:04:1515391][http-nio-9090-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 12:13:04:1515393][http-nio-9090-exec-2] INFO  p6spy - 2025-10-21 12:13:04 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 12:13:04:1515396][http-nio-9090-exec-2] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+[2025-10-21 12:13:06:1517427][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 12:13:06:1517428][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:13:06 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 12:13:06:1517431][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0
+[2025-10-21 12:13:06:1517432][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:13:06 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pe1_0.product_id,
+        pe1_0.category_id,
+        pe1_0.create_at,
+        pe1_0.is_deleted,
+        pe1_0.price,
+        pe1_0.seller_uid,
+        pe1_0.stock,
+        pe1_0.thumbnail_url,
+        pe1_0.update_at 
+    from
+        product pe1_0
+[2025-10-21 12:13:06:1517435][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:13:06 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 12:13:11:1521765][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 12:13:11:1521766][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:13:11 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 12:13:11:1521770][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=?
+[2025-10-21 12:13:11:1521771][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:13:11 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=1
+[2025-10-21 12:13:11:1521772][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:13:11 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 12:22:57:2108642][File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 62 class path changes (0 additions, 62 deletions, 0 modifications)
+[2025-10-21 12:22:57:2108646][Thread-23] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+[2025-10-21 12:22:57:2108656][tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+[2025-10-21 12:22:57:2108660][Thread-23] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 12:22:57:2108662][Thread-23] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+[2025-10-21 12:22:57:2108666][Thread-23] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+[2025-10-21 12:23:02:2112683][restartedMain] INFO  it.back.BackAppApplication - Starting BackAppApplication using Java 21.0.7 with PID 18768 (C:\regular_class\full_stack\shoppingMall\backend\build\classes\java\main started by ITSC in C:\regular_class\full_stack\shoppingMall)
+[2025-10-21 12:23:02:2112683][restartedMain] INFO  it.back.BackAppApplication - No active profile set, falling back to 1 default profile: "default"
+[2025-10-21 12:23:02:2112932][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2025-10-21 12:23:02:2112974][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 40 ms. Found 6 JPA repository interfaces.
+[2025-10-21 12:23:02:2113154][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9090 (http)
+[2025-10-21 12:23:02:2113155][restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2025-10-21 12:23:02:2113155][restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+[2025-10-21 12:23:02:2113185][restartedMain] INFO  o.a.c.c.C.[.[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2025-10-21 12:23:02:2113185][restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 499 ms
+[2025-10-21 12:23:02:2113232][restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+[2025-10-21 12:23:02:2113236][restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+[2025-10-21 12:23:02:2113248][restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+[2025-10-21 12:23:02:2113250][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Starting...
+[2025-10-21 12:23:02:2113254][restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-4 - Added connection org.mariadb.jdbc.Connection@5aceb037
+[2025-10-21 12:23:02:2113254][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Start completed.
+[2025-10-21 12:23:02:2113256][restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+[2025-10-21 12:23:02:2113257][restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'p6SpyDataSourceDecorator [com.p6spy.engine.spy.P6DataSource] -> dataSource [com.zaxxer.hikari.HikariDataSource]']
+	Database driver: undefined/unknown
+	Database version: 11.8.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2c30e2ae) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@42e42cd8)
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6a94c444) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6fc39eb7)
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@444d2473) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@272c52ce)
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6b56048b) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@18130970)
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@35d0c8bd) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@702f56eb)
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2b067639) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2b5ea2a0)
+[2025-10-21 12:23:02:2113258][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@18781256) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@12ea97bc)
+[2025-10-21 12:23:02:2113259][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@a458c66) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@54d0742c)
+[2025-10-21 12:23:02:2113259][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@c623642) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4af31705)
+[2025-10-21 12:23:02:2113530][restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2025-10-21 12:23:02:2113533][restartedMain] INFO  p6spy - 2025-10-21 12:23:02 | OperationTime : 1ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        table_name 
+    from
+        information_schema.TABLES 
+    where
+        table_schema=database() 
+        and table_type='SEQUENCE'
+[2025-10-21 12:23:02:2113567][restartedMain] DEBUG org.hibernate.SQL - 
+    alter table if exists review 
+       modify column content varchar(255) not null
+[2025-10-21 12:23:03:2113735][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 166ms | 
+P6Spy sql:
+
+    alter table if exists review 
+       modify column content varchar(255) not null
+[2025-10-21 12:23:03:2113735][restartedMain] DEBUG org.hibernate.SQL - 
+    alter table if exists review 
+       add column created_at datetime(6) not null
+[2025-10-21 12:23:03:2113824][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 87ms | 
+P6Spy sql:
+
+    alter table if exists review 
+       add column created_at datetime(6) not null
+[2025-10-21 12:23:03:2113824][restartedMain] DEBUG org.hibernate.SQL - 
+    alter table if exists review 
+       modify column rating integer not null
+[2025-10-21 12:23:03:2114091][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 266ms | 
+P6Spy sql:
+
+    alter table if exists review 
+       modify column rating integer not null
+[2025-10-21 12:23:03:2114091][restartedMain] DEBUG org.hibernate.SQL - 
+    alter table if exists review 
+       add column writer varchar(255) not null
+[2025-10-21 12:23:03:2114180][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 88ms | 
+P6Spy sql:
+
+    alter table if exists review 
+       add column writer varchar(255) not null
+[2025-10-21 12:23:03:2114183][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 12:23:03:2114186][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`category` 
+    where
+        1=0
+[2025-10-21 12:23:03:2114188][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 12:23:03:2114190][restartedMain] INFO  p6spy - 2025-10-21 12:23:03 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 12:23:04:2114829][restartedMain] INFO  p6spy - 2025-10-21 12:23:04 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 12:23:04:2114831][restartedMain] INFO  p6spy - 2025-10-21 12:23:04 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`order_detail` 
+    where
+        1=0
+[2025-10-21 12:23:04:2114834][restartedMain] INFO  p6spy - 2025-10-21 12:23:04 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 12:23:04:2114837][restartedMain] INFO  p6spy - 2025-10-21 12:23:04 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 12:23:04:2114838][restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 12:23:04:2115099][restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name secureUserService
+[2025-10-21 12:23:04:2115171][restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[2025-10-21 12:23:04:2115178][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9090 (http) with context path '/'
+[2025-10-21 12:23:04:2115185][restartedMain] INFO  it.back.BackAppApplication - Started BackAppApplication in 2.542 seconds (process running for 2122.114)
+[2025-10-21 12:23:04:2115187][restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+[2025-10-21 12:23:06:2117633][File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 68 class path changes (0 additions, 68 deletions, 0 modifications)
+[2025-10-21 12:23:06:2117634][Thread-33] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+[2025-10-21 12:23:06:2117637][tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+[2025-10-21 12:23:06:2117638][Thread-33] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 12:23:06:2117639][Thread-33] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown initiated...
+[2025-10-21 12:23:06:2117641][Thread-33] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown completed.
+[2025-10-21 12:23:59:2170642][restartedMain] INFO  it.back.BackAppApplication - Starting BackAppApplication using Java 21.0.7 with PID 18768 (C:\regular_class\full_stack\shoppingMall\backend\build\classes\java\main started by ITSC in C:\regular_class\full_stack\shoppingMall)
+[2025-10-21 12:23:59:2170642][restartedMain] INFO  it.back.BackAppApplication - No active profile set, falling back to 1 default profile: "default"
+[2025-10-21 12:24:00:2170821][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[2025-10-21 12:24:00:2170848][restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 26 ms. Found 6 JPA repository interfaces.
+[2025-10-21 12:24:00:2170968][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9090 (http)
+[2025-10-21 12:24:00:2170969][restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2025-10-21 12:24:00:2170969][restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+[2025-10-21 12:24:00:2170991][restartedMain] INFO  o.a.c.c.C.[.[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2025-10-21 12:24:00:2170991][restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 347 ms
+[2025-10-21 12:24:00:2171026][restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+[2025-10-21 12:24:00:2171029][restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+[2025-10-21 12:24:00:2171037][restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+[2025-10-21 12:24:00:2171038][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Starting...
+[2025-10-21 12:24:00:2171040][restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-5 - Added connection org.mariadb.jdbc.Connection@56a2a59
+[2025-10-21 12:24:00:2171040][restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Start completed.
+[2025-10-21 12:24:00:2171041][restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MariaDBDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+[2025-10-21 12:24:00:2171042][restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'p6SpyDataSourceDecorator [com.p6spy.engine.spy.P6DataSource] -> dataSource [com.zaxxer.hikari.HikariDataSource]']
+	Database driver: undefined/unknown
+	Database version: 11.8.2
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@198884c2) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@abc7a30)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@5f3596fb) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@38483bc5)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@653b069a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@c3f8df7)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@7f4e50c5) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6a1dafa)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3b930362) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4bb361d2)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4676d819) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4e08ac27)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6d233e97) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3d4e6f10)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4d08ceb0) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@466a2aa2)
+[2025-10-21 12:24:00:2171042][restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3249637e) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@7c31bcc8)
+[2025-10-21 12:24:00:2171155][restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[2025-10-21 12:24:00:2171157][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        table_name 
+    from
+        information_schema.TABLES 
+    where
+        table_schema=database() 
+        and table_type='SEQUENCE'
+[2025-10-21 12:24:00:2171175][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171176][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`category` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171177][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171178][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171360][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`buyer` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171362][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`order_detail` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171363][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`product` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171365][restartedMain] INFO  p6spy - 2025-10-21 12:24:00 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        * 
+    from
+        `shoppingmall_db`.`seller` 
+    where
+        1=0
+[2025-10-21 12:24:00:2171366][restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+[2025-10-21 12:24:00:2171562][restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name secureUserService
+[2025-10-21 12:24:00:2171621][restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+[2025-10-21 12:24:00:2171627][restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9090 (http) with context path '/'
+[2025-10-21 12:24:00:2171630][restartedMain] INFO  it.back.BackAppApplication - Started BackAppApplication in 1.019 seconds (process running for 2178.559)
+[2025-10-21 12:24:00:2171631][restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+[2025-10-21 12:24:13:2184304][http-nio-9090-exec-1] INFO  o.a.c.c.C.[.[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2025-10-21 12:24:13:2184304][http-nio-9090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[2025-10-21 12:24:13:2184305][http-nio-9090-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+[2025-10-21 12:24:13:2184325][http-nio-9090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 12:24:13:2184326][http-nio-9090-exec-1] INFO  p6spy - 2025-10-21 12:24:13 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 12:24:13:2184331][http-nio-9090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=?
+[2025-10-21 12:24:13:2184332][http-nio-9090-exec-1] INFO  p6spy - 2025-10-21 12:24:13 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=1
+[2025-10-21 12:24:13:2184333][http-nio-9090-exec-1] INFO  p6spy - 2025-10-21 12:24:13 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 12:24:13:2184340][http-nio-9090-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        re1_0.review_id,
+        re1_0.content,
+        re1_0.created_at,
+        re1_0.product_id,
+        re1_0.rating,
+        re1_0.writer 
+    from
+        review re1_0 
+    left join
+        product p1_0 
+            on p1_0.product_id=re1_0.product_id 
+    where
+        p1_0.product_id=?
+[2025-10-21 12:24:13:2184341][http-nio-9090-exec-1] INFO  p6spy - 2025-10-21 12:24:13 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        re1_0.review_id,
+        re1_0.content,
+        re1_0.created_at,
+        re1_0.product_id,
+        re1_0.rating,
+        re1_0.writer 
+    from
+        review re1_0 
+    left join
+        product p1_0 
+            on p1_0.product_id=re1_0.product_id 
+    where
+        p1_0.product_id=1
+[2025-10-21 12:24:14:2185516][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 12:24:14:2185517][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:24:14 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 12:24:14:2185519][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=?
+[2025-10-21 12:24:14:2185520][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:24:14 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=1
+[2025-10-21 12:24:14:2185521][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:24:14 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 12:24:14:2185522][http-nio-9090-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        re1_0.review_id,
+        re1_0.content,
+        re1_0.created_at,
+        re1_0.product_id,
+        re1_0.rating,
+        re1_0.writer 
+    from
+        review re1_0 
+    left join
+        product p1_0 
+            on p1_0.product_id=re1_0.product_id 
+    where
+        p1_0.product_id=?
+[2025-10-21 12:24:14:2185523][http-nio-9090-exec-4] INFO  p6spy - 2025-10-21 12:24:14 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        re1_0.review_id,
+        re1_0.content,
+        re1_0.created_at,
+        re1_0.product_id,
+        re1_0.rating,
+        re1_0.writer 
+    from
+        review re1_0 
+    left join
+        product p1_0 
+            on p1_0.product_id=re1_0.product_id 
+    where
+        p1_0.product_id=1
+[2025-10-21 12:25:11:2242392][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id=?
+[2025-10-21 12:25:11:2242394][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:25:11 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        ae1_0.admin_uid,
+        ae1_0.admin_id,
+        ae1_0.admin_name,
+        ae1_0.admin_password,
+        ae1_0.create_at,
+        ae1_0.permission_level,
+        ae1_0.update_at 
+    from
+        admin ae1_0 
+    where
+        ae1_0.admin_id='admin01'
+[2025-10-21 12:25:11:2242395][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=?
+[2025-10-21 12:25:11:2242396][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:25:11 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        pde1_0.product_id,
+        pde1_0.description,
+        pde1_0.shipping_info 
+    from
+        product_detail pde1_0 
+    where
+        pde1_0.product_id=3
+[2025-10-21 12:25:11:2242396][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:25:11 | OperationTime : 0ms | 
+P6Spy sql:
+
+[2025-10-21 12:25:11:2242397][http-nio-9090-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        re1_0.review_id,
+        re1_0.content,
+        re1_0.created_at,
+        re1_0.product_id,
+        re1_0.rating,
+        re1_0.writer 
+    from
+        review re1_0 
+    left join
+        product p1_0 
+            on p1_0.product_id=re1_0.product_id 
+    where
+        p1_0.product_id=?
+[2025-10-21 12:25:11:2242398][http-nio-9090-exec-3] INFO  p6spy - 2025-10-21 12:25:11 | OperationTime : 0ms | 
+(P6Spy sql,Hibernate format):
+
+    select
+        re1_0.review_id,
+        re1_0.content,
+        re1_0.created_at,
+        re1_0.product_id,
+        re1_0.rating,
+        re1_0.writer 
+    from
+        review re1_0 
+    left join
+        product p1_0 
+            on p1_0.product_id=re1_0.product_id 
+    where
+        p1_0.product_id=3
