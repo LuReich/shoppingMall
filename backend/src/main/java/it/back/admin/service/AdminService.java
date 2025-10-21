@@ -45,10 +45,9 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public List<UserSummaryDTO> findAllBuyers() {
-        return buyerRepository.findAll().stream()
-                .map(UserSummaryDTO::new)
-                .collect(Collectors.toList());
+    public Page<UserSummaryDTO> findAllBuyers(Pageable pageable) {
+        return buyerRepository.findAll(pageable)
+                .map(UserSummaryDTO::new);
     }
 
     public List<UserSummaryDTO> findAllSellers() {

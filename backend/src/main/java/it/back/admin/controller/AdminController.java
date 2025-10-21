@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.back.admin.dto.UserSummaryDTO;
 import it.back.admin.service.AdminService;
 import it.back.common.dto.LoginRequestDTO;
-import it.back.common.pagination.PageRequestDTO;
+
 import it.back.common.pagination.PageResponseDTO;
 import it.back.seller.service.SellerService;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +53,19 @@ public class AdminController {
 
 
     @GetMapping("/buyer")
-    public ResponseEntity<List<UserSummaryDTO>> getAllBuyers() {
-        return ResponseEntity.ok(adminService.findAllBuyers());
+    public ResponseEntity<PageResponseDTO<UserSummaryDTO>> getAllBuyers(Pageable pageable) {
+        Page<UserSummaryDTO> page = adminService.findAllBuyers(pageable);
+
+        PageResponseDTO<UserSummaryDTO> response = new PageResponseDTO<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/seller")
