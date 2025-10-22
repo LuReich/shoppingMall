@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -58,6 +59,7 @@ public class SecurityConfig {
         .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
         .requestMatchers("/api/admin/login").permitAll()
         .requestMatchers("/api/product/**").permitAll()
+        .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
         .requestMatchers("/**").hasAnyRole("ADMIN")
         .anyRequest().authenticated()
