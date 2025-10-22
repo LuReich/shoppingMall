@@ -34,7 +34,7 @@ public class ProductController {
 
     @GetMapping("/list")
     public ResponseEntity<PageResponseDTO<ProductDTO>> getAllProducts(Pageable pageable) {
-        Page<it.back.product.entity.ProductEntity> page = productService.getAllProducts(pageable);
+        Page<ProductEntity> page = productService.getAllProducts(pageable);
         List<ProductDTO> dtos = page.getContent().stream().map(product -> {
             ProductDTO dto = new ProductDTO();
             dto.setProductId(product.getProductId());

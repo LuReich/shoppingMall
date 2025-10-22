@@ -7,6 +7,9 @@ import it.back.seller.entity.SellerEntity;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class SellerService {
-    public java.util.List<SellerEntity> getAllSellers() {
+    public List<SellerEntity> getAllSellers() {
         return sellerRepository.findAll();
     }
 
