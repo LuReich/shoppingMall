@@ -28,8 +28,9 @@ public class ProductEntity {
     @JoinColumn(name = "seller_uid")
     private it.back.seller.entity.SellerEntity seller;
 
-    @Column(name = "category_id")
-    private Integer categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private it.back.category.entity.CategoryEntity category;
 
     @Column(nullable = false)
     private Integer price;

@@ -1,24 +1,33 @@
 package it.back.product.service;
 
-import it.back.product.dto.ProductDTO;
-import it.back.product.dto.ProductDetailDTO;
-import it.back.product.entity.ProductEntity;
-import it.back.product.entity.ProductDetailEntity;
-import it.back.product.repository.ProductRepository;
-import it.back.product.repository.ProductDetailRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import it.back.category.service.CategoryService;
+import it.back.product.entity.ProductDetailEntity;
+import it.back.product.entity.ProductEntity;
+import it.back.product.repository.ProductDetailRepository;
+import it.back.product.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
+    private final CategoryService categoryService;
 
-    public org.springframework.data.domain.Page<ProductEntity> getAllProducts(org.springframework.data.domain.Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public Page<ProductEntity> getAllProducts(Pageable pageable, Integer categoryId) {
+        if (categoryId == null) {
+            return productRepository.findAll(pageable);
+        }
+        List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+        return productRepository.findByCategoryId(categoryIds, pageable);
     }
 
     public Optional<ProductEntity> getProductById(Long id) {
