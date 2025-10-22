@@ -86,16 +86,16 @@ public class BuyerService {
     }
 
     @Transactional
-    public BuyerEntity registerBuyer(BuyerDTO buyerDto) {
+    public BuyerEntity registerBuyer(BuyerDTO buyerDTO) {
         BuyerEntity buyer = new BuyerEntity();
-        buyer.setBuyerId(buyerDto.getBuyerId());
-        buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Hashing added
-        buyer.setNickname(buyerDto.getNickname());
+        buyer.setBuyerId(buyerDTO.getBuyerId());
+        buyer.setPassword(passwordEncoder.encode(buyerDTO.getPassword())); // Hashing added
+        buyer.setNickname(buyerDTO.getNickname());
 
         BuyerDetailEntity detail = new BuyerDetailEntity();
-        detail.setPhone(buyerDto.getPhone());
-        detail.setAddress(buyerDto.getAddress());
-        detail.setAddressDetail(buyerDto.getAddressDetail());
+        detail.setPhone(buyerDTO.getPhone());
+        detail.setAddress(buyerDTO.getAddress());
+        detail.setAddressDetail(buyerDTO.getAddressDetail());
 
         detail.setBuyer(buyer);
         buyer.setBuyerDetail(detail);
