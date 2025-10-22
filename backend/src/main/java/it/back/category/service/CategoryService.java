@@ -62,7 +62,7 @@ public class CategoryService {
 
         // Find children by iterating through the map and checking their parent_id
         for (CategoryEntity category : categoryEntityMap.values()) {
-            if (category.getParent() != null && category.getParent().getCategoryId() == currentCategoryId) {
+            if (category.getParent() != null && category.getParent().getCategoryId() != null && category.getParent().getCategoryId().equals(currentCategoryId)) {
                 collectChildCategoryIds(category.getCategoryId(), categoryEntityMap, collectedIds);
             }
         }

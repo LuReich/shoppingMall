@@ -2,6 +2,7 @@ package it.back.product.controller;
 
 // ...existing code...
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,8 @@ public class ProductController {
 
     @GetMapping("/list")
     public ResponseEntity<PageResponseDTO<ProductDTO>> getAllProducts(
-            Pageable pageable, @RequestParam(name = "categoryId", required = false) Integer categoryId) {
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId) {
         return ResponseEntity.ok(productService.getAllProducts(pageable, categoryId));
     }
 

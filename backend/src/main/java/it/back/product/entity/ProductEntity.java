@@ -2,6 +2,8 @@ package it.back.product.entity;
 
 import java.time.LocalDateTime;
 
+import it.back.category.entity.CategoryEntity;
+import it.back.seller.entity.SellerEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,6 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
@@ -26,11 +29,14 @@ public class ProductEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_uid")
-    private it.back.seller.entity.SellerEntity seller;
+    private SellerEntity seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private it.back.category.entity.CategoryEntity category;
+    private CategoryEntity category;
+
+    @Column(name = "product_name", nullable = false)
+    private String productName;
 
     @Column(nullable = false)
     private Integer price;

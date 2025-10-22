@@ -26,9 +26,7 @@ public class ProductService {
     private final ProductDetailRepository productDetailRepository;
     private final CategoryService categoryService;
     private final ReviewService reviewService;
-    
 
-    
     public PageResponseDTO<ProductDTO> getAllProducts(Pageable pageable, Integer categoryId) {
         Page<ProductEntity> page;
         if (categoryId == null) {
@@ -42,6 +40,7 @@ public class ProductService {
             dto.setProductId(product.getProductId());
             dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
             dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+            dto.setProductName(product.getProductName());
             dto.setPrice(product.getPrice());
             dto.setStock(product.getStock());
             dto.setThumbnailUrl(product.getThumbnailUrl());
@@ -70,6 +69,7 @@ public class ProductService {
         dto.setProductId(product.getProductId());
         dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
         dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+        dto.setProductName(product.getProductName());
         dto.setPrice(product.getPrice());
         dto.setStock(product.getStock());
         dto.setThumbnailUrl(product.getThumbnailUrl());
