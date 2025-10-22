@@ -25,17 +25,22 @@ import it.back.buyer.entity.BuyerEntity;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.seller.service.SellerService;
+import it.back.seller.dto.SellerResponseDTO;
+import it.back.seller.entity.SellerEntity;
+import it.back.seller.repository.SellerRepository;
 import it.back.buyer.repository.BuyerRepository;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-public class AdminController {
 
+public class AdminController {
     private final AdminService adminService;
     private final SellerService sellerService;
     private final BuyerRepository buyerRepository;
+    private final SellerRepository sellerRepository;
+    
 
     
 
@@ -87,9 +92,29 @@ public class AdminController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/seller")
-    public ResponseEntity<List<UserSummaryDTO>> getAllSellers() {
-        return ResponseEntity.ok(adminService.findAllSellers());
+
+    @GetMapping("/seller/list")
+    public ResponseEntity<PageResponseDTO<SellerResponseDTO>> getAllSellersPage(@PageableDefault(size = 10) Pageable pageable) {
+    Page<SellerEntity> page = sellerRepository.findAll(pageable);
+    List<SellerResponseDTO> sellerList = page.getContent().stream()
+        .map(SellerResponseDTO::new)
+        .collect(Collectors.toList());
+    PageResponseDTO<SellerResponseDTO> response = new PageResponseDTO<>(
+        sellerList,
+        page.getNumber(),
+        page.getSize(),
+        page.getTotalElements(),
+        page.getTotalPages(),
+        page.isLast());
+    return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/seller/{sellerUid}/detail")
+    public ResponseEntity<SellerResponseDTO> getSellerDetail(@PathVariable Long sellerUid) {
+    return sellerRepository.findById(sellerUid)
+        .map(SellerResponseDTO::new)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
     }
 
 }

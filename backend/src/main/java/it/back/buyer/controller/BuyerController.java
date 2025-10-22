@@ -43,4 +43,5 @@ public class BuyerController {
         buyerService.registerBuyer(buyerDto);
         return ResponseEntity.ok("Buyer registered successfully");
     }
+
 }

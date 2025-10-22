@@ -13,10 +13,12 @@ import it.back.admin.dto.UserSummaryDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
 import it.back.buyer.dto.BuyerResponseDTO;
+import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.repository.SellerRepository;
+import it.back.seller.entity.SellerEntity;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -47,14 +49,12 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public Page<it.back.buyer.entity.BuyerEntity> findAllBuyers(Pageable pageable) {
+    public Page<BuyerEntity> findAllBuyers(Pageable pageable) {
         return buyerRepository.findAll(pageable);
     }
 
-    public List<UserSummaryDTO> findAllSellers() {
-        return sellerRepository.findAll().stream()
-                .map(UserSummaryDTO::new)
-                .collect(Collectors.toList());
+    public Page<SellerEntity> findAllSellers(Pageable pageable) {
+        return sellerRepository.findAll(pageable);
     }
 
 }
