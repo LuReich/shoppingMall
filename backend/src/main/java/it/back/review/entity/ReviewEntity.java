@@ -27,7 +27,7 @@ public class ReviewEntity {
     @Column(nullable = false)
     private int rating;
 
-    @Column(nullable = false)
+    @Column(name = "create_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
