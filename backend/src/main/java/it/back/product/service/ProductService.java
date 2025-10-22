@@ -17,8 +17,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
 
-    public List<ProductEntity> getAllProducts() {
-        return productRepository.findAll();
+    public org.springframework.data.domain.Page<ProductEntity> getAllProducts(org.springframework.data.domain.Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public Optional<ProductEntity> getProductById(Long id) {

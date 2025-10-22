@@ -16,10 +16,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import it.back.common.utils.JWTUtils;
-import it.back.filter.JWTFilter;
 import it.back.admin.repository.AdminRepository;
 import it.back.buyer.repository.BuyerRepository;
+import it.back.common.utils.JWTUtils;
+import it.back.filter.JWTFilter;
 import it.back.seller.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -57,9 +57,9 @@ public class SecurityConfig {
         .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
         .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
         .requestMatchers("/api/admin/login").permitAll()
+        .requestMatchers("/api/product/**").permitAll()
         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
         .requestMatchers("/**").hasAnyRole("ADMIN")
-        .requestMatchers("/product/**").permitAll()
         .anyRequest().authenticated()
     );
 
