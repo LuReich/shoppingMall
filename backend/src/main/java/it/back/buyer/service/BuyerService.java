@@ -91,6 +91,11 @@ public class BuyerService {
         return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
     }
 
+    /*
+    // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
+    // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
+    */
+
     @Transactional
     public BuyerEntity registerBuyer(BuyerDTO buyerDTO) {
         BuyerEntity buyer = new BuyerEntity();

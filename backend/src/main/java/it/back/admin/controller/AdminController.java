@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-
 public class AdminController {
     private final AdminService adminService;
     private final SellerService sellerService;
@@ -45,18 +45,30 @@ public class AdminController {
     
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestParam("loginId") String loginId,
-            @RequestParam("password") String password) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {
+        String jwt = adminService.login(dto);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Login successful");
+        responseBody.put("token", "Bearer: " + jwt);
+        return ResponseEntity.ok().body(responseBody);
+    
+
+    /*
+    // [form-data 방식으로 바꾸고 싶을 때 참고]
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestParam String loginId, @RequestParam String password) {
         LoginRequestDTO dto = new LoginRequestDTO();
         dto.setLoginId(loginId);
         dto.setPassword(password);
         String jwt = adminService.login(dto);
-
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Login successful");
         responseBody.put("token", "Bearer: " + jwt);
-
         return ResponseEntity.ok().body(responseBody);
+    }
+    // 또는
+    // public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ... }
+    */
     }
 
     @GetMapping("/admin")

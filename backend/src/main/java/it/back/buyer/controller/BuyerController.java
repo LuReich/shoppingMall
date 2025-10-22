@@ -29,18 +29,31 @@ public class BuyerController {
     private final BuyerService buyerService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestParam("loginId") String loginId, @RequestParam("password") String password) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {
+        String jwt = buyerService.login(dto);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Login successful");
+        responseBody.put("token", "bearer: " + jwt);
+        return ResponseEntity.ok().body(responseBody);
+    }
+
+    /*
+    // [form-data 방식으로 바꾸고 싶을 때 참고]
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestParam String loginId, @RequestParam String password) {
         LoginRequestDTO dto = new LoginRequestDTO();
         dto.setLoginId(loginId);
         dto.setPassword(password);
         String jwt = buyerService.login(dto);
-
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("message", "Login successful");
         responseBody.put("token", "bearer: " + jwt);
-
         return ResponseEntity.ok().body(responseBody);
     }
+    // 또는
+    // public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ... }
+    */
+    
 
     // 회원 정보 부분 수정 (비밀번호, 닉네임, 전화번호, 주소, 상세주소, 생년월일, 성별)
 
