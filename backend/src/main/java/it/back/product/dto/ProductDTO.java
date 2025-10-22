@@ -7,10 +7,11 @@ import java.time.LocalDateTime;
 @Data
 public class ProductDTO {
 
-    private String productName;
+    
     private Long productId;
     private Long sellerUid;
     private Integer categoryId;
+    private String productName;
     private Integer price;
     private Integer stock;
     private String thumbnailUrl;
