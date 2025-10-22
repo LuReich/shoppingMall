@@ -1,14 +1,18 @@
 package it.back.seller.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import it.back.common.dto.LoginRequestDTO;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.service.SellerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/seller")
@@ -42,7 +46,7 @@ public class SellerController {
     // 또는
     // public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ... }
     */
-    }
+    
 
 
     @PostMapping("/register")
