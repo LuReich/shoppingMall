@@ -30,7 +30,10 @@ public class ProductService {
     }
 
     public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+        productRepository.findById(id).ifPresent(product -> {
+            product.setIsDeleted(true);
+            productRepository.save(product);
+        });
     }
 
     public Optional<ProductDetailEntity> getProductDetail(Long productId) {
