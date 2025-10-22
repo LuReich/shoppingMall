@@ -1,5 +1,4 @@
 
-
 package it.back.admin.controller;
 
 import java.util.HashMap;
@@ -40,9 +39,6 @@ public class AdminController {
     private final SellerService sellerService;
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
-    
-
-    
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {
@@ -51,25 +47,28 @@ public class AdminController {
         responseBody.put("message", "Login successful");
         responseBody.put("token", "Bearer: " + jwt);
         return ResponseEntity.ok().body(responseBody);
-    
+    }
 
     /*
-    // [form-data 방식으로 바꾸고 싶을 때 참고]
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestParam String loginId, @RequestParam String password) {
-        LoginRequestDTO dto = new LoginRequestDTO();
-        dto.setLoginId(loginId);
-        dto.setPassword(password);
-        String jwt = adminService.login(dto);
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Login successful");
-        responseBody.put("token", "Bearer: " + jwt);
-        return ResponseEntity.ok().body(responseBody);
-    }
-    // 또는
-    // public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ... }
-    */
-    }
+     * // [form-data 방식으로 바꾸고 싶을 때 참고]
+     * 
+     * 또는
+     * public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ...
+     * }
+     */
+    
+    // @PostMapping("/login")
+    // public ResponseEntity<Map<String, String>> login(@RequestParam String
+    // loginId, @RequestParam String password) {
+    // LoginRequestDTO dto = new LoginRequestDTO();
+    // dto.setLoginId(loginId);
+    // dto.setPassword(password);
+    // String jwt = adminService.login(dto);
+    // Map<String, String> responseBody = new HashMap<>();
+    // responseBody.put("message", "Login successful");
+    // responseBody.put("token", "Bearer: " + jwt);
+    // return ResponseEntity.ok().body(responseBody);
+    // }
 
     @GetMapping("/admin")
     public ResponseEntity<List<UserSummaryDTO>> getAllAdmins() {
@@ -104,29 +103,29 @@ public class AdminController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
     @GetMapping("/seller/list")
-    public ResponseEntity<PageResponseDTO<SellerResponseDTO>> getAllSellersPage(@PageableDefault(size = 10) Pageable pageable) {
-    Page<SellerEntity> page = sellerRepository.findAll(pageable);
-    List<SellerResponseDTO> sellerList = page.getContent().stream()
-        .map(SellerResponseDTO::new)
-        .collect(Collectors.toList());
-    PageResponseDTO<SellerResponseDTO> response = new PageResponseDTO<>(
-        sellerList,
-        page.getNumber(),
-        page.getSize(),
-        page.getTotalElements(),
-        page.getTotalPages(),
-        page.isLast());
-    return ResponseEntity.ok(response);
+    public ResponseEntity<PageResponseDTO<SellerResponseDTO>> getAllSellersPage(
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<SellerEntity> page = sellerRepository.findAll(pageable);
+        List<SellerResponseDTO> sellerList = page.getContent().stream()
+                .map(SellerResponseDTO::new)
+                .collect(Collectors.toList());
+        PageResponseDTO<SellerResponseDTO> response = new PageResponseDTO<>(
+                sellerList,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/seller/{sellerUid}/detail")
     public ResponseEntity<SellerResponseDTO> getSellerDetail(@PathVariable Long sellerUid) {
-    return sellerRepository.findById(sellerUid)
-        .map(SellerResponseDTO::new)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+        return sellerRepository.findById(sellerUid)
+                .map(SellerResponseDTO::new)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }
