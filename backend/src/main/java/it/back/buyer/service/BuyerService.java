@@ -8,6 +8,8 @@ import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ public class BuyerService {
 
         // ADMIN은 모든 buyer 수정 가능, BUYER는 본인만 가능
         if (!buyer.getBuyerId().equals(loginId) && !"ADMIN".equals(role)) {
-            throw new org.springframework.security.access.AccessDeniedException("본인 또는 관리자만 수정할 수 있습니다.");
+            throw new AccessDeniedException("본인 또는 관리자만 수정할 수 있습니다.");
         }
 
         // 비밀번호: 프론트에서 새 비밀번호가 입력된 경우만 변경, 아니면 기존 값 유지

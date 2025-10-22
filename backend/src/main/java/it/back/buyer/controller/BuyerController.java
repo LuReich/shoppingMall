@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,7 @@ public class BuyerController {
     public ResponseEntity<Void> updateBuyer(
             @PathVariable Long buyerUid,
             @RequestBody BuyerUpdateRequest request,
-            org.springframework.security.core.Authentication authentication) {
+            Authentication authentication) {
         // principal이 null이면 401 반환
         Object principal = authentication == null ? null : authentication.getPrincipal();
         if (!(principal instanceof UserSummaryDTO user)) {
