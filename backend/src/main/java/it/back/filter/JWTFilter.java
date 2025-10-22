@@ -33,27 +33,24 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
-
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-
         String token = authorization.substring(7);
-
-        if (jwtUtils.getExpired(token)) {
-            filterChain.doFilter(request, response);
-            return;
+        try {
+            if (jwtUtils.getExpired(token)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            String loginId = jwtUtils.getUserId(token);
+            String role = jwtUtils.getUserRole(token);
+            UserSummaryDTO userSummary = createUserSummary(loginId, role);
+            Authentication authToken = new UsernamePasswordAuthenticationToken(userSummary, null, Collections.singletonList(() -> "ROLE_" + role));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        } catch (Exception e) {
+            // 토큰 파싱/검증 실패 시 인증 없이 다음 필터로 넘김
         }
-
-        String loginId = jwtUtils.getUserId(token);
-        String role = jwtUtils.getUserRole(token);
-
-        UserSummaryDTO userSummary = createUserSummary(loginId, role);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(userSummary, null, Collections.singletonList(() -> "ROLE_" + role));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
         filterChain.doFilter(request, response);
     }
 
