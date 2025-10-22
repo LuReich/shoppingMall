@@ -1,5 +1,8 @@
 package it.back.buyer.service;
 
+import org.springframework.security.core.Authentication;
+import it.back.admin.dto.UserSummaryDTO;
+
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerUpdateRequest;
 import it.back.buyer.entity.BuyerEntity;
@@ -8,22 +11,56 @@ import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BuyerService {
 
-    public java.util.List<BuyerEntity> getAllBuyers() {
-        return buyerRepository.findAll();
+    private final BuyerRepository buyerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTUtils jwtUtils;
+
+    public String login(LoginRequestDTO dto) {
+        BuyerEntity buyer = buyerRepository.findByBuyerId(dto.getLoginId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // 정지 또는 탈퇴(soft delete) 계정 처리
+        // soft delete 컬럼이 있다면 아래 조건에 추가 (예: buyer.isDeleted())
+        if (!buyer.isActive() /* || buyer.isDeleted() */) {
+            throw new IllegalArgumentException("정지 혹은 탈퇴한 계정입니다. 문의해주세요.");
+        }
+
+        if (!passwordEncoder.matches(dto.getPassword(), buyer.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
+    }
+
+    public List<BuyerDTO> getAllBuyers() {
+        return buyerRepository.findAll().stream().map(entity -> {
+            BuyerDTO dto = new BuyerDTO();
+            dto.setBuyerId(entity.getBuyerId());
+            dto.setNickname(entity.getNickname());
+            // 필요한 필드 추가
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @Transactional
-    public void updateBuyer(Long buyerUid, BuyerUpdateRequest req, String loginId, String role) {
+    public void updateBuyer(Long buyerUid, BuyerUpdateRequest req, Authentication authentication) {
+        Object principal = authentication == null ? null : authentication.getPrincipal();
+        if (!(principal instanceof UserSummaryDTO user)) {
+            throw new SecurityException("Unauthorized");
+        }
+        String loginId = user.getLoginId();
+        String role = user.getRole();
         BuyerEntity buyer = buyerRepository.findById(buyerUid)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found"));
 
@@ -53,12 +90,15 @@ public class BuyerService {
                 }
                 detail.setPhone(phone);
             }
-            if (req.getAddress() != null)
+            if (req.getAddress() != null) {
                 detail.setAddress(req.getAddress());
-            if (req.getAddressDetail() != null)
+            }
+            if (req.getAddressDetail() != null) {
                 detail.setAddressDetail(req.getAddressDetail());
-            if (req.getBirth() != null)
+            }
+            if (req.getBirth() != null) {
                 detail.setBirth(req.getBirth());
+            }
             if (req.getGender() != null) {
                 try {
                     detail.setGender(BuyerDetailEntity.Gender.valueOf(req.getGender().toUpperCase()));
@@ -69,32 +109,6 @@ public class BuyerService {
         }
         // 변경사항은 @Transactional에 의해 자동 반영
     }
-
-    private final BuyerRepository buyerRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JWTUtils jwtUtils;
-
-    public String login(LoginRequestDTO dto) {
-        BuyerEntity buyer = buyerRepository.findByBuyerId(dto.getLoginId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        // 정지 또는 탈퇴(soft delete) 계정 처리
-        // soft delete 컬럼이 있다면 아래 조건에 추가 (예: buyer.isDeleted())
-        if (!buyer.isActive() /* || buyer.isDeleted() */) {
-            throw new IllegalArgumentException("정지 혹은 탈퇴한 계정입니다. 문의해주세요.");
-        }
-
-        if (!passwordEncoder.matches(dto.getPassword(), buyer.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
-        }
-
-        return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
-    }
-
-    /*
-    // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
-    // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
-    */
 
     @Transactional
     public BuyerEntity registerBuyer(BuyerDTO buyerDTO) {

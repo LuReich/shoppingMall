@@ -1,4 +1,3 @@
-
 package it.back.admin.controller;
 
 import java.util.HashMap;
@@ -35,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
+
     private final AdminService adminService;
     private final SellerService sellerService;
     private final BuyerRepository buyerRepository;
@@ -56,7 +56,6 @@ public class AdminController {
      * public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ...
      * }
      */
-    
     // @PostMapping("/login")
     // public ResponseEntity<Map<String, String>> login(@RequestParam String
     // loginId, @RequestParam String password) {
@@ -69,30 +68,14 @@ public class AdminController {
     // responseBody.put("token", "Bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
-
     @GetMapping("/admin")
     public ResponseEntity<List<UserSummaryDTO>> getAllAdmins() {
         return ResponseEntity.ok(adminService.findAllAdmins());
     }
 
     @GetMapping("/buyer/list")
-    public ResponseEntity<PageResponseDTO<BuyerResponseDTO>> getAllBuyers(
-            @PageableDefault(size = 10) Pageable pageable) {
-
-        Page<BuyerEntity> page = adminService.findAllBuyers(pageable);
-        List<BuyerResponseDTO> buyerList = page.getContent().stream()
-                .map(BuyerResponseDTO::new)
-                .collect(Collectors.toList());
-
-        PageResponseDTO<BuyerResponseDTO> response = new PageResponseDTO<>(
-                buyerList,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast());
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<PageResponseDTO<BuyerResponseDTO>> getAllBuyers(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(adminService.findAllBuyers(pageable));
     }
 
     @GetMapping("/buyer/{buyerUid}/detail")
@@ -104,20 +87,8 @@ public class AdminController {
     }
 
     @GetMapping("/seller/list")
-    public ResponseEntity<PageResponseDTO<SellerResponseDTO>> getAllSellersPage(
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<SellerEntity> page = sellerRepository.findAll(pageable);
-        List<SellerResponseDTO> sellerList = page.getContent().stream()
-                .map(SellerResponseDTO::new)
-                .collect(Collectors.toList());
-        PageResponseDTO<SellerResponseDTO> response = new PageResponseDTO<>(
-                sellerList,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<PageResponseDTO<SellerResponseDTO>> getAllSellers(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(adminService.findAllSellers(pageable));
     }
 
     @GetMapping("/seller/{sellerUid}/detail")

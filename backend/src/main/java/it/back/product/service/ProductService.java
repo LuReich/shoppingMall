@@ -12,6 +12,10 @@ import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductDetailRepository;
 import it.back.product.repository.ProductRepository;
+import it.back.common.pagination.PageResponseDTO;
+import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductDetailDTO;
+import it.back.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,17 +25,58 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductDetailRepository productDetailRepository;
     private final CategoryService categoryService;
+    private final ReviewService reviewService;
+    
 
-    public Page<ProductEntity> getAllProducts(Pageable pageable, Integer categoryId) {
+    
+    public PageResponseDTO<ProductDTO> getAllProducts(Pageable pageable, Integer categoryId) {
+        Page<ProductEntity> page;
         if (categoryId == null) {
-            return productRepository.findAll(pageable);
+            page = productRepository.findAll(pageable);
+        } else {
+            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+            page = productRepository.findByCategoryId(categoryIds, pageable);
         }
-        List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
-        return productRepository.findByCategoryId(categoryIds, pageable);
+        List<ProductDTO> dtos = page.getContent().stream().map(product -> {
+            ProductDTO dto = new ProductDTO();
+            dto.setProductId(product.getProductId());
+            dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
+            dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+            dto.setPrice(product.getPrice());
+            dto.setStock(product.getStock());
+            dto.setThumbnailUrl(product.getThumbnailUrl());
+            dto.setCreateAt(product.getCreateAt());
+            dto.setUpdateAt(product.getUpdateAt());
+            dto.setIsDeleted(product.getIsDeleted());
+            return dto;
+        }).toList();
+        return new PageResponseDTO<>(
+                dtos,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 
-    public Optional<ProductEntity> getProductById(Long id) {
-        return productRepository.findById(id);
+    public ProductDTO getProductById(Long id) {
+        Optional<ProductEntity> productOpt = productRepository.findById(id);
+        if (productOpt.isEmpty()) {
+            return null;
+        }
+        ProductEntity product = productOpt.get();
+        ProductDTO dto = new ProductDTO();
+        dto.setProductId(product.getProductId());
+        dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
+        dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+        dto.setPrice(product.getPrice());
+        dto.setStock(product.getStock());
+        dto.setThumbnailUrl(product.getThumbnailUrl());
+        dto.setCreateAt(product.getCreateAt());
+        dto.setUpdateAt(product.getUpdateAt());
+        dto.setIsDeleted(product.getIsDeleted());
+        return dto;
     }
 
     public ProductEntity saveProduct(ProductEntity product) {
@@ -45,8 +90,18 @@ public class ProductService {
         });
     }
 
-    public Optional<ProductDetailEntity> getProductDetail(Long productId) {
-        return productDetailRepository.findById(productId);
+    public ProductDetailDTO getProductDetail(Long productId) {
+        Optional<ProductDetailEntity> detailOpt = productDetailRepository.findById(productId);
+        if (detailOpt.isEmpty()) {
+            return null;
+        }
+        ProductDetailEntity detail = detailOpt.get();
+        ProductDetailDTO dto = new ProductDetailDTO();
+        dto.setProductId(detail.getProductId());
+        dto.setDescription(detail.getDescription());
+        dto.setShippingInfo(detail.getShippingInfo());
+        dto.setReviews(reviewService.getReviewsByProductId(productId));
+        return dto;
     }
 
     public ProductDetailEntity saveProductDetail(ProductDetailEntity detail) {

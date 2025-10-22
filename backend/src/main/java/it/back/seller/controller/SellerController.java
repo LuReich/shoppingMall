@@ -1,13 +1,14 @@
 package it.back.seller.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.back.common.dto.LoginRequestDTO;
@@ -36,7 +37,7 @@ public class SellerController {
     
     // 또는
     // public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ... }
-    */
+     */
     // @PostMapping("/login")
     // public ResponseEntity<Map<String, String>> login(@RequestParam String loginId, @RequestParam String password) {
     //     LoginRequestDTO dto = new LoginRequestDTO();
@@ -48,8 +49,10 @@ public class SellerController {
     //     responseBody.put("token", "bearer: " + jwt);
     //     return ResponseEntity.ok().body(responseBody);
     // }
-    
-
+    @GetMapping("/list")
+    public ResponseEntity<List<SellerDTO>> getAllSellers() {
+        return ResponseEntity.ok(sellerService.getAllSellers());
+    }
 
     @PostMapping("/register")
     public ResponseEntity<String> registerSeller(@RequestBody SellerDTO sellerDto) {
