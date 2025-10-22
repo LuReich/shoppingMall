@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.back.category.dto.CategoryDTO;
 import it.back.category.dto.CategoryTreeDTO;
 import it.back.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-// Removed java.util.stream.Collectors as it's no longer needed for manual mapping
-
-import it.back.category.dto.CategoryDTO; // Added this
 
 @RestController
 @RequestMapping("/api/category")
@@ -27,7 +25,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryTree);
     }
 
-    @GetMapping("/flat-list") // New endpoint
+    @GetMapping("/flat-list") // 그냥 카테고리 순
     public ResponseEntity<List<CategoryDTO>> getAllCategoriesFlat() {
         List<CategoryDTO> categories = categoryService.getAllCategoriesFlat();
         return ResponseEntity.ok(categories);
