@@ -27,11 +27,17 @@ public class SellerService {
 
     public String login(LoginRequestDTO dto) {
     SellerEntity seller = sellerRepository.findBySellerId(dto.getLoginId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+    // 정지 또는 탈퇴(soft delete) 계정 처리
+    // soft delete 컬럼이 있다면 아래 조건에 추가 (예: seller.isDeleted())
+    if (!seller.isActive() /* || seller.isDeleted() */) {
+        throw new IllegalArgumentException("정지 혹은 탈퇴한 계정입니다. 문의해주세요.");
+    }
 
     if (!passwordEncoder.matches(dto.getPassword(), seller.getPassword())) {
-            throw new IllegalArgumentException("Invalid password");
-        }
+        throw new IllegalArgumentException("Invalid password");
+    }
 
     return jwtUtils.createJwt(seller.getSellerId(), "SELLER", 10 * 60 * 60 * 1000L);
     }
