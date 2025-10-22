@@ -53,9 +53,12 @@ public class BuyerService {
                 }
                 detail.setPhone(phone);
             }
-            if (req.getAddress() != null) detail.setAddress(req.getAddress());
-            if (req.getAddressDetail() != null) detail.setAddressDetail(req.getAddressDetail());
-            if (req.getBirth() != null) detail.setBirth(req.getBirth());
+            if (req.getAddress() != null)
+                detail.setAddress(req.getAddress());
+            if (req.getAddressDetail() != null)
+                detail.setAddressDetail(req.getAddressDetail());
+            if (req.getBirth() != null)
+                detail.setBirth(req.getBirth());
             if (req.getGender() != null) {
                 try {
                     detail.setGender(BuyerDetailEntity.Gender.valueOf(req.getGender().toUpperCase()));
@@ -72,30 +75,30 @@ public class BuyerService {
     private final JWTUtils jwtUtils;
 
     public String login(LoginRequestDTO dto) {
-    BuyerEntity buyer = buyerRepository.findByBuyerId(dto.getLoginId())
+        BuyerEntity buyer = buyerRepository.findByBuyerId(dto.getLoginId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    if (!passwordEncoder.matches(dto.getPassword(), buyer.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), buyer.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
 
-    return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
+        return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
     }
 
     @Transactional
     public BuyerEntity registerBuyer(BuyerDTO buyerDto) {
-    BuyerEntity buyer = new BuyerEntity();
-    buyer.setBuyerId(buyerDto.getBuyerId());
-    buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Hashing added
-    buyer.setNickname(buyerDto.getNickname());
+        BuyerEntity buyer = new BuyerEntity();
+        buyer.setBuyerId(buyerDto.getBuyerId());
+        buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Hashing added
+        buyer.setNickname(buyerDto.getNickname());
 
-    BuyerDetailEntity detail = new BuyerDetailEntity();
-    detail.setPhone(buyerDto.getPhone());
-    detail.setAddress(buyerDto.getAddress());
-    detail.setAddressDetail(buyerDto.getAddressDetail());
+        BuyerDetailEntity detail = new BuyerDetailEntity();
+        detail.setPhone(buyerDto.getPhone());
+        detail.setAddress(buyerDto.getAddress());
+        detail.setAddressDetail(buyerDto.getAddressDetail());
 
-    detail.setBuyer(buyer);
-    buyer.setBuyerDetail(detail);
+        detail.setBuyer(buyer);
+        buyer.setBuyerDetail(detail);
 
         return buyerRepository.save(buyer);
     }
