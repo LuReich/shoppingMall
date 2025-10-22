@@ -20,8 +20,8 @@ public class BuyerDetailEntity {
     @JoinColumn(name = "buyer_uid")
     private BuyerEntity buyer;
 
-    @Column(name = "phone_number", unique = true, nullable = false, length = 20)
-    private String phoneNumber;
+    @Column(name = "phone", unique = true, nullable = false, length = 20)
+    private String phone;
 
     @Column(nullable = false, length = 255)
     private String address;
@@ -35,6 +35,6 @@ public class BuyerDetailEntity {
     private Gender gender;
 
     public enum Gender {
-        MALE, FEMALE
+        MALE, FEMALE, UNSELECTED
     }
 }

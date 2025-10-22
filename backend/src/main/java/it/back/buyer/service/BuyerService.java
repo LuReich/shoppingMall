@@ -40,10 +40,10 @@ public class BuyerService {
     buyer.setPassword(passwordEncoder.encode(buyerDto.getPassword())); // Hashing added
     buyer.setNickname(buyerDto.getNickname());
 
-        BuyerDetailEntity detail = new BuyerDetailEntity();
-        detail.setPhoneNumber(buyerDto.getPhoneNumber());
-        detail.setAddress(buyerDto.getAddress());
-        detail.setAddressDetail(buyerDto.getAddressDetail());
+    BuyerDetailEntity detail = new BuyerDetailEntity();
+    detail.setPhone(buyerDto.getPhone());
+    detail.setAddress(buyerDto.getAddress());
+    detail.setAddressDetail(buyerDto.getAddressDetail());
 
     detail.setBuyer(buyer);
     buyer.setBuyerDetail(detail);

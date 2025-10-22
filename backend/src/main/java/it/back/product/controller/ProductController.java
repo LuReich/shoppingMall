@@ -1,8 +1,11 @@
 package it.back.product.controller;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.entity.ProductDetailEntity;
@@ -29,10 +33,10 @@ public class ProductController {
     private final ReviewService reviewService;
 
     @GetMapping("/list")
-    public ResponseEntity<it.back.common.pagination.PageResponseDTO<it.back.product.dto.ProductDTO>> getAllProducts(org.springframework.data.domain.Pageable pageable) {
-        org.springframework.data.domain.Page<it.back.product.entity.ProductEntity> page = productService.getAllProducts(pageable);
-        java.util.List<it.back.product.dto.ProductDTO> dtos = page.getContent().stream().map(product -> {
-            it.back.product.dto.ProductDTO dto = new it.back.product.dto.ProductDTO();
+    public ResponseEntity<PageResponseDTO<ProductDTO>> getAllProducts(Pageable pageable) {
+        Page<it.back.product.entity.ProductEntity> page = productService.getAllProducts(pageable);
+        List<ProductDTO> dtos = page.getContent().stream().map(product -> {
+            ProductDTO dto = new ProductDTO();
             dto.setProductId(product.getProductId());
             dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
             dto.setCategoryId(product.getCategoryId());
@@ -43,8 +47,8 @@ public class ProductController {
             dto.setUpdateAt(product.getUpdateAt());
             dto.setIsDeleted(product.getIsDeleted());
             return dto;
-        }).collect(java.util.stream.Collectors.toList());
-        it.back.common.pagination.PageResponseDTO<it.back.product.dto.ProductDTO> response = new it.back.common.pagination.PageResponseDTO<>(
+        }).collect(Collectors.toList());
+        PageResponseDTO<ProductDTO> response = new PageResponseDTO<>(
             dtos,
             page.getNumber(),
             page.getSize(),

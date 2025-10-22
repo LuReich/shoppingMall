@@ -22,12 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-    // ...existing code...
-    public Page<BuyerResponseDTO> findAllBuyersFull(Pageable pageable) {
-        return buyerRepository.findAll(pageable)
-                .map(BuyerResponseDTO::new);
-    }
-
+    
     private final AdminRepository adminRepository;
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
@@ -52,9 +47,8 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public Page<UserSummaryDTO> findAllBuyers(Pageable pageable) {
-        return buyerRepository.findAll(pageable)
-                .map(UserSummaryDTO::new);
+    public Page<it.back.buyer.entity.BuyerEntity> findAllBuyers(Pageable pageable) {
+        return buyerRepository.findAll(pageable);
     }
 
     public List<UserSummaryDTO> findAllSellers() {

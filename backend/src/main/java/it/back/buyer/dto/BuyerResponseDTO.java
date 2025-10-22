@@ -1,21 +1,26 @@
+
 package it.back.buyer.dto;
 
 import java.time.LocalDateTime;
-
+import java.time.LocalDate;
 import it.back.buyer.entity.BuyerEntity;
+import it.back.buyer.entity.BuyerDetailEntity;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+
 public class BuyerResponseDTO {
     private Long buyerUid;
     private String buyerId;
     private String password;
     private String nickname;
-    private String phoneNumber;
+    private String phone;
     private String address;
     private String addressDetail;
+    private LocalDate birth;
+    private BuyerDetailEntity.Gender gender;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private boolean isActive;
@@ -27,9 +32,11 @@ public class BuyerResponseDTO {
         this.password = buyer.getPassword();
         this.nickname = buyer.getNickname();
         if (buyer.getBuyerDetail() != null) {
-            this.phoneNumber = buyer.getBuyerDetail().getPhoneNumber();
+            this.phone = buyer.getBuyerDetail().getPhone();
             this.address = buyer.getBuyerDetail().getAddress();
             this.addressDetail = buyer.getBuyerDetail().getAddressDetail();
+            this.birth = buyer.getBuyerDetail().getBirth();
+            this.gender = buyer.getBuyerDetail().getGender();
         }
         this.createAt = buyer.getCreateAt();
         this.updateAt = buyer.getUpdateAt();
