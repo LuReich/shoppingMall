@@ -41,46 +41,32 @@ public class SecurityConfig {
 
     @Bean
     public JWTFilter jwtFilter() {
-        return new JWTFilter(jwtUtils, adminRepository, buyerRepository, sellerRepository);
+    return new JWTFilter(jwtUtils, adminRepository, buyerRepository, sellerRepository);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable);
+    http.csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .formLogin(AbstractHttpConfigurer::disable)
+        .httpBasic(AbstractHttpConfigurer::disable);
 
-        http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
-<<<<<<< HEAD
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/product/**").permitAll()
-                .requestMatchers("api/category/**").permitAll()
-                .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
-                .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
-                .requestMatchers("/api/admin/login").permitAll()
-                .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
-                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-                .requestMatchers("/**").hasAnyRole("ADMIN")
-                .anyRequest().authenticated()
-        );
-=======
     http.authorizeHttpRequests(auth -> auth
         .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
         .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
         .requestMatchers("/api/admin/login").permitAll()
-        .requestMatchers("/api/product/**").permitAll()
         .requestMatchers("/api/category/**").permitAll()
+        .requestMatchers("/api/product/**").permitAll()
         .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
         .requestMatchers("/**").hasAnyRole("ADMIN")
         .anyRequest().authenticated()
     );
->>>>>>> 3826cc4f115e5dd281e18199a0a3ce70c01cc024
 
-        return http.build();
+    return http.build();
     }
 
     @Bean
