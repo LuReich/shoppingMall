@@ -47,7 +47,13 @@ public class SellerService {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        return jwtUtils.createJwt(seller.getSellerId(), "SELLER", 10 * 60 * 60 * 1000L);
+        return jwtUtils.createJwt(
+            seller.getSellerUid(), // uid (Long)
+            seller.getSellerId(), // userId (String)
+            seller.getCompanyName(), // userNickname (String, 회사명)
+            "SELLER", // userRole
+            10 * 60 * 60 * 1000L // 만료(ms)
+        );
     }
 
     /*

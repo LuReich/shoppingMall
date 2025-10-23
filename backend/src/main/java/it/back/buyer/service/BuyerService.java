@@ -41,7 +41,13 @@ public class BuyerService {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
+        return jwtUtils.createJwt(
+            buyer.getBuyerUid(), // uid (Long)
+            buyer.getBuyerId(), // userId (String)
+            buyer.getNickname(), // userNickname (String)
+            "BUYER", // userRole
+            10 * 60 * 60 * 1000L // 만료(ms)
+        );
     }
 
     public List<BuyerDTO> getAllBuyers() {

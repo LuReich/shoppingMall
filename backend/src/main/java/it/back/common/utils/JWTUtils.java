@@ -23,6 +23,30 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JWTUtils {
 
+    // uid 추출
+    public Long getUid(String token) {
+        Object value = Jwts.parser().verifyWith(secretKey)
+            .build().parseSignedClaims(token)
+            .getPayload().get("uid");
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        } else if (value != null) {
+            try {
+                return Long.parseLong(value.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // userNickname 추출
+    public String getUserNickname(String token) {
+        return Jwts.parser().verifyWith(secretKey)
+            .build().parseSignedClaims(token)
+            .getPayload().get("userNickname", String.class);
+    }
+
     private SecretKey secretKey;
 
     public JWTUtils(@Value("${spring.jwt.secretKey}")String secret) {
@@ -31,23 +55,29 @@ public class JWTUtils {
                     Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    //사용자 아이디, 권한, 이름, 지속시간(분)
-    public String createJwt(String category, String userId, 
-                         String userName, String userRole, Long mins) {
 
+    // uid, userId, userNickname, role, 지속시간(분)
+    public String createJwt(String category, Long uid, String userId, String userNickname, String userRole, Long mins) {
         return Jwts.builder()
             .claim("category", category)
+            .claim("uid", uid)
             .claim("userId", userId)
-            .claim("userName", userName)
-            .claim("userRole", userRole)
+            .claim("userNickname", userNickname)
+            .claim("role", userRole)
             .issuedAt(Timestamp.valueOf(LocalDateTime.now()))
-            .expiration(Timestamp.valueOf( LocalDateTime.now().plusMinutes(mins) ))
+            .expiration(Timestamp.valueOf(LocalDateTime.now().plusMinutes(mins)))
             .signWith(secretKey)
             .compact();
     }
 
+    // 기존 방식과의 호환을 위해 오버로딩(기존 userName은 null)
+    public String createJwt(Long uid, String userId, String userNickname, String userRole, Long expiredMs) {
+        return createJwt("auth", uid, userId, userNickname, userRole, expiredMs / (60 * 1000));
+    }
+
+    // 기존 방식(사용 비권장)
     public String createJwt(String userId, String userRole, Long expiredMs) {
-        return createJwt("auth", userId, null, userRole, expiredMs / (60 * 1000));
+        return createJwt("auth", null, userId, null, userRole, expiredMs / (60 * 1000));
     }
 
 

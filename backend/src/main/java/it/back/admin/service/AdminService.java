@@ -54,7 +54,13 @@ public class AdminService {
         }
 
         // 10 hours token validity
-        return jwtUtils.createJwt(admin.getAdminId(), "ADMIN", 10 * 60 * 60 * 1000L);
+        return jwtUtils.createJwt(
+            admin.getAdminUid() != null ? admin.getAdminUid().longValue() : null, // uid (Long)
+            admin.getAdminId(), // userId (String)
+            admin.getAdminName(), // userNickname (String, 관리자명)
+            "ADMIN", // userRole
+            10 * 60 * 60 * 1000L // 만료(ms)
+        );
     }
 
     /*
