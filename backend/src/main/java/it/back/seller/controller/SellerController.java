@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.back.common.dto.LoginRequestDTO;
@@ -55,8 +55,8 @@ public class SellerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerSeller(@RequestBody SellerDTO sellerDto) {
-        sellerService.registerSeller(sellerDto);
+    public ResponseEntity<String> registerSeller(@RequestBody SellerDTO sellerDTO) {
+        sellerService.registerSeller(sellerDTO);
         return ResponseEntity.ok("Seller registered successfully");
     }
 }
