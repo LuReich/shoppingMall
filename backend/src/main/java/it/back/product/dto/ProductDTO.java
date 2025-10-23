@@ -1,4 +1,3 @@
-	// ...existing code...
 package it.back.product.dto;
 
 import lombok.Data;
