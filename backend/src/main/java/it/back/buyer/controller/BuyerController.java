@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import it.back.buyer.dto.BuyerDTO;
-import it.back.buyer.dto.BuyerUpdateRequest;
+import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.service.BuyerService;
 import it.back.common.dto.LoginRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +62,7 @@ public class BuyerController {
     @PatchMapping("/{buyerUid}")
     public ResponseEntity<Void> updateBuyer(
             @PathVariable Long buyerUid,
-            @RequestBody BuyerUpdateRequest request,
+            @RequestBody BuyerUpdateRequestDTO request,
             Authentication authentication) {
         try {
             buyerService.updateBuyer(buyerUid, request, authentication);

@@ -12,11 +12,12 @@ public class BuyerDTO {
     private String buyerId;
     private String password;
     private String nickname;
+    private String buyerEmail;
+    
     // BuyerDetail info
     private String phone;
     private String address;
     private String addressDetail;
     private LocalDate birth;
     private Gender gender;
-        private String buyerEmail;
 }

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.back.admin.dto.UserSummaryDTO;
 import it.back.buyer.dto.BuyerDTO;
-import it.back.buyer.dto.BuyerUpdateRequest;
+import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
@@ -55,7 +55,7 @@ public class BuyerService {
     }
 
     @Transactional
-    public void updateBuyer(Long buyerUid, BuyerUpdateRequest req, Authentication authentication) {
+    public void updateBuyer(Long buyerUid, BuyerUpdateRequestDTO req, Authentication authentication) {
         Object principal = authentication == null ? null : authentication.getPrincipal();
         if (!(principal instanceof UserSummaryDTO user)) {
             throw new SecurityException("Unauthorized");
@@ -77,6 +77,9 @@ public class BuyerService {
         // 닉네임 등 기타 필드
         if (req.getNickname() != null) {
             buyer.setNickname(req.getNickname());
+        }
+        if (req.getBuyerEmail() != null && !req.getBuyerEmail().isBlank()) {
+            buyer.setBuyerEmail(req.getBuyerEmail());
         }
 
         BuyerDetailEntity detail = buyer.getBuyerDetail();
