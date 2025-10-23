@@ -27,6 +27,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminService {
 
+    
+    private final AdminRepository adminRepository;
+    private final BuyerRepository buyerRepository;
+    private final SellerRepository sellerRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTUtils jwtUtils;
+
     public UserSummaryDTO findByAdminId(String adminId) {
         AdminEntity admin = adminRepository.findByAdminId(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다."));
@@ -37,12 +44,6 @@ public class AdminService {
         return adminRepository.findByAdminId(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다."));
     }
-
-    private final AdminRepository adminRepository;
-    private final BuyerRepository buyerRepository;
-    private final SellerRepository sellerRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JWTUtils jwtUtils;
 
     public String login(LoginRequestDTO dto) {
         AdminEntity admin = adminRepository.findByAdminId(dto.getLoginId())
