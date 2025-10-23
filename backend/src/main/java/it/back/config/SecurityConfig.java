@@ -54,6 +54,7 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
+<<<<<<< HEAD
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/product/**").permitAll()
                 .requestMatchers("api/category/**").permitAll()
@@ -65,6 +66,19 @@ public class SecurityConfig {
                 .requestMatchers("/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
         );
+=======
+    http.authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
+        .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
+        .requestMatchers("/api/admin/login").permitAll()
+        .requestMatchers("/api/product/**").permitAll()
+        .requestMatchers("/api/category/**").permitAll()
+        .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
+        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+        .requestMatchers("/**").hasAnyRole("ADMIN")
+        .anyRequest().authenticated()
+    );
+>>>>>>> 3826cc4f115e5dd281e18199a0a3ce70c01cc024
 
         return http.build();
     }
@@ -74,7 +88,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173")); // Add frontend dev server port
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:4000")); // Add frontend dev server port
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
