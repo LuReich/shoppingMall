@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 public class SellerResponseDTO {
     private Long sellerUid;
     private String sellerId;
-    private String sellerEmail;
     private String companyName;
+    private String sellerEmail;
     private boolean isVerified;
     private boolean isActive;
     private LocalDateTime createAt;
@@ -27,8 +27,8 @@ public class SellerResponseDTO {
     public SellerResponseDTO(SellerEntity seller) {
     this.sellerUid = seller.getSellerUid();
     this.sellerId = seller.getSellerId();
-    this.sellerEmail = seller.getSellerEmail();
     this.companyName = seller.getCompanyName();
+    this.sellerEmail = seller.getSellerEmail();
     this.isVerified = seller.isVerified();
     this.isActive = seller.isActive();
     this.createAt = seller.getCreateAt();

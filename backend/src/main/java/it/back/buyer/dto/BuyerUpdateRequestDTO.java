@@ -6,9 +6,10 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class BuyerUpdateRequest {
+public class BuyerUpdateRequestDTO {
     private String password;
     private String nickname;
+    private String buyerEmail;
     private String phone;
     private String address;
     private String addressDetail;

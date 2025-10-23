@@ -14,9 +14,9 @@ import lombok.Setter;
 public class BuyerResponseDTO {
     private Long buyerUid;
     private String buyerId;
-    private String buyerEmail;
     private String password;
     private String nickname;
+    private String buyerEmail;
     private String phone;
     private String address;
     private String addressDetail;
@@ -30,9 +30,10 @@ public class BuyerResponseDTO {
     public BuyerResponseDTO(BuyerEntity buyer) {
     this.buyerUid = buyer.getBuyerUid();
     this.buyerId = buyer.getBuyerId();
-    this.buyerEmail = buyer.getBuyerEmail();
     this.password = buyer.getPassword();
     this.nickname = buyer.getNickname();
+    this.buyerEmail = buyer.getBuyerEmail();
+    
         if (buyer.getBuyerDetail() != null) {
             this.phone = buyer.getBuyerDetail().getPhone();
             this.address = buyer.getBuyerDetail().getAddress();
