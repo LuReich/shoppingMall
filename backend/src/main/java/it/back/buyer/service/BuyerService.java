@@ -1,6 +1,7 @@
 package it.back.buyer.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -9,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.back.admin.dto.UserSummaryDTO;
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
@@ -62,12 +62,12 @@ public class BuyerService {
 
     @Transactional
     public void updateBuyer(Long buyerUid, BuyerUpdateRequestDTO req, Authentication authentication) {
-        Object principal = authentication == null ? null : authentication.getPrincipal();
-        if (!(principal instanceof UserSummaryDTO user)) {
+        if (authentication == null) {
             throw new SecurityException("Unauthorized");
         }
-        String loginId = user.getLoginId();
-        String role = user.getRole();
+        String loginId = (String) authentication.getPrincipal();
+        Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
+        String role = (String) details.get("role");
         BuyerEntity buyer = buyerRepository.findById(buyerUid)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found"));
 

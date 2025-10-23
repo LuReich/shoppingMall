@@ -7,21 +7,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import it.back.admin.dto.UserSummaryDTO;
 
 public class SecureUser implements UserDetails {
 
     private String loginId;
     private String password;
     private String role;
-
-    public SecureUser(UserSummaryDTO userSummary) {
-        this.loginId = userSummary.getLoginId();
-        // Password is not typically stored in UserSummaryDTO for security context
-        // It would be loaded by UserDetailsService if needed for authentication
-        this.password = null; 
-        this.role = userSummary.getRole();
-    }
 
     public SecureUser(String loginId, String password, String role) {
         this.loginId = loginId;

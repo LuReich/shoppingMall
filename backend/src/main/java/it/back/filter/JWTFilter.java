@@ -7,13 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import it.back.admin.dto.UserSummaryDTO;
-import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
-import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.utils.JWTUtils;
-import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -69,26 +65,4 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private UserSummaryDTO createUserSummary(String loginId, String role) {
-        // This is a simplified creation. In a real app, you might fetch the user from DB
-        // to ensure they still exist and are active. But for setting security context,
-        // info from a trusted JWT is often sufficient.
-        if ("ADMIN".equals(role)) {
-            AdminEntity admin = adminRepository.findByAdminId(loginId).orElse(null);
-            if (admin != null) {
-                return new UserSummaryDTO(admin);
-            }
-        } else if ("BUYER".equals(role)) {
-            BuyerEntity buyer = buyerRepository.findByBuyerId(loginId).orElse(null);
-            if (buyer != null) {
-                return new UserSummaryDTO(buyer);
-            }
-        } else if ("SELLER".equals(role)) {
-            SellerEntity seller = sellerRepository.findBySellerId(loginId).orElse(null);
-            if (seller != null) {
-                return new UserSummaryDTO(seller);
-            }
-        }
-        return null;
-    }
 }
