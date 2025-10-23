@@ -14,6 +14,7 @@ import lombok.Setter;
 public class BuyerResponseDTO {
     private Long buyerUid;
     private String buyerId;
+    private String buyerEmail;
     private String password;
     private String nickname;
     private String phone;
@@ -27,10 +28,11 @@ public class BuyerResponseDTO {
     // 필요시 Buyer 엔티티의 모든 필드 추가
 
     public BuyerResponseDTO(BuyerEntity buyer) {
-        this.buyerUid = buyer.getBuyerUid();
-        this.buyerId = buyer.getBuyerId();
-        this.password = buyer.getPassword();
-        this.nickname = buyer.getNickname();
+    this.buyerUid = buyer.getBuyerUid();
+    this.buyerId = buyer.getBuyerId();
+    this.buyerEmail = buyer.getBuyerEmail();
+    this.password = buyer.getPassword();
+    this.nickname = buyer.getNickname();
         if (buyer.getBuyerDetail() != null) {
             this.phone = buyer.getBuyerDetail().getPhone();
             this.address = buyer.getBuyerDetail().getAddress();

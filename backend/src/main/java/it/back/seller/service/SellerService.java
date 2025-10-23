@@ -56,22 +56,22 @@ public class SellerService {
      */
     @Transactional
     public SellerEntity registerSeller(SellerDTO sellerDTO) {
-        SellerEntity seller = new SellerEntity();
-        seller.setSellerId(sellerDTO.getSellerId());
-        seller.setPassword(passwordEncoder.encode(sellerDTO.getPassword())); // Hashing added
-        seller.setCompanyName(sellerDTO.getCompanyName());
+    SellerEntity seller = new SellerEntity();
+    seller.setSellerId(sellerDTO.getSellerId());
+    seller.setPassword(passwordEncoder.encode(sellerDTO.getPassword())); // Hashing added
+    seller.setCompanyName(sellerDTO.getCompanyName());
+    seller.setSellerEmail(sellerDTO.getSellerEmail());
 
-        SellerDetailEntity detail = new SellerDetailEntity();
-        detail.setBusinessRegistrationNumber(sellerDTO.getBusinessRegistrationNumber());
-        detail.setCompanyInfo(sellerDTO.getCompanyInfo()); // 업체 상세 소개 저장
-        detail.setPhone(sellerDTO.getPhone());
-        detail.setAddress(sellerDTO.getAddress());
-        detail.setAddressDetail(sellerDTO.getAddressDetail());
-        
+    SellerDetailEntity detail = new SellerDetailEntity();
+    detail.setBusinessRegistrationNumber(sellerDTO.getBusinessRegistrationNumber());
+    detail.setCompanyInfo(sellerDTO.getCompanyInfo()); // 업체 상세 소개 저장
+    detail.setPhone(sellerDTO.getPhone());
+    detail.setAddress(sellerDTO.getAddress());
+    detail.setAddressDetail(sellerDTO.getAddressDetail());
 
-        detail.setSeller(seller);
-        seller.setSellerDetail(detail);
+    detail.setSeller(seller);
+    seller.setSellerDetail(detail);
 
-        return sellerRepository.save(seller);
+    return sellerRepository.save(seller);
     }
 }

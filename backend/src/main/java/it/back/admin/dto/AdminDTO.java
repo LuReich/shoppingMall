@@ -10,4 +10,5 @@ public class AdminDTO {
     private String adminPassword;
     private String adminName;
     private Byte permissionLevel;
+        private String adminEmail;
 }

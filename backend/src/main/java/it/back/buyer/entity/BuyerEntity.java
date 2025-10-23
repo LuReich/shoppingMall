@@ -18,14 +18,18 @@ public class BuyerEntity {
     @Column(name = "buyer_uid")
     private Long buyerUid;
 
+
     @Column(name = "buyer_id", unique = true, nullable = false, length = 50)
     private String buyerId;
 
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(nullable = false, length = 50)
     private String nickname;
+
+    @Column(name = "buyer_email", unique = true, nullable = false, length = 100)
+    private String buyerEmail;
 
     @CreationTimestamp
     @Column(name = "create_at", updatable = false)

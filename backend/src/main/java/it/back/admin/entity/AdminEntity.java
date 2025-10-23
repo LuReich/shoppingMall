@@ -18,6 +18,7 @@ public class AdminEntity {
     @Column(name = "admin_uid")
     private Integer adminUid;
 
+
     @Column(name = "admin_id", unique = true, nullable = false, length = 50)
     private String adminId;
 
@@ -26,6 +27,9 @@ public class AdminEntity {
 
     @Column(name = "admin_name", nullable = false, length = 50)
     private String adminName;
+
+    @Column(name = "admin_email", unique = true, nullable = false, length = 100)
+    private String adminEmail;
 
     @Column(name = "permission_level", nullable = false)
     private Byte permissionLevel;

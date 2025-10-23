@@ -18,8 +18,12 @@ public class SellerEntity {
     @Column(name = "seller_uid")
     private Long sellerUid;
 
+
     @Column(name = "seller_id", unique = true, nullable = false, length = 50)
     private String sellerId;
+
+    @Column(name = "seller_email", unique = true, nullable = false, length = 100)
+    private String sellerEmail;
 
     @Column(nullable = false, length = 255)
     private String password;
