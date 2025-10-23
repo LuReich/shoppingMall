@@ -1,6 +1,7 @@
 package it.back.buyer.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -9,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.back.admin.dto.UserSummaryDTO;
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
@@ -41,7 +41,13 @@ public class BuyerService {
             throw new IllegalArgumentException("Invalid password");
         }
 
-        return jwtUtils.createJwt(buyer.getBuyerId(), "BUYER", 10 * 60 * 60 * 1000L);
+        return jwtUtils.createJwt(
+                buyer.getBuyerUid(), // uid (Long)
+                buyer.getBuyerId(), // userId (String)
+                buyer.getNickname(), // userNickname (String)
+                "BUYER", // userRole
+                10 * 60 * 60 * 1000L // 만료(ms)
+        );
     }
 
     public List<BuyerDTO> getAllBuyers() {
@@ -56,12 +62,12 @@ public class BuyerService {
 
     @Transactional
     public void updateBuyer(Long buyerUid, BuyerUpdateRequestDTO req, Authentication authentication) {
-        Object principal = authentication == null ? null : authentication.getPrincipal();
-        if (!(principal instanceof UserSummaryDTO user)) {
+        if (authentication == null) {
             throw new SecurityException("Unauthorized");
         }
-        String loginId = user.getLoginId();
-        String role = user.getRole();
+        String loginId = (String) authentication.getPrincipal();
+        Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
+        String role = (String) details.get("role");
         BuyerEntity buyer = buyerRepository.findById(buyerUid)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found"));
 
@@ -116,22 +122,22 @@ public class BuyerService {
 
     @Transactional
     public BuyerEntity registerBuyer(BuyerDTO buyerDTO) {
-    BuyerEntity buyer = new BuyerEntity();
-    buyer.setBuyerId(buyerDTO.getBuyerId());
-    buyer.setPassword(passwordEncoder.encode(buyerDTO.getPassword())); // Hashing added
-    buyer.setNickname(buyerDTO.getNickname());
-    buyer.setBuyerEmail(buyerDTO.getBuyerEmail());
+        BuyerEntity buyer = new BuyerEntity();
+        buyer.setBuyerId(buyerDTO.getBuyerId());
+        buyer.setPassword(passwordEncoder.encode(buyerDTO.getPassword())); // Hashing added
+        buyer.setNickname(buyerDTO.getNickname());
+        buyer.setBuyerEmail(buyerDTO.getBuyerEmail());
 
-    BuyerDetailEntity detail = new BuyerDetailEntity();
-    detail.setPhone(buyerDTO.getPhone());
-    detail.setAddress(buyerDTO.getAddress());
-    detail.setAddressDetail(buyerDTO.getAddressDetail());
-    detail.setBirth(buyerDTO.getBirth());
-    detail.setGender(buyerDTO.getGender());
+        BuyerDetailEntity detail = new BuyerDetailEntity();
+        detail.setPhone(buyerDTO.getPhone());
+        detail.setAddress(buyerDTO.getAddress());
+        detail.setAddressDetail(buyerDTO.getAddressDetail());
+        detail.setBirth(buyerDTO.getBirth());
+        detail.setGender(buyerDTO.getGender());
 
-    detail.setBuyer(buyer);
-    buyer.setBuyerDetail(detail);
+        detail.setBuyer(buyer);
+        buyer.setBuyerDetail(detail);
 
-    return buyerRepository.save(buyer);
+        return buyerRepository.save(buyer);
     }
 }

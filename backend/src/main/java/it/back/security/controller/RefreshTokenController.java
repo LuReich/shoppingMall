@@ -46,14 +46,15 @@ public class RefreshTokenController {
         }
 
         String userId = jwtUtils.getUserId(refreshToken);
-        String userName = jwtUtils.getUserName(refreshToken);
         String userRole = jwtUtils.getUserRole(refreshToken);
+        Long uid = jwtUtils.getUid(refreshToken);
+        String userNickname = jwtUtils.getUserNickname(refreshToken);
 
         // 토큰 생성
-        String accessToken = jwtUtils.createJwt("access", userId, userName,
-                userRole, LoginFilter.ACCESS_TOKEN_EXPIRE_TIME);
-        String newRefresh = jwtUtils.createJwt("refresh", userId, userName,
-                userRole, LoginFilter.REFRESH_TOKEN_EXPIRE_TIME);
+        String accessToken = jwtUtils.createJwt(uid, userId, userNickname, userRole,
+                LoginFilter.ACCESS_TOKEN_EXPIRE_TIME);
+        String newRefresh = jwtUtils.createJwt(uid, userId, userNickname, userRole,
+                LoginFilter.REFRESH_TOKEN_EXPIRE_TIME);
 
         // 응답을 설정
         // 쿠키에 갱신된 refresh 토큰 넣기
@@ -62,7 +63,7 @@ public class RefreshTokenController {
         response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
 
-        Map<String, Object> mapContent=new HashMap<>();
+        Map<String, Object> mapContent = new HashMap<>();
 
         mapContent.put("resultMsg", "OK");
         mapContent.put("status", "200");
@@ -70,7 +71,7 @@ public class RefreshTokenController {
         Map<String, Object> data = new HashMap<>();
 
         data.put("userId", userId);
-        data.put("userName", userName);
+        data.put("userNickname", userNickname);
         data.put("userRole", userRole);
         data.put("token", accessToken);
 
