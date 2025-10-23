@@ -18,4 +18,5 @@ public class BuyerDTO {
     private String addressDetail;
     private LocalDate birth;
     private Gender gender;
+        private String buyerEmail;
 }

@@ -113,21 +113,22 @@ public class BuyerService {
 
     @Transactional
     public BuyerEntity registerBuyer(BuyerDTO buyerDTO) {
-        BuyerEntity buyer = new BuyerEntity();
-        buyer.setBuyerId(buyerDTO.getBuyerId());
-        buyer.setPassword(passwordEncoder.encode(buyerDTO.getPassword())); // Hashing added
-        buyer.setNickname(buyerDTO.getNickname());
+    BuyerEntity buyer = new BuyerEntity();
+    buyer.setBuyerId(buyerDTO.getBuyerId());
+    buyer.setPassword(passwordEncoder.encode(buyerDTO.getPassword())); // Hashing added
+    buyer.setNickname(buyerDTO.getNickname());
+    buyer.setBuyerEmail(buyerDTO.getBuyerEmail());
 
-        BuyerDetailEntity detail = new BuyerDetailEntity();
-        detail.setPhone(buyerDTO.getPhone());
-        detail.setAddress(buyerDTO.getAddress());
-        detail.setAddressDetail(buyerDTO.getAddressDetail());
-        detail.setBirth(buyerDTO.getBirth());
-        detail.setGender(buyerDTO.getGender());
+    BuyerDetailEntity detail = new BuyerDetailEntity();
+    detail.setPhone(buyerDTO.getPhone());
+    detail.setAddress(buyerDTO.getAddress());
+    detail.setAddressDetail(buyerDTO.getAddressDetail());
+    detail.setBirth(buyerDTO.getBirth());
+    detail.setGender(buyerDTO.getGender());
 
-        detail.setBuyer(buyer);
-        buyer.setBuyerDetail(detail);
+    detail.setBuyer(buyer);
+    buyer.setBuyerDetail(detail);
 
-        return buyerRepository.save(buyer);
+    return buyerRepository.save(buyer);
     }
 }

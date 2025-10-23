@@ -32,6 +32,7 @@ create table admin (
     admin_id varchar(50) unique not null comment '관리자 로그인 아이디',
     admin_password varchar(255) not null comment '관리자 비밀번호 (암호화 저장)',
     admin_name varchar(50) not null comment '관리자 이름',
+    admin_email varchar(100) unique not null comment '관리자 이메일',
     permission_level tinyint not null default 1 comment '권한 등급 (1: 최고, 9: 최하)',
     create_at datetime default now() comment '계정 생성일',
     update_at datetime default current_timestamp on update current_timestamp comment '계정 수정일'
@@ -45,7 +46,8 @@ create table buyer (
     buyer_uid bigint primary key auto_increment comment '구매자 고유 식별자 (PK)',
     buyer_id varchar(50) unique not null comment '로그인 아이디',
     password varchar(255) not null comment '비밀번호 (암호화 저장)',
-    nickname varchar(50) unique not null comment '닉네임',
+    nickname varchar(50) not null comment '닉네임',
+    buyer_email varchar(100) unique not null comment '이메일',
     create_at datetime default now() comment '가입일',
     update_at datetime default current_timestamp on update current_timestamp comment '정보 수정일',
     is_active boolean default true comment '계정 활성 여부',
@@ -76,6 +78,7 @@ create table seller (
     seller_id varchar(50) unique not null comment '로그인 아이디',
     password varchar(255) not null comment '비밀번호 (암호화 저장)',
     company_name varchar(100) not null comment '업체명 (대표 식별자)',
+    seller_email varchar(100) unique not null comment '이메일',
     create_at datetime default now() comment '가입일',
     update_at datetime default current_timestamp on update current_timestamp comment '정보 수정일',
     is_verified boolean default false comment '관리자 인증 여부 (판매 승인)',
@@ -306,15 +309,15 @@ create table faq (
 /* ================================================================= */
 
 /* 관리자 계정 (admin) */
-INSERT INTO admin (admin_id, admin_password, admin_name, permission_level) VALUES
-('admin01', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '최고관리자', 1),
-('admin02', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '부관리자', 3);
+INSERT INTO admin (admin_id, admin_email, admin_password, admin_name, permission_level) VALUES
+('admin01', 'admin01@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '최고관리자', 1),
+('admin02', 'admin02@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '부관리자', 3);
 
 /* 구매자 계정 (buyer) */
-INSERT INTO buyer (buyer_id, password, nickname) VALUES
-('buyer01', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉1'),
-('buyer02', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉2'),
-('buyer03', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉3_탈퇴');
+INSERT INTO buyer (buyer_id, buyer_email, password, nickname) VALUES
+('buyer01', 'buyer01@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉1'),
+('buyer02', 'buyer02@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉2'),
+('buyer03', 'buyer03@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '구매자닉3_탈퇴');
 
 /* 구매자 상세 정보 (buyer_detail) */
 INSERT INTO buyer_detail (buyer_uid, phone, address, address_detail, birth, gender) VALUES
@@ -323,10 +326,10 @@ INSERT INTO buyer_detail (buyer_uid, phone, address, address_detail, birth, gend
 (3, '010-5555-6666', '부산광역시 해운대구 센텀동로 789', '404호', '1988-01-01', 'MALE');
 
 /* 판매자 계정 (seller) */
-INSERT INTO seller (seller_id, password, company_name, is_verified) VALUES
-('seller01', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '알파상사', TRUE),
-('seller02', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '베타유통', TRUE),
-('seller03', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '감마셀러_미인증', FALSE);
+INSERT INTO seller (seller_id, seller_email, password, company_name, is_verified) VALUES
+('seller01', 'seller01@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '알파상사', TRUE),
+('seller02', 'seller02@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '베타유통', TRUE),
+('seller03', 'seller03@email.com', '$2a$10$lDKSQKEXy9QXV1I5mnAr1uPQBwSQ94asIoYR7OjdnMMYl9T21OnaC', '감마셀러_미인증', FALSE);
 
 /* 판매자 상세 정보 (seller_detail) */
 INSERT INTO seller_detail (seller_uid, business_registration_number, company_info, phone, address, address_detail) VALUES

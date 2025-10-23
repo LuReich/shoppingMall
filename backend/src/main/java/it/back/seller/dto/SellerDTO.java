@@ -17,4 +17,5 @@ public class SellerDTO {
     private String address;
     private String addressDetail;
     private String companyInfo; // 업체 상세 소개 (선택 입력)
+        private String sellerEmail;
 }
