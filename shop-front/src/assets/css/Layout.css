@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+.layout-container{
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+/* 콘텐츠(중간 부분)가 남는 공간을 채우게 */
+.layout-container main {
+  width: 75%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 130px 50px;
+}
