@@ -46,7 +46,9 @@ public class JWTFilter extends OncePerRequestFilter {
             String loginId = jwtUtils.getUserId(token);
             String role = jwtUtils.getUserRole(token);
             UserSummaryDTO userSummary = createUserSummary(loginId, role);
-            Authentication authToken = new UsernamePasswordAuthenticationToken(userSummary, null, Collections.singletonList(() -> "ROLE_" + role));
+            // principal은 loginId(문자열), details에 userSummary 저장
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginId, null, Collections.singletonList(() -> "ROLE_" + role));
+            authToken.setDetails(userSummary);
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } catch (Exception e) {
             // 토큰 파싱/검증 실패 시 인증 없이 다음 필터로 넘김
