@@ -1,22 +1,23 @@
 package it.back.buyer.service;
 
-import org.springframework.security.core.Authentication;
-import it.back.admin.dto.UserSummaryDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import it.back.admin.dto.UserSummaryDTO;
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerUpdateRequest;
-import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.entity.BuyerDetailEntity;
+import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -121,6 +122,8 @@ public class BuyerService {
         detail.setPhone(buyerDTO.getPhone());
         detail.setAddress(buyerDTO.getAddress());
         detail.setAddressDetail(buyerDTO.getAddressDetail());
+        detail.setBirth(buyerDTO.getBirth());
+        detail.setGender(buyerDTO.getGender());
 
         detail.setBuyer(buyer);
         buyer.setBuyerDetail(detail);

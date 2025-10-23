@@ -1,17 +1,19 @@
 package it.back.seller.service;
 
-import it.back.common.dto.LoginRequestDTO;
-import it.back.common.utils.JWTUtils;
-import it.back.seller.dto.SellerDTO;
-import it.back.seller.entity.SellerEntity;
-import it.back.seller.entity.SellerDetailEntity;
-import it.back.seller.repository.SellerRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import it.back.common.dto.LoginRequestDTO;
+import it.back.common.utils.JWTUtils;
+import it.back.seller.dto.SellerDTO;
+import it.back.seller.entity.SellerDetailEntity;
+import it.back.seller.entity.SellerEntity;
+import it.back.seller.repository.SellerRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -49,21 +51,23 @@ public class SellerService {
     }
 
     /*
-    // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
-    // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
+     * // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
+     * // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
      */
     @Transactional
-    public SellerEntity registerSeller(SellerDTO sellerDto) {
+    public SellerEntity registerSeller(SellerDTO sellerDTO) {
         SellerEntity seller = new SellerEntity();
-        seller.setSellerId(sellerDto.getSellerId());
-        seller.setPassword(passwordEncoder.encode(sellerDto.getPassword())); // Hashing added
-        seller.setCompanyName(sellerDto.getCompanyName());
+        seller.setSellerId(sellerDTO.getSellerId());
+        seller.setPassword(passwordEncoder.encode(sellerDTO.getPassword())); // Hashing added
+        seller.setCompanyName(sellerDTO.getCompanyName());
 
         SellerDetailEntity detail = new SellerDetailEntity();
-        detail.setBusinessRegistrationNumber(sellerDto.getBusinessRegistrationNumber());
-        detail.setPhone(sellerDto.getPhone());
-        detail.setAddress(sellerDto.getAddress());
-        detail.setAddressDetail(sellerDto.getAddressDetail());
+        detail.setBusinessRegistrationNumber(sellerDTO.getBusinessRegistrationNumber());
+        detail.setCompanyInfo(sellerDTO.getCompanyInfo()); // 업체 상세 소개 저장
+        detail.setPhone(sellerDTO.getPhone());
+        detail.setAddress(sellerDTO.getAddress());
+        detail.setAddressDetail(sellerDTO.getAddressDetail());
+        
 
         detail.setSeller(seller);
         seller.setSellerDetail(detail);
