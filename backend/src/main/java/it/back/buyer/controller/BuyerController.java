@@ -18,6 +18,9 @@ import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.service.BuyerService;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.buyer.repository.BuyerRepository;
+import it.back.buyer.entity.BuyerEntity;
+import it.back.buyer.dto.BuyerResponseDTO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,6 +29,16 @@ import lombok.RequiredArgsConstructor;
 public class BuyerController {
 
     private final BuyerService buyerService;
+    private final BuyerRepository buyerRepository;
+
+    @GetMapping("/me")
+    public ResponseEntity<BuyerResponseDTO> getMyInfo(Authentication authentication) {
+        String userId = authentication.getName();
+        System.out.println("[BuyerController] /me userId: " + userId);
+        BuyerEntity buyer = buyerRepository.findByBuyerId(userId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + userId));
+        return ResponseEntity.ok(new BuyerResponseDTO(buyer));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {

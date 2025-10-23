@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.dto.UserSummaryDTO;
+import it.back.admin.entity.AdminEntity;
 import it.back.admin.service.AdminService;
 import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.entity.BuyerEntity;
@@ -30,6 +33,7 @@ import it.back.seller.repository.SellerRepository;
 import it.back.buyer.repository.BuyerRepository;
 import lombok.RequiredArgsConstructor;
 
+
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -39,6 +43,14 @@ public class AdminController {
     private final SellerService sellerService;
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
+
+    @GetMapping("/me")
+    public ResponseEntity<AdminResponseDTO> getMyInfo(Authentication authentication) {
+        String userId = authentication.getName();
+        System.out.println("[AdminController] /me userId: " + userId);
+        AdminEntity admin = adminService.getAdminEntityById(userId);
+        return ResponseEntity.ok(new AdminResponseDTO(admin));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {

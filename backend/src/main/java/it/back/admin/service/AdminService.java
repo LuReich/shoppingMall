@@ -27,6 +27,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminService {
 
+    public UserSummaryDTO findByAdminId(String adminId) {
+        AdminEntity admin = adminRepository.findByAdminId(adminId)
+                .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다."));
+        return new UserSummaryDTO(admin);
+    }
+
+    public AdminEntity getAdminEntityById(String adminId) {
+        return adminRepository.findByAdminId(adminId)
+                .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다."));
+    }
+
     private final AdminRepository adminRepository;
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;

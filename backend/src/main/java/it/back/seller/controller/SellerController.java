@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.service.SellerService;
+import it.back.seller.repository.SellerRepository;
+import it.back.seller.entity.SellerEntity;
+import it.back.seller.dto.SellerResponseDTO;
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequestMapping("/api/seller")
@@ -22,6 +27,16 @@ import lombok.RequiredArgsConstructor;
 public class SellerController {
 
     private final SellerService sellerService;
+    private final SellerRepository sellerRepository;
+
+    @GetMapping("/me")
+    public ResponseEntity<SellerResponseDTO> getMyInfo(Authentication authentication) {
+        String userId = authentication.getName();
+        System.out.println("[SellerController] /me userId: " + userId);
+        SellerEntity seller = sellerRepository.findBySellerId(userId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + userId));
+        return ResponseEntity.ok(new SellerResponseDTO(seller));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {
