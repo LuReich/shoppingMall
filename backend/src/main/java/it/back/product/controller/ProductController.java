@@ -30,6 +30,7 @@ public class ProductController {
     private final ProductService productService;
     // ...existing code...
 
+    // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, 만약 로그인한 상태에서 안된다면 긴급 연락 해주세요
     @GetMapping("/list")
     public ResponseEntity<PageResponseDTO<ProductDTO>> getAllProducts(
             @PageableDefault(size = 10) Pageable pageable,
@@ -37,6 +38,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(pageable, categoryId));
     }
 
+    // 해당 product_id 보기, 사용 용도 미정
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         ProductDTO dto = productService.getProductById(id);
@@ -46,17 +48,20 @@ public class ProductController {
         return ResponseEntity.ok(dto);
     }
 
+    // 상품 등록 용도인데 미구현
     @PostMapping
     public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
         return ResponseEntity.ok(productService.saveProduct(product));
     }
 
+    // 상품 삭제 용인데 미사용 권장
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
+    // 상품 상세 정보 불러오기
     @GetMapping("/{id}/detail")
     public ResponseEntity<ProductDetailDTO> getProductDetail(@PathVariable("id") Long id) {
         ProductDetailDTO dto = productService.getProductDetail(id);
@@ -66,6 +71,7 @@ public class ProductController {
         return ResponseEntity.ok(dto);
     }
 
+    // 일단 넣어놓기만 한 거라 미사용 권장
     @PostMapping("/{id}/detail")
     public ResponseEntity<ProductDetailEntity> createOrUpdateProductDetail(@PathVariable Long id,
             @RequestBody ProductDetailEntity detail) {

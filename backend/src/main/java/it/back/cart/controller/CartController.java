@@ -35,6 +35,7 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCartList(uid));
     }
 
+    // 로그인한 buyer 상품 카트 추가용
     @PostMapping("/add")
     public ResponseEntity<Map<String, String>> addToCart(@RequestBody CartDTO dto, Authentication authentication) {
         String loginId = (String) authentication.getPrincipal();
@@ -60,6 +61,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
+    // buyer의 카트 안에 있는 상품 수량 변경 용
     @PatchMapping("/{cartId}")
     public ResponseEntity<Map<String, String>> updateCartQuantity(
             @PathVariable Long cartId,
@@ -91,6 +93,7 @@ public class CartController {
         }
     }
 
+    // 개별 카트 삭제용
     @DeleteMapping("/{cartId}")
     public ResponseEntity<Map<String, String>> removeFromCart(@PathVariable Long cartId, Authentication authentication) {
         String loginId = (String) authentication.getPrincipal();
@@ -106,6 +109,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
+    // 체크박스 선택된 카트 삭제용인데 잘 써질지를 모르겠네요
     @DeleteMapping("/selected")
     public ResponseEntity<Map<String, String>> removeFromCartAtOnce(@RequestBody List<Long> cartIds, Authentication authentication) {
         String loginId = (String) authentication.getPrincipal();
