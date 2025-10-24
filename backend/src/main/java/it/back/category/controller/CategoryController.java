@@ -23,8 +23,8 @@ public class CategoryController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategoryFlatList() {
-        List<CategoryDTO> flatList = categoryService.getCategoryFlatList();
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategoryList() {
+        List<CategoryDTO> flatList = categoryService.getCategoryList();
         
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(flatList));
     }
