@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
+import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
@@ -52,11 +53,24 @@ public class BuyerService {
 
     public List<BuyerDTO> getAllBuyers() {
         return buyerRepository.findAll().stream().map(entity -> {
-            BuyerDTO dto = new BuyerDTO();
-            dto.setBuyerId(entity.getBuyerId());
-            dto.setNickname(entity.getNickname());
-            // 필요한 필드 추가
-            return dto;
+            BuyerDTO buyerDto = new BuyerDTO();
+            buyerDto.setBuyerUid(entity.getBuyerUid());
+            buyerDto.setBuyerId(entity.getBuyerId());
+            buyerDto.setNickname(entity.getNickname());
+            buyerDto.setBuyerEmail(entity.getBuyerEmail());
+            buyerDto.setCreateAt(entity.getCreateAt());
+            buyerDto.setUpdateAt(entity.getUpdateAt());
+            buyerDto.setIsActive(entity.isActive());
+            buyerDto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
+            buyerDto.setWithdrawalReason(entity.getWithdrawalReason());
+            if (entity.getBuyerDetail() != null) {
+                buyerDto.setPhone(entity.getBuyerDetail().getPhone());
+                buyerDto.setAddress(entity.getBuyerDetail().getAddress());
+                buyerDto.setAddressDetail(entity.getBuyerDetail().getAddressDetail());
+                buyerDto.setBirth(entity.getBuyerDetail().getBirth());
+                buyerDto.setGender(entity.getBuyerDetail().getGender());
+            }
+            return buyerDto;
         }).collect(Collectors.toList());
     }
 
@@ -121,19 +135,19 @@ public class BuyerService {
     }
 
     @Transactional
-    public BuyerEntity registerBuyer(BuyerDTO buyerDTO) {
+    public BuyerEntity registerBuyer(BuyerRegisterDTO buyerRegisterDto) {
         BuyerEntity buyer = new BuyerEntity();
-        buyer.setBuyerId(buyerDTO.getBuyerId());
-        buyer.setPassword(passwordEncoder.encode(buyerDTO.getPassword())); // Hashing added
-        buyer.setNickname(buyerDTO.getNickname());
-        buyer.setBuyerEmail(buyerDTO.getBuyerEmail());
+        buyer.setBuyerId(buyerRegisterDto.getBuyerId());
+        buyer.setPassword(passwordEncoder.encode(buyerRegisterDto.getPassword())); // Hashing added
+        buyer.setNickname(buyerRegisterDto.getNickname());
+        buyer.setBuyerEmail(buyerRegisterDto.getBuyerEmail());
 
         BuyerDetailEntity detail = new BuyerDetailEntity();
-        detail.setPhone(buyerDTO.getPhone());
-        detail.setAddress(buyerDTO.getAddress());
-        detail.setAddressDetail(buyerDTO.getAddressDetail());
-        detail.setBirth(buyerDTO.getBirth());
-        detail.setGender(buyerDTO.getGender());
+        detail.setPhone(buyerRegisterDto.getPhone());
+        detail.setAddress(buyerRegisterDto.getAddress());
+        detail.setAddressDetail(buyerRegisterDto.getAddressDetail());
+        detail.setBirth(buyerRegisterDto.getBirth());
+        detail.setGender(buyerRegisterDto.getGender());
 
         detail.setBuyer(buyer);
         buyer.setBuyerDetail(detail);

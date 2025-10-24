@@ -59,7 +59,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/seller/register", "/api/v1/seller/login").permitAll()
                 .requestMatchers("/api/v1/admin/login").permitAll()
                 .requestMatchers("/api/v1/seller/public/**").permitAll()
-                // /me 엔드포인트 권한 명시
+                .requestMatchers("/api/v1/review/write").hasRole("BUYER")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/review/{reviewId}").hasRole("BUYER")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/review/{reviewId}").hasRole("BUYER")
                 .requestMatchers("/api/v1/buyer/me").hasRole("BUYER")
                 .requestMatchers("/api/v1/seller/me").hasRole("SELLER")
                 .requestMatchers("/api/v1/admin/me").hasRole("ADMIN")
@@ -81,10 +83,10 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
         config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:4000")); // Add
-                                                                                                                      // frontend
-                                                                                                                      // dev
-                                                                                                                      // server
-                                                                                                                      // port
+        // frontend
+        // dev
+        // server
+        // port
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 

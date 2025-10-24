@@ -1,10 +1,11 @@
 package it.back.product.controller;
 
-import org.springframework.http.HttpStatus;
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import it.back.common.dto.ApiResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import it.back.common.dto.ApiResponse;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.service.ProductService;
+import it.back.review.dto.ReviewDTO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,20 +38,21 @@ public class ProductController {
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(name = "categoryId", required = false) Integer categoryId) {
 
+        PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageable, categoryId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.ok(productService.getAllProducts(pageable, categoryId)));
+                .body(ApiResponse.ok(productPageDto));
     }
 
     // 해당 product_id 보기, 사용 용도 미정
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductDTO>> getProductById(@PathVariable Long id) {
 
-        ProductDTO dto = productService.getProductById(id);
-        if (dto == null) {
+        ProductDTO productDto = productService.getProductById(id);
+        if (productDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productDto));
     }
 
     // 상품 등록 용도인데 미구현
@@ -67,12 +72,21 @@ public class ProductController {
     @GetMapping("/{id}/detail")
     public ResponseEntity<ApiResponse<ProductDetailDTO>> getProductDetail(@PathVariable("id") Long id) {
 
-        ProductDetailDTO dto = productService.getProductDetail(id);
-        if (dto == null) {
+        ProductDetailDTO productDetailDto = productService.getProductDetail(id);
+        if (productDetailDto == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productDetailDto));
+    }
+
+    // 상품별 리뷰 목록 조회 (페이지네이션 포함)
+    @GetMapping("/{productId}/review")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ReviewDTO>>> getProductReviews(
+            @PathVariable Long productId,
+            @PageableDefault(size = 10) Pageable pageable) {
+        PageResponseDTO<ReviewDTO> reviewPageDto = productService.getProductReviews(productId, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(reviewPageDto));
     }
 
     // 일단 넣어놓기만 한 거라 미사용 권장

@@ -32,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
     private final AdminService adminService;
-    private final SellerService sellerService;
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
 
@@ -74,7 +73,6 @@ public class AdminController {
     // responseBody.put("token", "Bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
-
     // admin 전용 buyer 리스트 불러오기 회원 보기 리스트 관리자 페이지 전용
     @GetMapping("/buyer/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<BuyerResponseDTO>>> getAllBuyers(
@@ -86,8 +84,8 @@ public class AdminController {
     @GetMapping("/buyer/{buyerUid}/detail")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> getBuyerDetail(@PathVariable Long buyerUid) {
         BuyerResponseDTO dto = buyerRepository.findById(buyerUid)
-            .map(BuyerResponseDTO::new)
-            .orElse(null);
+                .map(BuyerResponseDTO::new)
+                .orElse(null);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
     }
 
@@ -102,8 +100,8 @@ public class AdminController {
     @GetMapping("/seller/{sellerUid}/detail")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> getSellerDetail(@PathVariable Long sellerUid) {
         SellerResponseDTO dto = sellerRepository.findById(sellerUid)
-            .map(SellerResponseDTO::new)
-            .orElse(null);
+                .map(SellerResponseDTO::new)
+                .orElse(null);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
     }
 

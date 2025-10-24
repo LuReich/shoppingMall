@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
+import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.buyer.service.BuyerService;
@@ -70,13 +71,7 @@ public class BuyerController {
     // responseBody.put("token", "bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
-
     // 그냥 있는 코드 권한 때문에 못씁니다.
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<BuyerDTO>>> getAllBuyers() {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(buyerService.getAllBuyers()));
-    }
-
     // 회원 정보 부분 수정 (비밀번호, 닉네임, 전화번호, 주소, 상세주소, 생년월일, 성별)
     @PatchMapping("/{buyerUid}")
     public ResponseEntity<ApiResponse<String>> updateBuyer(
@@ -93,8 +88,8 @@ public class BuyerController {
 
     // buyer 회원가입 용
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> registerBuyer(@RequestBody BuyerDTO buyerDto) {
-        buyerService.registerBuyer(buyerDto);
+    public ResponseEntity<ApiResponse<String>> registerBuyer(@RequestBody BuyerRegisterDTO buyerRegisterDto) {
+        buyerService.registerBuyer(buyerRegisterDto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Buyer registered successfully"));
     }
 

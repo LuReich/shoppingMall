@@ -1,25 +1,18 @@
 package it.back.buyer.dto;
 
 import java.time.LocalDate;
-
 import it.back.buyer.entity.BuyerDetailEntity.Gender;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BuyerDTO {
+public class BuyerRegisterDTO {
 
-    private Long buyerUid;
     private String buyerId;
+    private String password;
     private String nickname;
     private String buyerEmail;
-    private java.time.LocalDateTime createAt;
-    private java.time.LocalDateTime updateAt;
-    private Boolean isActive;
-    private String withdrawalStatus;
-    private String withdrawalReason;
-    // BuyerDetail info
     private String phone;
     private String address;
     private String addressDetail;
