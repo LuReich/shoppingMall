@@ -6,21 +6,21 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import it.back.buyer.dto.BuyerDTO;
+import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
+import it.back.buyer.entity.BuyerEntity;
+import it.back.buyer.repository.BuyerRepository;
 import it.back.buyer.service.BuyerService;
 import it.back.common.dto.LoginRequestDTO;
-import it.back.buyer.repository.BuyerRepository;
-import it.back.buyer.entity.BuyerEntity;
-import it.back.buyer.dto.BuyerResponseDTO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,6 +31,7 @@ public class BuyerController {
     private final BuyerService buyerService;
     private final BuyerRepository buyerRepository;
 
+    // 로그인한 buyer 가 자기 정보 보는 용도
     @GetMapping("/me")
     public ResponseEntity<BuyerResponseDTO> getMyInfo(Authentication authentication) {
         String userId = authentication.getName();
@@ -40,6 +41,7 @@ public class BuyerController {
         return ResponseEntity.ok(new BuyerResponseDTO(buyer));
     }
 
+    // buyer 전용 로그인
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {
         String jwt = buyerService.login(dto);
@@ -66,6 +68,8 @@ public class BuyerController {
     //     responseBody.put("token", "bearer: " + jwt);
     //     return ResponseEntity.ok().body(responseBody);
     // }
+
+    // 그냥 있는 코드 권한 때문에 못씁니다.
     @GetMapping("/list")
     public ResponseEntity<List<BuyerDTO>> getAllBuyers() {
         return ResponseEntity.ok(buyerService.getAllBuyers());
@@ -85,6 +89,7 @@ public class BuyerController {
         }
     }
 
+    // buyer 회원가입 용
     @PostMapping("/register")
     public ResponseEntity<String> registerBuyer(@RequestBody BuyerDTO buyerDto) {
         buyerService.registerBuyer(buyerDto);

@@ -58,6 +58,7 @@ public class SecurityConfig {
         .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
         .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
         .requestMatchers("/api/admin/login").permitAll()
+        .requestMatchers("/api/seller/public/**").permitAll()
         // /me 엔드포인트 권한 명시
         .requestMatchers("/api/buyer/me").hasRole("BUYER")
         .requestMatchers("/api/seller/me").hasRole("SELLER")

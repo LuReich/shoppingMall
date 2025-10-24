@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
+import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SellerService {
+
 
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
@@ -79,5 +81,27 @@ public class SellerService {
         seller.setSellerDetail(detail);
 
         return sellerRepository.save(seller);
+    }
+
+    // 공개용 판매자 정보 조회
+    public it.back.seller.dto.SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
+        SellerEntity seller = sellerRepository.findById(sellerUid)
+            .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
+        SellerDetailEntity detail = seller.getSellerDetail();
+        SellerPublicDTO dto = new SellerPublicDTO();
+        dto.setSellerUid(seller.getSellerUid());
+        dto.setCompanyName(seller.getCompanyName());
+        dto.setSellerEmail(seller.getSellerEmail());
+        dto.setCreateAt(seller.getCreateAt());
+        dto.setVerified(seller.isVerified());
+        dto.setActive(seller.isActive());
+        if (detail != null) {
+            dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
+            dto.setCompanyInfo(detail.getCompanyInfo());
+            dto.setPhone(detail.getPhone());
+            dto.setAddress(detail.getAddress());
+            dto.setAddressDetail(detail.getAddressDetail());
+        }
+        return dto;
     }
 }

@@ -36,6 +36,7 @@ public class AdminController {
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
 
+    // 로그인 한 admin 이 자신의 정보 불러오기 마이페이지 개인 정보 수정용
     @GetMapping("/me")
     public ResponseEntity<AdminResponseDTO> getMyInfo(Authentication authentication) {
         String userId = authentication.getName();
@@ -44,6 +45,7 @@ public class AdminController {
         return ResponseEntity.ok(new AdminResponseDTO(admin));
     }
 
+    // admin 전용 로그인
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO dto) {
         String jwt = adminService.login(dto);
@@ -72,11 +74,15 @@ public class AdminController {
     // responseBody.put("token", "Bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
+
+
+    // admin 전용 buyer 리스트 불러오기 회원 보기 리스트 관리자 페이지 전용
     @GetMapping("/buyer/list")
     public ResponseEntity<PageResponseDTO<BuyerResponseDTO>> getAllBuyers(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(adminService.findAllBuyers(pageable));
     }
 
+    // buyer 상세 보기 아마도 회원 리스트 표? 에서 링크 넣고 싶은데 넣고 이걸로 요청 보내서 상세 정보 보기
     @GetMapping("/buyer/{buyerUid}/detail")
     public ResponseEntity<BuyerResponseDTO> getBuyerDetail(@PathVariable Long buyerUid) {
         return buyerRepository.findById(buyerUid)
@@ -85,11 +91,13 @@ public class AdminController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // seller 리스트 보기 관리자 페이지 전용
     @GetMapping("/seller/list")
     public ResponseEntity<PageResponseDTO<SellerResponseDTO>> getAllSellers(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(adminService.findAllSellers(pageable));
     }
 
+    // seller 상세 정보 보기
     @GetMapping("/seller/{sellerUid}/detail")
     public ResponseEntity<SellerResponseDTO> getSellerDetail(@PathVariable Long sellerUid) {
         return sellerRepository.findById(sellerUid)
