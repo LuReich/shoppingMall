@@ -10,6 +10,6 @@ public class ReviewDTO {
     private Long reviewId;
     private String content;
     private int rating;
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
     private String writer;
 }

@@ -22,7 +22,7 @@ public class ReviewService {
                     dto.setReviewId(review.getReviewId());
                     dto.setContent(review.getContent());
                     dto.setRating(review.getRating());
-                    dto.setCreatedAt(review.getCreatedAt());
+                    dto.setCreateAt(review.getCreateAt());
                     dto.setWriter(review.getWriter());
                     return dto;
                 })
