@@ -1,5 +1,4 @@
 
-
 package it.back.category.controller;
 
 import it.back.category.dto.CategoryDTO;
@@ -21,18 +20,20 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategoryList() {
-        List<CategoryDTO> flatList = categoryService.getCategoryList();
-        
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(flatList));
+
+        List<CategoryDTO> categoryList = categoryService.getCategoryList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(categoryList));
     }
 
     @GetMapping("/tree")
     public ResponseEntity<ApiResponse<List<CategoryTreeResponseDTO>>> getCategoryTree() {
+
         List<CategoryTreeResponseDTO> categoryTree = categoryService.getCategoryTree();
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(categoryTree));
+        
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(categoryTree));
     }
-    
+
 }
