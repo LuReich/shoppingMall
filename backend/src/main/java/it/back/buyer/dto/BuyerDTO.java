@@ -1,8 +1,5 @@
 package it.back.buyer.dto;
 
-import java.time.LocalDate;
-
-import it.back.buyer.entity.BuyerDetailEntity.Gender;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,10 +16,4 @@ public class BuyerDTO {
     private Boolean isActive;
     private String withdrawalStatus;
     private String withdrawalReason;
-    // BuyerDetail info
-    private String phone;
-    private String address;
-    private String addressDetail;
-    private LocalDate birth;
-    private Gender gender;
 }

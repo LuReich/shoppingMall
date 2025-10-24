@@ -18,10 +18,12 @@ import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.service.AdminService;
 import it.back.buyer.dto.BuyerResponseDTO;
+import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.seller.dto.SellerResponseDTO;
+import it.back.seller.dto.SellerDTO;
 import it.back.seller.repository.SellerRepository;
 import it.back.seller.service.SellerService;
 import lombok.RequiredArgsConstructor;
@@ -75,7 +77,7 @@ public class AdminController {
     // }
     // admin 전용 buyer 리스트 불러오기 회원 보기 리스트 관리자 페이지 전용
     @GetMapping("/buyer/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<BuyerResponseDTO>>> getAllBuyers(
+    public ResponseEntity<ApiResponse<PageResponseDTO<BuyerDTO>>> getAllBuyers(
             @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageable)));
     }
@@ -91,7 +93,7 @@ public class AdminController {
 
     // seller 리스트 보기 관리자 페이지 전용
     @GetMapping("/seller/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<SellerResponseDTO>>> getAllSellers(
+    public ResponseEntity<ApiResponse<PageResponseDTO<SellerDTO>>> getAllSellers(
             @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageable)));
     }

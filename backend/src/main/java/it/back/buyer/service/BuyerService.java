@@ -63,13 +63,6 @@ public class BuyerService {
             buyerDto.setIsActive(entity.isActive());
             buyerDto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
             buyerDto.setWithdrawalReason(entity.getWithdrawalReason());
-            if (entity.getBuyerDetail() != null) {
-                buyerDto.setPhone(entity.getBuyerDetail().getPhone());
-                buyerDto.setAddress(entity.getBuyerDetail().getAddress());
-                buyerDto.setAddressDetail(entity.getBuyerDetail().getAddressDetail());
-                buyerDto.setBirth(entity.getBuyerDetail().getBirth());
-                buyerDto.setGender(entity.getBuyerDetail().getGender());
-            }
             return buyerDto;
         }).collect(Collectors.toList());
     }

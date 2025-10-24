@@ -39,13 +39,7 @@ public class SellerService {
             sellerDto.setWithdrawalReason(entity.getWithdrawalReason());
             sellerDto.setCreateAt(entity.getCreateAt());
             sellerDto.setUpdateAt(entity.getUpdateAt());
-            if (entity.getSellerDetail() != null) {
-                sellerDto.setBusinessRegistrationNumber(entity.getSellerDetail().getBusinessRegistrationNumber());
-                sellerDto.setCompanyInfo(entity.getSellerDetail().getCompanyInfo());
-                sellerDto.setPhone(entity.getSellerDetail().getPhone());
-                sellerDto.setAddress(entity.getSellerDetail().getAddress());
-                sellerDto.setAddressDetail(entity.getSellerDetail().getAddressDetail());
-            }
+
             return sellerDto;
         }).collect(Collectors.toList());
     }

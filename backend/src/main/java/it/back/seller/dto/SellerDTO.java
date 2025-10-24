@@ -17,10 +17,4 @@ public class SellerDTO {
     private String withdrawalReason;
     private java.time.LocalDateTime createAt;
     private java.time.LocalDateTime updateAt;
-    // SellerDetail info
-    private String businessRegistrationNumber;
-    private String phone;
-    private String address;
-    private String addressDetail;
-    private String companyInfo;
 }
