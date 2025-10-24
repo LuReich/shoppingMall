@@ -1,9 +1,13 @@
 /* ================================================================= */
+
 /* 3조 도소매업 사이트: 최종 데이터베이스 생성 및 가짜 데이터 삽입 스크립트 (MariaDB) */
 /* (PK를 _uid로, 로그인 ID를 _id로 변경, 오류 수정 및 DROP/CREATE/INSERT 통합) */
 /* ================================================================= */
 
+
 /* 기존 테이블이 존재하면 삭제 (역순으로 삭제하여 FK 제약 조건 문제 방지) */
+SET FOREIGN_KEY_CHECKS = 0;
+
 DROP TABLE IF EXISTS `faq`;
 DROP TABLE IF EXISTS `seller_inquiry`;
 DROP TABLE IF EXISTS `buyer_inquiry`;
@@ -11,7 +15,7 @@ DROP TABLE IF EXISTS `ad`;
 DROP TABLE IF EXISTS `product_like`;
 DROP TABLE IF EXISTS `review`;
 DROP TABLE IF EXISTS `order_detail`;
-DROP TABLE IF EXISTS `order`; /* 'order'는 예약어이므로 백틱으로 감쌈 */
+DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `cart`;
 DROP TABLE IF EXISTS `product_image`;
 DROP TABLE IF EXISTS `product_detail`;
@@ -172,10 +176,9 @@ create table cart (
 
 
 /* ----------------------------------------------------- */
-/* table `order` (주문 테이블)                             */
+/* table `orders` (주문 테이블)                             */
 /* ----------------------------------------------------- */
-/* 'order'는 SQL 예약어이므로 백틱(`)으로 감싸줍니다. */
-create table `order` (
+create table orders (
     order_id bigint primary key auto_increment comment '주문 고유 번호',
     buyer_uid bigint not null comment '구매자 고유 식별자 (FK)',
     total_price int unsigned not null comment '총 결제 금액',
@@ -200,7 +203,7 @@ create table order_detail (
     quantity int unsigned not null comment '주문 수량',
     price_per_item int unsigned not null comment '주문 시점의 개당 가격',
     order_detail_status enum('PAID', 'SHIPPING', 'DELIVERED', 'CANCELED') not null default 'PAID' comment '주문상세별 상태(배송/처리)',
-    foreign key (order_id) references `order`(order_id) on delete cascade,
+    foreign key (order_id) references orders(order_id) on delete cascade,
     foreign key (product_id) references product(product_id),
     foreign key (seller_uid) references seller(seller_uid)
 ) comment '주문 상세 정보 테이블 (판매자 기준 조회 최적화)';
@@ -313,6 +316,11 @@ create table faq (
 ) comment '자주 묻는 질문(FAQ) 테이블';
 
 
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+
 /* ================================================================= */
 /* 3조 도소매업 사이트: 가짜 데이터 삽입 스크립트 (MariaDB)          */
 /* ================================================================= */
@@ -403,7 +411,7 @@ INSERT INTO cart (buyer_uid, product_id, quantity) VALUES
 
 
 /* 주문 (order) - 백틱(`)으로 테이블 이름 감싸기 */
-INSERT INTO `order` (buyer_uid, total_price, recipient_name, recipient_address, recipient_address_detail, order_status) VALUES
+INSERT INTO orders (buyer_uid, total_price, recipient_name, recipient_address, recipient_address_detail, order_status) VALUES
 (1, 55000, '김철수', '서울특별시 강남구 테헤란로 123', '101호', 'DELIVERED'), /* 구매자1의 완료된 주문 (상품3 1개) */
 (2, 68000, '박영희', '경기도 성남시 분당구 판교역로 456', '202동 303호', 'SHIPPING'); /* 구매자2의 배송 중인 주문 (상품4 1개) */
 
