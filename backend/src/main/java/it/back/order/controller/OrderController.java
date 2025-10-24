@@ -29,28 +29,28 @@ public class OrderController {
 
     // 주문 생성 시 buyerUid를 인증에서 추출해 DTO에 세팅
     // {
-    //     "buyerUid": 1,
-    //     "totalPrice": 55000,
-    //     "recipientName": "김철수",
-    //     "recipientAddress": "서울특별시 강남구 테헤란로 123",
-    //     "recipientAddressDetail": "101호",
-    //     "orderStatus": "PAID",
-    //     "orderDetails": [
-    //         {
-    //             "productId": 3,
-    //             "sellerUid": 2,
-    //             "quantity": 1,
-    //             "pricePerItem": 55000,
-    //             "orderDetailStatus": "PAID"
-    //         }, 
-    //         {
-    //             "productId": 1,
-    //             "sellerUid": 2,
-    //             "quantity": 1,
-    //             "pricePerItem": 55000,
-    //         "orderDetailStatus": "PAID"
-    //         }
-    //     ]
+    // "buyerUid": 1,
+    // "totalPrice": 55000,
+    // "recipientName": "김철수",
+    // "recipientAddress": "서울특별시 강남구 테헤란로 123",
+    // "recipientAddressDetail": "101호",
+    // "orderStatus": "PAID",
+    // "orderDetails": [
+    // {
+    // "productId": 3,
+    // "sellerUid": 2,
+    // "quantity": 1,
+    // "pricePerItem": 55000,
+    // "orderDetailStatus": "PAID"
+    // },
+    // {
+    // "productId": 1,
+    // "sellerUid": 2,
+    // "quantity": 1,
+    // "pricePerItem": 55000,
+    // "orderDetailStatus": "PAID"
+    // }
+    // ]
     // }
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO, Authentication authentication) {
@@ -58,8 +58,7 @@ public class OrderController {
         Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
                 : (Long) details.get("uid");
         orderDTO.setBuyerUid(buyerUid);
-        // 서비스에서 Entity 반환, 컨트롤러에서 DTO 변환 및 응답
-        OrderEntity saved = orderService.createOrder(orderDTO);
-        return ResponseEntity.ok(OrderDTO.from(saved));
+        orderService.createOrder(orderDTO);
+        return ResponseEntity.ok().build();
     }
 }
