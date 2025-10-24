@@ -23,7 +23,18 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    
+    public List<CategoryDTO> getCategoryList() {
+        List<CategoryEntity> allCategories = categoryRepository.findAll();
+        return allCategories.stream().map(entity -> {
+            CategoryDTO dto = new CategoryDTO();
+            dto.setCategoryId(entity.getCategoryId());
+            dto.setCategoryName(entity.getCategoryName());
+            dto.setParentId(entity.getParent() != null ? entity.getParent().getCategoryId() : null);
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+
     public List<Integer> getCategoryWithChild(Integer categoryId) {
         List<CategoryEntity> allCategories = categoryRepository.findAll();
         Map<Integer, CategoryEntity> categoryEntityMap = allCategories.stream()
@@ -58,16 +69,7 @@ public class CategoryService {
         }
         return rootCategories;
     }
-    public List<CategoryDTO> getCategoryList() {
-        List<CategoryEntity> allCategories = categoryRepository.findAll();
-        return allCategories.stream().map(entity -> {
-            CategoryDTO dto = new CategoryDTO();
-            dto.setCategoryId(entity.getCategoryId());
-            dto.setCategoryName(entity.getCategoryName());
-            dto.setParentId(entity.getParent() != null ? entity.getParent().getCategoryId() : null);
-            return dto;
-        }).collect(Collectors.toList());
-    }
+    
 
     private void collectChildCategoryIds(Integer currentCategoryId, Map<Integer, CategoryEntity> categoryEntityMap, Set<Integer> collectedIds) {
         if (currentCategoryId == null || collectedIds.contains(currentCategoryId)) {
