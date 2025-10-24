@@ -55,20 +55,20 @@ public class SecurityConfig {
         http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
-                .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
-                .requestMatchers("/api/admin/login").permitAll()
-                .requestMatchers("/api/seller/public/**").permitAll()
+                .requestMatchers("/api/v1/buyer/register", "/api/v1/buyer/login").permitAll()
+                .requestMatchers("/api/v1/seller/register", "/api/v1/seller/login").permitAll()
+                .requestMatchers("/api/v1/admin/login").permitAll()
+                .requestMatchers("/api/v1/seller/public/**").permitAll()
                 // /me 엔드포인트 권한 명시
-                .requestMatchers("/api/buyer/me").hasRole("BUYER")
-                .requestMatchers("/api/seller/me").hasRole("SELLER")
-                .requestMatchers("/api/admin/me").hasRole("ADMIN")
-                .requestMatchers("/api/cart/**").hasRole("BUYER")
-                .requestMatchers("/api/orders/**").hasRole("BUYER")
-                .requestMatchers("/api/category/**").permitAll()
-                .requestMatchers("/api/product/**").permitAll()
-                .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
-                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+                .requestMatchers("/api/v1/buyer/me").hasRole("BUYER")
+                .requestMatchers("/api/v1/seller/me").hasRole("SELLER")
+                .requestMatchers("/api/v1/admin/me").hasRole("ADMIN")
+                .requestMatchers("/api/v1/cart/**").hasRole("BUYER")
+                .requestMatchers("/api/v1/orders/**").hasRole("BUYER")
+                .requestMatchers("/api/v1/category/**").permitAll()
+                .requestMatchers("/api/v1/product/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/buyer/**").hasAnyRole("BUYER", "ADMIN")
+                .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN")
                 .requestMatchers("/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated());
 

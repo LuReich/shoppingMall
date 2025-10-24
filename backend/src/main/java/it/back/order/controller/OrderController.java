@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -24,6 +24,7 @@ public class OrderController {
         Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
         Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
                 : (Long) details.get("uid");
+
         return ResponseEntity.ok(orderService.getOrdersByBuyerUid(buyerUid));
     }
 
@@ -54,11 +55,13 @@ public class OrderController {
     // }
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO, Authentication authentication) {
+
         Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
         Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
                 : (Long) details.get("uid");
         orderDTO.setBuyerUid(buyerUid);
         orderService.createOrder(orderDTO);
+
         return ResponseEntity.ok().build();
     }
 }

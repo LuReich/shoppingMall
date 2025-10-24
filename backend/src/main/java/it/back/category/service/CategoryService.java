@@ -1,6 +1,8 @@
+
 package it.back.category.service;
 
 import it.back.category.dto.CategoryTreeResponseDTO;
+import it.back.category.dto.CategoryDTO;
 import it.back.category.entity.CategoryEntity;
 import it.back.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +19,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryService {
 
+
+
     private final CategoryRepository categoryRepository;
+
+
 
     public List<CategoryTreeResponseDTO> getCategoryTree() {
         List<CategoryEntity> allCategories = categoryRepository.findAll();
-
         Map<Integer, CategoryTreeResponseDTO> categoryMap = allCategories.stream()
                 .map(CategoryTreeResponseDTO::fromEntity)
                 .collect(Collectors.toMap(CategoryTreeResponseDTO::getCategoryId, dto -> dto));
@@ -40,6 +45,16 @@ public class CategoryService {
             }
         }
         return rootCategories;
+    }
+    public List<CategoryDTO> getCategoryFlatList() {
+        List<CategoryEntity> allCategories = categoryRepository.findAll();
+        return allCategories.stream().map(entity -> {
+            CategoryDTO dto = new CategoryDTO();
+            dto.setCategoryId(entity.getCategoryId());
+            dto.setCategoryName(entity.getCategoryName());
+            dto.setParentId(entity.getParent() != null ? entity.getParent().getCategoryId() : null);
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public List<Integer> getCategoryWithChild(Integer categoryId) {
