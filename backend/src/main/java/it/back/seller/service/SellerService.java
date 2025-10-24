@@ -83,7 +83,7 @@ public class SellerService {
     }
 
     // 공개용 판매자 정보 조회
-    public it.back.seller.dto.SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
+    public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
         SellerEntity seller = sellerRepository.findById(sellerUid)
                 .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
         SellerDetailEntity detail = seller.getSellerDetail();
