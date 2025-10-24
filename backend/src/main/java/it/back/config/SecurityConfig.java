@@ -41,38 +41,38 @@ public class SecurityConfig {
 
     @Bean
     public JWTFilter jwtFilter() {
-    return new JWTFilter(jwtUtils, adminRepository, buyerRepository, sellerRepository);
+        return new JWTFilter(jwtUtils, adminRepository, buyerRepository, sellerRepository);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable)
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .formLogin(AbstractHttpConfigurer::disable)
-        .httpBasic(AbstractHttpConfigurer::disable);
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable);
 
-    http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    http.authorizeHttpRequests(auth -> auth
-        .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
-        .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
-        .requestMatchers("/api/admin/login").permitAll()
-        .requestMatchers("/api/seller/public/**").permitAll()
-        // /me 엔드포인트 권한 명시
-        .requestMatchers("/api/buyer/me").hasRole("BUYER")
-        .requestMatchers("/api/seller/me").hasRole("SELLER")
-        .requestMatchers("/api/admin/me").hasRole("ADMIN")
-        .requestMatchers("/api/cart/**").hasRole("BUYER")
-        .requestMatchers("/api/category/**").permitAll()
-        .requestMatchers("/api/product/**").permitAll()
-        .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
-        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-        .requestMatchers("/**").hasAnyRole("ADMIN")
-        .anyRequest().authenticated()
-    );
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/buyer/register", "/api/buyer/login").permitAll()
+                .requestMatchers("/api/seller/register", "/api/seller/login").permitAll()
+                .requestMatchers("/api/admin/login").permitAll()
+                .requestMatchers("/api/seller/public/**").permitAll()
+                // /me 엔드포인트 권한 명시
+                .requestMatchers("/api/buyer/me").hasRole("BUYER")
+                .requestMatchers("/api/seller/me").hasRole("SELLER")
+                .requestMatchers("/api/admin/me").hasRole("ADMIN")
+                .requestMatchers("/api/cart/**").hasRole("BUYER")
+                .requestMatchers("/api/orders/**").hasRole("BUYER")
+                .requestMatchers("/api/category/**").permitAll()
+                .requestMatchers("/api/product/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/buyer/**").hasAnyRole("BUYER", "ADMIN")
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+                .requestMatchers("/**").hasAnyRole("ADMIN")
+                .anyRequest().authenticated());
 
-    return http.build();
+        return http.build();
     }
 
     @Bean
@@ -80,7 +80,11 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:4000")); // Add frontend dev server port
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:4000")); // Add
+                                                                                                                      // frontend
+                                                                                                                      // dev
+                                                                                                                      // server
+                                                                                                                      // port
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
