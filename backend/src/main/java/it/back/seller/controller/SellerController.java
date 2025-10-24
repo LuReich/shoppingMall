@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
+import it.back.seller.dto.SellerRegisterDTO;
 import it.back.seller.service.SellerService;
 import it.back.seller.repository.SellerRepository;
 import it.back.seller.entity.SellerEntity;
@@ -68,7 +72,6 @@ public class SellerController {
     // responseBody.put("token", "bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
-
     // 공개용 판매자 정보 조회 (비로그인/로그인 모두 접근 가능)
     @GetMapping("/public/{sellerUid}")
     public ResponseEntity<ApiResponse<SellerPublicDTO>> getSellerPublicInfo(@PathVariable Long sellerUid) {
@@ -76,15 +79,10 @@ public class SellerController {
     }
 
     // 테스트용 미사용 권장
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<SellerDTO>>> getAllSellers() {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerService.getAllSellers()));
-    }
-
     // seller 등록용
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> registerSeller(@RequestBody SellerDTO sellerDTO) {
-        sellerService.registerSeller(sellerDTO);
+    public ResponseEntity<ApiResponse<String>> registerSeller(@RequestBody SellerRegisterDTO sellerRegisterDto) {
+        sellerService.registerSeller(sellerRegisterDto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Seller registered successfully"));
     }
 }

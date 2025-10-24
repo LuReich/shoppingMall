@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
+import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.JWTUtils;
+import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
@@ -58,12 +60,22 @@ public class AdminService {
     // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
     // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
      */
-
-
-    public PageResponseDTO<BuyerResponseDTO> findAllBuyers(Pageable pageable) {
+    public PageResponseDTO<BuyerDTO> findAllBuyers(Pageable pageable) {
         Page<BuyerEntity> page = buyerRepository.findAll(pageable);
-        List<BuyerResponseDTO> buyerList = page.getContent().stream()
-                .map(BuyerResponseDTO::new)
+        List<BuyerDTO> buyerList = page.getContent().stream()
+                .map(entity -> {
+                    BuyerDTO dto = new BuyerDTO();
+                    dto.setBuyerUid(entity.getBuyerUid());
+                    dto.setBuyerId(entity.getBuyerId());
+                    dto.setNickname(entity.getNickname());
+                    dto.setBuyerEmail(entity.getBuyerEmail());
+                    dto.setCreateAt(entity.getCreateAt());
+                    dto.setUpdateAt(entity.getUpdateAt());
+                    dto.setIsActive(entity.isActive());
+                    dto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
+                    dto.setWithdrawalReason(entity.getWithdrawalReason());
+                    return dto;
+                })
                 .collect(Collectors.toList());
         return new PageResponseDTO<>(
                 buyerList,
@@ -75,10 +87,23 @@ public class AdminService {
         );
     }
 
-    public PageResponseDTO<SellerResponseDTO> findAllSellers(Pageable pageable) {
+    public PageResponseDTO<SellerDTO> findAllSellers(Pageable pageable) {
         Page<SellerEntity> page = sellerRepository.findAll(pageable);
-        List<SellerResponseDTO> sellerList = page.getContent().stream()
-                .map(SellerResponseDTO::new)
+        List<SellerDTO> sellerList = page.getContent().stream()
+                .map(entity -> {
+                    SellerDTO dto = new SellerDTO();
+                    dto.setSellerUid(entity.getSellerUid());
+                    dto.setSellerId(entity.getSellerId());
+                    dto.setSellerEmail(entity.getSellerEmail());
+                    dto.setCompanyName(entity.getCompanyName());
+                    dto.setIsVerified(entity.isVerified());
+                    dto.setIsActive(entity.isActive());
+                    dto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
+                    dto.setWithdrawalReason(entity.getWithdrawalReason());
+                    dto.setCreateAt(entity.getCreateAt());
+                    dto.setUpdateAt(entity.getUpdateAt());
+                    return dto;
+                })
                 .collect(Collectors.toList());
         return new PageResponseDTO<>(
                 sellerList,

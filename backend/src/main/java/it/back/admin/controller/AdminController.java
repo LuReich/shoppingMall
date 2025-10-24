@@ -18,10 +18,12 @@ import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.service.AdminService;
 import it.back.buyer.dto.BuyerResponseDTO;
+import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.seller.dto.SellerResponseDTO;
+import it.back.seller.dto.SellerDTO;
 import it.back.seller.repository.SellerRepository;
 import it.back.seller.service.SellerService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
     private final AdminService adminService;
-    private final SellerService sellerService;
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
 
@@ -74,10 +75,9 @@ public class AdminController {
     // responseBody.put("token", "Bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
-
     // admin 전용 buyer 리스트 불러오기 회원 보기 리스트 관리자 페이지 전용
     @GetMapping("/buyer/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<BuyerResponseDTO>>> getAllBuyers(
+    public ResponseEntity<ApiResponse<PageResponseDTO<BuyerDTO>>> getAllBuyers(
             @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageable)));
     }
@@ -86,14 +86,14 @@ public class AdminController {
     @GetMapping("/buyer/{buyerUid}/detail")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> getBuyerDetail(@PathVariable Long buyerUid) {
         BuyerResponseDTO dto = buyerRepository.findById(buyerUid)
-            .map(BuyerResponseDTO::new)
-            .orElse(null);
+                .map(BuyerResponseDTO::new)
+                .orElse(null);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
     }
 
     // seller 리스트 보기 관리자 페이지 전용
     @GetMapping("/seller/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<SellerResponseDTO>>> getAllSellers(
+    public ResponseEntity<ApiResponse<PageResponseDTO<SellerDTO>>> getAllSellers(
             @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageable)));
     }
@@ -102,8 +102,8 @@ public class AdminController {
     @GetMapping("/seller/{sellerUid}/detail")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> getSellerDetail(@PathVariable Long sellerUid) {
         SellerResponseDTO dto = sellerRepository.findById(sellerUid)
-            .map(SellerResponseDTO::new)
-            .orElse(null);
+                .map(SellerResponseDTO::new)
+                .orElse(null);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
     }
 

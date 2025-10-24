@@ -2,6 +2,7 @@ package it.back.seller.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
+import it.back.seller.dto.SellerRegisterDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
@@ -24,13 +26,21 @@ public class SellerService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
 
-    public List<SellerDTO> getAllSellers() {
-        return sellerRepository.findAll().stream().map(entity -> {
-            SellerDTO dto = new SellerDTO();
-            dto.setSellerId(entity.getSellerId());
-            dto.setCompanyName(entity.getCompanyName());
-            // 필요한 필드 추가
-            return dto;
+    public List<SellerDTO> getAllSellers(Sort sort) {
+        return sellerRepository.findAll(sort).stream().map(entity -> {
+            SellerDTO sellerDto = new SellerDTO();
+            sellerDto.setSellerUid(entity.getSellerUid());
+            sellerDto.setSellerId(entity.getSellerId());
+            sellerDto.setSellerEmail(entity.getSellerEmail());
+            sellerDto.setCompanyName(entity.getCompanyName());
+            sellerDto.setIsVerified(entity.isVerified());
+            sellerDto.setIsActive(entity.isActive());
+            sellerDto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
+            sellerDto.setWithdrawalReason(entity.getWithdrawalReason());
+            sellerDto.setCreateAt(entity.getCreateAt());
+            sellerDto.setUpdateAt(entity.getUpdateAt());
+
+            return sellerDto;
         }).collect(Collectors.toList());
     }
 
@@ -62,19 +72,19 @@ public class SellerService {
      * // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
      */
     @Transactional
-    public SellerEntity registerSeller(SellerDTO sellerDTO) {
+    public SellerEntity registerSeller(SellerRegisterDTO sellerRegisterDto) {
         SellerEntity seller = new SellerEntity();
-        seller.setSellerId(sellerDTO.getSellerId());
-        seller.setPassword(passwordEncoder.encode(sellerDTO.getPassword())); // Hashing added
-        seller.setCompanyName(sellerDTO.getCompanyName());
-        seller.setSellerEmail(sellerDTO.getSellerEmail());
+        seller.setSellerId(sellerRegisterDto.getSellerId());
+        seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword())); // Hashing added
+        seller.setCompanyName(sellerRegisterDto.getCompanyName());
+        seller.setSellerEmail(sellerRegisterDto.getSellerEmail());
 
         SellerDetailEntity detail = new SellerDetailEntity();
-        detail.setBusinessRegistrationNumber(sellerDTO.getBusinessRegistrationNumber());
-        detail.setCompanyInfo(sellerDTO.getCompanyInfo()); // 업체 상세 소개 저장
-        detail.setPhone(sellerDTO.getPhone());
-        detail.setAddress(sellerDTO.getAddress());
-        detail.setAddressDetail(sellerDTO.getAddressDetail());
+        detail.setBusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber());
+        detail.setCompanyInfo(sellerRegisterDto.getCompanyInfo()); // 업체 상세 소개 저장
+        detail.setPhone(sellerRegisterDto.getPhone());
+        detail.setAddress(sellerRegisterDto.getAddress());
+        detail.setAddressDetail(sellerRegisterDto.getAddressDetail());
 
         detail.setSeller(seller);
         seller.setSellerDetail(detail);

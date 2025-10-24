@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class SellerResponseDTO {
+
     private Long sellerUid;
+
     private String sellerId;
     private String companyName;
     private String sellerEmail;
@@ -25,14 +27,14 @@ public class SellerResponseDTO {
     private String addressDetail;
 
     public SellerResponseDTO(SellerEntity seller) {
-    this.sellerUid = seller.getSellerUid();
-    this.sellerId = seller.getSellerId();
-    this.companyName = seller.getCompanyName();
-    this.sellerEmail = seller.getSellerEmail();
-    this.isVerified = seller.isVerified();
-    this.isActive = seller.isActive();
-    this.createAt = seller.getCreateAt();
-    this.updateAt = seller.getUpdateAt();
+        this.sellerUid = seller.getSellerUid();
+        this.sellerId = seller.getSellerId();
+        this.companyName = seller.getCompanyName();
+        this.sellerEmail = seller.getSellerEmail();
+        this.isVerified = seller.isVerified();
+        this.isActive = seller.isActive();
+        this.createAt = seller.getCreateAt();
+        this.updateAt = seller.getUpdateAt();
 
         if (seller.getSellerDetail() != null) {
             this.businessRegistrationNumber = seller.getSellerDetail().getBusinessRegistrationNumber();

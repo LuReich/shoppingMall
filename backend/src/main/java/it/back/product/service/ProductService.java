@@ -8,14 +8,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import it.back.category.service.CategoryService;
+import it.back.common.pagination.PageResponseDTO;
+import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductDetailDTO;
 import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductDetailRepository;
 import it.back.product.repository.ProductRepository;
-import it.back.common.pagination.PageResponseDTO;
-import it.back.product.dto.ProductDTO;
-import it.back.product.dto.ProductDetailDTO;
 import it.back.review.service.ReviewService;
+import it.back.review.dto.ReviewDTO;
+import it.back.review.entity.ReviewEntity;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -26,6 +28,35 @@ public class ProductService {
     private final ProductDetailRepository productDetailRepository;
     private final CategoryService categoryService;
     private final ReviewService reviewService;
+
+    // 상품별 리뷰 목록 조회 (페이지네이션)
+    public PageResponseDTO<ReviewDTO> getProductReviews(Long productId, Pageable pageable) {
+        Page<ReviewEntity> page = reviewService.getReviewsByProductIdPaged(productId, pageable);
+        List<ReviewDTO> dtos = page.getContent().stream().map(review -> {
+            ReviewDTO dto = new ReviewDTO();
+            dto.setReviewId(review.getReviewId());
+            dto.setContent(review.getContent());
+            dto.setRating(review.getRating());
+            dto.setCreateAt(review.getCreateAt());
+            dto.setUpdateAt(review.getUpdateAt());
+            dto.setBuyerNickname(review.getBuyer().getNickname());
+            dto.setBuyerUid(review.getBuyer().getBuyerUid());
+            dto.setSellerCompanyName(review.getProduct().getSeller().getCompanyName());
+            dto.setSellerUid(review.getProduct().getSeller().getSellerUid());
+            dto.setProductName(review.getProduct().getProductName());
+            dto.setProductId(review.getProduct().getProductId());
+            dto.setOrderDetailId(review.getOrderDetail().getOrderDetailId());
+            return dto;
+        }).toList();
+        return new PageResponseDTO<>(
+                dtos,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
+    }
 
     public PageResponseDTO<ProductDTO> getAllProducts(Pageable pageable, Integer categoryId) {
         Page<ProductEntity> page;
@@ -100,8 +131,13 @@ public class ProductService {
         dto.setProductId(detail.getProductId());
         dto.setDescription(detail.getDescription());
         dto.setShippingInfo(detail.getShippingInfo());
-        dto.setReviews(reviewService.getReviewsByProductId(productId));
+        // 리뷰는 별도 API에서 제공
         return dto;
+    }
+
+    // 상품별 리뷰 목록 조회 (ProductController에서 사용)
+    public List<ReviewDTO> getProductReviews(Long productId) {
+        return reviewService.getReviewsByProductId(productId);
     }
 
     public ProductDetailEntity saveProductDetail(ProductDetailEntity detail) {

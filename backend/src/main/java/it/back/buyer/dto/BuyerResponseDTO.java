@@ -1,4 +1,3 @@
-
 package it.back.buyer.dto;
 
 import java.time.LocalDateTime;
@@ -12,11 +11,11 @@ import lombok.Setter;
 @Setter
 
 public class BuyerResponseDTO {
+
     private Long buyerUid;
     private String buyerId;
-    private String password;
-    private String nickname;
     private String buyerEmail;
+    private String nickname;
     private String phone;
     private String address;
     private String addressDetail;
@@ -28,12 +27,11 @@ public class BuyerResponseDTO {
     // 필요시 Buyer 엔티티의 모든 필드 추가
 
     public BuyerResponseDTO(BuyerEntity buyer) {
-    this.buyerUid = buyer.getBuyerUid();
-    this.buyerId = buyer.getBuyerId();
-    this.password = buyer.getPassword();
-    this.nickname = buyer.getNickname();
-    this.buyerEmail = buyer.getBuyerEmail();
-    
+        this.buyerUid = buyer.getBuyerUid();
+        this.buyerEmail = buyer.getBuyerEmail();
+        this.nickname = buyer.getNickname();
+        this.buyerEmail = buyer.getBuyerEmail();
+
         if (buyer.getBuyerDetail() != null) {
             this.phone = buyer.getBuyerDetail().getPhone();
             this.address = buyer.getBuyerDetail().getAddress();
