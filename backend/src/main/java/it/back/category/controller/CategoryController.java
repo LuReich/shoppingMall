@@ -21,15 +21,18 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<CategoryTreeResponseDTO>>> getCategoryTree() {
-        List<CategoryTreeResponseDTO> categoryTree = categoryService.getCategoryTree();
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(categoryTree));
-    }
-    @GetMapping("/flat")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategoryFlatList() {
         List<CategoryDTO> flatList = categoryService.getCategoryFlatList();
         
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(flatList));
     }
+
+    @GetMapping("/tree")
+    public ResponseEntity<ApiResponse<List<CategoryTreeResponseDTO>>> getCategoryTree() {
+        List<CategoryTreeResponseDTO> categoryTree = categoryService.getCategoryTree();
+    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(categoryTree));
+    }
+    
 }
