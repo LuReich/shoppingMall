@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SellerService {
 
-
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
@@ -86,7 +85,7 @@ public class SellerService {
     // 공개용 판매자 정보 조회
     public it.back.seller.dto.SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
         SellerEntity seller = sellerRepository.findById(sellerUid)
-            .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
+                .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
         SellerDetailEntity detail = seller.getSellerDetail();
         SellerPublicDTO dto = new SellerPublicDTO();
         dto.setSellerUid(seller.getSellerUid());

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.back.common.dto.LoginRequestDTO;
 import it.back.seller.dto.SellerDTO;
+import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.service.SellerService;
 import it.back.seller.repository.SellerRepository;
 import it.back.seller.entity.SellerEntity;
@@ -71,7 +72,7 @@ public class SellerController {
 
     // 공개용 판매자 정보 조회 (비로그인/로그인 모두 접근 가능)
     @GetMapping("/public/{sellerUid}")
-    public ResponseEntity<it.back.seller.dto.SellerPublicDTO> getSellerPublicInfo(@PathVariable Long sellerUid) {
+    public ResponseEntity<SellerPublicDTO> getSellerPublicInfo(@PathVariable Long sellerUid) {
         return ResponseEntity.ok(sellerService.getSellerPublicInfo(sellerUid));
     }
 
