@@ -1,14 +1,20 @@
 package it.back.order.controller;
 
+import it.back.common.dto.ApiResponse;
 import it.back.order.dto.OrderDTO;
 import it.back.order.entity.OrderEntity;
 import it.back.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -19,13 +25,15 @@ public class OrderController {
 
     // 로그인 한 buyer의 주문 목록 조회 (Authentication 기반)
     @GetMapping("/buyer/me")
-    public ResponseEntity<List<OrderDTO>> getOrdersByBuyer(Authentication authentication) {
+    public ResponseEntity<ApiResponse<List<OrderDTO>>> getOrdersByBuyer(
+            Authentication authentication) {
+
         // 인증 정보에서 buyerUid 추출
         Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
         Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
                 : (Long) details.get("uid");
 
-        return ResponseEntity.ok(orderService.getOrdersByBuyerUid(buyerUid));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderService.getOrdersByBuyerUid(buyerUid)));
     }
 
     // 주문 생성 시 buyerUid를 인증에서 추출해 DTO에 세팅
@@ -54,7 +62,8 @@ public class OrderController {
     // ]
     // }
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO, Authentication authentication) {
+    public ResponseEntity<ApiResponse<String>> createOrder(@RequestBody OrderDTO orderDTO,
+            Authentication authentication) {
 
         Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
         Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
@@ -62,6 +71,6 @@ public class OrderController {
         orderDTO.setBuyerUid(buyerUid);
         orderService.createOrder(orderDTO);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Order created successfully"));
     }
 }

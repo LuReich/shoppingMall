@@ -79,15 +79,15 @@ public class BuyerController {
 
     // 회원 정보 부분 수정 (비밀번호, 닉네임, 전화번호, 주소, 상세주소, 생년월일, 성별)
     @PatchMapping("/{buyerUid}")
-    public ResponseEntity<Void> updateBuyer(
+    public ResponseEntity<ApiResponse<String>> updateBuyer(
             @PathVariable Long buyerUid,
             @RequestBody BuyerUpdateRequestDTO request,
             Authentication authentication) {
         try {
             buyerService.updateBuyer(buyerUid, request, authentication);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Buyer updated successfully"));
         } catch (SecurityException e) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body(ApiResponse.ok("Unauthorized"));
         }
     }
 

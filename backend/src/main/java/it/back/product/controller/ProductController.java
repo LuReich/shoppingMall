@@ -58,11 +58,9 @@ public class ProductController {
 
     // 상품 삭제 용인데 미사용 권장
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-
+    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Product deleted successfully"));
     }
 
     // 상품 상세 정보 불러오기
