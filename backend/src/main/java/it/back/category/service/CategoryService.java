@@ -23,6 +23,18 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    
+    public List<Integer> getCategoryWithChild(Integer categoryId) {
+        List<CategoryEntity> allCategories = categoryRepository.findAll();
+        Map<Integer, CategoryEntity> categoryEntityMap = allCategories.stream()
+                .collect(Collectors.toMap(CategoryEntity::getCategoryId, category -> category));
+
+        Set<Integer> resultIds = new HashSet<>();
+        collectChildCategoryIds(categoryId, categoryEntityMap, resultIds);
+
+        return new ArrayList<>(resultIds);
+    }
+
 
 
     public List<CategoryTreeResponseDTO> getCategoryTree() {
@@ -46,7 +58,7 @@ public class CategoryService {
         }
         return rootCategories;
     }
-    public List<CategoryDTO> getCategoryFlatList() {
+    public List<CategoryDTO> getCategoryList() {
         List<CategoryEntity> allCategories = categoryRepository.findAll();
         return allCategories.stream().map(entity -> {
             CategoryDTO dto = new CategoryDTO();
@@ -55,17 +67,6 @@ public class CategoryService {
             dto.setParentId(entity.getParent() != null ? entity.getParent().getCategoryId() : null);
             return dto;
         }).collect(Collectors.toList());
-    }
-
-    public List<Integer> getCategoryWithChild(Integer categoryId) {
-        List<CategoryEntity> allCategories = categoryRepository.findAll();
-        Map<Integer, CategoryEntity> categoryEntityMap = allCategories.stream()
-                .collect(Collectors.toMap(CategoryEntity::getCategoryId, category -> category));
-
-        Set<Integer> resultIds = new HashSet<>();
-        collectChildCategoryIds(categoryId, categoryEntityMap, resultIds);
-
-        return new ArrayList<>(resultIds);
     }
 
     private void collectChildCategoryIds(Integer currentCategoryId, Map<Integer, CategoryEntity> categoryEntityMap, Set<Integer> collectedIds) {
