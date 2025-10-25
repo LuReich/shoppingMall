@@ -82,7 +82,7 @@ public class BuyerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedBuyer));
     }
 
-    // 이메일 중복 체크
+    // 이메일 중복 및 형식 체크
     @PostMapping("/check-email")
     public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body, Authentication authentication) {
         String email = body.get("email");
@@ -91,7 +91,7 @@ public class BuyerController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    // 전화번호 중복 체크
+    // 전화번호 중복 및 형식 체크
     @PostMapping("/check-phone")
     public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, String> body, Authentication authentication) {
         String phone = body.get("phone");
