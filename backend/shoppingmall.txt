@@ -69,7 +69,7 @@ create table buyer_detail (
     address varchar(255) not null comment 'API 검색 주소',
     address_detail varchar(255) comment '상세 주소',
     birth date comment '생년월일',
-    gender enum('MALE', 'FEMALE', 'UNSELECTED') comment '성별',
+    gender enum('MALE', 'FEMALE', 'UNSELECTED') not null default 'UNSELECTED' comment '성별',
     foreign key (buyer_uid) references buyer(buyer_uid) on delete cascade
 ) comment '구매자 상세 정보(개인정보) 테이블';
 

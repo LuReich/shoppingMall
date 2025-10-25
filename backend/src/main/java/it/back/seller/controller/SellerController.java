@@ -78,11 +78,10 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerService.getSellerPublicInfo(sellerUid)));
     }
 
-    // 테스트용 미사용 권장
     // seller 등록용
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> registerSeller(@RequestBody SellerRegisterDTO sellerRegisterDto) {
-        sellerService.registerSeller(sellerRegisterDto);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Seller registered successfully"));
+    public ResponseEntity<ApiResponse<SellerResponseDTO>> registerSeller(@RequestBody SellerRegisterDTO sellerRegisterDto) {
+        SellerResponseDTO result = sellerService.registerSeller(sellerRegisterDto);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 }

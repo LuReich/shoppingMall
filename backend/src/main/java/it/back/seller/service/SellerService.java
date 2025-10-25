@@ -13,6 +13,8 @@ import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerRegisterDTO;
+import it.back.common.dto.ApiResponse;
+import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
@@ -72,7 +74,29 @@ public class SellerService {
      * // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
      */
     @Transactional
-    public SellerEntity registerSeller(SellerRegisterDTO sellerRegisterDto) {
+    public SellerResponseDTO registerSeller(SellerRegisterDTO sellerRegisterDto) {
+        // 중복 체크
+        if (sellerRepository.findBySellerId(sellerRegisterDto.getSellerId()).isPresent()) {
+            SellerResponseDTO errorDTO = new SellerResponseDTO();
+            errorDTO.setCompanyName("이미 사용 중인 아이디입니다.");
+            return errorDTO;
+        }
+        if (sellerRepository.findBySellerEmail(sellerRegisterDto.getSellerEmail()).isPresent()) {
+            SellerResponseDTO errorDTO = new SellerResponseDTO();
+            errorDTO.setCompanyName("이미 사용 중인 이메일입니다.");
+            return errorDTO;
+        }
+        if (sellerRepository.findBySellerDetail_Phone(sellerRegisterDto.getPhone()).isPresent()) {
+            SellerResponseDTO errorDTO = new SellerResponseDTO();
+            errorDTO.setCompanyName("이미 사용 중인 전화번호입니다.");
+            return errorDTO;
+        }
+        if (sellerRepository.findBySellerDetail_BusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber()).isPresent()) {
+            SellerResponseDTO errorDTO = new SellerResponseDTO();
+            errorDTO.setCompanyName("이미 사용 중인 사업자등록번호입니다.");
+            return errorDTO;
+        }
+
         SellerEntity seller = new SellerEntity();
         seller.setSellerId(sellerRegisterDto.getSellerId());
         seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword())); // Hashing added
@@ -89,7 +113,8 @@ public class SellerService {
         detail.setSeller(seller);
         seller.setSellerDetail(detail);
 
-        return sellerRepository.save(seller);
+        SellerEntity saved = sellerRepository.save(seller);
+        return new SellerResponseDTO(saved);
     }
 
     // 공개용 판매자 정보 조회

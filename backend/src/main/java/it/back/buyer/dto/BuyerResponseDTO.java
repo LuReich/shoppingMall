@@ -3,6 +3,7 @@ package it.back.buyer.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
 import lombok.Getter;
@@ -10,8 +11,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 public class BuyerResponseDTO {
+
+    // 기본 생성자 (에러 메시지 전달용)
+    public BuyerResponseDTO() {
+    }
+
+    public void setErrorMessage(String msg) {
+        this.nickname = msg;
+    }
+    // nickname 필드에 에러 메시지 전달(프론트에서 분기 처리)
 
     private Long buyerUid;
     private String buyerId;
@@ -24,7 +33,8 @@ public class BuyerResponseDTO {
     private BuyerDetailEntity.Gender gender;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
-    private boolean isActive;
+    @JsonProperty("isActive")
+    private Boolean isActive;
     // 필요시 Buyer 엔티티의 모든 필드 추가
 
     public BuyerResponseDTO(BuyerEntity buyer) {
