@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import it.back.common.dto.ApiResponse;
-import it.back.buyer.dto.BuyerResponseDTO;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,7 +20,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<ApiResponse<BuyerResponseDTO>> handleSecurity(SecurityException e) {
+    public ResponseEntity<ApiResponse<String>> handleSecurity(SecurityException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.ok(null));
     }
 }

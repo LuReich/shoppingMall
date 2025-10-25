@@ -139,12 +139,39 @@ public class BuyerService {
                 try {
                     detail.setGender(BuyerDetailEntity.Gender.valueOf(req.getGender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    // 잘못된 값이 오면 무시(혹은 예외 처리)
+                    throw new IllegalArgumentException("gender 값이 올바르지 않습니다. (허용값: MALE, FEMALE, UNSELECTED)");
                 }
             }
         }
         // 변경사항은 @Transactional에 의해 자동 반영
         return buyer;
+    }
+
+    /**
+     * 이메일 중복/본인/사용가능 체크
+     *
+     * @param email 이메일
+     * @param loginId 로그인한 아이디(없으면 null)
+     * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
+     */
+    public String checkEmail(String email, String loginId) {
+        return buyerRepository.findByBuyerEmail(email)
+                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
+                .orElse("OK");
+    }
+
+    /**
+     * 전화번호 중복/본인/사용가능 체크
+     *
+     * @param phone 전화번호
+     * @param loginId 로그인한 아이디(없으면 null)
+     * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
+     */
+    public String checkPhone(String phone, String loginId) {
+        return buyerRepository.findAll().stream()
+                .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
+                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
+                .findFirst().orElse("OK");
     }
 
     @Transactional
