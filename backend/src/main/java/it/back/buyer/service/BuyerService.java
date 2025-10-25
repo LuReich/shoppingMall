@@ -1,9 +1,12 @@
 package it.back.buyer.service;
 
+import it.back.common.dto.ApiResponse;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -148,30 +151,50 @@ public class BuyerService {
     }
 
     /**
-     * 이메일 중복/본인/사용가능 체크
-     *
-     * @param email 이메일
-     * @param loginId 로그인한 아이디(없으면 null)
-     * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
-     */
-    public String checkEmail(String email, String loginId) {
-        return buyerRepository.findByBuyerEmail(email)
-                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
-                .orElse("OK");
-    }
-
-    /**
      * 전화번호 중복/본인/사용가능 체크
      *
      * @param phone 전화번호
      * @param loginId 로그인한 아이디(없으면 null)
      * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
      */
-    public String checkPhone(String phone, String loginId) {
-        return buyerRepository.findAll().stream()
+    public ApiResponse<String> checkPhone(String phone, String loginId) {
+        if (phone == null || phone.isBlank()) {
+            return ApiResponse.badRequest("전화번호를 입력하세요.");
+        }
+        if (!phone.matches("\\d+")) {
+            return ApiResponse.badRequest("전화번호는 숫자만 입력해야 합니다.");
+        }
+        if (phone.length() < 10 || phone.length() > 11) {
+            return ApiResponse.badRequest("전화번호는 10~11자리여야 합니다.");
+        }
+        String result = buyerRepository.findAll().stream()
                 .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
                 .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
                 .findFirst().orElse("OK");
+        if ("DUPLICATE".equals(result)) {
+            return ApiResponse.error(409, "이미 사용 중인 전화번호입니다.");
+        } else if ("SAME".equals(result)) {
+            return ApiResponse.ok("이전과 동일한 전화번호입니다.");
+        }
+        return ApiResponse.ok("사용 가능한 전화번호입니다.");
+    }
+
+    public ApiResponse<String> checkEmail(String email, String loginId) {
+        if (email == null || email.isBlank()) {
+            return ApiResponse.badRequest("이메일을 입력하세요.");
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            return ApiResponse.badRequest("이메일 형식이 올바르지 않습니다.");
+        }
+        String result = buyerRepository.findByBuyerEmail(email)
+                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
+                .orElse("OK");
+        if ("DUPLICATE".equals(result)) {
+            return ApiResponse.error(409, "이미 사용 중인 이메일입니다.");
+        } else if ("SAME".equals(result)) {
+            return ApiResponse.ok("이전과 동일한 이메일입니다.");
+        }
+        return ApiResponse.ok("사용 가능한 이메일입니다.");
     }
 
     @Transactional

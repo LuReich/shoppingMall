@@ -82,32 +82,22 @@ public class BuyerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedBuyer));
     }
 
-    // 이메일 중복 체크
+    // 이메일 중복 및 형식 체크
     @PostMapping("/check-email")
     public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body, Authentication authentication) {
         String email = body.get("email");
         String loginId = authentication != null ? authentication.getName() : null;
-        String result = buyerService.checkEmail(email, loginId);
-        if ("DUPLICATE".equals(result)) {
-            return ResponseEntity.status(409).body(ApiResponse.error(409, "이미 사용 중인 이메일입니다."));
-        } else if ("SAME".equals(result)) {
-            return ResponseEntity.ok().body(ApiResponse.ok("이전과 동일한 이메일입니다."));
-        }
-        return ResponseEntity.ok().body(ApiResponse.ok("사용 가능한 이메일입니다."));
+        ApiResponse<String> response = buyerService.checkEmail(email, loginId);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    // 전화번호 중복 체크
+    // 전화번호 중복 및 형식 체크
     @PostMapping("/check-phone")
     public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, String> body, Authentication authentication) {
         String phone = body.get("phone");
         String loginId = authentication != null ? authentication.getName() : null;
-        String result = buyerService.checkPhone(phone, loginId);
-        if ("DUPLICATE".equals(result)) {
-            return ResponseEntity.status(409).body(ApiResponse.error(409, "이미 사용 중인 전화번호입니다."));
-        } else if ("SAME".equals(result)) {
-            return ResponseEntity.ok().body(ApiResponse.ok("이전과 동일한 전화번호입니다."));
-        }
-        return ResponseEntity.ok().body(ApiResponse.ok("사용 가능한 전화번호입니다."));
+        ApiResponse<String> response = buyerService.checkPhone(phone, loginId);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     // buyer 회원가입 용
