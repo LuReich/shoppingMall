@@ -1,5 +1,6 @@
 package it.back.seller.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.back.seller.entity.SellerEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,13 +10,19 @@ import java.time.LocalDateTime;
 @Setter
 public class SellerResponseDTO {
 
+    // 기본 생성자 (에러 메시지 전달용)
+    public SellerResponseDTO() {
+    }
+
     private Long sellerUid;
 
     private String sellerId;
     private String companyName;
     private String sellerEmail;
-    private boolean isVerified;
-    private boolean isActive;
+    @JsonProperty("isVerified")
+    private Boolean isVerified;
+    @JsonProperty("isActive")
+    private Boolean isActive;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 

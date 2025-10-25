@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerRegisterDTO;
+import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
@@ -157,59 +158,62 @@ public class BuyerService {
      * @param loginId 로그인한 아이디(없으면 null)
      * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
      */
-    public ApiResponse<String> checkPhone(String phone, String loginId) {
+    public String checkPhone(String phone, String loginId) {
         if (phone == null || phone.isBlank()) {
-            return ApiResponse.badRequest("전화번호를 입력하세요.");
+            return "전화번호를 입력하세요.";
         }
         if (!phone.matches("\\d+")) {
-            return ApiResponse.badRequest("전화번호는 숫자만 입력해야 합니다.");
+            return "전화번호는 숫자만 입력해야 합니다.";
         }
         if (phone.length() < 10 || phone.length() > 11) {
-            return ApiResponse.badRequest("전화번호는 10~11자리여야 합니다.");
+            return "전화번호는 10~11자리여야 합니다.";
         }
         String result = buyerRepository.findAll().stream()
                 .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
                 .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
                 .findFirst().orElse("OK");
         if ("DUPLICATE".equals(result)) {
-            return ApiResponse.error(409, "이미 사용 중인 전화번호입니다.");
+            return "이미 사용 중인 전화번호입니다.";
         } else if ("SAME".equals(result)) {
-            return ApiResponse.ok("이전과 동일한 전화번호입니다.");
+            return "이전과 동일한 전화번호입니다.";
         }
-        return ApiResponse.ok("사용 가능한 전화번호입니다.");
+        return "사용 가능한 전화번호입니다.";
     }
 
-    public ApiResponse<String> checkEmail(String email, String loginId) {
+    public String checkEmail(String email, String loginId) {
         if (email == null || email.isBlank()) {
-            return ApiResponse.badRequest("이메일을 입력하세요.");
+            return "이메일을 입력하세요.";
         }
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            return ApiResponse.badRequest("이메일 형식이 올바르지 않습니다.");
+            return "이메일 형식이 올바르지 않습니다.";
         }
         String result = buyerRepository.findByBuyerEmail(email)
                 .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
                 .orElse("OK");
         if ("DUPLICATE".equals(result)) {
-            return ApiResponse.error(409, "이미 사용 중인 이메일입니다.");
+            return "이미 사용 중인 이메일입니다.";
         } else if ("SAME".equals(result)) {
-            return ApiResponse.ok("이전과 동일한 이메일입니다.");
+            return "이전과 동일한 이메일입니다.";
         }
-        return ApiResponse.ok("사용 가능한 이메일입니다.");
+        return "사용 가능한 이메일입니다.";
     }
 
     @Transactional
-    public BuyerEntity registerBuyer(BuyerRegisterDTO buyerRegisterDto) {
+    public BuyerResponseDTO registerBuyer(BuyerRegisterDTO buyerRegisterDto) {
         // 이메일 중복 체크
-        buyerRepository.findByBuyerEmail(buyerRegisterDto.getBuyerEmail()).ifPresent(existing -> {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        });
+        if (buyerRepository.findByBuyerEmail(buyerRegisterDto.getBuyerEmail()).isPresent()) {
+            BuyerResponseDTO errorDTO = new BuyerResponseDTO();
+            errorDTO.setErrorMessage("이미 사용 중인 이메일입니다.");
+            return errorDTO;
+        }
         // 전화번호 중복 체크
-        buyerRepository.findAll().stream()
-                .filter(b -> b.getBuyerDetail() != null && buyerRegisterDto.getPhone().equals(b.getBuyerDetail().getPhone()))
-                .findAny()
-                .ifPresent(b -> {
-                    throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
-                });
+        boolean phoneExists = buyerRepository.findAll().stream()
+                .anyMatch(b -> b.getBuyerDetail() != null && buyerRegisterDto.getPhone().equals(b.getBuyerDetail().getPhone()));
+        if (phoneExists) {
+            BuyerResponseDTO errorDTO = new BuyerResponseDTO();
+            errorDTO.setErrorMessage("이미 사용 중인 전화번호입니다.");
+            return errorDTO;
+        }
 
         BuyerEntity buyer = new BuyerEntity();
         buyer.setBuyerId(buyerRegisterDto.getBuyerId());
@@ -227,6 +231,7 @@ public class BuyerService {
         detail.setBuyer(buyer);
         buyer.setBuyerDetail(detail);
 
-        return buyerRepository.save(buyer);
+        BuyerEntity saved = buyerRepository.save(buyer);
+        return new BuyerResponseDTO(saved);
     }
 }

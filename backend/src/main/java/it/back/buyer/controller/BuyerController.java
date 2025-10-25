@@ -79,16 +79,20 @@ public class BuyerController {
 
         BuyerEntity updatedEntity = buyerService.updateBuyer(buyerUid, request, authentication);
         BuyerResponseDTO updatedBuyer = new BuyerResponseDTO(updatedEntity);
+
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedBuyer));
     }
 
     // 이메일 중복 및 형식 체크
     @PostMapping("/check-email")
-    public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body, Authentication authentication) {
+    public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body,
+            Authentication authentication) {
+
         String email = body.get("email");
         String loginId = authentication != null ? authentication.getName() : null;
-        ApiResponse<String> response = buyerService.checkEmail(email, loginId);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        String result = buyerService.checkEmail(email, loginId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // 전화번호 중복 및 형식 체크
@@ -96,23 +100,15 @@ public class BuyerController {
     public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, String> body, Authentication authentication) {
         String phone = body.get("phone");
         String loginId = authentication != null ? authentication.getName() : null;
-        ApiResponse<String> response = buyerService.checkPhone(phone, loginId);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        String result = buyerService.checkPhone(phone, loginId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // buyer 회원가입 용
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> registerBuyer(@RequestBody BuyerRegisterDTO buyerRegisterDto) {
-        try {
-            buyerService.registerBuyer(buyerRegisterDto);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Buyer registered successfully"));
-        } catch (IllegalArgumentException e) {
-            String msg = e.getMessage();
-            if (msg != null && (msg.contains("이미 사용 중인 이메일") || msg.contains("이미 사용 중인 전화번호"))) {
-                return ResponseEntity.status(409).body(ApiResponse.error(409, msg));
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.badRequest(msg));
-        }
+    public ResponseEntity<ApiResponse<BuyerResponseDTO>> registerBuyer(@RequestBody BuyerRegisterDTO buyerRegisterDto) {
+        BuyerResponseDTO result = buyerService.registerBuyer(buyerRegisterDto);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
 }
