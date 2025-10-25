@@ -1,9 +1,10 @@
 package it.back.buyer.dto;
 
-import java.time.LocalDateTime;
 import java.time.LocalDate;
-import it.back.buyer.entity.BuyerEntity;
+import java.time.LocalDateTime;
+
 import it.back.buyer.entity.BuyerDetailEntity;
+import it.back.buyer.entity.BuyerEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,9 +29,9 @@ public class BuyerResponseDTO {
 
     public BuyerResponseDTO(BuyerEntity buyer) {
         this.buyerUid = buyer.getBuyerUid();
+        this.buyerId = buyer.getBuyerId();
         this.buyerEmail = buyer.getBuyerEmail();
         this.nickname = buyer.getNickname();
-        this.buyerEmail = buyer.getBuyerEmail();
 
         if (buyer.getBuyerDetail() != null) {
             this.phone = buyer.getBuyerDetail().getPhone();

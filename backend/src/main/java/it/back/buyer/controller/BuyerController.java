@@ -1,10 +1,9 @@
 package it.back.buyer.controller;
 
-import org.springframework.http.HttpStatus;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import it.back.common.dto.ApiResponse;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,13 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import it.back.buyer.dto.BuyerDTO;
+
+import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
-import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.buyer.service.BuyerService;
+import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -71,26 +71,54 @@ public class BuyerController {
     // responseBody.put("token", "bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
-    // 그냥 있는 코드 권한 때문에 못씁니다.
-    // 회원 정보 부분 수정 (비밀번호, 닉네임, 전화번호, 주소, 상세주소, 생년월일, 성별)
     @PatchMapping("/{buyerUid}")
-    public ResponseEntity<ApiResponse<String>> updateBuyer(
+    public ResponseEntity<ApiResponse<BuyerResponseDTO>> updateBuyer(
             @PathVariable Long buyerUid,
             @RequestBody BuyerUpdateRequestDTO request,
             Authentication authentication) {
-        try {
-            buyerService.updateBuyer(buyerUid, request, authentication);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Buyer updated successfully"));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(401).body(ApiResponse.ok("Unauthorized"));
+
+        BuyerEntity updatedEntity = buyerService.updateBuyer(buyerUid, request, authentication);
+        BuyerResponseDTO updatedBuyer = new BuyerResponseDTO(updatedEntity);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedBuyer));
+    }
+
+    // 이메일 중복 체크
+    @PostMapping("/check-email")
+    public ResponseEntity<Void> checkEmail(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        boolean exists = buyerRepository.findByBuyerEmail(email).isPresent();
+        if (exists) {
+            return ResponseEntity.status(409).build();
         }
+        return ResponseEntity.ok().build();
+    }
+
+    // 전화번호 중복 체크
+    @PostMapping("/check-phone")
+    public ResponseEntity<Void> checkPhone(@RequestBody Map<String, String> body) {
+        String phone = body.get("phone");
+        boolean exists = buyerRepository.findAll().stream()
+                .anyMatch(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()));
+        if (exists) {
+            return ResponseEntity.status(409).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     // buyer 회원가입 용
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<String>> registerBuyer(@RequestBody BuyerRegisterDTO buyerRegisterDto) {
-        buyerService.registerBuyer(buyerRegisterDto);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Buyer registered successfully"));
+        try {
+            buyerService.registerBuyer(buyerRegisterDto);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Buyer registered successfully"));
+        } catch (IllegalArgumentException e) {
+            String msg = e.getMessage();
+            if (msg != null && (msg.contains("이미 사용 중인 이메일") || msg.contains("이미 사용 중인 전화번호"))) {
+                return ResponseEntity.status(409).body(ApiResponse.error(409, msg));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.badRequest(msg));
+        }
     }
 
 }
