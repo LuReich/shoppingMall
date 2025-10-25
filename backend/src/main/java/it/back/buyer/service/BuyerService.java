@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.back.buyer.dto.BuyerDTO;
-import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.dto.BuyerRegisterDTO;
+import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
@@ -68,7 +68,7 @@ public class BuyerService {
     }
 
     @Transactional
-    public void updateBuyer(Long buyerUid, BuyerUpdateRequestDTO req, Authentication authentication) {
+    public BuyerEntity updateBuyer(Long buyerUid, BuyerUpdateRequestDTO req, Authentication authentication) {
         if (authentication == null) {
             throw new SecurityException("Unauthorized");
         }
@@ -92,7 +92,18 @@ public class BuyerService {
             buyer.setNickname(req.getNickname());
         }
         if (req.getBuyerEmail() != null && !req.getBuyerEmail().isBlank()) {
-            buyer.setBuyerEmail(req.getBuyerEmail());
+            String email = req.getBuyerEmail();
+            // 간단한 이메일 형식 검증 (정규식)
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+            }
+            // 이메일 중복 체크 (본인 제외)
+            buyerRepository.findByBuyerEmail(email).ifPresent(existing -> {
+                if (!existing.getBuyerUid().equals(buyerUid)) {
+                    throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+                }
+            });
+            buyer.setBuyerEmail(email);
         }
 
         BuyerDetailEntity detail = buyer.getBuyerDetail();
@@ -105,6 +116,14 @@ public class BuyerService {
                 if (phone.length() < 10 || phone.length() > 11) {
                     throw new IllegalArgumentException("전화번호는 10~11자리여야 합니다.");
                 }
+                // 전화번호 중복 체크 (본인 제외)
+                buyerRepository.findAll().stream()
+                        .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
+                        .filter(b -> !b.getBuyerUid().equals(buyerUid))
+                        .findAny()
+                        .ifPresent(b -> {
+                            throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
+                        });
                 detail.setPhone(phone);
             }
             if (req.getAddress() != null) {
@@ -120,15 +139,55 @@ public class BuyerService {
                 try {
                     detail.setGender(BuyerDetailEntity.Gender.valueOf(req.getGender().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    // 잘못된 값이 오면 무시(혹은 예외 처리)
+                    throw new IllegalArgumentException("gender 값이 올바르지 않습니다. (허용값: MALE, FEMALE, UNSELECTED)");
                 }
             }
         }
         // 변경사항은 @Transactional에 의해 자동 반영
+        return buyer;
+    }
+
+    /**
+     * 이메일 중복/본인/사용가능 체크
+     *
+     * @param email 이메일
+     * @param loginId 로그인한 아이디(없으면 null)
+     * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
+     */
+    public String checkEmail(String email, String loginId) {
+        return buyerRepository.findByBuyerEmail(email)
+                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
+                .orElse("OK");
+    }
+
+    /**
+     * 전화번호 중복/본인/사용가능 체크
+     *
+     * @param phone 전화번호
+     * @param loginId 로그인한 아이디(없으면 null)
+     * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
+     */
+    public String checkPhone(String phone, String loginId) {
+        return buyerRepository.findAll().stream()
+                .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
+                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
+                .findFirst().orElse("OK");
     }
 
     @Transactional
     public BuyerEntity registerBuyer(BuyerRegisterDTO buyerRegisterDto) {
+        // 이메일 중복 체크
+        buyerRepository.findByBuyerEmail(buyerRegisterDto.getBuyerEmail()).ifPresent(existing -> {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        });
+        // 전화번호 중복 체크
+        buyerRepository.findAll().stream()
+                .filter(b -> b.getBuyerDetail() != null && buyerRegisterDto.getPhone().equals(b.getBuyerDetail().getPhone()))
+                .findAny()
+                .ifPresent(b -> {
+                    throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
+                });
+
         BuyerEntity buyer = new BuyerEntity();
         buyer.setBuyerId(buyerRegisterDto.getBuyerId());
         buyer.setPassword(passwordEncoder.encode(buyerRegisterDto.getPassword())); // Hashing added

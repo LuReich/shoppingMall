@@ -8,5 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface BuyerRepository extends JpaRepository<BuyerEntity, Long> {
+
     Optional<BuyerEntity> findByBuyerId(String buyerId);
+
+    Optional<BuyerEntity> findByBuyerEmail(String buyerEmail);
 }
