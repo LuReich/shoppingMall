@@ -19,4 +19,7 @@ public class CartItemResponseDTO {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // 장바구니 최대치 안내 메시지
+    private String message;
 }

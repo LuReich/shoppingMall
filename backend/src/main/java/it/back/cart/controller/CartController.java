@@ -3,6 +3,7 @@ package it.back.cart.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -45,7 +46,7 @@ public class CartController {
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<CartItemResponseDTO>>> getCartList(
             Authentication authentication,
-            org.springframework.data.domain.Pageable pageable) {
+            Pageable pageable) {
         long buyerId = getBuyerUid(authentication);
         PageResponseDTO<CartItemResponseDTO> result = cartService.getCartList(buyerId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
