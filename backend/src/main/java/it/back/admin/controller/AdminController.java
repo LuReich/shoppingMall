@@ -40,9 +40,9 @@ public class AdminController {
     // 로그인 한 admin 이 자신의 정보 불러오기 마이페이지 개인 정보 수정용
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<AdminResponseDTO>> getMyInfo(Authentication authentication) {
-        String userId = authentication.getName();
-        System.out.println("[AdminController] /me userId: " + userId);
-        AdminEntity admin = adminService.getAdminEntityById(userId);
+        String loginId = authentication.getName();
+        System.out.println("[AdminController] /me loginId: " + loginId);
+        AdminEntity admin = adminService.getAdminEntityById(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(new AdminResponseDTO(admin)));
     }
 

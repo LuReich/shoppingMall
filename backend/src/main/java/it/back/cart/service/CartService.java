@@ -32,11 +32,11 @@ public class CartService {
     private final ProductRepository productRepository;
 
     // 장바구니 추가
-    public CartItemResponseDTO addCartItem(long buyerId, CartDTO cartDTO) {
+    public CartItemResponseDTO addCartItem(long buyerUid, CartDTO cartDTO) {
         if (cartDTO.getQuantity() < 1) {
             throw new IllegalArgumentException("장바구니에는 최소 1개 이상 담아야 합니다.");
         }
-        BuyerEntity buyer = buyerRepository.findById(buyerId)
+        BuyerEntity buyer = buyerRepository.findById(buyerUid)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         ProductEntity product = productRepository.findById(cartDTO.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
@@ -89,8 +89,8 @@ public class CartService {
 
     // 장바구니 목록 조회
     @Transactional(readOnly = true)
-    public PageResponseDTO<CartItemResponseDTO> getCartList(long buyerId, Pageable pageable) {
-        BuyerEntity buyer = buyerRepository.findById(buyerId)
+    public PageResponseDTO<CartItemResponseDTO> getCartList(long buyerUid, Pageable pageable) {
+        BuyerEntity buyer = buyerRepository.findById(buyerUid)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Page<CartEntity> cartPage = cartRepository.findByBuyer(buyer, pageable);
@@ -122,13 +122,13 @@ public class CartService {
     }
 
     // 장바구니 수량 변경
-    public CartItemResponseDTO updateQuantity(long cartId, int quantity, long buyerId) {
+    public CartItemResponseDTO updateQuantity(long cartId, int quantity, long buyerUid) {
         if (quantity < 1) {
             throw new IllegalArgumentException("장바구니에는 최소 1개 이상 담아야 합니다.");
         }
         CartEntity cartEntity = cartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("장바구니 상품을 찾을 수 없습니다."));
-        if (cartEntity.getBuyer().getBuyerUid() != buyerId) {
+        if (cartEntity.getBuyer().getBuyerUid() != buyerUid) {
             throw new IllegalStateException("권한이 없습니다.");
         }
         String message = null;
@@ -162,10 +162,10 @@ public class CartService {
     }
 
     // 장바구니 개별 삭제
-    public String deleteCartItem(long cartId, long buyerId) {
+    public String deleteCartItem(long cartId, long buyerUid) {
         CartEntity cartEntity = cartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("장바구니 상품을 찾을 수 없습니다."));
-        if (cartEntity.getBuyer().getBuyerUid() != buyerId) {
+        if (cartEntity.getBuyer().getBuyerUid() != buyerUid) {
             throw new IllegalStateException("권한이 없습니다.");
         }
         cartRepository.delete(cartEntity);
@@ -173,8 +173,8 @@ public class CartService {
     }
 
     // 장바구니 선택 삭제
-    public String deleteSelectedCartItems(List<Long> cartIds, long buyerId) {
-        BuyerEntity buyer = buyerRepository.findById(buyerId)
+    public String deleteSelectedCartItems(List<Long> cartIds, long buyerUid) {
+        BuyerEntity buyer = buyerRepository.findById(buyerUid)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         cartRepository.deleteByIdInAndBuyer(cartIds, buyer);
         return cartIds.size() + "개의 상품이 장바구니에서 삭제되었습니다.";

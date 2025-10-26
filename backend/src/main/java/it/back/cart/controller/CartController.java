@@ -47,8 +47,8 @@ public class CartController {
     public ResponseEntity<ApiResponse<PageResponseDTO<CartItemResponseDTO>>> getCartList(
             Authentication authentication,
             Pageable pageable) {
-        long buyerId = getBuyerUid(authentication);
-        PageResponseDTO<CartItemResponseDTO> result = cartService.getCartList(buyerId, pageable);
+        long buyerUid = getBuyerUid(authentication);
+        PageResponseDTO<CartItemResponseDTO> result = cartService.getCartList(buyerUid, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
@@ -57,8 +57,8 @@ public class CartController {
     public ResponseEntity<ApiResponse<CartItemResponseDTO>> addToCart(
             Authentication authentication,
             @RequestBody CartDTO cartDTO) {
-        long buyerId = getBuyerUid(authentication);
-        CartItemResponseDTO responseDTO = cartService.addCartItem(buyerId, cartDTO);
+        long buyerUid = getBuyerUid(authentication);
+        CartItemResponseDTO responseDTO = cartService.addCartItem(buyerUid, cartDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(responseDTO));
     }
 
@@ -68,9 +68,9 @@ public class CartController {
             Authentication authentication,
             @PathVariable Long cartId,
             @RequestBody Map<String, Integer> payload) {
-        long buyerId = getBuyerUid(authentication);
+        long buyerUid = getBuyerUid(authentication);
         int quantity = payload.get("quantity");
-        CartItemResponseDTO responseDTO = cartService.updateQuantity(cartId, quantity, buyerId);
+        CartItemResponseDTO responseDTO = cartService.updateQuantity(cartId, quantity, buyerUid);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseDTO));
     }
 
@@ -79,8 +79,8 @@ public class CartController {
     public ResponseEntity<ApiResponse<String>> removeFromCart(
             Authentication authentication,
             @PathVariable Long cartId) {
-        long buyerId = getBuyerUid(authentication);
-        String message = cartService.deleteCartItem(cartId, buyerId);
+        long buyerUid = getBuyerUid(authentication);
+        String message = cartService.deleteCartItem(cartId, buyerUid);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
     }
 
@@ -89,8 +89,8 @@ public class CartController {
     public ResponseEntity<ApiResponse<String>> removeSelectedCartItems(
             Authentication authentication,
             @RequestBody List<Long> cartIds) {
-        long buyerId = getBuyerUid(authentication);
-        String message = cartService.deleteSelectedCartItems(cartIds, buyerId);
+        long buyerUid = getBuyerUid(authentication);
+        String message = cartService.deleteSelectedCartItems(cartIds, buyerUid);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
     }
 }
