@@ -37,10 +37,10 @@ public class SellerController {
     // 로그인한 seller 가 자기 정보 불러오기
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> getMyInfo(Authentication authentication) {
-        String userId = authentication.getName();
-        System.out.println("[SellerController] /me userId: " + userId);
-        SellerEntity seller = sellerRepository.findBySellerId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + userId));
+        String loginId = authentication.getName();
+        System.out.println("[SellerController] /me loginId: " + loginId);
+        SellerEntity seller = sellerRepository.findBySellerId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + loginId));
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(new SellerResponseDTO(seller)));
     }
 

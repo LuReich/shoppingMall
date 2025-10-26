@@ -35,10 +35,10 @@ public class BuyerController {
     // 로그인한 buyer 가 자기 정보 보는 용도
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> getMyInfo(Authentication authentication) {
-        String userId = authentication.getName();
-        System.out.println("[BuyerController] /me userId: " + userId);
-        BuyerEntity buyer = buyerRepository.findByBuyerId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + userId));
+        String loginId = authentication.getName();
+        System.out.println("[BuyerController] /me loginId: " + loginId);
+        BuyerEntity buyer = buyerRepository.findByBuyerId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(new BuyerResponseDTO(buyer)));
     }
 

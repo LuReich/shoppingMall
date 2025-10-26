@@ -5,16 +5,12 @@ import it.back.order.dto.OrderDTO;
 import it.back.order.entity.OrderEntity;
 import it.back.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -23,16 +19,26 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // 인증 정보에서 buyerUid 추출 및 BUYER 권한 체크
+    private Long getBuyerUid(Authentication authentication) {
+        Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
+        Object roleObj = details.get("role");
+        if (roleObj == null || !"BUYER".equals(roleObj.toString())) {
+            throw new IllegalStateException("구매자(BUYER) 권한이 필요합니다.");
+        }
+        Object uidObj = details.get("uid");
+        if (uidObj instanceof Integer) {
+            return ((Integer) uidObj).longValue();
+        }
+        return (Long) uidObj;
+    }
+
     // 로그인 한 buyer의 주문 목록 조회 (Authentication 기반)
     @GetMapping("/buyer/me")
     public ResponseEntity<ApiResponse<List<OrderDTO>>> getOrdersByBuyer(
             Authentication authentication) {
 
-        // 인증 정보에서 buyerUid 추출
-        Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
-        Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
-                : (Long) details.get("uid");
-
+        Long buyerUid = getBuyerUid(authentication);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderService.getOrdersByBuyerUid(buyerUid)));
     }
 
@@ -65,12 +71,9 @@ public class OrderController {
     public ResponseEntity<ApiResponse<String>> createOrder(@RequestBody OrderDTO orderDTO,
             Authentication authentication) {
 
-        Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
-        Long buyerUid = details.get("uid") instanceof Integer ? ((Integer) details.get("uid")).longValue()
-                : (Long) details.get("uid");
+        Long buyerUid = getBuyerUid(authentication);
         orderDTO.setBuyerUid(buyerUid);
         orderService.createOrder(orderDTO);
-
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Order created successfully"));
     }
 }
