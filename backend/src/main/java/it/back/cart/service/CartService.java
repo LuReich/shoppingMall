@@ -79,6 +79,8 @@ public class CartService {
                     dto.setQuantity(cartEntity.getQuantity());
                     dto.setPricePerItem(cartEntity.getProduct().getPrice());
                     dto.setSellerCompanyName(cartEntity.getProduct().getSeller().getCompanyName());
+                    dto.setCreatedAt(cartEntity.getCreatedAt());
+                    dto.setUpdatedAt(cartEntity.getUpdatedAt());
                     return dto;
                 })
                 .collect(Collectors.toList());
