@@ -1,25 +1,23 @@
 package it.back.cart.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.cart.dto.CartDTO;
 import it.back.cart.dto.CartItemResponseDTO;
 import it.back.cart.entity.CartEntity;
 import it.back.cart.repository.CartRepository;
-import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,11 +63,10 @@ public class CartService {
 
     // 장바구니 목록 조회
     @Transactional(readOnly = true)
-    public PageResponseDTO<CartItemResponseDTO> getCartList(long buyerId, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<CartItemResponseDTO> getCartList(long buyerId, Pageable pageable) {
         BuyerEntity buyer = buyerRepository.findById(buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize(), Sort.by("cartId").descending());
         Page<CartEntity> cartPage = cartRepository.findByBuyer(buyer, pageable);
 
         List<CartItemResponseDTO> dtoList = cartPage.getContent().stream()
