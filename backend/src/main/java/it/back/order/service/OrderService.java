@@ -5,25 +5,33 @@ import it.back.order.entity.OrderEntity;
 import it.back.order.entity.OrderDetailEntity;
 import it.back.order.repository.OrderRepository;
 import it.back.order.repository.OrderDetailRepository;
+import it.back.order.dto.OrderResponseDTO;
 import it.back.order.dto.OrderDTO;
-import it.back.order.dto.OrderDetailDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import it.back.common.pagination.PageResponseDTO;
+import it.back.product.repository.ProductRepository;
+import it.back.seller.repository.SellerRepository;
 
 @Service
 @RequiredArgsConstructor
+
 public class OrderService {
-    
 
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final ProductRepository productRepository;
+    private final SellerRepository sellerRepository;
 
     @Transactional
-    public OrderEntity createOrder(OrderDTO orderDTO) {
+    public OrderResponseDTO createOrder(OrderDTO orderDTO) {
         OrderEntity order = new OrderEntity();
         order.setBuyerUid(orderDTO.getBuyerUid());
         order.setTotalPrice(orderDTO.getTotalPrice());
@@ -45,22 +53,100 @@ public class OrderService {
             }).collect(Collectors.toList());
             order.setOrderDetails(details);
         }
-        return orderRepository.save(order);
+        OrderEntity saved = orderRepository.save(order);
+        // 상품/판매자 정보 맵핑을 위해 id 수집
+        List<Long> productIds = saved.getOrderDetails().stream().map(OrderDetailEntity::getProductId).distinct().toList();
+        List<Long> sellerUids = saved.getOrderDetails().stream().map(OrderDetailEntity::getSellerUid).distinct().toList();
+        Map<Long, it.back.product.entity.ProductEntity> productMap = productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
+        Map<Long, String> companyNameMap = sellerRepository.findAllById(sellerUids).stream()
+                .collect(Collectors.toMap(s -> s.getSellerUid(), s -> s.getCompanyName()));
+
+        OrderResponseDTO dto = new OrderResponseDTO();
+        dto.setOrderId(saved.getOrderId());
+        dto.setCreateAt(saved.getCreateAt());
+        dto.setUpdateAt(saved.getUpdateAt());
+        dto.setRecipientName(saved.getRecipientName());
+        dto.setRecipientAddress(saved.getRecipientAddress());
+        dto.setRecipientAddressDetail(saved.getRecipientAddressDetail());
+        dto.setStatus(saved.getOrderStatus().name());
+        dto.setTotalPrice(saved.getTotalPrice());
+        // 주문상세 전체를 리스트로 매핑 + 상품/판매자 정보 + 주문/상세 생성일/수정일 포함
+        if (saved.getOrderDetails() != null) {
+            List<it.back.order.dto.OrderDetailDTO> detailDTOs = saved.getOrderDetails().stream().map(detail -> {
+                it.back.order.dto.OrderDetailDTO d = it.back.order.dto.OrderDetailDTO.from(detail);
+                var product = productMap.get(detail.getProductId());
+                if (product != null) {
+                    d.setProductName(product.getProductName());
+                    d.setProductThumbnailUrl(product.getThumbnailUrl());
+                }
+                d.setCompanyName(companyNameMap.get(detail.getSellerUid()));
+                d.setCreateAt(detail.getCreateAt());
+                d.setUpdateAt(detail.getUpdateAt());
+                return d;
+            }).collect(Collectors.toList());
+            dto.setOrderDetails(detailDTOs);
+        }
+        return dto;
     }
 
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrdersByBuyerUid(Long buyerUid) {
-        return orderRepository.findAll().stream()
+    public PageResponseDTO<OrderResponseDTO> getOrdersByBuyerUid(Long buyerUid, Pageable pageable) {
+        Page<OrderEntity> page = orderRepository.findAll(pageable);
+        // 전체 주문상세에 대한 productId, sellerUid 수집
+        List<OrderDetailEntity> allDetails = page.getContent().stream()
+                .flatMap(order -> order.getOrderDetails().stream())
+                .toList();
+        List<Long> productIds = allDetails.stream().map(OrderDetailEntity::getProductId).distinct().toList();
+        List<Long> sellerUids = allDetails.stream().map(OrderDetailEntity::getSellerUid).distinct().toList();
+        Map<Long, it.back.product.entity.ProductEntity> productMap = productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
+        Map<Long, String> companyNameMap = sellerRepository.findAllById(sellerUids).stream()
+                .collect(Collectors.toMap(s -> s.getSellerUid(), s -> s.getCompanyName()));
+
+        List<OrderResponseDTO> dtoList = page.getContent().stream()
                 .filter(order -> order.getBuyerUid().equals(buyerUid))
-                .map(OrderDTO::from)
+                .map(order -> {
+                    OrderResponseDTO dto = new OrderResponseDTO();
+                    dto.setOrderId(order.getOrderId());
+                    dto.setCreateAt(order.getCreateAt());
+                    dto.setUpdateAt(order.getUpdateAt());
+                    dto.setRecipientName(order.getRecipientName());
+                    dto.setRecipientAddress(order.getRecipientAddress());
+                    dto.setRecipientAddressDetail(order.getRecipientAddressDetail());
+                    dto.setStatus(order.getOrderStatus().name());
+                    dto.setTotalPrice(order.getTotalPrice());
+                    if (order.getOrderDetails() != null) {
+                        List<it.back.order.dto.OrderDetailDTO> detailDTOs = order.getOrderDetails().stream().map(detail -> {
+                            it.back.order.dto.OrderDetailDTO d = it.back.order.dto.OrderDetailDTO.from(detail);
+                            var product = productMap.get(detail.getProductId());
+                            if (product != null) {
+                                d.setProductName(product.getProductName());
+                                d.setProductThumbnailUrl(product.getThumbnailUrl());
+                            }
+                            d.setCompanyName(companyNameMap.get(detail.getSellerUid()));
+                            d.setCreateAt(detail.getCreateAt());
+                            d.setUpdateAt(detail.getUpdateAt());
+                            return d;
+                        }).collect(Collectors.toList());
+                        dto.setOrderDetails(detailDTOs);
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
+        return new PageResponseDTO<>(
+                dtoList,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 
     // toDTO, toDetailDTO 제거: 변환 책임을 DTO로 이동
-
     /**
-     * 주문상세 전체가 DELIVERED면 주문도 DELIVERED로 상태 변경
-     * 판매자가 주문 상태 변경 시 자동으로 체크
+     * 주문상세 전체가 DELIVERED면 주문도 DELIVERED로 상태 변경 판매자가 주문 상태 변경 시 자동으로 체크
      */
     @Transactional
     public void updateOrderStatusIfAllDelivered(Long orderId) {

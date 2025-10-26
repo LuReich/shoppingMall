@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Getter
 @Setter
 public class OrderDetailEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_detail_id")
@@ -35,6 +36,12 @@ public class OrderDetailEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "order_detail_status", nullable = false)
     private OrderDetailStatus orderDetailStatus = OrderDetailStatus.PAID;
+
+    @Column(name = "create_at")
+    private java.time.LocalDateTime createAt;
+
+    @Column(name = "update_at")
+    private java.time.LocalDateTime updateAt;
 
     public enum OrderDetailStatus {
         PAID, SHIPPING, DELIVERED, CANCELED
