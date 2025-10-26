@@ -85,7 +85,7 @@ public class CartController {
     }
 
     // 선택된 장바구니 상품 삭제
-    @DeleteMapping
+    @DeleteMapping("/selected")
     public ResponseEntity<ApiResponse<String>> removeSelectedCartItems(
             Authentication authentication,
             @RequestBody List<Long> cartIds) {
