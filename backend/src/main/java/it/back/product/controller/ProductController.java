@@ -1,7 +1,5 @@
 package it.back.product.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -44,39 +42,35 @@ public class ProductController {
     }
 
     // 해당 product_id 보기, 사용 용도 미정
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductDTO>> getProductById(@PathVariable Long id) {
-
-        ProductDTO productDto = productService.getProductById(id);
+    @GetMapping("/{productId}")
+    public ResponseEntity<ApiResponse<ProductDTO>> getProductById(@PathVariable("productId") Long productId) {
+        ProductDTO productDto = productService.getProductById(productId);
         if (productDto == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productDto));
     }
 
     // 상품 등록 용도인데 미구현
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<ProductEntity>> createProduct(@RequestBody ProductEntity product) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productService.saveProduct(product)));
     }
 
     // 상품 삭제 용인데 미사용 권장
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable("productId") Long productId) {
+        productService.deleteProduct(productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Product deleted successfully"));
     }
 
     // 상품 상세 정보 불러오기
-    @GetMapping("/{id}/detail")
-    public ResponseEntity<ApiResponse<ProductDetailDTO>> getProductDetail(@PathVariable("id") Long id) {
-
-        ProductDetailDTO productDetailDto = productService.getProductDetail(id);
+    @GetMapping("/{productId}/detail")
+    public ResponseEntity<ApiResponse<ProductDetailDTO>> getProductDetail(@PathVariable("productId") Long productId) {
+        ProductDetailDTO productDetailDto = productService.getProductDetail(productId);
         if (productDetailDto == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productDetailDto));
     }
 
@@ -90,12 +84,10 @@ public class ProductController {
     }
 
     // 일단 넣어놓기만 한 거라 미사용 권장
-    @PostMapping("/{id}/detail")
-    public ResponseEntity<ApiResponse<ProductDetailEntity>> createOrUpdateProductDetail(@PathVariable Long id,
+    @PostMapping("/{productId}/detail")
+    public ResponseEntity<ApiResponse<ProductDetailEntity>> createOrUpdateProductDetail(@PathVariable("productId") Long productId,
             @RequestBody ProductDetailEntity detail) {
-
-        detail.setProductId(id);
-
+        detail.setProductId(productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productService.saveProductDetail(detail)));
     }
 }
