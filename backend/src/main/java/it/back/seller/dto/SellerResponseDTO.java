@@ -32,6 +32,7 @@ public class SellerResponseDTO {
     private String phone;
     private String address;
     private String addressDetail;
+    private String role;
 
     public SellerResponseDTO(SellerEntity seller) {
         this.sellerUid = seller.getSellerUid();
@@ -50,5 +51,6 @@ public class SellerResponseDTO {
             this.address = seller.getSellerDetail().getAddress();
             this.addressDetail = seller.getSellerDetail().getAddressDetail();
         }
+        this.role = "SELLER";
     }
 }
