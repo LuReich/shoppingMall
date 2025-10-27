@@ -36,11 +36,23 @@ public class OrderEntity {
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus = OrderStatus.PAID;
 
-    @Column(name = "create_at")
+
+    @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;
 
     @Column(name = "update_at")
     private LocalDateTime updateAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference

@@ -65,22 +65,17 @@ public class CartService {
             newCartEntity.setQuantity(newQuantity);
             savedEntity = cartRepository.save(newCartEntity);
         }
-        cartRepository.flush();
-
-        // DB에서 재조회하여 createdAt, updatedAt 보장
-        CartEntity refreshed = cartRepository.findById(savedEntity.getCartId())
-                .orElse(savedEntity);
 
         CartItemResponseDTO dto = new CartItemResponseDTO();
-        dto.setCartId(refreshed.getCartId());
-        dto.setProductId(refreshed.getProduct().getProductId());
-        dto.setProductName(refreshed.getProduct().getProductName());
-        dto.setThumbnailUrl(refreshed.getProduct().getThumbnailUrl());
-        dto.setQuantity(refreshed.getQuantity());
-        dto.setPricePerItem(refreshed.getProduct().getPrice());
-        dto.setSellerCompanyName(refreshed.getProduct().getSeller().getCompanyName());
-        dto.setCreatedAt(refreshed.getCreatedAt());
-        dto.setUpdatedAt(refreshed.getUpdatedAt());
+        dto.setCartId(savedEntity.getCartId());
+        dto.setProductId(savedEntity.getProduct().getProductId());
+        dto.setProductName(savedEntity.getProduct().getProductName());
+        dto.setThumbnailUrl(savedEntity.getProduct().getThumbnailUrl());
+        dto.setQuantity(savedEntity.getQuantity());
+        dto.setPricePerItem(savedEntity.getProduct().getPrice());
+        dto.setSellerCompanyName(savedEntity.getProduct().getSeller().getCompanyName());
+        dto.setCreatedAt(savedEntity.getCreatedAt());
+        dto.setUpdatedAt(savedEntity.getUpdatedAt());
         if (message != null) {
             dto.setMessage(message);
         }
@@ -139,22 +134,17 @@ public class CartService {
         }
         cartEntity.setQuantity(newQuantity);
         CartEntity updatedEntity = cartRepository.save(cartEntity);
-        cartRepository.flush();
-
-        // DB에서 재조회하여 createdAt, updatedAt 보장
-        CartEntity refreshed = cartRepository.findById(updatedEntity.getCartId())
-                .orElse(updatedEntity);
 
         CartItemResponseDTO dto = new CartItemResponseDTO();
-        dto.setCartId(refreshed.getCartId());
-        dto.setProductId(refreshed.getProduct().getProductId());
-        dto.setProductName(refreshed.getProduct().getProductName());
-        dto.setThumbnailUrl(refreshed.getProduct().getThumbnailUrl());
-        dto.setQuantity(refreshed.getQuantity());
-        dto.setPricePerItem(refreshed.getProduct().getPrice());
-        dto.setSellerCompanyName(refreshed.getProduct().getSeller().getCompanyName());
-        dto.setCreatedAt(refreshed.getCreatedAt());
-        dto.setUpdatedAt(refreshed.getUpdatedAt());
+        dto.setCartId(updatedEntity.getCartId());
+        dto.setProductId(updatedEntity.getProduct().getProductId());
+        dto.setProductName(updatedEntity.getProduct().getProductName());
+        dto.setThumbnailUrl(updatedEntity.getProduct().getThumbnailUrl());
+        dto.setQuantity(updatedEntity.getQuantity());
+        dto.setPricePerItem(updatedEntity.getProduct().getPrice());
+        dto.setSellerCompanyName(updatedEntity.getProduct().getSeller().getCompanyName());
+        dto.setCreatedAt(updatedEntity.getCreatedAt());
+        dto.setUpdatedAt(updatedEntity.getUpdatedAt());
         if (message != null) {
             dto.setMessage(message);
         }
