@@ -15,7 +15,7 @@ public class OrderResponseDTO {
     private String recipientName;
     private String recipientAddress;
     private String recipientAddressDetail;
-    private String recipientPhoneNumber; // 필요시
+    private String buyerPhone; // 주문자 전화번호(주문 시점)
     private String status;
     private Integer totalPrice;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")

@@ -30,16 +30,23 @@ public class OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final ProductRepository productRepository;
     private final SellerRepository sellerRepository;
+    private final it.back.buyer.repository.BuyerDetailRepository buyerDetailRepository;
 
     @Transactional
     public OrderResponseDTO createOrder(OrderDTO orderDTO) {
-        OrderEntity order = new OrderEntity();
-        order.setBuyerUid(orderDTO.getBuyerUid());
-        order.setTotalPrice(orderDTO.getTotalPrice());
-        order.setRecipientName(orderDTO.getRecipientName());
-        order.setRecipientAddress(orderDTO.getRecipientAddress());
-        order.setRecipientAddressDetail(orderDTO.getRecipientAddressDetail());
-        order.setOrderStatus(OrderEntity.OrderStatus.valueOf(orderDTO.getOrderStatus()));
+    OrderEntity order = new OrderEntity();
+    order.setBuyerUid(orderDTO.getBuyerUid());
+    // buyerUid로 BuyerDetailEntity에서 phone 조회 후 세팅
+    buyerDetailRepository.findByBuyerUid(orderDTO.getBuyerUid())
+        .ifPresentOrElse(
+            detail -> order.setBuyerPhone(detail.getPhone()),
+            () -> { throw new IllegalArgumentException("구매자 상세 정보(전화번호)를 찾을 수 없습니다."); }
+        );
+    order.setTotalPrice(orderDTO.getTotalPrice());
+    order.setRecipientName(orderDTO.getRecipientName());
+    order.setRecipientAddress(orderDTO.getRecipientAddress());
+    order.setRecipientAddressDetail(orderDTO.getRecipientAddressDetail());
+    order.setOrderStatus(OrderEntity.OrderStatus.valueOf(orderDTO.getOrderStatus()));
 
         if (orderDTO.getOrderDetails() != null) {
             List<OrderDetailEntity> details = orderDTO.getOrderDetails().stream().map(detailDTO -> {
@@ -67,11 +74,12 @@ public class OrderService {
         dto.setOrderId(saved.getOrderId());
         dto.setCreateAt(saved.getCreateAt());
         dto.setUpdateAt(saved.getUpdateAt());
-        dto.setRecipientName(saved.getRecipientName());
-        dto.setRecipientAddress(saved.getRecipientAddress());
-        dto.setRecipientAddressDetail(saved.getRecipientAddressDetail());
-        dto.setStatus(saved.getOrderStatus().name());
-        dto.setTotalPrice(saved.getTotalPrice());
+    dto.setRecipientName(saved.getRecipientName());
+    dto.setRecipientAddress(saved.getRecipientAddress());
+    dto.setRecipientAddressDetail(saved.getRecipientAddressDetail());
+    dto.setBuyerPhone(saved.getBuyerPhone());
+    dto.setStatus(saved.getOrderStatus().name());
+    dto.setTotalPrice(saved.getTotalPrice());
         // 주문상세 전체를 리스트로 매핑 + 상품/판매자 정보 + 주문/상세 생성일/수정일 포함
         if (saved.getOrderDetails() != null) {
             List<OrderDetailDTO> detailDTOs = saved.getOrderDetails().stream().map(detail -> {
@@ -121,6 +129,7 @@ public class OrderService {
                     dto.setRecipientName(order.getRecipientName());
                     dto.setRecipientAddress(order.getRecipientAddress());
                     dto.setRecipientAddressDetail(order.getRecipientAddressDetail());
+                    dto.setBuyerPhone(order.getBuyerPhone());
                     dto.setStatus(order.getOrderStatus().name());
                     dto.setTotalPrice(order.getTotalPrice());
                     if (order.getOrderDetails() != null) {
