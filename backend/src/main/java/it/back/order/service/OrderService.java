@@ -1,4 +1,3 @@
-    // 잘못된 위치의 메서드 선언 삭제 (클래스 내부에 이미 올바르게 존재)
 package it.back.order.service;
 
 import it.back.order.entity.OrderEntity;
@@ -7,6 +6,7 @@ import it.back.order.repository.OrderRepository;
 import it.back.order.repository.OrderDetailRepository;
 import it.back.order.dto.OrderResponseDTO;
 import it.back.order.dto.OrderDTO;
+import it.back.order.dto.OrderDetailDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import it.back.common.pagination.PageResponseDTO;
+import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductRepository;
 import it.back.seller.repository.SellerRepository;
 
@@ -57,7 +58,7 @@ public class OrderService {
         // 상품/판매자 정보 맵핑을 위해 id 수집
         List<Long> productIds = saved.getOrderDetails().stream().map(OrderDetailEntity::getProductId).distinct().toList();
         List<Long> sellerUids = saved.getOrderDetails().stream().map(OrderDetailEntity::getSellerUid).distinct().toList();
-        Map<Long, it.back.product.entity.ProductEntity> productMap = productRepository.findAllById(productIds).stream()
+        Map<Long, ProductEntity> productMap = productRepository.findAllById(productIds).stream()
                 .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
         Map<Long, String> companyNameMap = sellerRepository.findAllById(sellerUids).stream()
                 .collect(Collectors.toMap(s -> s.getSellerUid(), s -> s.getCompanyName()));
@@ -73,8 +74,14 @@ public class OrderService {
         dto.setTotalPrice(saved.getTotalPrice());
         // 주문상세 전체를 리스트로 매핑 + 상품/판매자 정보 + 주문/상세 생성일/수정일 포함
         if (saved.getOrderDetails() != null) {
-            List<it.back.order.dto.OrderDetailDTO> detailDTOs = saved.getOrderDetails().stream().map(detail -> {
-                it.back.order.dto.OrderDetailDTO d = it.back.order.dto.OrderDetailDTO.from(detail);
+            List<OrderDetailDTO> detailDTOs = saved.getOrderDetails().stream().map(detail -> {
+                OrderDetailDTO d = new OrderDetailDTO();
+                d.setOrderDetailId(detail.getOrderDetailId());
+                d.setProductId(detail.getProductId());
+                d.setSellerUid(detail.getSellerUid());
+                d.setQuantity(detail.getQuantity());
+                d.setPricePerItem(detail.getPricePerItem());
+                d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
                 var product = productMap.get(detail.getProductId());
                 if (product != null) {
                     d.setProductName(product.getProductName());
@@ -99,7 +106,7 @@ public class OrderService {
                 .toList();
         List<Long> productIds = allDetails.stream().map(OrderDetailEntity::getProductId).distinct().toList();
         List<Long> sellerUids = allDetails.stream().map(OrderDetailEntity::getSellerUid).distinct().toList();
-        Map<Long, it.back.product.entity.ProductEntity> productMap = productRepository.findAllById(productIds).stream()
+        Map<Long, ProductEntity> productMap = productRepository.findAllById(productIds).stream()
                 .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
         Map<Long, String> companyNameMap = sellerRepository.findAllById(sellerUids).stream()
                 .collect(Collectors.toMap(s -> s.getSellerUid(), s -> s.getCompanyName()));
@@ -117,8 +124,14 @@ public class OrderService {
                     dto.setStatus(order.getOrderStatus().name());
                     dto.setTotalPrice(order.getTotalPrice());
                     if (order.getOrderDetails() != null) {
-                        List<it.back.order.dto.OrderDetailDTO> detailDTOs = order.getOrderDetails().stream().map(detail -> {
-                            it.back.order.dto.OrderDetailDTO d = it.back.order.dto.OrderDetailDTO.from(detail);
+                        List<OrderDetailDTO> detailDTOs = order.getOrderDetails().stream().map(detail -> {
+                            OrderDetailDTO d = new OrderDetailDTO();
+                            d.setOrderDetailId(detail.getOrderDetailId());
+                            d.setProductId(detail.getProductId());
+                            d.setSellerUid(detail.getSellerUid());
+                            d.setQuantity(detail.getQuantity());
+                            d.setPricePerItem(detail.getPricePerItem());
+                            d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
                             var product = productMap.get(detail.getProductId());
                             if (product != null) {
                                 d.setProductName(product.getProductName());

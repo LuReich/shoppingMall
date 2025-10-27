@@ -3,6 +3,9 @@ package it.back.order.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
@@ -38,10 +41,10 @@ public class OrderDetailEntity {
     private OrderDetailStatus orderDetailStatus = OrderDetailStatus.PAID;
 
     @Column(name = "create_at")
-    private java.time.LocalDateTime createAt;
+    private LocalDateTime createAt;
 
     @Column(name = "update_at")
-    private java.time.LocalDateTime updateAt;
+    private LocalDateTime updateAt;
 
     public enum OrderDetailStatus {
         PAID, SHIPPING, DELIVERED, CANCELED
