@@ -52,8 +52,20 @@ public class ReviewService {
     public void updateReview(Long reviewId, ReviewCreateRequest request, String userId) throws IllegalAccessException {
         ReviewEntity review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
+        // 본인 리뷰인지 확인
         if (!review.getBuyer().getBuyerId().equals(userId)) {
             throw new IllegalAccessException("본인 리뷰만 수정할 수 있습니다.");
+        }
+        // orderDetailId가 일치하는지 확인 (구매한 상품에 대한 리뷰만 수정 가능)
+        if (request.getOrderDetailId() != null && !review.getOrderDetail().getOrderDetailId().equals(request.getOrderDetailId())) {
+            throw new IllegalAccessException("구매한 상품에 대해서만 리뷰를 수정할 수 있습니다.");
+        }
+        // productId와 orderDetailId 매칭 검증
+        if (request.getProductId() != null) {
+            Long orderDetailProductId = review.getOrderDetail().getProductId();
+            if (!orderDetailProductId.equals(request.getProductId())) {
+                throw new IllegalAccessException("orderDetailId와 productId가 일치하지 않습니다.");
+            }
         }
         review.setContent(request.getContent());
         review.setRating(request.getRating());

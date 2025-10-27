@@ -75,6 +75,8 @@ public class OrderController {
     // }
     // ]
     // }
+
+    // 주문 생성
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponseDTO>> createOrder(@RequestBody OrderDTO orderDTO,
             Authentication authentication) {

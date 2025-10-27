@@ -26,20 +26,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // 리뷰 삭제 API (buyer만 가능)
-    @PreAuthorize("hasRole('BUYER')")
-    @DeleteMapping("/{reviewId}")
-    public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId, Principal principal) {
-        try {
-            reviewService.deleteReview(reviewId, principal.getName());
-            return ResponseEntity.ok(ApiResponse.ok("리뷰가 삭제되었습니다."));
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.forbidden("본인 리뷰만 삭제할 수 있습니다."));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.notFound(e.getMessage()));
-        }
-    }
-
     // 리뷰 작성 API
     @PostMapping("write")
     public ResponseEntity<ApiResponse<Map<String, Object>>> createReview(@RequestBody ReviewCreateRequest request, Principal principal) throws Exception {
@@ -60,4 +46,19 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.notFound(e.getMessage()));
         }
     }
+
+    // 리뷰 삭제 API (buyer만 가능)
+    @PreAuthorize("hasRole('BUYER')")
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId, Principal principal) {
+        try {
+            reviewService.deleteReview(reviewId, principal.getName());
+            return ResponseEntity.ok(ApiResponse.ok("리뷰가 삭제되었습니다."));
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.forbidden("본인 리뷰만 삭제할 수 있습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.notFound(e.getMessage()));
+        }
+    }
+
 }
