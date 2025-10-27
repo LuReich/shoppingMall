@@ -40,11 +40,23 @@ public class OrderDetailEntity {
     @Column(name = "order_detail_status", nullable = false)
     private OrderDetailStatus orderDetailStatus = OrderDetailStatus.PAID;
 
-    @Column(name = "create_at")
+
+    @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;
 
     @Column(name = "update_at")
     private LocalDateTime updateAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
 
     public enum OrderDetailStatus {
         PAID, SHIPPING, DELIVERED, CANCELED
