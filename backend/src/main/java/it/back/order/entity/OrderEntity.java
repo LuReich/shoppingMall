@@ -20,6 +20,9 @@ public class OrderEntity {
     @Column(name = "buyer_uid", nullable = false)
     private Long buyerUid;
 
+    @Column(name = "buyer_phone", nullable = false, length = 20)
+    private String buyerPhone;
+
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
