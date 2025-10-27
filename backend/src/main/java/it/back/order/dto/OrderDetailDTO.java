@@ -2,7 +2,6 @@ package it.back.order.dto;
 
 import java.time.LocalDateTime;
 
-import it.back.order.entity.OrderDetailEntity;
 import lombok.Getter;
 import lombok.Setter;
 
