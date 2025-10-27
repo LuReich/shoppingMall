@@ -15,6 +15,7 @@ public class AdminResponseDTO {
     private Byte permissionLevel;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private String role;
 
     public AdminResponseDTO(AdminEntity admin) {
         this.adminUid = admin.getAdminUid();
@@ -24,5 +25,6 @@ public class AdminResponseDTO {
         this.permissionLevel = admin.getPermissionLevel();
         this.createAt = admin.getCreateAt();
         this.updateAt = admin.getUpdateAt();
+        this.role = "ADMIN";
     }
 }
