@@ -1,5 +1,6 @@
 package it.back.product.controller;
 
+import it.back.common.pagination.PageRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -33,11 +34,11 @@ public class ProductController {
     // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, 만약 로그인한 상태에서 안된다면 긴급 연락 해주세요
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductDTO>>> getAllProducts(
-        @PageableDefault(size = 10) Pageable pageable,
+        PageRequestDTO pageRequestDTO,
         @RequestParam(name = "categoryId", required = false) Integer categoryId,
         @RequestParam(name = "productName", required = false) String productName) {
 
-    PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageable, categoryId, productName);
+    PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName);
     return ResponseEntity.status(HttpStatus.OK)
         .body(ApiResponse.ok(productPageDto));
     }
