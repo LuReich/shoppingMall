@@ -19,6 +19,10 @@ import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
+import jakarta.validation.ConstraintViolationException;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,6 +32,7 @@ public class BuyerService {
     private final BuyerRepository buyerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
+    private final Validator validator;
 
     public String login(LoginRequestDTO dto) {
         BuyerEntity buyer = buyerRepository.findByBuyerId(dto.getLoginId())
@@ -144,6 +149,13 @@ public class BuyerService {
                 }
             }
         }
+
+        // Explicitly validate the entity before returning (which triggers save by @Transactional)
+        Set<ConstraintViolation<BuyerEntity>> violations = validator.validate(buyer);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
         // 변경사항은 @Transactional에 의해 자동 반영
         return buyer;
     }
@@ -227,6 +239,12 @@ public class BuyerService {
 
         detail.setBuyer(buyer);
         buyer.setBuyerDetail(detail);
+
+        // Explicitly validate the entity
+        Set<ConstraintViolation<BuyerEntity>> violations = validator.validate(buyer);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
 
         BuyerEntity saved = buyerRepository.save(buyer);
         return new BuyerResponseDTO(saved);

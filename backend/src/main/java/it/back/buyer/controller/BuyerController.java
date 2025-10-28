@@ -1,5 +1,6 @@
 package it.back.buyer.controller;
 
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,10 +72,11 @@ public class BuyerController {
     // responseBody.put("token", "bearer: " + jwt);
     // return ResponseEntity.ok().body(responseBody);
     // }
+    // buyer 자기 정보 수정
     @PatchMapping("/{buyerUid}")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> updateBuyer(
             @PathVariable Long buyerUid,
-            @RequestBody BuyerUpdateRequestDTO request,
+            @Valid @RequestBody BuyerUpdateRequestDTO request,
             Authentication authentication) {
 
         BuyerEntity updatedEntity = buyerService.updateBuyer(buyerUid, request, authentication);
@@ -97,7 +99,8 @@ public class BuyerController {
 
     // 전화번호 중복 및 형식 체크
     @PostMapping("/check-phone")
-    public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, String> body, Authentication authentication) {
+    public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, String> body,
+            Authentication authentication) {
         String phone = body.get("phone");
         String loginId = authentication != null ? authentication.getName() : null;
         String result = buyerService.checkPhone(phone, loginId);
@@ -106,14 +109,15 @@ public class BuyerController {
 
     // buyer 회원가입 용
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<BuyerResponseDTO>> registerBuyer(@RequestBody BuyerRegisterDTO buyerRegisterDto) {
+    public ResponseEntity<ApiResponse<BuyerResponseDTO>> registerBuyer(@Valid @RequestBody BuyerRegisterDTO buyerRegisterDto) {
         BuyerResponseDTO result = buyerService.registerBuyer(buyerRegisterDto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // buyer 본인 탈퇴 (isActive=0)
     @PatchMapping("/withdraw")
-    public ResponseEntity<ApiResponse<String>> buyerWithdraw(@RequestBody(required = false) Map<String, String> body, Authentication authentication) {
+    public ResponseEntity<ApiResponse<String>> buyerWithdraw(@RequestBody(required = false) Map<String, String> body,
+            Authentication authentication) {
         String loginId = authentication.getName();
         String withdrawalReason = (body != null) ? body.getOrDefault("withdrawalReason", "") : "";
         buyerService.buyerWithdraw(loginId, withdrawalReason);

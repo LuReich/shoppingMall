@@ -1,5 +1,6 @@
 package it.back.seller.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.List;
@@ -81,7 +82,7 @@ public class SellerController {
 
     // seller 등록용
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<SellerResponseDTO>> registerSeller(@RequestBody SellerRegisterDTO sellerRegisterDto) {
+    public ResponseEntity<ApiResponse<SellerResponseDTO>> registerSeller(@Valid @RequestBody SellerRegisterDTO sellerRegisterDto) {
         SellerResponseDTO result = sellerService.registerSeller(sellerRegisterDto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
