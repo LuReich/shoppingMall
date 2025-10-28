@@ -75,26 +75,25 @@ public class SellerService {
      */
     @Transactional
     public SellerResponseDTO registerSeller(SellerRegisterDTO sellerRegisterDto) {
+        // 전화번호 숫자열(10~11자리)만 허용
+        String phone = sellerRegisterDto.getPhone();
+        if (phone == null || !phone.matches("^\\d{10,11}$")) {
+            throw new IllegalArgumentException("전화번호는 10~11자리 숫자만 입력해야 합니다.");
+        }
+        // 사업자등록번호 10자리 숫자 체크
+        String businessNo = sellerRegisterDto.getBusinessRegistrationNumber();
+        if (businessNo == null || !businessNo.matches("^\\d{10}$")) {
+            throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
+        }
         // 중복 체크
         if (sellerRepository.findBySellerId(sellerRegisterDto.getSellerId()).isPresent()) {
-            SellerResponseDTO errorDTO = new SellerResponseDTO();
-            errorDTO.setCompanyName("이미 사용 중인 아이디입니다.");
-            return errorDTO;
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
         if (sellerRepository.findBySellerEmail(sellerRegisterDto.getSellerEmail()).isPresent()) {
-            SellerResponseDTO errorDTO = new SellerResponseDTO();
-            errorDTO.setCompanyName("이미 사용 중인 이메일입니다.");
-            return errorDTO;
-        }
-        if (sellerRepository.findBySellerDetail_Phone(sellerRegisterDto.getPhone()).isPresent()) {
-            SellerResponseDTO errorDTO = new SellerResponseDTO();
-            errorDTO.setCompanyName("이미 사용 중인 전화번호입니다.");
-            return errorDTO;
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         if (sellerRepository.findBySellerDetail_BusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber()).isPresent()) {
-            SellerResponseDTO errorDTO = new SellerResponseDTO();
-            errorDTO.setCompanyName("이미 사용 중인 사업자등록번호입니다.");
-            return errorDTO;
+            throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
         }
 
         SellerEntity seller = new SellerEntity();

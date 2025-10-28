@@ -197,19 +197,19 @@ public class BuyerService {
 
     @Transactional
     public BuyerResponseDTO registerBuyer(BuyerRegisterDTO buyerRegisterDto) {
+        // 아이디(buyer_id) 중복 체크
+        if (buyerRepository.findByBuyerId(buyerRegisterDto.getBuyerId()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
         // 이메일 중복 체크
         if (buyerRepository.findByBuyerEmail(buyerRegisterDto.getBuyerEmail()).isPresent()) {
-            BuyerResponseDTO errorDTO = new BuyerResponseDTO();
-            errorDTO.setErrorMessage("이미 사용 중인 이메일입니다.");
-            return errorDTO;
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         // 전화번호 중복 체크
         boolean phoneExists = buyerRepository.findAll().stream()
                 .anyMatch(b -> b.getBuyerDetail() != null && buyerRegisterDto.getPhone().equals(b.getBuyerDetail().getPhone()));
         if (phoneExists) {
-            BuyerResponseDTO errorDTO = new BuyerResponseDTO();
-            errorDTO.setErrorMessage("이미 사용 중인 전화번호입니다.");
-            return errorDTO;
+            throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
         }
 
         BuyerEntity buyer = new BuyerEntity();
