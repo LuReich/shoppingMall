@@ -113,9 +113,10 @@ public class BuyerController {
 
     // buyer 본인 탈퇴 (isActive=0)
     @PatchMapping("/withdraw")
-    public ResponseEntity<ApiResponse<String>> buyerWithdraw(Authentication authentication) {
+    public ResponseEntity<ApiResponse<String>> buyerWithdraw(@RequestBody(required = false) Map<String, String> body, Authentication authentication) {
         String loginId = authentication.getName();
-        buyerService.buyerWithdraw(loginId);
+        String withdrawalReason = (body != null) ? body.getOrDefault("withdrawalReason", "") : "";
+        buyerService.buyerWithdraw(loginId, withdrawalReason);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("회원 탈퇴(비활성화) 처리되었습니다."));
     }
 
