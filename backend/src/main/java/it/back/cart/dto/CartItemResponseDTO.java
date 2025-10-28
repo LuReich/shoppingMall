@@ -16,6 +16,7 @@ public class CartItemResponseDTO {
     private String thumbnailUrl;
     private Integer quantity;
     private Integer pricePerItem;
+    private Long sellerUid; // 판매자 식별자 추가
     private String sellerCompanyName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
