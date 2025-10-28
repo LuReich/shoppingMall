@@ -2,12 +2,13 @@ package it.back.seller.repository;
 
 import it.back.seller.entity.SellerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface SellerRepository extends JpaRepository<SellerEntity, Long> {
+public interface SellerRepository extends JpaRepository<SellerEntity, Long>, JpaSpecificationExecutor<SellerEntity> {
 
     Optional<SellerEntity> findBySellerId(String sellerId);
 

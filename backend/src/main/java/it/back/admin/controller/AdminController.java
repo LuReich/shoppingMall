@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.entity.AdminEntity;
@@ -57,8 +58,10 @@ public class AdminController {
     // admin 전용 buyer 리스트 불러오기 회원 보기 리스트 관리자 페이지 전용
     @GetMapping("/buyer/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<BuyerDTO>>> getAllBuyers(
-            PageRequestDTO pageRequestDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageRequestDTO)));
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(required = false) String buyerId,
+            @RequestParam(required = false) String nickname) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageRequestDTO, buyerId, nickname)));
     }
 
     // buyer 상세 보기 아마도 회원 리스트 표? 에서 링크 넣고 싶은데 넣고 이걸로 요청 보내서 상세 정보 보기
@@ -73,8 +76,10 @@ public class AdminController {
     // seller 리스트 보기 관리자 페이지 전용
     @GetMapping("/seller/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<SellerDTO>>> getAllSellers(
-            PageRequestDTO pageRequestDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageRequestDTO)));
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(required = false) String sellerId,
+            @RequestParam(required = false) String companyName) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageRequestDTO, sellerId, companyName)));
     }
 
     // seller 상세 정보 보기

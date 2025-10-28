@@ -1,10 +1,12 @@
 package it.back.admin.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -55,9 +58,21 @@ public class AdminService {
         );
     }
 
-    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, String buyerId, String nickname) {
         Pageable pageable = pageRequestDTO.toPageable();
-        Page<BuyerEntity> page = buyerRepository.findAll(pageable);
+
+        Specification<BuyerEntity> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (buyerId != null && !buyerId.isBlank()) {
+                predicates.add(criteriaBuilder.like(root.get("buyerId"), "%" + buyerId + "%"));
+            }
+            if (nickname != null && !nickname.isBlank()) {
+                predicates.add(criteriaBuilder.like(root.get("nickname"), "%" + nickname + "%"));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<BuyerEntity> page = buyerRepository.findAll(spec, pageable);
         List<BuyerDTO> buyerList = page.getContent().stream()
                 .map(entity -> {
                     BuyerDTO dto = new BuyerDTO();
@@ -76,9 +91,21 @@ public class AdminService {
         return new PageResponseDTO<>(page, buyerList);
     }
 
-    public PageResponseDTO<SellerDTO> findAllSellers(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<SellerDTO> findAllSellers(PageRequestDTO pageRequestDTO, String sellerId, String companyName) {
         Pageable pageable = pageRequestDTO.toPageable();
-        Page<SellerEntity> page = sellerRepository.findAll(pageable);
+
+        Specification<SellerEntity> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (sellerId != null && !sellerId.isBlank()) {
+                predicates.add(criteriaBuilder.like(root.get("sellerId"), "%" + sellerId + "%"));
+            }
+            if (companyName != null && !companyName.isBlank()) {
+                predicates.add(criteriaBuilder.like(root.get("companyName"), "%" + companyName + "%"));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<SellerEntity> page = sellerRepository.findAll(spec, pageable);
         List<SellerDTO> sellerList = page.getContent().stream()
                 .map(entity -> {
                     SellerDTO dto = new SellerDTO();

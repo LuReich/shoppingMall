@@ -1,10 +1,12 @@
 package it.back.product.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import it.back.category.service.CategoryService;
@@ -19,6 +21,7 @@ import it.back.product.repository.ProductRepository;
 import it.back.review.dto.ReviewDTO;
 import it.back.review.entity.ReviewEntity;
 import it.back.review.service.ReviewService;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -56,21 +59,26 @@ public class ProductService {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
-        Page<ProductEntity> page;
-        String trimmedProductName = (productName != null) ? productName.trim() : null;
-        String noSpaceProductName = (trimmedProductName != null) ? trimmedProductName.replace(" ", "") : null;
+        Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (categoryId == null && (noSpaceProductName == null || noSpaceProductName.isBlank())) {
-            page = productRepository.findAll(pageable);
-        } else if (categoryId != null && (noSpaceProductName == null || noSpaceProductName.isBlank())) {
-            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
-            page = productRepository.findByCategoryId(categoryIds, pageable);
-        } else if (categoryId == null) {
-            page = productRepository.findByProductNameIgnoreSpace(noSpaceProductName, pageable);
-        } else {
-            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
-            page = productRepository.findByCategoryIdAndProductNameIgnoreSpace(categoryIds, noSpaceProductName, pageable);
-        }
+            if (categoryId != null) {
+                List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+                predicates.add(root.get("category").get("categoryId").in(categoryIds));
+            }
+
+            if (productName != null && !productName.isBlank()) {
+                String noSpaceProductName = productName.replace(" ", "");
+                predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.function("REPLACE", String.class, root.get("productName"), criteriaBuilder.literal(" "), criteriaBuilder.literal("")),
+                    "%" + noSpaceProductName + "%"
+                ));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<ProductEntity> page = productRepository.findAll(spec, pageable);
 
         List<ProductDTO> dtos = page.getContent().stream().map(product -> {
             ProductDTO dto = new ProductDTO();
