@@ -1,4 +1,4 @@
-package it.back.buyer.specification;
+package it.back.admin.specification;
 
 import java.util.ArrayList;
 import java.util.List;
