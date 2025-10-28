@@ -1,5 +1,7 @@
 package it.back.seller.entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +27,8 @@ public class SellerDetailEntity {
     @Column(name = "company_info", columnDefinition = "TEXT")
     private String companyInfo;
 
+    @NotBlank(message = "전화번호는 필수 입력 값입니다.")
+    @Pattern(regexp = "^\\S*$", message = "전화번호에는 공백을 포함할 수 없습니다.")
     @Column(nullable = false, length = 20)
     private String phone;
 

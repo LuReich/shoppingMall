@@ -1,26 +1,31 @@
 package it.back.admin.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
 import it.back.buyer.dto.BuyerDTO;
-import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
+import it.back.admin.specification.BuyerSpecifications;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
-import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
+import it.back.admin.specification.SellerSpecifications;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -56,12 +61,19 @@ public class AdminService {
         );
     }
 
-    /*
-    // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
-    // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
-     */
-    public PageResponseDTO<BuyerDTO> findAllBuyers(Pageable pageable) {
-        Page<BuyerEntity> page = buyerRepository.findAll(pageable);
+    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, Long buyerUid, String buyerId, String nickname, String buyerEmail, String phone, String withdrawalStatus) {
+        Pageable pageable = pageRequestDTO.toPageable();
+
+        Specification<BuyerEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        spec = spec.and(BuyerSpecifications.hasBuyerUid(buyerUid));
+        spec = spec.and(BuyerSpecifications.hasBuyerId(buyerId));
+        spec = spec.and(BuyerSpecifications.hasNickname(nickname));
+        spec = spec.and(BuyerSpecifications.hasBuyerEmail(buyerEmail));
+        spec = spec.and(BuyerSpecifications.hasPhone(phone));
+        spec = spec.and(BuyerSpecifications.hasWithdrawalStatus(withdrawalStatus));
+
+        Page<BuyerEntity> page = buyerRepository.findAll(spec, pageable);
         List<BuyerDTO> buyerList = page.getContent().stream()
                 .map(entity -> {
                     BuyerDTO dto = new BuyerDTO();
@@ -77,18 +89,27 @@ public class AdminService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-        return new PageResponseDTO<>(
-                buyerList,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, buyerList);
     }
 
-    public PageResponseDTO<SellerDTO> findAllSellers(Pageable pageable) {
-        Page<SellerEntity> page = sellerRepository.findAll(pageable);
+    public PageResponseDTO<SellerDTO> findAllSellers(PageRequestDTO pageRequestDTO, Long sellerUid, String sellerId, String companyName,
+            String sellerEmail, String phone, String businessRegistrationNumber, Boolean isActive, Boolean isVerified,
+            String withdrawalStatus) {
+        Pageable pageable = pageRequestDTO.toPageable();
+
+        Specification<SellerEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        spec = spec.and(SellerSpecifications.hasSellerUid(sellerUid));
+        spec = spec.and(SellerSpecifications.hasSellerId(sellerId));
+        spec = spec.and(SellerSpecifications.hasCompanyName(companyName));
+        spec = spec.and(SellerSpecifications.hasSellerEmail(sellerEmail));
+        spec = spec.and(SellerSpecifications.hasPhone(phone));
+        spec = spec.and(SellerSpecifications.hasBusinessRegistrationNumber(businessRegistrationNumber));
+        spec = spec.and(SellerSpecifications.isActive(isActive));
+        spec = spec.and(SellerSpecifications.isVerified(isVerified));
+        spec = spec.and(SellerSpecifications.hasWithdrawalStatus(withdrawalStatus));
+
+        Page<SellerEntity> page = sellerRepository.findAll(spec, pageable);
         List<SellerDTO> sellerList = page.getContent().stream()
                 .map(entity -> {
                     SellerDTO dto = new SellerDTO();
@@ -105,14 +126,7 @@ public class AdminService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-        return new PageResponseDTO<>(
-                sellerList,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, sellerList);
     }
 
 }

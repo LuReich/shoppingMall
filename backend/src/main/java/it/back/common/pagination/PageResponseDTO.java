@@ -2,6 +2,8 @@ package it.back.common.pagination;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"page", "size", "totalElements", "totalPages", "last", "content"})
@@ -21,6 +23,15 @@ public class PageResponseDTO<T> {
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.last = last;
+    }
+
+    public PageResponseDTO(Page<?> page, List<T> content) {
+        this.content = content;
+        this.page = page.getNumber();
+        this.size = page.getSize();
+        this.totalElements = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
+        this.last = page.isLast();
     }
     public List<T> getContent() { return content; }
     public void setContent(List<T> content) { this.content = content; }

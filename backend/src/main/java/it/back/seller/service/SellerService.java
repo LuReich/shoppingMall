@@ -18,6 +18,10 @@ import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
+import jakarta.validation.ConstraintViolationException;
+import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -27,6 +31,7 @@ public class SellerService {
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
+    private final Validator validator;
 
     public List<SellerDTO> getAllSellers(Sort sort) {
         return sellerRepository.findAll(sort).stream().map(entity -> {
@@ -75,9 +80,32 @@ public class SellerService {
      */
     @Transactional
     public SellerResponseDTO registerSeller(SellerRegisterDTO sellerRegisterDto) {
+        // 이메일 형식 체크
+        String email = sellerRegisterDto.getSellerEmail();
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+        }
+        // 전화번호 숫자열(10~11자리)만 허용
+        String phone = sellerRegisterDto.getPhone();
+        if (phone == null || !phone.matches("^\\d{10,11}$")) {
+            throw new IllegalArgumentException("전화번호는 10~11자리 숫자만 입력해야 합니다.");
+        }
+        // 사업자등록번호 10자리 숫자 체크
+        String businessNo = sellerRegisterDto.getBusinessRegistrationNumber();
+        if (businessNo == null || !businessNo.matches("^\\d{10}$")) {
+            throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
+        }
 
-
-        validateSellerFields(sellerRegisterDto);
+        // Uniqueness checks
+        if (sellerRepository.findBySellerId(sellerRegisterDto.getSellerId()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+        if (sellerRepository.findBySellerEmail(sellerRegisterDto.getSellerEmail()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+        if (sellerRepository.findBySellerDetail_BusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
+        }
 
         SellerEntity seller = new SellerEntity();
         
@@ -96,40 +124,17 @@ public class SellerService {
         detail.setSeller(seller);
         seller.setSellerDetail(detail);
 
+        // Explicitly validate the entity
+        Set<ConstraintViolation<SellerEntity>> violations = validator.validate(seller);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
         SellerEntity saved = sellerRepository.save(seller);
         return new SellerResponseDTO(saved);
     }
 
-    /**
-     * 회원가입/수정 등에서 재사용할 수 있는 seller 입력값 검증(이메일/전화번호/사업자등록번호 형식 및 중복) 메서드
-     */
-    private void validateSellerFields(SellerRegisterDTO sellerRegisterDto) {
-        // 이메일 형식 체크
-        String email = sellerRegisterDto.getSellerEmail();
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
-        }
-        // 전화번호 숫자열(10~11자리)만 허용
-        String phone = sellerRegisterDto.getPhone();
-        if (phone == null || !phone.matches("^\\d{10,11}$")) {
-            throw new IllegalArgumentException("전화번호는 10~11자리 숫자만 입력해야 합니다.");
-        }
-        // 사업자등록번호 10자리 숫자 체크
-        String businessNo = sellerRegisterDto.getBusinessRegistrationNumber();
-        if (businessNo == null || !businessNo.matches("^\\d{10}$")) {
-            throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
-        }
-        // 중복 체크
-        if (sellerRepository.findBySellerId(sellerRegisterDto.getSellerId()).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        }
-        if (sellerRepository.findBySellerEmail(sellerRegisterDto.getSellerEmail()).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        }
-        if (sellerRepository.findBySellerDetail_BusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber()).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
-        }
-    }
+    
 
     // 공개용 판매자 정보 조회
     public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {

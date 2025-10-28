@@ -1,13 +1,16 @@
 package it.back.product.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import it.back.category.service.CategoryService;
+import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
@@ -15,9 +18,11 @@ import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductDetailRepository;
 import it.back.product.repository.ProductRepository;
+import it.back.product.specification.ProductSpecifications;
 import it.back.review.dto.ReviewDTO;
 import it.back.review.entity.ReviewEntity;
 import it.back.review.service.ReviewService;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,33 +53,23 @@ public class ProductService {
             dto.setOrderDetailId(review.getOrderDetail().getOrderDetailId());
             return dto;
         }).toList();
-        return new PageResponseDTO<>(
-                dtos,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, dtos);
     }
 
-    public PageResponseDTO<ProductDTO> getAllProducts(Pageable pageable, Integer categoryId, String productName) {
+    public PageResponseDTO<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName) {
 
-        Page<ProductEntity> page;
-        String trimmedProductName = (productName != null) ? productName.trim() : null;
-        String noSpaceProductName = (trimmedProductName != null) ? trimmedProductName.replace(" ", "") : null;
+        Pageable pageable = pageRequestDTO.toPageable();
 
-        if (categoryId == null && (noSpaceProductName == null || noSpaceProductName.isBlank())) {
-            page = productRepository.findAll(pageable);
-        } else if (categoryId != null && (noSpaceProductName == null || noSpaceProductName.isBlank())) {
+        Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        spec = spec.and(ProductSpecifications.nameContains(productName));
+
+        if (categoryId != null) {
             List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
-            page = productRepository.findByCategoryId(categoryIds, pageable);
-        } else if (categoryId == null) {
-            page = productRepository.findByProductNameIgnoreSpace(noSpaceProductName, pageable);
-        } else {
-            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
-            page = productRepository.findByCategoryIdAndProductNameIgnoreSpace(categoryIds, noSpaceProductName, pageable);
+            spec = spec.and(ProductSpecifications.inCategory(categoryIds));
         }
+
+        Page<ProductEntity> page = productRepository.findAll(spec, pageable);
 
         List<ProductDTO> dtos = page.getContent().stream().map(product -> {
             ProductDTO dto = new ProductDTO();
@@ -91,14 +86,7 @@ public class ProductService {
             return dto;
         }).toList();
 
-        return new PageResponseDTO<>(
-                dtos,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, dtos);
     }
 
     public ProductDTO getProductById(Long id) {

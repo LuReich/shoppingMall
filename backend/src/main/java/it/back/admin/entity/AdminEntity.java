@@ -1,11 +1,18 @@
 package it.back.admin.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "admin")
@@ -17,7 +24,6 @@ public class AdminEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "admin_uid")
     private Integer adminUid;
-
 
     @Column(name = "admin_id", unique = true, nullable = false, length = 50)
     private String adminId;
