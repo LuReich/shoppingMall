@@ -34,6 +34,7 @@ public class SellerController {
     private final SellerService sellerService;
     private final SellerRepository sellerRepository;
 
+
     // 로그인한 seller 가 자기 정보 불러오기
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> getMyInfo(Authentication authentication) {
