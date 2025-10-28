@@ -60,8 +60,11 @@ public class AdminController {
     public ResponseEntity<ApiResponse<PageResponseDTO<BuyerDTO>>> getAllBuyers(
             PageRequestDTO pageRequestDTO,
             @RequestParam(required = false) String buyerId,
-            @RequestParam(required = false) String nickname) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageRequestDTO, buyerId, nickname)));
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String buyerEmail,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String withdrawalStatus) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageRequestDTO, buyerId, nickname, buyerEmail, phone, withdrawalStatus)));
     }
 
     // buyer 상세 보기 아마도 회원 리스트 표? 에서 링크 넣고 싶은데 넣고 이걸로 요청 보내서 상세 정보 보기
@@ -78,8 +81,14 @@ public class AdminController {
     public ResponseEntity<ApiResponse<PageResponseDTO<SellerDTO>>> getAllSellers(
             PageRequestDTO pageRequestDTO,
             @RequestParam(required = false) String sellerId,
-            @RequestParam(required = false) String companyName) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageRequestDTO, sellerId, companyName)));
+            @RequestParam(required = false) String companyName,
+            @RequestParam(required = false) String sellerEmail,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String businessRegistrationNumber,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(required = false) Boolean isVerified,
+            @RequestParam(required = false) String withdrawalStatus) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageRequestDTO, sellerId, companyName, sellerEmail, phone, businessRegistrationNumber, isActive, isVerified, withdrawalStatus)));
     }
 
     // seller 상세 정보 보기

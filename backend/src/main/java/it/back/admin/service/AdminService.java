@@ -22,6 +22,7 @@ import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 
@@ -58,7 +59,7 @@ public class AdminService {
         );
     }
 
-    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, String buyerId, String nickname) {
+    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, String buyerId, String nickname, String buyerEmail, String phone, String withdrawalStatus) {
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<BuyerEntity> spec = (root, query, criteriaBuilder) -> {
@@ -68,6 +69,21 @@ public class AdminService {
             }
             if (nickname != null && !nickname.isBlank()) {
                 predicates.add(criteriaBuilder.like(root.get("nickname"), "%" + nickname + "%"));
+            }
+            if (buyerEmail != null && !buyerEmail.isBlank()) {
+                predicates.add(criteriaBuilder.like(root.get("buyerEmail"), "%" + buyerEmail + "%"));
+            }
+            if (phone != null && !phone.isBlank()) {
+                Join<BuyerEntity, Object> detailJoin = root.join("buyerDetail");
+                predicates.add(criteriaBuilder.like(detailJoin.get("phone"), "%" + phone + "%"));
+            }
+            if (withdrawalStatus != null && !withdrawalStatus.isBlank()) {
+                try {
+                    BuyerEntity.WithdrawalStatus status = BuyerEntity.WithdrawalStatus.valueOf(withdrawalStatus.toUpperCase());
+                    predicates.add(criteriaBuilder.equal(root.get("withdrawalStatus"), status));
+                } catch (IllegalArgumentException e) {
+                    // Ignore invalid status
+                }
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -91,17 +107,53 @@ public class AdminService {
         return new PageResponseDTO<>(page, buyerList);
     }
 
-    public PageResponseDTO<SellerDTO> findAllSellers(PageRequestDTO pageRequestDTO, String sellerId, String companyName) {
+    public PageResponseDTO<SellerDTO> findAllSellers(PageRequestDTO pageRequestDTO, String sellerId, String companyName,
+            String sellerEmail, String phone, String businessRegistrationNumber, Boolean isActive, Boolean isVerified,
+            String withdrawalStatus) {
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<SellerEntity> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            // String searches (like)
             if (sellerId != null && !sellerId.isBlank()) {
                 predicates.add(criteriaBuilder.like(root.get("sellerId"), "%" + sellerId + "%"));
             }
             if (companyName != null && !companyName.isBlank()) {
                 predicates.add(criteriaBuilder.like(root.get("companyName"), "%" + companyName + "%"));
             }
+            if (sellerEmail != null && !sellerEmail.isBlank()) {
+                predicates.add(criteriaBuilder.like(root.get("sellerEmail"), "%" + sellerEmail + "%"));
+            }
+
+            // Joined fields (from SellerDetailEntity)
+            if (phone != null && !phone.isBlank()) {
+                Join<SellerEntity, Object> detailJoin = root.join("sellerDetail");
+                predicates.add(criteriaBuilder.like(detailJoin.get("phone"), "%" + phone + "%"));
+            }
+            if (businessRegistrationNumber != null && !businessRegistrationNumber.isBlank()) {
+                Join<SellerEntity, Object> detailJoin = root.join("sellerDetail");
+                predicates.add(criteriaBuilder.like(detailJoin.get("businessRegistrationNumber"), "%" + businessRegistrationNumber + "%"));
+            }
+
+            // Boolean searches (equal)
+            if (isActive != null) {
+                predicates.add(criteriaBuilder.equal(root.get("isActive"), isActive));
+            }
+            if (isVerified != null) {
+                predicates.add(criteriaBuilder.equal(root.get("isVerified"), isVerified));
+            }
+
+            // Enum search (equal)
+            if (withdrawalStatus != null && !withdrawalStatus.isBlank()) {
+                try {
+                    SellerEntity.WithdrawalStatus status = SellerEntity.WithdrawalStatus.valueOf(withdrawalStatus.toUpperCase());
+                    predicates.add(criteriaBuilder.equal(root.get("withdrawalStatus"), status));
+                } catch (IllegalArgumentException e) {
+                    // Ignore if the provided status is not a valid enum constant
+                }
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
