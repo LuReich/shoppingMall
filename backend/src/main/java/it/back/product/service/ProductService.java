@@ -68,11 +68,12 @@ public class ProductService {
             }
 
             if (productName != null && !productName.isBlank()) {
-                String noSpaceProductName = productName.replace(" ", "");
-                predicates.add(criteriaBuilder.like(
-                    criteriaBuilder.function("REPLACE", String.class, root.get("productName"), criteriaBuilder.literal(" "), criteriaBuilder.literal("")),
-                    "%" + noSpaceProductName + "%"
-                ));
+                String[] keywords = productName.split("\\s+"); // Split by one or more spaces
+                for (String keyword : keywords) {
+                    if (!keyword.isEmpty()) {
+                        predicates.add(criteriaBuilder.like(root.get("productName"), "%" + keyword + "%"));
+                    }
+                }
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
