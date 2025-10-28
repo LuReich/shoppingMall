@@ -33,12 +33,13 @@ public class ProductController {
     // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, 만약 로그인한 상태에서 안된다면 긴급 연락 해주세요
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductDTO>>> getAllProducts(
-            @PageableDefault(size = 10) Pageable pageable,
-            @RequestParam(name = "categoryId", required = false) Integer categoryId) {
+        @PageableDefault(size = 10) Pageable pageable,
+        @RequestParam(name = "categoryId", required = false) Integer categoryId,
+        @RequestParam(name = "productName", required = false) String productName) {
 
-        PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageable, categoryId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(ApiResponse.ok(productPageDto));
+    PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageable, categoryId, productName);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(ApiResponse.ok(productPageDto));
     }
 
     // 해당 product_id 보기, 사용 용도 미정

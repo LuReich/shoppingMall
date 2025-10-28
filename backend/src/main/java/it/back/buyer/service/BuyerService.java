@@ -233,11 +233,12 @@ public class BuyerService {
     }
 
     @Transactional
-    public void buyerWithdraw(String loginId) {
+    public void buyerWithdraw(String loginId, String withdrawalReason) {
         BuyerEntity buyer = buyerRepository.findByBuyerId(loginId)
             .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
         buyer.setActive(false);
         buyer.setWithdrawalStatus(BuyerEntity.WithdrawalStatus.VOLUNTARY);
+        buyer.setWithdrawalReason(withdrawalReason);
         buyerRepository.save(buyer);
     }
 }
