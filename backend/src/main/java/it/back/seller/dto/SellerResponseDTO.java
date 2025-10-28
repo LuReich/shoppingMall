@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 public class SellerResponseDTO {
 
-    // 기본 생성자 (에러 메시지 전달용)
-    public SellerResponseDTO() {
-    }
 
     private Long sellerUid;
 
