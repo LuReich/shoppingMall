@@ -15,9 +15,9 @@ import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductDetailRepository;
 import it.back.product.repository.ProductRepository;
-import it.back.review.service.ReviewService;
 import it.back.review.dto.ReviewDTO;
 import it.back.review.entity.ReviewEntity;
+import it.back.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -58,14 +58,24 @@ public class ProductService {
         );
     }
 
-    public PageResponseDTO<ProductDTO> getAllProducts(Pageable pageable, Integer categoryId) {
+    public PageResponseDTO<ProductDTO> getAllProducts(Pageable pageable, Integer categoryId, String productName) {
+
         Page<ProductEntity> page;
-        if (categoryId == null) {
+        String trimmedProductName = (productName != null) ? productName.trim() : null;
+        String noSpaceProductName = (trimmedProductName != null) ? trimmedProductName.replace(" ", "") : null;
+
+        if (categoryId == null && (noSpaceProductName == null || noSpaceProductName.isBlank())) {
             page = productRepository.findAll(pageable);
-        } else {
+        } else if (categoryId != null && (noSpaceProductName == null || noSpaceProductName.isBlank())) {
             List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
             page = productRepository.findByCategoryId(categoryIds, pageable);
+        } else if (categoryId == null) {
+            page = productRepository.findByProductNameIgnoreSpace(noSpaceProductName, pageable);
+        } else {
+            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+            page = productRepository.findByCategoryIdAndProductNameIgnoreSpace(categoryIds, noSpaceProductName, pageable);
         }
+
         List<ProductDTO> dtos = page.getContent().stream().map(product -> {
             ProductDTO dto = new ProductDTO();
             dto.setProductId(product.getProductId());
@@ -80,6 +90,7 @@ public class ProductService {
             dto.setIsDeleted(product.getIsDeleted());
             return dto;
         }).toList();
+
         return new PageResponseDTO<>(
                 dtos,
                 page.getNumber(),
