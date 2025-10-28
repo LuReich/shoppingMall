@@ -2,6 +2,7 @@ package it.back.buyer.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -19,9 +20,8 @@ import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
-import jakarta.validation.ConstraintViolationException;
-import java.util.Set;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 
@@ -89,20 +89,30 @@ public class BuyerService {
             throw new AccessDeniedException("본인 또는 관리자만 수정할 수 있습니다.");
         }
 
-        // 비밀번호: 프론트에서 새 비밀번호가 입력된 경우만 변경, 아니면 기존 값 유지
-        if (req.getPassword() != null && !req.getPassword().isBlank()) {
-            buyer.setPassword(passwordEncoder.encode(req.getPassword()));
+        // PATCH: password가 null 또는 빈문자열이면 기존 비밀번호 유지, 값이 있으면 유효성 검사 후 변경
+        if (req.getPassword() != null) {
+            if (req.getPassword().isBlank()) {
+                // 빈 문자열이면 기존 비밀번호 유지 (아무것도 하지 않음)
+            } else {
+                // 값이 있고, 공백 포함 등 유효성 위반이면 400 반환
+                Set<ConstraintViolation<BuyerUpdateRequestDTO>> pwViolations = validator.validateProperty(req, "password");
+                if (!pwViolations.isEmpty()) {
+                    throw new ConstraintViolationException(pwViolations);
+                }
+                buyer.setPassword(passwordEncoder.encode(req.getPassword()));
+            }
         }
         // 닉네임 등 기타 필드
         if (req.getNickname() != null) {
             buyer.setNickname(req.getNickname());
         }
         if (req.getBuyerEmail() != null && !req.getBuyerEmail().isBlank()) {
-            String email = req.getBuyerEmail();
-            // 간단한 이메일 형식 검증 (정규식)
-            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+            // DTO의 이메일 유효성 검사 (엔티티와 동일한 @Email 등 적용)
+            Set<ConstraintViolation<BuyerUpdateRequestDTO>> emailViolations = validator.validateProperty(req, "buyerEmail");
+            if (!emailViolations.isEmpty()) {
+                throw new ConstraintViolationException(emailViolations);
             }
+            String email = req.getBuyerEmail();
             // 이메일 중복 체크 (본인 제외)
             buyerRepository.findByBuyerEmail(email).ifPresent(existing -> {
                 if (!existing.getBuyerUid().equals(buyerUid)) {
@@ -253,7 +263,7 @@ public class BuyerService {
     @Transactional
     public void buyerWithdraw(String loginId, String withdrawalReason) {
         BuyerEntity buyer = buyerRepository.findByBuyerId(loginId)
-            .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
+                .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
         buyer.setActive(false);
         buyer.setWithdrawalStatus(BuyerEntity.WithdrawalStatus.VOLUNTARY);
         buyer.setWithdrawalReason(withdrawalReason);

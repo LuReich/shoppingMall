@@ -1,12 +1,16 @@
 package it.back.buyer.dto;
 
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDate;
 
 @Getter
 @Setter
 public class BuyerUpdateRequestDTO {
+
+    @Pattern(regexp = "^\\S*$", message = "비밀번호에는 공백을 포함할 수 없습니다.")
     private String password;
     private String nickname;
     private String buyerEmail;
