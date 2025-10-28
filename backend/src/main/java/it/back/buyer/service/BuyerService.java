@@ -1,12 +1,9 @@
 package it.back.buyer.service;
 
-import it.back.common.dto.ApiResponse;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -233,5 +230,14 @@ public class BuyerService {
 
         BuyerEntity saved = buyerRepository.save(buyer);
         return new BuyerResponseDTO(saved);
+    }
+
+    @Transactional
+    public void buyerWithdraw(String loginId) {
+        BuyerEntity buyer = buyerRepository.findByBuyerId(loginId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
+        buyer.setActive(false);
+        buyer.setWithdrawalStatus(BuyerEntity.WithdrawalStatus.VOLUNTARY);
+        buyerRepository.save(buyer);
     }
 }

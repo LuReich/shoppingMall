@@ -73,6 +73,7 @@ public class CartService {
         dto.setThumbnailUrl(savedEntity.getProduct().getThumbnailUrl());
         dto.setQuantity(savedEntity.getQuantity());
         dto.setPricePerItem(savedEntity.getProduct().getPrice());
+        dto.setSellerUid(savedEntity.getProduct().getSeller().getSellerUid()); // 추가
         dto.setSellerCompanyName(savedEntity.getProduct().getSeller().getCompanyName());
         dto.setCreatedAt(savedEntity.getCreatedAt());
         dto.setUpdatedAt(savedEntity.getUpdatedAt());
@@ -99,6 +100,7 @@ public class CartService {
                     dto.setThumbnailUrl(cartEntity.getProduct().getThumbnailUrl());
                     dto.setQuantity(cartEntity.getQuantity());
                     dto.setPricePerItem(cartEntity.getProduct().getPrice());
+                    dto.setSellerUid(cartEntity.getProduct().getSeller().getSellerUid()); // 추가
                     dto.setSellerCompanyName(cartEntity.getProduct().getSeller().getCompanyName());
                     dto.setCreatedAt(cartEntity.getCreatedAt());
                     dto.setUpdatedAt(cartEntity.getUpdatedAt());
@@ -112,8 +114,7 @@ public class CartService {
                 cartPage.getSize(),
                 cartPage.getTotalElements(),
                 cartPage.getTotalPages(),
-                cartPage.isLast()
-        );
+                cartPage.isLast());
     }
 
     // 장바구니 수량 변경
@@ -142,6 +143,7 @@ public class CartService {
         dto.setThumbnailUrl(updatedEntity.getProduct().getThumbnailUrl());
         dto.setQuantity(updatedEntity.getQuantity());
         dto.setPricePerItem(updatedEntity.getProduct().getPrice());
+        dto.setSellerUid(updatedEntity.getProduct().getSeller().getSellerUid()); // 추가
         dto.setSellerCompanyName(updatedEntity.getProduct().getSeller().getCompanyName());
         dto.setCreatedAt(updatedEntity.getCreatedAt());
         dto.setUpdatedAt(updatedEntity.getUpdatedAt());
