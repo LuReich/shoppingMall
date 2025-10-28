@@ -1,10 +1,10 @@
 package it.back.admin.controller;
 
-import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import it.back.common.dto.ApiResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,17 +13,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.service.AdminService;
-import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.dto.BuyerDTO;
+import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.repository.BuyerRepository;
+import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
-import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.dto.SellerDTO;
+import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -59,12 +61,14 @@ public class AdminController {
     @GetMapping("/buyer/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<BuyerDTO>>> getAllBuyers(
             PageRequestDTO pageRequestDTO,
+            @RequestParam(required = false) Long buyerUid,
             @RequestParam(required = false) String buyerId,
             @RequestParam(required = false) String nickname,
             @RequestParam(required = false) String buyerEmail,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) String withdrawalStatus) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllBuyers(pageRequestDTO, buyerId, nickname, buyerEmail, phone, withdrawalStatus)));
+        PageResponseDTO<BuyerDTO> buyerPageResponse = adminService.findAllBuyers(pageRequestDTO, buyerUid, buyerId, nickname, buyerEmail, phone, withdrawalStatus);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(buyerPageResponse));
     }
 
     // buyer 상세 보기 아마도 회원 리스트 표? 에서 링크 넣고 싶은데 넣고 이걸로 요청 보내서 상세 정보 보기
@@ -80,6 +84,7 @@ public class AdminController {
     @GetMapping("/seller/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<SellerDTO>>> getAllSellers(
             PageRequestDTO pageRequestDTO,
+            @RequestParam(required = false) Long sellerUid,
             @RequestParam(required = false) String sellerId,
             @RequestParam(required = false) String companyName,
             @RequestParam(required = false) String sellerEmail,
@@ -88,7 +93,8 @@ public class AdminController {
             @RequestParam(required = false) Boolean isActive,
             @RequestParam(required = false) Boolean isVerified,
             @RequestParam(required = false) String withdrawalStatus) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(adminService.findAllSellers(pageRequestDTO, sellerId, companyName, sellerEmail, phone, businessRegistrationNumber, isActive, isVerified, withdrawalStatus)));
+        PageResponseDTO<SellerDTO> sellerPageResponse = adminService.findAllSellers(pageRequestDTO, sellerUid, sellerId, companyName, sellerEmail, phone, businessRegistrationNumber, isActive, isVerified, withdrawalStatus);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerPageResponse));
     }
 
     // seller 상세 정보 보기

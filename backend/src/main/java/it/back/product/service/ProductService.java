@@ -18,6 +18,7 @@ import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductDetailRepository;
 import it.back.product.repository.ProductRepository;
+import it.back.product.specification.ProductSpecifications;
 import it.back.review.dto.ReviewDTO;
 import it.back.review.entity.ReviewEntity;
 import it.back.review.service.ReviewService;
@@ -59,25 +60,14 @@ public class ProductService {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
-        Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
+        Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
-            if (categoryId != null) {
-                List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
-                predicates.add(root.get("category").get("categoryId").in(categoryIds));
-            }
+        spec = spec.and(ProductSpecifications.nameContains(productName));
 
-            if (productName != null && !productName.isBlank()) {
-                String[] keywords = productName.split("\\s+"); // Split by one or more spaces
-                for (String keyword : keywords) {
-                    if (!keyword.isEmpty()) {
-                        predicates.add(criteriaBuilder.like(root.get("productName"), "%" + keyword + "%"));
-                    }
-                }
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+        if (categoryId != null) {
+            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+            spec = spec.and(ProductSpecifications.inCategory(categoryIds));
+        }
 
         Page<ProductEntity> page = productRepository.findAll(spec, pageable);
 

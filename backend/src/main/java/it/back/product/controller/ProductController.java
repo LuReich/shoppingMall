@@ -34,13 +34,12 @@ public class ProductController {
     // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, 만약 로그인한 상태에서 안된다면 긴급 연락 해주세요
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductDTO>>> getAllProducts(
-        PageRequestDTO pageRequestDTO,
-        @RequestParam(name = "categoryId", required = false) Integer categoryId,
-        @RequestParam(name = "productName", required = false) String productName) {
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
+            @RequestParam(name = "productName", required = false) String productName) {
 
-    PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName);
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(ApiResponse.ok(productPageDto));
+        PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productPageDto));
     }
 
     // 해당 product_id 보기, 사용 용도 미정
@@ -56,7 +55,8 @@ public class ProductController {
     // 상품 등록 용도인데 미구현
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<ProductEntity>> createProduct(@RequestBody ProductEntity product) {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productService.saveProduct(product)));
+        ProductEntity savedProduct = productService.saveProduct(product);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(savedProduct));
     }
 
     // 상품 삭제 용인데 미사용 권장
@@ -90,6 +90,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductDetailEntity>> createOrUpdateProductDetail(@PathVariable("productId") Long productId,
             @RequestBody ProductDetailEntity detail) {
         detail.setProductId(productId);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productService.saveProductDetail(detail)));
+        ProductDetailEntity savedProductDetail = productService.saveProductDetail(detail);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(savedProductDetail));
     }
 }
