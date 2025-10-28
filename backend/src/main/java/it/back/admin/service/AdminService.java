@@ -11,14 +11,13 @@ import org.springframework.stereotype.Service;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
 import it.back.buyer.dto.BuyerDTO;
-import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
-import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,11 +55,8 @@ public class AdminService {
         );
     }
 
-    /*
-    // [form-data 방식으로 바꿀 때 서비스는 동일하게 사용 가능]
-    // 컨트롤러에서 DTO로 변환해서 넘기면 서비스 코드는 그대로 사용하면 됩니다.
-     */
-    public PageResponseDTO<BuyerDTO> findAllBuyers(Pageable pageable) {
+    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = pageRequestDTO.toPageable();
         Page<BuyerEntity> page = buyerRepository.findAll(pageable);
         List<BuyerDTO> buyerList = page.getContent().stream()
                 .map(entity -> {
@@ -77,17 +73,11 @@ public class AdminService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-        return new PageResponseDTO<>(
-                buyerList,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, buyerList);
     }
 
-    public PageResponseDTO<SellerDTO> findAllSellers(Pageable pageable) {
+    public PageResponseDTO<SellerDTO> findAllSellers(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = pageRequestDTO.toPageable();
         Page<SellerEntity> page = sellerRepository.findAll(pageable);
         List<SellerDTO> sellerList = page.getContent().stream()
                 .map(entity -> {
@@ -105,14 +95,7 @@ public class AdminService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-        return new PageResponseDTO<>(
-                sellerList,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, sellerList);
     }
 
 }

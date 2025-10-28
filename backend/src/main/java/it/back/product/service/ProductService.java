@@ -1,14 +1,10 @@
 package it.back.product.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import it.back.category.service.CategoryService;
@@ -53,48 +49,12 @@ public class ProductService {
             dto.setOrderDetailId(review.getOrderDetail().getOrderDetailId());
             return dto;
         }).toList();
-        return new PageResponseDTO<>(
-                dtos,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, dtos);
     }
 
     public PageResponseDTO<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName) {
 
-        List<Order> orders = new ArrayList<>();
-        if (pageRequestDTO.getSort() != null && !pageRequestDTO.getSort().isEmpty()) {
-            List<String> sortList = pageRequestDTO.getSort();
-
-            boolean isCommaSeparated = sortList.stream().anyMatch(s -> s.contains(","));
-
-            if(isCommaSeparated) {
-                for (String sort : sortList) {
-                    String[] parts = sort.split(",", 2);
-                    String property = parts[0];
-                    Sort.Direction direction = parts.length > 1 ? Sort.Direction.fromString(parts[1]) : Sort.Direction.ASC;
-                    orders.add(new Order(direction, property));
-                }
-            } else {
-                for (int i = 0; i < sortList.size(); i++) {
-                    String property = sortList.get(i);
-                    Sort.Direction direction = Sort.Direction.ASC;
-                    if (i + 1 < sortList.size()) {
-                        String next = sortList.get(i + 1);
-                        if ("asc".equalsIgnoreCase(next) || "desc".equalsIgnoreCase(next)) {
-                            direction = Sort.Direction.fromString(next);
-                            i++;
-                        }
-                    }
-                    orders.add(new Order(direction, property));
-                }
-            }
-        }
-
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize(), Sort.by(orders));
+        Pageable pageable = pageRequestDTO.toPageable();
 
         Page<ProductEntity> page;
         String trimmedProductName = (productName != null) ? productName.trim() : null;
@@ -127,14 +87,7 @@ public class ProductService {
             return dto;
         }).toList();
 
-        return new PageResponseDTO<>(
-                dtos,
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.isLast()
-        );
+        return new PageResponseDTO<>(page, dtos);
     }
 
     public ProductDTO getProductById(Long id) {
