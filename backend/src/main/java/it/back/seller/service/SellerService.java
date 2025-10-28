@@ -75,6 +75,11 @@ public class SellerService {
      */
     @Transactional
     public SellerResponseDTO registerSeller(SellerRegisterDTO sellerRegisterDto) {
+        // 이메일 형식 체크
+        String email = sellerRegisterDto.getSellerEmail();
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+        }
         // 전화번호 숫자열(10~11자리)만 허용
         String phone = sellerRegisterDto.getPhone();
         if (phone == null || !phone.matches("^\\d{10,11}$")) {
