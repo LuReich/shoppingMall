@@ -75,6 +75,35 @@ public class SellerService {
      */
     @Transactional
     public SellerResponseDTO registerSeller(SellerRegisterDTO sellerRegisterDto) {
+
+
+        validateSellerFields(sellerRegisterDto);
+
+        SellerEntity seller = new SellerEntity();
+        
+        seller.setSellerId(sellerRegisterDto.getSellerId());
+        seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword())); // Hashing added
+        seller.setCompanyName(sellerRegisterDto.getCompanyName());
+        seller.setSellerEmail(sellerRegisterDto.getSellerEmail());
+
+        SellerDetailEntity detail = new SellerDetailEntity();
+        detail.setBusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber());
+        detail.setCompanyInfo(sellerRegisterDto.getCompanyInfo()); // 업체 상세 소개 저장
+        detail.setPhone(sellerRegisterDto.getPhone());
+        detail.setAddress(sellerRegisterDto.getAddress());
+        detail.setAddressDetail(sellerRegisterDto.getAddressDetail());
+
+        detail.setSeller(seller);
+        seller.setSellerDetail(detail);
+
+        SellerEntity saved = sellerRepository.save(seller);
+        return new SellerResponseDTO(saved);
+    }
+
+    /**
+     * 회원가입/수정 등에서 재사용할 수 있는 seller 입력값 검증(이메일/전화번호/사업자등록번호 형식 및 중복) 메서드
+     */
+    private void validateSellerFields(SellerRegisterDTO sellerRegisterDto) {
         // 이메일 형식 체크
         String email = sellerRegisterDto.getSellerEmail();
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
@@ -100,25 +129,6 @@ public class SellerService {
         if (sellerRepository.findBySellerDetail_BusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
         }
-
-        SellerEntity seller = new SellerEntity();
-        seller.setSellerId(sellerRegisterDto.getSellerId());
-        seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword())); // Hashing added
-        seller.setCompanyName(sellerRegisterDto.getCompanyName());
-        seller.setSellerEmail(sellerRegisterDto.getSellerEmail());
-
-        SellerDetailEntity detail = new SellerDetailEntity();
-        detail.setBusinessRegistrationNumber(sellerRegisterDto.getBusinessRegistrationNumber());
-        detail.setCompanyInfo(sellerRegisterDto.getCompanyInfo()); // 업체 상세 소개 저장
-        detail.setPhone(sellerRegisterDto.getPhone());
-        detail.setAddress(sellerRegisterDto.getAddress());
-        detail.setAddressDetail(sellerRegisterDto.getAddressDetail());
-
-        detail.setSeller(seller);
-        seller.setSellerDetail(detail);
-
-        SellerEntity saved = sellerRepository.save(seller);
-        return new SellerResponseDTO(saved);
     }
 
     // 공개용 판매자 정보 조회
