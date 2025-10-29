@@ -58,25 +58,6 @@ public class BuyerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseBody));
     }
 
-    /*
-     * // [form-data 방식으로 바꾸고 싶을 때 참고]
-     * 
-     * // 또는
-     * // public ResponseEntity<?> login(@ModelAttribute LoginRequestDTO dto) { ...
-     * }
-     */
-    // @PostMapping("/login")
-    // public ResponseEntity<Map<String, String>> login(@RequestParam String
-    // loginId, @RequestParam String password) {
-    // LoginRequestDTO dto = new LoginRequestDTO();
-    // dto.setLoginId(loginId);
-    // dto.setPassword(password);
-    // String jwt = buyerService.login(dto);
-    // Map<String, String> responseBody = new HashMap<>();
-    // responseBody.put("message", "Login successful");
-    // responseBody.put("token", "bearer: " + jwt);
-    // return ResponseEntity.ok().body(responseBody);
-    // }
     // buyer 자기 정보 수정
     @PatchMapping("/{buyerUid}")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> updateBuyer(
