@@ -188,23 +188,24 @@ public class SellerService {
         return "사용 가능한 이메일입니다.";
     }
 
-    // 사업자등록번호 중복 체크
-    public String checkBusinessRegistrationNumber(String businessRegistrationNumber, String loginId) {
+    // 사업자등록번호 유효성 및 중복 체크
+    public boolean checkBusinessRegistrationNumber(String businessRegistrationNumber, String loginId) {
         if (businessRegistrationNumber == null || businessRegistrationNumber.isBlank()) {
-            return "사업자등록번호를 입력하세요.";
+            throw new IllegalArgumentException("사업자등록번호를 입력하세요.");
         }
         if (!businessRegistrationNumber.matches("^\\d{10}$")) {
-            return "사업자등록번호는 10자리 숫자만 입력해야 합니다.";
+            throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
         }
-        String result = sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessRegistrationNumber)
-                .map(existing -> loginId != null && loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
-                .orElse("OK");
-        if ("DUPLICATE".equals(result)) {
-            return "이미 사용 중인 사업자등록번호입니다.";
-        } else if ("SAME".equals(result)) {
-            return "이전과 동일한 사업자등록번호입니다.";
-        }
-        return "사용 가능한 사업자등록번호입니다.";
+        
+        return sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessRegistrationNumber)
+                .map(existing -> {
+                    if (loginId != null && loginId.equals(existing.getSellerId())) {
+                        return true; // 이전과 동일한 사업자등록번호
+                    } else {
+                        throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다."); // 타인의 중복 번호
+                    }
+                })
+                .orElse(false); // 사용 가능한 새 번호
     }
 
     @Transactional

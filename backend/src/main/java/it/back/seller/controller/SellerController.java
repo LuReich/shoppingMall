@@ -113,8 +113,11 @@ public class SellerController {
             Authentication authentication) {
         String businessRegistrationNumber = body.get("businessRegistrationNumber");
         String loginId = authentication != null ? authentication.getName() : null;
-        String result = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, loginId);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+
+        boolean isSameAsSelf = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, loginId);
+
+        String message = isSameAsSelf ? "이전과 동일한 사업자등록번호입니다." : "사용 가능한 사업자등록번호입니다.";
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
     }
 
     // 판매자 탈퇴(비활성화) PATCH 방식

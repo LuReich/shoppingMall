@@ -78,9 +78,11 @@ public class BuyerController {
 
         String email = body.get("email");
         String loginId = authentication != null ? authentication.getName() : null;
-        String result = buyerService.checkEmail(email, loginId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+        boolean isSameAsSelf = buyerService.checkEmail(email, loginId);
+
+        String message = isSameAsSelf ? "이전과 동일한 이메일입니다." : "사용 가능한 이메일입니다.";
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
     }
 
     // 전화번호 중복 및 형식 체크
@@ -89,8 +91,11 @@ public class BuyerController {
             Authentication authentication) {
         String phone = body.get("phone");
         String loginId = authentication != null ? authentication.getName() : null;
-        String result = buyerService.checkPhone(phone, loginId);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+
+        boolean isSameAsSelf = buyerService.checkPhone(phone, loginId);
+
+        String message = isSameAsSelf ? "이전과 동일한 전화번호입니다." : "사용 가능한 전화번호입니다.";
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
     }
 
     // buyer 회원가입 용

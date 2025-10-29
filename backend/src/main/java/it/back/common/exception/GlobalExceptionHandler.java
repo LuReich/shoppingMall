@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<String>> handleIllegalArgument(IllegalArgumentException e) {
         String msg = e.getMessage();
-        if (msg != null && (msg.contains("이미 사용 중인 이메일") || msg.contains("이미 사용 중인 전화번호"))) {
+        if (msg != null && (msg.contains("이미 사용 중인 이메일") || msg.contains("이미 사용 중인 전화번호") || msg.contains("이미 사용 중인 사업자등록번호"))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, msg));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, msg));
