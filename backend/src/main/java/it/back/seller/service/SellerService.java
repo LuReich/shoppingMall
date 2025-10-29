@@ -1,9 +1,10 @@
 package it.back.seller.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.Sort;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,14 +14,12 @@ import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerRegisterDTO;
-import it.back.common.dto.ApiResponse;
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
-import jakarta.validation.ConstraintViolationException;
-import java.util.Set;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +32,7 @@ public class SellerService {
     private final JWTUtils jwtUtils;
     private final Validator validator;
 
+    // (중복 import, 클래스 선언, 필드 선언 제거)
     public List<SellerDTO> getAllSellers(Sort sort) {
         return sellerRepository.findAll(sort).stream().map(entity -> {
             SellerDTO sellerDto = new SellerDTO();
@@ -108,7 +108,7 @@ public class SellerService {
         }
 
         SellerEntity seller = new SellerEntity();
-        
+
         seller.setSellerId(sellerRegisterDto.getSellerId());
         seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword())); // Hashing added
         seller.setCompanyName(sellerRegisterDto.getCompanyName());
@@ -133,8 +133,6 @@ public class SellerService {
         SellerEntity saved = sellerRepository.save(seller);
         return new SellerResponseDTO(saved);
     }
-
-    
 
     // 공개용 판매자 정보 조회
     public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
