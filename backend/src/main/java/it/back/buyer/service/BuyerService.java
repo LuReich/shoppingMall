@@ -107,12 +107,15 @@ public class BuyerService {
             buyer.setNickname(req.getNickname());
         }
         if (req.getBuyerEmail() != null && !req.getBuyerEmail().isBlank()) {
+            String email = req.getBuyerEmail();
+            if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+            }
             // DTO의 이메일 유효성 검사 (엔티티와 동일한 @Email 등 적용)
             Set<ConstraintViolation<BuyerUpdateRequestDTO>> emailViolations = validator.validateProperty(req, "buyerEmail");
             if (!emailViolations.isEmpty()) {
                 throw new ConstraintViolationException(emailViolations);
             }
-            String email = req.getBuyerEmail();
             // 이메일 중복 체크 (본인 제외)
             buyerRepository.findByBuyerEmail(email).ifPresent(existing -> {
                 if (!existing.getBuyerUid().equals(buyerUid)) {
@@ -171,50 +174,56 @@ public class BuyerService {
     }
 
     /**
-     * 전화번호 중복/본인/사용가능 체크
-     *
-     * @param phone 전화번호
-     * @param loginId 로그인한 아이디(없으면 null)
-     * @return DUPLICATE(타인), SAME(본인), OK(사용가능)
+     * 전화번호 유효성 및 중복 체크.
+     * @return true: 이전과 동일한 전화번호, false: 사용 가능한 새 전화번호
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 전화번호
      */
-    public String checkPhone(String phone, String loginId) {
+    public boolean checkPhone(String phone, String loginId) {
         if (phone == null || phone.isBlank()) {
-            return "전화번호를 입력하세요.";
+            throw new IllegalArgumentException("전화번호를 입력하세요.");
         }
         if (!phone.matches("\\d+")) {
-            return "전화번호는 숫자만 입력해야 합니다.";
+            throw new IllegalArgumentException("전화번호는 숫자만 입력해야 합니다.");
         }
         if (phone.length() < 10 || phone.length() > 11) {
-            return "전화번호는 10~11자리여야 합니다.";
+            throw new IllegalArgumentException("전화번호는 10~11자리여야 합니다.");
         }
-        String result = buyerRepository.findAll().stream()
+        
+        return buyerRepository.findAll().stream()
                 .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
-                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
-                .findFirst().orElse("OK");
-        if ("DUPLICATE".equals(result)) {
-            return "이미 사용 중인 전화번호입니다.";
-        } else if ("SAME".equals(result)) {
-            return "이전과 동일한 전화번호입니다.";
-        }
-        return "사용 가능한 전화번호입니다.";
+                .findFirst()
+                .map(b -> {
+                    if (loginId != null && loginId.equals(b.getBuyerId())) {
+                        return true; // 이전과 동일한 전화번호
+                    } else {
+                        throw new IllegalArgumentException("이미 사용 중인 전화번호입니다."); // 타인의 중복 전화번호
+                    }
+                })
+                .orElse(false); // 사용 가능한 새 전화번호
     }
 
-    public String checkEmail(String email, String loginId) {
+    /**
+     * 이메일 유효성 및 중복 체크.
+     * @return true: 이전과 동일한 이메일, false: 사용 가능한 새 이메일
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 이메일
+     */
+    public boolean checkEmail(String email, String loginId) {
         if (email == null || email.isBlank()) {
-            return "이메일을 입력하세요.";
+            throw new IllegalArgumentException("이메일을 입력하세요.");
         }
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            return "이메일 형식이 올바르지 않습니다.";
+        if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
-        String result = buyerRepository.findByBuyerEmail(email)
-                .map(b -> loginId != null && loginId.equals(b.getBuyerId()) ? "SAME" : "DUPLICATE")
-                .orElse("OK");
-        if ("DUPLICATE".equals(result)) {
-            return "이미 사용 중인 이메일입니다.";
-        } else if ("SAME".equals(result)) {
-            return "이전과 동일한 이메일입니다.";
-        }
-        return "사용 가능한 이메일입니다.";
+        
+        return buyerRepository.findByBuyerEmail(email)
+                .map(b -> {
+                    if (loginId != null && loginId.equals(b.getBuyerId())) {
+                        return true; // 이전과 동일한 이메일
+                    } else {
+                        throw new IllegalArgumentException("이미 사용 중인 이메일입니다."); // 타인의 중복 이메일
+                    }
+                })
+                .orElse(false); // 사용 가능한 새 이메일
     }
 
     @Transactional
@@ -223,8 +232,12 @@ public class BuyerService {
         if (buyerRepository.findByBuyerId(buyerRegisterDto.getBuyerId()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
-        // 이메일 중복 체크
-        if (buyerRepository.findByBuyerEmail(buyerRegisterDto.getBuyerEmail()).isPresent()) {
+        // 이메일 중복 및 형식 체크
+        String email = buyerRegisterDto.getBuyerEmail();
+        if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+        }
+        if (buyerRepository.findByBuyerEmail(email).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         // 전화번호 중복 체크

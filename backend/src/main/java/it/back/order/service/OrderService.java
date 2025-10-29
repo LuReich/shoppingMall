@@ -107,7 +107,9 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public PageResponseDTO<OrderResponseDTO> getOrdersByBuyerUid(Long buyerUid, Pageable pageable) {
-        Page<OrderEntity> page = orderRepository.findAll(pageable);
+        // 1. Repository에서 buyerUid로 직접 조회
+        Page<OrderEntity> page = orderRepository.findByBuyerUid(buyerUid, pageable);
+
         // 전체 주문상세에 대한 productId, sellerUid 수집
         List<OrderDetailEntity> allDetails = page.getContent().stream()
                 .flatMap(order -> order.getOrderDetails().stream())
@@ -119,8 +121,8 @@ public class OrderService {
         Map<Long, String> companyNameMap = sellerRepository.findAllById(sellerUids).stream()
                 .collect(Collectors.toMap(s -> s.getSellerUid(), s -> s.getCompanyName()));
 
+        // 2. 메모리 필터링(.filter) 제거
         List<OrderResponseDTO> dtoList = page.getContent().stream()
-                .filter(order -> order.getBuyerUid().equals(buyerUid))
                 .map(order -> {
                     OrderResponseDTO dto = new OrderResponseDTO();
                     dto.setOrderId(order.getOrderId());
@@ -156,6 +158,8 @@ public class OrderService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+        
+        // 3. 올바른 정보가 담긴 page 객체를 사용
         return new PageResponseDTO<>(
                 dtoList,
                 page.getNumber(),

@@ -8,7 +8,6 @@ import lombok.Setter;
 
 public class SellerUpdateRequestDTO {
 
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "^\\S*$", message = "비밀번호에는 공백을 포함할 수 없습니다.")
     private String password; // 비밀번호 변경 시에만 값 전달, 아니면 null/blank
     private String companyName;

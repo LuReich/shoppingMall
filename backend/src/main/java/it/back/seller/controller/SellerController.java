@@ -1,30 +1,29 @@
 package it.back.seller.controller;
-
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import it.back.common.dto.ApiResponse;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.web.bind.annotation.RestController;
+
+import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
-import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerRegisterDTO;
-import it.back.seller.service.SellerService;
-import it.back.seller.repository.SellerRepository;
-import it.back.seller.entity.SellerEntity;
 import it.back.seller.dto.SellerResponseDTO;
+import it.back.seller.dto.SellerUpdateRequestDTO;
+import it.back.seller.entity.SellerEntity;
+import it.back.seller.repository.SellerRepository;
+import it.back.seller.service.SellerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,7 +34,7 @@ public class SellerController {
     private final SellerService sellerService;
     private final SellerRepository sellerRepository;
 
-
+    
     // 로그인한 seller 가 자기 정보 불러오기
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> getMyInfo(Authentication authentication) {
@@ -85,5 +84,50 @@ public class SellerController {
     public ResponseEntity<ApiResponse<SellerResponseDTO>> registerSeller(@Valid @RequestBody SellerRegisterDTO sellerRegisterDto) {
         SellerResponseDTO result = sellerService.registerSeller(sellerRegisterDto);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+    }
+
+    // 판매자 자기 정보 수정 (PATCH)
+    @PatchMapping("/{sellerUid}")
+    public ResponseEntity<ApiResponse<SellerResponseDTO>> updateSeller(
+            @PathVariable Long sellerUid,
+            @Valid @RequestBody SellerUpdateRequestDTO request,
+            Authentication authentication) {
+        SellerResponseDTO updated = sellerService.updateSeller(sellerUid, request, authentication);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updated));
+    }
+
+
+    // 이메일 중복/형식 체크
+    @PostMapping("/check-email")
+    public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body,
+            Authentication authentication) {
+        String email = body.get("email");
+        String loginId = authentication != null ? authentication.getName() : null;
+        String result = sellerService.checkEmail(email, loginId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+    }
+
+    // 사업자등록번호 중복 체크
+    @PostMapping("/check-businessRegistrationNumber")
+    public ResponseEntity<ApiResponse<String>> checkBusinessRegistrationNumber(@RequestBody Map<String, String> body,
+            Authentication authentication) {
+        String businessRegistrationNumber = body.get("businessRegistrationNumber");
+        String loginId = authentication != null ? authentication.getName() : null;
+
+        boolean isSameAsSelf = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, loginId);
+
+        String message = isSameAsSelf ? "이전과 동일한 사업자등록번호입니다." : "사용 가능한 사업자등록번호입니다.";
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+    }
+
+    // 판매자 탈퇴(비활성화) PATCH 방식
+    @PatchMapping("/withdraw")
+    public ResponseEntity<ApiResponse<String>> sellerWithdraw(
+            Authentication authentication,
+            @RequestBody(required = false) Map<String, String> body) {
+        String loginId = authentication.getName();
+        String withdrawalReason = (body != null) ? body.getOrDefault("withdrawalReason", "") : "";
+        sellerService.sellerWithdraw(loginId, withdrawalReason);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("회원 탈퇴(비활성화) 처리되었습니다."));
     }
 }
