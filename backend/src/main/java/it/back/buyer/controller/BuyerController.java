@@ -1,9 +1,9 @@
 package it.back.buyer.controller;
 
-import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,6 +23,10 @@ import it.back.buyer.repository.BuyerRepository;
 import it.back.buyer.service.BuyerService;
 import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.common.pagination.PageResponseDTO;
+import it.back.order.dto.OrderResponseDTO;
+import it.back.order.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,6 +36,7 @@ public class BuyerController {
 
     private final BuyerService buyerService;
     private final BuyerRepository buyerRepository;
+    private final OrderService orderService;
 
     // 로그인한 buyer 가 자기 정보 보는 용도
     @GetMapping("/me")
@@ -122,6 +127,34 @@ public class BuyerController {
         String withdrawalReason = (body != null) ? body.getOrDefault("withdrawalReason", "") : "";
         buyerService.buyerWithdraw(loginId, withdrawalReason);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("회원 탈퇴(비활성화) 처리되었습니다."));
+    }
+
+    // buyer 주문 이력 조회 (페이지네이션)
+    @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<PageResponseDTO<OrderResponseDTO>>> getMyOrders(
+            Authentication authentication,
+            Pageable pageable) {
+        // 인증 정보에서 buyerUid 추출 (OrderController 참고)
+        Object detailsObj = authentication.getDetails();
+        if (!(detailsObj instanceof Map<?, ?> details)) {
+            throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
+        }
+        Object roleObj = details.get("role");
+        if (roleObj == null || !"BUYER".equals(roleObj.toString())) {
+            throw new IllegalStateException("구매자(BUYER) 권한이 필요합니다.");
+        }
+        Object uidObj = details.get("uid");
+        Long buyerUid;
+        if (uidObj instanceof Integer i) {
+            buyerUid = i.longValue();
+        } else if (uidObj instanceof Long l) {
+            buyerUid = l;
+        } else {
+            throw new IllegalStateException("uid 타입이 올바르지 않습니다.");
+        }
+        // OrderService에서 주문 이력 조회
+        PageResponseDTO<OrderResponseDTO> result = orderService.getOrdersByBuyerUid(buyerUid, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
 }
