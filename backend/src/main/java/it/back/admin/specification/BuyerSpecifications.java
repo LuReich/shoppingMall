@@ -1,3 +1,4 @@
+
 package it.back.admin.specification;
 
 import java.util.ArrayList;
@@ -10,6 +11,15 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 
 public class BuyerSpecifications {
+
+    public static Specification<BuyerEntity> isActive(Boolean isActive) {
+        return (root, query, criteriaBuilder) -> {
+            if (isActive == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("isActive"), isActive);
+        };
+    }
 
     public static Specification<BuyerEntity> hasBuyerUid(Long buyerUid) {
         return (root, query, criteriaBuilder) -> {

@@ -61,7 +61,7 @@ public class AdminService {
         );
     }
 
-    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, Long buyerUid, String buyerId, String nickname, String buyerEmail, String phone, String withdrawalStatus) {
+    public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, Long buyerUid, String buyerId, String nickname, String buyerEmail, String phone, Boolean isActive, String withdrawalStatus) {
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<BuyerEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
@@ -71,6 +71,7 @@ public class AdminService {
         spec = spec.and(BuyerSpecifications.hasNickname(nickname));
         spec = spec.and(BuyerSpecifications.hasBuyerEmail(buyerEmail));
         spec = spec.and(BuyerSpecifications.hasPhone(phone));
+        spec = spec.and(BuyerSpecifications.isActive(isActive));
         spec = spec.and(BuyerSpecifications.hasWithdrawalStatus(withdrawalStatus));
 
         Page<BuyerEntity> page = buyerRepository.findAll(spec, pageable);
