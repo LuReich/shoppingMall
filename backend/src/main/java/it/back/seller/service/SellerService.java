@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerRegisterDTO;
 import it.back.seller.dto.SellerResponseDTO;
+import it.back.seller.dto.SellerUpdateRequestDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
@@ -32,24 +34,6 @@ public class SellerService {
     private final JWTUtils jwtUtils;
     private final Validator validator;
 
-    // (중복 import, 클래스 선언, 필드 선언 제거)
-    public List<SellerDTO> getAllSellers(Sort sort) {
-        return sellerRepository.findAll(sort).stream().map(entity -> {
-            SellerDTO sellerDto = new SellerDTO();
-            sellerDto.setSellerUid(entity.getSellerUid());
-            sellerDto.setSellerId(entity.getSellerId());
-            sellerDto.setSellerEmail(entity.getSellerEmail());
-            sellerDto.setCompanyName(entity.getCompanyName());
-            sellerDto.setIsVerified(entity.isVerified());
-            sellerDto.setIsActive(entity.isActive());
-            sellerDto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
-            sellerDto.setWithdrawalReason(entity.getWithdrawalReason());
-            sellerDto.setCreateAt(entity.getCreateAt());
-            sellerDto.setUpdateAt(entity.getUpdateAt());
-
-            return sellerDto;
-        }).collect(Collectors.toList());
-    }
 
     public String login(LoginRequestDTO dto) {
         SellerEntity seller = sellerRepository.findBySellerId(dto.getLoginId())
@@ -72,6 +56,47 @@ public class SellerService {
                 "SELLER", // userRole
                 10 * 60 * 60 * 1000L // 만료(ms)
         );
+    }
+
+    // (중복 import, 클래스 선언, 필드 선언 제거)
+    public List<SellerDTO> getAllSellers(Sort sort) {
+        return sellerRepository.findAll(sort).stream().map(entity -> {
+            SellerDTO sellerDto = new SellerDTO();
+            sellerDto.setSellerUid(entity.getSellerUid());
+            sellerDto.setSellerId(entity.getSellerId());
+            sellerDto.setSellerEmail(entity.getSellerEmail());
+            sellerDto.setCompanyName(entity.getCompanyName());
+            sellerDto.setIsVerified(entity.isVerified());
+            sellerDto.setIsActive(entity.isActive());
+            sellerDto.setWithdrawalStatus(entity.getWithdrawalStatus() != null ? entity.getWithdrawalStatus().name() : null);
+            sellerDto.setWithdrawalReason(entity.getWithdrawalReason());
+            sellerDto.setCreateAt(entity.getCreateAt());
+            sellerDto.setUpdateAt(entity.getUpdateAt());
+
+            return sellerDto;
+        }).collect(Collectors.toList());
+    }
+
+    // 공개용 판매자 정보 조회
+    public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
+        SellerEntity seller = sellerRepository.findById(sellerUid)
+                .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
+        SellerDetailEntity detail = seller.getSellerDetail();
+        SellerPublicDTO dto = new SellerPublicDTO();
+        dto.setSellerUid(seller.getSellerUid());
+        dto.setCompanyName(seller.getCompanyName());
+        dto.setSellerEmail(seller.getSellerEmail());
+        dto.setCreateAt(seller.getCreateAt());
+        dto.setVerified(seller.isVerified());
+        dto.setActive(seller.isActive());
+        if (detail != null) {
+            dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
+            dto.setCompanyInfo(detail.getCompanyInfo());
+            dto.setPhone(detail.getPhone());
+            dto.setAddress(detail.getAddress());
+            dto.setAddressDetail(detail.getAddressDetail());
+        }
+        return dto;
     }
 
     /*
@@ -140,25 +165,74 @@ public class SellerService {
         return new SellerResponseDTO(saved);
     }
 
-    // 공개용 판매자 정보 조회
-    public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
-        SellerEntity seller = sellerRepository.findById(sellerUid)
-                .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
-        SellerDetailEntity detail = seller.getSellerDetail();
-        SellerPublicDTO dto = new SellerPublicDTO();
-        dto.setSellerUid(seller.getSellerUid());
-        dto.setCompanyName(seller.getCompanyName());
-        dto.setSellerEmail(seller.getSellerEmail());
-        dto.setCreateAt(seller.getCreateAt());
-        dto.setVerified(seller.isVerified());
-        dto.setActive(seller.isActive());
-        if (detail != null) {
-            dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
-            dto.setCompanyInfo(detail.getCompanyInfo());
-            dto.setPhone(detail.getPhone());
-            dto.setAddress(detail.getAddress());
-            dto.setAddressDetail(detail.getAddressDetail());
+
+    // 이메일 중복/형식 체크 (본인 제외)
+    public String checkEmail(String email, Authentication authentication) {
+        if (email == null || email.isBlank()) {
+            return "이메일을 입력하세요.";
         }
-        return dto;
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            return "이메일 형식이 올바르지 않습니다.";
+        }
+        String loginId = authentication.getName();
+        return sellerRepository.findBySellerEmail(email)
+                .map(existing -> loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
+                .orElse("OK");
+    }
+
+    // 사업자등록번호 중복 체크 (본인 제외)
+    public String checkBusinessNumber(String businessNumber, Authentication authentication) {
+        if (businessNumber == null || businessNumber.isBlank()) {
+            return "사업자등록번호를 입력하세요.";
+        }
+        String loginId = authentication.getName();
+        return sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessNumber)
+                .map(existing -> loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
+                .orElse("OK");
+    }
+
+    @Transactional
+    public SellerResponseDTO updateSeller(SellerUpdateRequestDTO req, Authentication authentication) {
+        String loginId = authentication.getName();
+        SellerEntity seller = sellerRepository.findBySellerId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + loginId));
+
+        // 비밀번호 변경
+        if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            Set<jakarta.validation.ConstraintViolation<it.back.seller.dto.SellerUpdateRequestDTO>> pwViolations = validator.validateProperty(req, "password");
+            if (!pwViolations.isEmpty()) {
+                throw new jakarta.validation.ConstraintViolationException(pwViolations);
+            }
+            seller.setPassword(passwordEncoder.encode(req.getPassword()));
+        }
+        // 기타 정보 변경(아이디는 수정 불가)
+        if (req.getCompanyName() != null) seller.setCompanyName(req.getCompanyName());
+        if (req.getSellerEmail() != null) seller.setSellerEmail(req.getSellerEmail());
+        SellerDetailEntity detail = seller.getSellerDetail();
+        if (detail != null) {
+            if (req.getBusinessRegistrationNumber() != null) detail.setBusinessRegistrationNumber(req.getBusinessRegistrationNumber());
+            if (req.getPhone() != null) detail.setPhone(req.getPhone());
+            if (req.getAddress() != null) detail.setAddress(req.getAddress());
+            if (req.getAddressDetail() != null) detail.setAddressDetail(req.getAddressDetail());
+            if (req.getCompanyInfo() != null) detail.setCompanyInfo(req.getCompanyInfo());
+        }
+        // 유효성 검사
+        Set<ConstraintViolation<SellerEntity>> violations = validator.validate(seller);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        SellerEntity saved = sellerRepository.save(seller);
+        return new SellerResponseDTO(saved);
+    }
+
+    @Transactional
+    public void sellerWithdraw(Authentication authentication, String withdrawalReason) {
+        String loginId = authentication.getName();
+        SellerEntity seller = sellerRepository.findBySellerId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + loginId));
+        seller.setActive(false);
+        seller.setWithdrawalStatus(SellerEntity.WithdrawalStatus.VOLUNTARY);
+        seller.setWithdrawalReason(withdrawalReason);
+        sellerRepository.save(seller);
     }
 }
