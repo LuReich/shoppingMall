@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/buyer/register", "/api/v1/buyer/login").permitAll()
                 .requestMatchers("/api/v1/buyer/check-email", "/api/v1/buyer/check-phone").permitAll()
                 .requestMatchers("/api/v1/seller/register", "/api/v1/seller/login").permitAll()
+                .requestMatchers("/api/v1/seller/check-email", "/api/v1/seller/check-businessRegistrationNumber").permitAll()
                 .requestMatchers("/api/v1/admin/login").permitAll()
                 .requestMatchers("/api/v1/seller/public/**").permitAll()
                 .requestMatchers("/api/v1/review/write").hasRole("BUYER")
