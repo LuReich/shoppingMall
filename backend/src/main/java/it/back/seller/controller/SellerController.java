@@ -87,39 +87,44 @@ public class SellerController {
     }
 
     // 판매자 자기 정보 수정 (PATCH)
-    @PatchMapping("/update")
-    public ResponseEntity<ApiResponse<SellerResponseDTO>> updateMyInfo(
+    @PatchMapping("/{sellerUid}")
+    public ResponseEntity<ApiResponse<SellerResponseDTO>> updateSeller(
+            @PathVariable Long sellerUid,
             @Valid @RequestBody SellerUpdateRequestDTO request,
             Authentication authentication) {
-        SellerResponseDTO updated = sellerService.updateSeller(request, authentication);
+        SellerResponseDTO updated = sellerService.updateSeller(sellerUid, request, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updated));
     }
 
 
     // 이메일 중복/형식 체크
-    @GetMapping("/check-email")
-    public ResponseEntity<ApiResponse<String>> checkEmail(
-            @RequestParam String email,
+    @PostMapping("/check-email")
+    public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body,
             Authentication authentication) {
-        String result = sellerService.checkEmail(email, authentication);
-        return ResponseEntity.ok(ApiResponse.ok(result));
+        String email = body.get("email");
+        String loginId = authentication != null ? authentication.getName() : null;
+        String result = sellerService.checkEmail(email, loginId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // 사업자등록번호 중복 체크
-    @GetMapping("/check-business-number")
-    public ResponseEntity<ApiResponse<String>> checkBusinessNumber(
-            @RequestParam String businessNumber,
+    @PostMapping("/check-businessRegistrationNumber")
+    public ResponseEntity<ApiResponse<String>> checkBusinessRegistrationNumber(@RequestBody Map<String, String> body,
             Authentication authentication) {
-        String result = sellerService.checkBusinessNumber(businessNumber, authentication);
-        return ResponseEntity.ok(ApiResponse.ok(result));
+        String businessRegistrationNumber = body.get("businessRegistrationNumber");
+        String loginId = authentication != null ? authentication.getName() : null;
+        String result = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, loginId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // 판매자 탈퇴(비활성화) PATCH 방식
     @PatchMapping("/withdraw")
-    public ResponseEntity<ApiResponse<Void>> sellerWithdraw(
+    public ResponseEntity<ApiResponse<String>> sellerWithdraw(
             Authentication authentication,
-            @RequestBody(required = false) String withdrawalReason) {
-        sellerService.sellerWithdraw(authentication, withdrawalReason);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(null));
+            @RequestBody(required = false) Map<String, String> body) {
+        String loginId = authentication.getName();
+        String withdrawalReason = (body != null) ? body.getOrDefault("withdrawalReason", "") : "";
+        sellerService.sellerWithdraw(loginId, withdrawalReason);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("회원 탈퇴(비활성화) 처리되었습니다."));
     }
 }

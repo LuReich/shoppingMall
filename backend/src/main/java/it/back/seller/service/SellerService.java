@@ -1,4 +1,7 @@
+
 package it.back.seller.service;
+import java.util.Map;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 import java.util.Set;
@@ -166,68 +169,138 @@ public class SellerService {
     }
 
 
-    // 이메일 중복/형식 체크 (본인 제외)
-    public String checkEmail(String email, Authentication authentication) {
+    // 이메일 중복/형식 체크
+    public String checkEmail(String email, String loginId) {
         if (email == null || email.isBlank()) {
             return "이메일을 입력하세요.";
         }
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             return "이메일 형식이 올바르지 않습니다.";
         }
-        String loginId = authentication.getName();
-        return sellerRepository.findBySellerEmail(email)
-                .map(existing -> loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
+        String result = sellerRepository.findBySellerEmail(email)
+                .map(existing -> loginId != null && loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
                 .orElse("OK");
+        if ("DUPLICATE".equals(result)) {
+            return "이미 사용 중인 이메일입니다.";
+        } else if ("SAME".equals(result)) {
+            return "이전과 동일한 이메일입니다.";
+        }
+        return "사용 가능한 이메일입니다.";
     }
 
-    // 사업자등록번호 중복 체크 (본인 제외)
-    public String checkBusinessNumber(String businessNumber, Authentication authentication) {
-        if (businessNumber == null || businessNumber.isBlank()) {
+    // 사업자등록번호 중복 체크
+    public String checkBusinessRegistrationNumber(String businessRegistrationNumber, String loginId) {
+        if (businessRegistrationNumber == null || businessRegistrationNumber.isBlank()) {
             return "사업자등록번호를 입력하세요.";
         }
-        String loginId = authentication.getName();
-        return sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessNumber)
-                .map(existing -> loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
+        if (!businessRegistrationNumber.matches("^\\d{10}$")) {
+            return "사업자등록번호는 10자리 숫자만 입력해야 합니다.";
+        }
+        String result = sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessRegistrationNumber)
+                .map(existing -> loginId != null && loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
                 .orElse("OK");
+        if ("DUPLICATE".equals(result)) {
+            return "이미 사용 중인 사업자등록번호입니다.";
+        } else if ("SAME".equals(result)) {
+            return "이전과 동일한 사업자등록번호입니다.";
+        }
+        return "사용 가능한 사업자등록번호입니다.";
     }
 
     @Transactional
-    public SellerResponseDTO updateSeller(SellerUpdateRequestDTO req, Authentication authentication) {
-        String loginId = authentication.getName();
-        SellerEntity seller = sellerRepository.findBySellerId(loginId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + loginId));
+    public SellerResponseDTO updateSeller(Long sellerUid, SellerUpdateRequestDTO req, Authentication authentication) {
+        if (authentication == null) {
+            throw new SecurityException("Unauthorized");
+        }
+        String loginId = (String) authentication.getPrincipal();
+        Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
+        String role = (String) details.get("role");
+        SellerEntity seller = sellerRepository.findById(sellerUid)
+                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
 
-        // 비밀번호 변경
-        if (req.getPassword() != null && !req.getPassword().isBlank()) {
-            Set<jakarta.validation.ConstraintViolation<it.back.seller.dto.SellerUpdateRequestDTO>> pwViolations = validator.validateProperty(req, "password");
-            if (!pwViolations.isEmpty()) {
-                throw new jakarta.validation.ConstraintViolationException(pwViolations);
+        // ADMIN은 모든 seller 수정 가능, SELLER는 본인만 가능
+        if (!seller.getSellerId().equals(loginId) && !"ADMIN".equals(role)) {
+            throw new AccessDeniedException("본인 또는 관리자만 수정할 수 있습니다.");
+        }
+
+        // PATCH: password가 null 또는 빈문자열이면 기존 비밀번호 유지, 값이 있으면 유효성 검사 후 변경
+        if (req.getPassword() != null) {
+            if (req.getPassword().isBlank()) {
+                // 빈 문자열이면 기존 비밀번호 유지 (아무것도 하지 않음)
+            } else {
+                // 값이 있고, 공백 포함 등 유효성 위반이면 400 반환
+                Set<ConstraintViolation<SellerUpdateRequestDTO>> pwViolations = validator.validateProperty(req, "password");
+                if (!pwViolations.isEmpty()) {
+                    throw new ConstraintViolationException(pwViolations);
+                }
+                seller.setPassword(passwordEncoder.encode(req.getPassword()));
             }
-            seller.setPassword(passwordEncoder.encode(req.getPassword()));
         }
         // 기타 정보 변경(아이디는 수정 불가)
-        if (req.getCompanyName() != null) seller.setCompanyName(req.getCompanyName());
-        if (req.getSellerEmail() != null) seller.setSellerEmail(req.getSellerEmail());
+        if (req.getCompanyName() != null) {
+            seller.setCompanyName(req.getCompanyName());
+        }
+        if (req.getSellerEmail() != null && !req.getSellerEmail().isBlank()) {
+            // DTO의 이메일 유효성 검사 (엔티티와 동일한 @Email 등 적용)
+            Set<ConstraintViolation<SellerUpdateRequestDTO>> emailViolations = validator.validateProperty(req, "sellerEmail");
+            if (!emailViolations.isEmpty()) {
+                throw new ConstraintViolationException(emailViolations);
+            }
+            String email = req.getSellerEmail();
+            // 이메일 중복 체크 (본인 제외)
+            sellerRepository.findBySellerEmail(email).ifPresent(existing -> {
+                if (!existing.getSellerUid().equals(sellerUid)) {
+                    throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+                }
+            });
+            seller.setSellerEmail(email);
+        }
+
         SellerDetailEntity detail = seller.getSellerDetail();
         if (detail != null) {
-            if (req.getBusinessRegistrationNumber() != null) detail.setBusinessRegistrationNumber(req.getBusinessRegistrationNumber());
-            if (req.getPhone() != null) detail.setPhone(req.getPhone());
-            if (req.getAddress() != null) detail.setAddress(req.getAddress());
-            if (req.getAddressDetail() != null) detail.setAddressDetail(req.getAddressDetail());
-            if (req.getCompanyInfo() != null) detail.setCompanyInfo(req.getCompanyInfo());
+            if (req.getBusinessRegistrationNumber() != null && !req.getBusinessRegistrationNumber().isBlank()) {
+                // 사업자등록번호 10자리 숫자 체크
+                String businessNo = req.getBusinessRegistrationNumber();
+                if (!businessNo.matches("^\\d{10}$")) {
+                    throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
+                }
+                // 사업자등록번호 중복 체크 (본인 제외)
+                sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessNo).ifPresent(existing -> {
+                    if (!existing.getSellerUid().equals(sellerUid)) {
+                        throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
+                    }
+                });
+                detail.setBusinessRegistrationNumber(businessNo);
+            }
+            if (req.getPhone() != null && !req.getPhone().isBlank()) {
+                // 전화번호 숫자열(10~11자리)만 허용
+                String phone = req.getPhone();
+                if (!phone.matches("^\\d{10,11}$")) {
+                    throw new IllegalArgumentException("전화번호는 10~11자리 숫자만 입력해야 합니다.");
+                }
+                detail.setPhone(phone);
+            }
+            if (req.getAddress() != null) {
+                detail.setAddress(req.getAddress());
+            }
+            if (req.getAddressDetail() != null) {
+                detail.setAddressDetail(req.getAddressDetail());
+            }
+            if (req.getCompanyInfo() != null) {
+                detail.setCompanyInfo(req.getCompanyInfo());
+            }
         }
         // 유효성 검사
         Set<ConstraintViolation<SellerEntity>> violations = validator.validate(seller);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-        SellerEntity saved = sellerRepository.save(seller);
-        return new SellerResponseDTO(saved);
+        // 변경사항은 @Transactional에 의해 자동 반영
+        return new SellerResponseDTO(seller);
     }
 
     @Transactional
-    public void sellerWithdraw(Authentication authentication, String withdrawalReason) {
-        String loginId = authentication.getName();
+    public void sellerWithdraw(String loginId, String withdrawalReason) {
         SellerEntity seller = sellerRepository.findBySellerId(loginId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 sellerId 없음: " + loginId));
         seller.setActive(false);
