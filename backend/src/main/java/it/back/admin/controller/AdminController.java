@@ -66,8 +66,9 @@ public class AdminController {
             @RequestParam(required = false) String nickname,
             @RequestParam(required = false) String buyerEmail,
             @RequestParam(required = false) String phone,
+            @RequestParam(required = false) Boolean isActive,
             @RequestParam(required = false) String withdrawalStatus) {
-        PageResponseDTO<BuyerDTO> buyerPageResponse = adminService.findAllBuyers(pageRequestDTO, buyerUid, buyerId, nickname, buyerEmail, phone, withdrawalStatus);
+        PageResponseDTO<BuyerDTO> buyerPageResponse = adminService.findAllBuyers(pageRequestDTO, buyerUid, buyerId, nickname, buyerEmail, phone, isActive, withdrawalStatus);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(buyerPageResponse));
     }
 
