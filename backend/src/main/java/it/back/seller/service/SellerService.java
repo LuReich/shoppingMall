@@ -1,13 +1,12 @@
 
 package it.back.seller.service;
-import java.util.Map;
-import org.springframework.security.access.AccessDeniedException;
-
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -108,9 +107,9 @@ public class SellerService {
      */
     @Transactional
     public SellerResponseDTO registerSeller(SellerRegisterDTO sellerRegisterDto) {
-        // 이메일 형식 체크
+        // 이메일 형식 체크 (영문, 숫자, . _ - 만 허용, 한글/특수문자 불가, @ 오른쪽은 도메인 형식만 허용)
         String email = sellerRegisterDto.getSellerEmail();
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+        if (email == null || !email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
         // 전화번호 숫자열(10~11자리)만 허용
@@ -174,7 +173,8 @@ public class SellerService {
         if (email == null || email.isBlank()) {
             return "이메일을 입력하세요.";
         }
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+        // 영문, 숫자, . _ - 만 허용, 한글/특수문자 불가, @ 오른쪽은 도메인 형식만 허용
+        if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             return "이메일 형식이 올바르지 않습니다.";
         }
         String result = sellerRepository.findBySellerEmail(email)
@@ -241,12 +241,15 @@ public class SellerService {
             seller.setCompanyName(req.getCompanyName());
         }
         if (req.getSellerEmail() != null && !req.getSellerEmail().isBlank()) {
+            String email = req.getSellerEmail();
+            if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+            }
             // DTO의 이메일 유효성 검사 (엔티티와 동일한 @Email 등 적용)
             Set<ConstraintViolation<SellerUpdateRequestDTO>> emailViolations = validator.validateProperty(req, "sellerEmail");
             if (!emailViolations.isEmpty()) {
                 throw new ConstraintViolationException(emailViolations);
             }
-            String email = req.getSellerEmail();
             // 이메일 중복 체크 (본인 제외)
             sellerRepository.findBySellerEmail(email).ifPresent(existing -> {
                 if (!existing.getSellerUid().equals(sellerUid)) {

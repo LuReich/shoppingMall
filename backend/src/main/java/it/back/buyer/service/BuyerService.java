@@ -107,12 +107,15 @@ public class BuyerService {
             buyer.setNickname(req.getNickname());
         }
         if (req.getBuyerEmail() != null && !req.getBuyerEmail().isBlank()) {
+            String email = req.getBuyerEmail();
+            if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+            }
             // DTO의 이메일 유효성 검사 (엔티티와 동일한 @Email 등 적용)
             Set<ConstraintViolation<BuyerUpdateRequestDTO>> emailViolations = validator.validateProperty(req, "buyerEmail");
             if (!emailViolations.isEmpty()) {
                 throw new ConstraintViolationException(emailViolations);
             }
-            String email = req.getBuyerEmail();
             // 이메일 중복 체크 (본인 제외)
             buyerRepository.findByBuyerEmail(email).ifPresent(existing -> {
                 if (!existing.getBuyerUid().equals(buyerUid)) {
@@ -203,7 +206,8 @@ public class BuyerService {
         if (email == null || email.isBlank()) {
             return "이메일을 입력하세요.";
         }
-        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+        // 영문, 숫자, . _ - 만 허용, 한글/특수문자 불가, @ 오른쪽은 도메인 형식만 허용
+        if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             return "이메일 형식이 올바르지 않습니다.";
         }
         String result = buyerRepository.findByBuyerEmail(email)
@@ -223,8 +227,12 @@ public class BuyerService {
         if (buyerRepository.findByBuyerId(buyerRegisterDto.getBuyerId()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
-        // 이메일 중복 체크
-        if (buyerRepository.findByBuyerEmail(buyerRegisterDto.getBuyerEmail()).isPresent()) {
+        // 이메일 중복 및 형식 체크
+        String email = buyerRegisterDto.getBuyerEmail();
+        if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+        }
+        if (buyerRepository.findByBuyerEmail(email).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
         // 전화번호 중복 체크
