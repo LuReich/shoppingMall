@@ -96,6 +96,12 @@ public class SellerService {
             throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
         }
 
+        // 비밀번호 유효성 검사
+        Set<ConstraintViolation<SellerRegisterDTO>> pwViolations = validator.validateProperty(sellerRegisterDto, "password");
+        if (!pwViolations.isEmpty()) {
+            throw new ConstraintViolationException(pwViolations);
+        }
+
         // Uniqueness checks
         if (sellerRepository.findBySellerId(sellerRegisterDto.getSellerId()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
@@ -108,9 +114,9 @@ public class SellerService {
         }
 
         SellerEntity seller = new SellerEntity();
-
         seller.setSellerId(sellerRegisterDto.getSellerId());
-        seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword())); // Hashing added
+        // 비밀번호 유효성 검사 통과 후 암호화
+        seller.setPassword(passwordEncoder.encode(sellerRegisterDto.getPassword()));
         seller.setCompanyName(sellerRegisterDto.getCompanyName());
         seller.setSellerEmail(sellerRegisterDto.getSellerEmail());
 
