@@ -11,6 +11,7 @@ public class ProductDTO {
     private Long sellerUid;
     private Integer categoryId;
     private String productName;
+    private String companyName;
     private Integer price;
     private Integer stock;
     private String thumbnailUrl;

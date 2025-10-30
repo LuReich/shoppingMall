@@ -56,13 +56,17 @@ public class ProductService {
         return new PageResponseDTO<>(page, dtos);
     }
 
-    public PageResponseDTO<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName) {
+    public PageResponseDTO<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName, String companyName) {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
+        // Add fetch join for Seller to avoid N+1 queries
+        spec = spec.and(ProductSpecifications.withSeller());
+
         spec = spec.and(ProductSpecifications.nameContains(productName));
+        spec = spec.and(ProductSpecifications.companyNameContains(companyName));
 
         if (categoryId != null) {
             List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
@@ -83,6 +87,7 @@ public class ProductService {
             dto.setCreateAt(product.getCreateAt());
             dto.setUpdateAt(product.getUpdateAt());
             dto.setIsDeleted(product.getIsDeleted());
+            dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
             return dto;
         }).toList();
 

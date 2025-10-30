@@ -41,4 +41,35 @@ public class ProductSpecifications {
             return root.get("category").get("categoryId").in(categoryIds);
         };
     }
+
+    public static Specification<ProductEntity> withSeller() {
+        return (root, query, criteriaBuilder) -> {
+            // Ensure the seller is fetched along with the product to avoid N+1 queries
+            root.fetch("seller", jakarta.persistence.criteria.JoinType.LEFT);
+            return criteriaBuilder.conjunction(); // Always-true predicate
+        };
+    }
+
+    public static Specification<ProductEntity> companyNameContains(String companyName) {
+        return (root, query, criteriaBuilder) -> {
+            if (companyName == null || companyName.isBlank()) {
+                return criteriaBuilder.conjunction(); // Always-true predicate
+            }
+
+            List<Predicate> predicates = new ArrayList<>();
+            String[] keywords = companyName.trim().split("\s+");
+
+            for (String keyword : keywords) {
+                if (!keyword.isEmpty()) {
+                    predicates.add(criteriaBuilder.like(root.get("seller").get("companyName"), "%" + keyword + "%"));
+                }
+            }
+
+            if (predicates.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
 }
