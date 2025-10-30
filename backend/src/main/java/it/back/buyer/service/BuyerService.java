@@ -12,6 +12,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
+import it.back.review.entity.ReviewEntity;
+import it.back.review.dto.ReviewDTO;
+import it.back.common.pagination.PageRequestDTO;
+import it.back.common.pagination.PageResponseDTO;
+import it.back.review.specification.ReviewSpecifications;
+
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
@@ -19,6 +29,7 @@ import it.back.buyer.dto.BuyerUpdateRequestDTO;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
+import it.back.review.repository.ReviewRepository;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.utils.JWTUtils;
 import jakarta.validation.ConstraintViolation;
@@ -31,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
     private final Validator validator;
@@ -320,5 +332,34 @@ public class BuyerService {
         buyer.setWithdrawalStatus(BuyerEntity.WithdrawalStatus.VOLUNTARY);
         buyer.setWithdrawalReason(withdrawalReason);
         buyerRepository.save(buyer);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponseDTO<ReviewDTO> getMyReviews(Long buyerUid, PageRequestDTO pageRequestDTO, String productName) {
+        Pageable pageable = pageRequestDTO.toPageable();
+
+        Specification<ReviewEntity> spec = ReviewSpecifications.hasBuyerId(buyerUid)
+                .and(ReviewSpecifications.productNameContains(productName));
+
+        Page<ReviewEntity> page = reviewRepository.findAll(spec, pageable);
+
+        List<ReviewDTO> dtos = page.getContent().stream().map(review -> {
+            ReviewDTO dto = new ReviewDTO();
+            dto.setReviewId(review.getReviewId());
+            dto.setContent(review.getContent());
+            dto.setRating(review.getRating());
+            dto.setCreateAt(review.getCreateAt());
+            dto.setUpdateAt(review.getUpdateAt());
+            dto.setBuyerNickname(review.getBuyer().getNickname());
+            dto.setBuyerUid(review.getBuyer().getBuyerUid());
+            dto.setCompanyName(review.getProduct().getSeller().getCompanyName());
+            dto.setSellerUid(review.getProduct().getSeller().getSellerUid());
+            dto.setProductName(review.getProduct().getProductName());
+            dto.setProductId(review.getProduct().getProductId());
+            dto.setOrderDetailId(review.getOrderDetail().getOrderDetailId());
+            return dto;
+        }).toList();
+
+        return new PageResponseDTO<>(page, dtos);
     }
 }

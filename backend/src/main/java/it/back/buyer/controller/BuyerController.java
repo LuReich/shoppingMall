@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import it.back.common.pagination.PageRequestDTO;
+import it.back.review.dto.ReviewDTO;
 
 import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
@@ -46,6 +50,22 @@ public class BuyerController {
         BuyerEntity buyer = buyerRepository.findByBuyerId(loginId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(new BuyerResponseDTO(buyer)));
+    }
+
+    // 로그인한 buyer 가 자기가 쓴 리뷰 목록을 보는 용도 (페이지네이션, 상품명 검색 포함)
+    @GetMapping("/reviews")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ReviewDTO>>> getMyReviews(
+            Authentication authentication,
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "productName", required = false) String productName) {
+
+        Long buyerUid = extractUidFromAuth(authentication);
+        if (buyerUid == null) {
+            throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
+        }
+
+        PageResponseDTO<ReviewDTO> result = buyerService.getMyReviews(buyerUid, pageRequestDTO, productName);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // buyer 전용 로그인

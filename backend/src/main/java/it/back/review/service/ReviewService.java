@@ -83,7 +83,7 @@ public class ReviewService {
                     dto.setRating(review.getRating());
                     dto.setCreateAt(review.getCreateAt());
                     dto.setBuyerNickname(review.getBuyer().getNickname());
-                    dto.setSellerCompanyName(review.getProduct().getSeller().getCompanyName());
+                    dto.setCompanyName(review.getProduct().getSeller().getCompanyName());
                     dto.setProductName(review.getProduct().getProductName());
                     return dto;
                 })
