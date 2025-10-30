@@ -193,9 +193,12 @@ public class SellerService {
 
     /**
      * 아이디 유효성 및 중복 체크.
-     * @throws IllegalArgumentException 형식 오류 또는 중복 아이디
+     * @param sellerId 아이디
+     * @param sellerUid 중복 검사에서 제외할 seller의 UID (본인/수정대상)
+     * @return true: sellerId가 sellerUid의 것과 동일, false: 사용 가능한 새 아이디
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 아이디
      */
-    public void checkSellerId(String sellerId) {
+    public boolean checkSellerId(String sellerId, Long sellerUid) {
         if (sellerId == null || sellerId.isBlank()) {
             throw new IllegalArgumentException("아이디를 입력하세요.");
         }
@@ -203,9 +206,18 @@ public class SellerService {
         if (!sellerId.matches("^[a-zA-Z][a-zA-Z0-9]{5,19}$")) {
             throw new IllegalArgumentException("아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.");
         }
-        if (sellerRepository.findBySellerId(sellerId).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+
+        Optional<SellerEntity> existing = sellerRepository.findBySellerId(sellerId);
+        if (existing.isEmpty()) {
+            return false; // 사용 가능한 새 아이디
         }
+
+        SellerEntity found = existing.get();
+        if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
+            return true; // 이전과 동일한 아이디 (자신 혹은 수정 대상의 아이디)
+        }
+
+        throw new IllegalArgumentException("이미 사용 중인 아이디입니다."); // 타인의 중복 아이디
     }
 
     // 사업자등록번호 유효성 및 중복 체크

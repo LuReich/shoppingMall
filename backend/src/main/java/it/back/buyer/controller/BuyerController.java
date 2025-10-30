@@ -75,18 +75,11 @@ public class BuyerController {
     @PostMapping("/check-email")
     public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, Object> body,
             Authentication authentication) {
-
         String email = (String) body.get("buyerEmail");
-        Long buyerUid = getUidFromRequest(body, "buyerUid");
-
-        // If UID not in body (self-update or registration), get it from auth token
-        if (buyerUid == null && authentication != null) {
-            String loginId = authentication.getName();
-            buyerUid = buyerRepository.findByBuyerId(loginId)
-                                      .map(BuyerEntity::getBuyerUid)
-                                      .orElse(null);
+        Long buyerUid = parseUidFromBody(body, "buyerUid");
+        if (buyerUid == null) {
+            buyerUid = extractUidFromAuth(authentication);
         }
-
         try {
             boolean isSameAsSelf = buyerService.checkEmail(email, buyerUid);
             String message = isSameAsSelf ? "이전과 동일한 이메일입니다." : "사용 가능한 이메일입니다.";
@@ -104,16 +97,10 @@ public class BuyerController {
     public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, Object> body,
             Authentication authentication) {
         String phone = (String) body.get("phone");
-        Long buyerUid = getUidFromRequest(body, "buyerUid");
-
-        // If UID not in body (self-update or registration), get it from auth token
-        if (buyerUid == null && authentication != null) {
-            String loginId = authentication.getName();
-            buyerUid = buyerRepository.findByBuyerId(loginId)
-                                      .map(BuyerEntity::getBuyerUid)
-                                      .orElse(null);
+        Long buyerUid = parseUidFromBody(body, "buyerUid");
+        if (buyerUid == null) {
+            buyerUid = extractUidFromAuth(authentication);
         }
-
         try {
             boolean isSameAsSelf = buyerService.checkPhone(phone, buyerUid);
             String message = isSameAsSelf ? "이전과 동일한 전화번호입니다." : "사용 가능한 전화번호입니다.";
@@ -128,11 +115,17 @@ public class BuyerController {
 
     // 아이디 중복 체크
     @PostMapping("/check-buyerId")
-    public ResponseEntity<ApiResponse<String>> checkBuyerId(@RequestBody Map<String, String> body) {
-        String buyerId = body.get("buyerId");
+    public ResponseEntity<ApiResponse<String>> checkBuyerId(@RequestBody Map<String, Object> body,
+            Authentication authentication) {
+        String buyerId = (String) body.get("buyerId");
+        Long buyerUid = parseUidFromBody(body, "buyerUid");
+        if (buyerUid == null) {
+            buyerUid = extractUidFromAuth(authentication);
+        }
         try {
-            buyerService.checkBuyerId(buyerId);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("사용 가능한 아이디입니다."));
+            boolean isSameAsSelf = buyerService.checkBuyerId(buyerId, buyerUid);
+            String message = isSameAsSelf ? "이전과 동일한 아이디입니다." : "사용 가능한 아이디입니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("이미 사용 중인")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, e.getMessage()));
@@ -140,6 +133,9 @@ public class BuyerController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, e.getMessage()));
         }
     }
+    // ...매핑 메서드들...
+
+    
 
     // buyer 회원가입 용
     @PostMapping("/register")
@@ -186,21 +182,32 @@ public class BuyerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
-    private Long getUidFromRequest(Map<String, Object> body, String key) {
+    // ====== 유틸리티 메서드 ======
+    // Map에서 Long uid 추출 공통 메서드
+    private static Long parseUidFromBody(Map<String, Object> body, String key) {
         Object uidObj = body.get(key);
-        if (uidObj == null) return null;
-        if (uidObj instanceof Integer) {
-            return ((Integer) uidObj).longValue();
-        } else if (uidObj instanceof Long) {
-            return (Long) uidObj;
-        } else if (uidObj instanceof String) {
-            try {
-                return Long.parseLong((String) uidObj);
-            } catch (NumberFormatException e) {
-                return null;
+        if (uidObj instanceof Integer i) return i.longValue();
+        if (uidObj instanceof Long l) return l;
+        if (uidObj instanceof String s) {
+            try { return Long.parseLong(s); } catch (NumberFormatException ignore) {}
+        }
+        return null;
+    }
+
+    // JWT에서 uid 추출 공통 메서드
+    private static Long extractUidFromAuth(Authentication authentication) {
+        if (authentication == null) return null;
+        Object detailsObj = authentication.getDetails();
+        if (detailsObj instanceof Map<?, ?> details) {
+            Object uidObj = details.get("uid");
+            if (uidObj instanceof Integer i) return i.longValue();
+            if (uidObj instanceof Long l) return l;
+            if (uidObj instanceof String s) {
+                try { return Long.parseLong(s); } catch (NumberFormatException ignore) {}
             }
         }
         return null;
     }
+
 
 }
