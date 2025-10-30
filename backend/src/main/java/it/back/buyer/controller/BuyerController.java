@@ -73,29 +73,72 @@ public class BuyerController {
 
     // 이메일 중복 및 형식 체크
     @PostMapping("/check-email")
-    public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, String> body,
+    public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, Object> body,
             Authentication authentication) {
 
-        String email = body.get("email");
-        String loginId = authentication != null ? authentication.getName() : null;
+        String email = (String) body.get("buyerEmail");
+        Long buyerUid = getUidFromRequest(body, "buyerUid");
 
-        boolean isSameAsSelf = buyerService.checkEmail(email, loginId);
+        // If UID not in body (self-update or registration), get it from auth token
+        if (buyerUid == null && authentication != null) {
+            String loginId = authentication.getName();
+            buyerUid = buyerRepository.findByBuyerId(loginId)
+                                      .map(BuyerEntity::getBuyerUid)
+                                      .orElse(null);
+        }
 
-        String message = isSameAsSelf ? "이전과 동일한 이메일입니다." : "사용 가능한 이메일입니다.";
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+        try {
+            boolean isSameAsSelf = buyerService.checkEmail(email, buyerUid);
+            String message = isSameAsSelf ? "이전과 동일한 이메일입니다." : "사용 가능한 이메일입니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("이미 사용 중인")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, e.getMessage()));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, e.getMessage()));
+        }
     }
 
     // 전화번호 중복 및 형식 체크
     @PostMapping("/check-phone")
-    public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, String> body,
+    public ResponseEntity<ApiResponse<String>> checkPhone(@RequestBody Map<String, Object> body,
             Authentication authentication) {
-        String phone = body.get("phone");
-        String loginId = authentication != null ? authentication.getName() : null;
+        String phone = (String) body.get("phone");
+        Long buyerUid = getUidFromRequest(body, "buyerUid");
 
-        boolean isSameAsSelf = buyerService.checkPhone(phone, loginId);
+        // If UID not in body (self-update or registration), get it from auth token
+        if (buyerUid == null && authentication != null) {
+            String loginId = authentication.getName();
+            buyerUid = buyerRepository.findByBuyerId(loginId)
+                                      .map(BuyerEntity::getBuyerUid)
+                                      .orElse(null);
+        }
 
-        String message = isSameAsSelf ? "이전과 동일한 전화번호입니다." : "사용 가능한 전화번호입니다.";
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+        try {
+            boolean isSameAsSelf = buyerService.checkPhone(phone, buyerUid);
+            String message = isSameAsSelf ? "이전과 동일한 전화번호입니다." : "사용 가능한 전화번호입니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("이미 사용 중인")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, e.getMessage()));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, e.getMessage()));
+        }
+    }
+
+    // 아이디 중복 체크
+    @PostMapping("/check-buyerId")
+    public ResponseEntity<ApiResponse<String>> checkBuyerId(@RequestBody Map<String, String> body) {
+        String buyerId = body.get("buyerId");
+        try {
+            buyerService.checkBuyerId(buyerId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("사용 가능한 아이디입니다."));
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("이미 사용 중인")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, e.getMessage()));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, e.getMessage()));
+        }
     }
 
     // buyer 회원가입 용
@@ -141,6 +184,23 @@ public class BuyerController {
         // OrderService에서 주문 이력 조회
         PageResponseDTO<OrderResponseDTO> result = orderService.getOrdersByBuyerUid(buyerUid, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+    }
+
+    private Long getUidFromRequest(Map<String, Object> body, String key) {
+        Object uidObj = body.get(key);
+        if (uidObj == null) return null;
+        if (uidObj instanceof Integer) {
+            return ((Integer) uidObj).longValue();
+        } else if (uidObj instanceof Long) {
+            return (Long) uidObj;
+        } else if (uidObj instanceof String) {
+            try {
+                return Long.parseLong((String) uidObj);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
 }

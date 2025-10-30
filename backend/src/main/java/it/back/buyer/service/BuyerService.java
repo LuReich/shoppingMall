@@ -2,6 +2,7 @@ package it.back.buyer.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -175,10 +176,12 @@ public class BuyerService {
 
     /**
      * 전화번호 유효성 및 중복 체크.
-     * @return true: 이전과 동일한 전화번호, false: 사용 가능한 새 전화번호
-     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 전화번호
+     * @param phone 전화번호
+     * @param buyerUid 중복 검사에서 제외할 buyer의 UID (본인/수정대상)
+     * @return true: phone이 buyerUid의 것과 동일, false: 사용 가능한 새 번호
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 번호
      */
-    public boolean checkPhone(String phone, String loginId) {
+    public boolean checkPhone(String phone, Long buyerUid) {
         if (phone == null || phone.isBlank()) {
             throw new IllegalArgumentException("전화번호를 입력하세요.");
         }
@@ -189,25 +192,30 @@ public class BuyerService {
             throw new IllegalArgumentException("전화번호는 10~11자리여야 합니다.");
         }
         
-        return buyerRepository.findAll().stream()
+        Optional<BuyerEntity> existing = buyerRepository.findAll().stream()
                 .filter(b -> b.getBuyerDetail() != null && phone.equals(b.getBuyerDetail().getPhone()))
-                .findFirst()
-                .map(b -> {
-                    if (loginId != null && loginId.equals(b.getBuyerId())) {
-                        return true; // 이전과 동일한 전화번호
-                    } else {
-                        throw new IllegalArgumentException("이미 사용 중인 전화번호입니다."); // 타인의 중복 전화번호
-                    }
-                })
-                .orElse(false); // 사용 가능한 새 전화번호
+                .findFirst();
+        
+        if (existing.isEmpty()) {
+            return false; // 사용 가능한 새 전화번호
+        }
+
+        BuyerEntity found = existing.get();
+        if (buyerUid != null && buyerUid.equals(found.getBuyerUid())) {
+            return true; // 이전과 동일한 전화번호
+        }
+
+        throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
     }
 
     /**
      * 이메일 유효성 및 중복 체크.
-     * @return true: 이전과 동일한 이메일, false: 사용 가능한 새 이메일
+     * @param email 이메일
+     * @param buyerUid 중복 검사에서 제외할 buyer의 UID (본인/수정대상)
+     * @return true: email이 buyerUid의 것과 동일, false: 사용 가능한 새 이메일
      * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 이메일
      */
-    public boolean checkEmail(String email, String loginId) {
+    public boolean checkEmail(String email, Long buyerUid) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("이메일을 입력하세요.");
         }
@@ -215,15 +223,34 @@ public class BuyerService {
             throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
         
-        return buyerRepository.findByBuyerEmail(email)
-                .map(b -> {
-                    if (loginId != null && loginId.equals(b.getBuyerId())) {
-                        return true; // 이전과 동일한 이메일
-                    } else {
-                        throw new IllegalArgumentException("이미 사용 중인 이메일입니다."); // 타인의 중복 이메일
-                    }
-                })
-                .orElse(false); // 사용 가능한 새 이메일
+        Optional<BuyerEntity> existing = buyerRepository.findByBuyerEmail(email);
+        if (existing.isEmpty()) {
+            return false; // 사용 가능한 새 이메일
+        }
+        
+        BuyerEntity found = existing.get();
+        if (buyerUid != null && buyerUid.equals(found.getBuyerUid())) {
+            return true; // 이전과 동일한 이메일 (자신 혹은 수정 대상의 이메일)
+        }
+        
+        throw new IllegalArgumentException("이미 사용 중인 이메일입니다."); // 타인의 중복 이메일
+    }
+
+    /**
+     * 아이디 유효성 및 중복 체크.
+     * @throws IllegalArgumentException 형식 오류 또는 중복 아이디
+     */
+    public void checkBuyerId(String buyerId) {
+        if (buyerId == null || buyerId.isBlank()) {
+            throw new IllegalArgumentException("아이디를 입력하세요.");
+        }
+        // 아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.
+        if (!buyerId.matches("^[a-zA-Z][a-zA-Z0-9]{5,19}$")) {
+            throw new IllegalArgumentException("아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.");
+        }
+        if (buyerRepository.findByBuyerId(buyerId).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
     }
 
     @Transactional
