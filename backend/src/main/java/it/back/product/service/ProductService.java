@@ -47,7 +47,7 @@ public class ProductService {
             dto.setUpdateAt(review.getUpdateAt());
             dto.setBuyerNickname(review.getBuyer().getNickname());
             dto.setBuyerUid(review.getBuyer().getBuyerUid());
-            dto.setSellerCompanyName(review.getProduct().getSeller().getCompanyName());
+            dto.setCompanyName(review.getProduct().getSeller().getCompanyName());
             dto.setSellerUid(review.getProduct().getSeller().getSellerUid());
             dto.setProductName(review.getProduct().getProductName());
             dto.setProductId(review.getProduct().getProductId());

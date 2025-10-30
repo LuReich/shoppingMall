@@ -16,12 +16,21 @@ public class ProductSpecifications {
                 return criteriaBuilder.conjunction(); // Always-true predicate
             }
 
+            // Expression that removes spaces from the productName column
+            jakarta.persistence.criteria.Expression<String> productNameWithoutSpaces = criteriaBuilder.function(
+                "replace", 
+                String.class, 
+                root.get("productName"), 
+                criteriaBuilder.literal(" "), 
+                criteriaBuilder.literal("")
+            );
+
             List<Predicate> predicates = new ArrayList<>();
-            String[] keywords = productName.trim().split("\\s+");
+            String[] keywords = productName.trim().split("\s+");
 
             for (String keyword : keywords) {
                 if (!keyword.isEmpty()) {
-                    predicates.add(criteriaBuilder.like(root.get("productName"), "%" + keyword + "%"));
+                    predicates.add(criteriaBuilder.like(productNameWithoutSpaces, "%" + keyword + "%"));
                 }
             }
 
@@ -56,12 +65,21 @@ public class ProductSpecifications {
                 return criteriaBuilder.conjunction(); // Always-true predicate
             }
 
+            // Expression that removes spaces from the companyName column
+            jakarta.persistence.criteria.Expression<String> companyNameWithoutSpaces = criteriaBuilder.function(
+                "replace", 
+                String.class, 
+                root.get("seller").get("companyName"), 
+                criteriaBuilder.literal(" "), 
+                criteriaBuilder.literal("")
+            );
+
             List<Predicate> predicates = new ArrayList<>();
             String[] keywords = companyName.trim().split("\s+");
 
             for (String keyword : keywords) {
                 if (!keyword.isEmpty()) {
-                    predicates.add(criteriaBuilder.like(root.get("seller").get("companyName"), "%" + keyword + "%"));
+                    predicates.add(criteriaBuilder.like(companyNameWithoutSpaces, "%" + keyword + "%"));
                 }
             }
 

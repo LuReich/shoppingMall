@@ -9,17 +9,16 @@ import lombok.Setter;
 @Setter
 public class ReviewDTO {
 
-    private Long buyerUid;
-    private Long sellerUid;
-    private Long productId;
-    private Long orderDetailId;
-    private LocalDateTime updateAt;
-
     private Long reviewId;
-    private String content;
-    private int rating;
-    private LocalDateTime createAt;
+    private Long buyerUid;
+    private Long orderDetailId;
+    private Long productId;
+    private Long sellerUid;
     private String buyerNickname;
-    private String sellerCompanyName;
-    private String productName; // 상품명
+    private int rating;
+    private String content;
+    private String productName;
+    private String companyName;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 }
