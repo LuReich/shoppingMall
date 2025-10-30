@@ -2,6 +2,7 @@
 package it.back.seller.service;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -169,27 +170,46 @@ public class SellerService {
 
 
     // 이메일 중복/형식 체크
-    public String checkEmail(String email, String loginId) {
+    public boolean checkEmail(String email, Long sellerUid) {
         if (email == null || email.isBlank()) {
-            return "이메일을 입력하세요.";
+            throw new IllegalArgumentException("이메일을 입력하세요.");
         }
-        // 영문, 숫자, . _ - 만 허용, 한글/특수문자 불가, @ 오른쪽은 도메인 형식만 허용
         if (!email.matches("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            return "이메일 형식이 올바르지 않습니다.";
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
-        String result = sellerRepository.findBySellerEmail(email)
-                .map(existing -> loginId != null && loginId.equals(existing.getSellerId()) ? "SAME" : "DUPLICATE")
-                .orElse("OK");
-        if ("DUPLICATE".equals(result)) {
-            return "이미 사용 중인 이메일입니다.";
-        } else if ("SAME".equals(result)) {
-            return "이전과 동일한 이메일입니다.";
+        
+        Optional<SellerEntity> existing = sellerRepository.findBySellerEmail(email);
+        if (existing.isEmpty()) {
+            return false; // 사용 가능한 새 이메일
         }
-        return "사용 가능한 이메일입니다.";
+        
+        SellerEntity found = existing.get();
+        if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
+            return true; // 이전과 동일한 이메일 (자신 혹은 수정 대상의 이메일)
+        }
+        
+        throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+    }
+
+    /**
+     * 아이디 유효성 및 중복 체크.
+     * @throws IllegalArgumentException 형식 오류 또는 중복 아이디
+     */
+    public void checkSellerId(String sellerId) {
+        if (sellerId == null || sellerId.isBlank()) {
+            throw new IllegalArgumentException("아이디를 입력하세요.");
+        }
+        // 아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.
+        if (!sellerId.matches("^[a-zA-Z][a-zA-Z0-9]{5,19}$")) {
+            throw new IllegalArgumentException("아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.");
+        }
+        if (sellerRepository.findBySellerId(sellerId).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
     }
 
     // 사업자등록번호 유효성 및 중복 체크
-    public boolean checkBusinessRegistrationNumber(String businessRegistrationNumber, String loginId) {
+    public boolean checkBusinessRegistrationNumber(String businessRegistrationNumber, Long sellerUid) {
         if (businessRegistrationNumber == null || businessRegistrationNumber.isBlank()) {
             throw new IllegalArgumentException("사업자등록번호를 입력하세요.");
         }
@@ -197,15 +217,18 @@ public class SellerService {
             throw new IllegalArgumentException("사업자등록번호는 10자리 숫자만 입력해야 합니다.");
         }
         
-        return sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessRegistrationNumber)
-                .map(existing -> {
-                    if (loginId != null && loginId.equals(existing.getSellerId())) {
-                        return true; // 이전과 동일한 사업자등록번호
-                    } else {
-                        throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다."); // 타인의 중복 번호
-                    }
-                })
-                .orElse(false); // 사용 가능한 새 번호
+        Optional<SellerEntity> existing = sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessRegistrationNumber);
+        
+        if (existing.isEmpty()) {
+            return false; // 사용 가능한 새 번호
+        }
+
+        SellerEntity found = existing.get();
+        if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
+            return true; // 이전과 동일한 사업자등록번호
+        }
+
+        throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
     }
 
     @Transactional
