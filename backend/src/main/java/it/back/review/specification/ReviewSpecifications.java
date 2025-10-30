@@ -25,12 +25,21 @@ public class ReviewSpecifications {
                 return criteriaBuilder.conjunction(); // Always-true predicate
             }
 
+            // Expression that removes spaces from the productName column
+            jakarta.persistence.criteria.Expression<String> productNameWithoutSpaces = criteriaBuilder.function(
+                "replace", 
+                String.class, 
+                root.get("product").get("productName"), 
+                criteriaBuilder.literal(" "), 
+                criteriaBuilder.literal("")
+            );
+
             List<Predicate> predicates = new ArrayList<>();
             String[] keywords = productName.trim().split("\s+");
 
             for (String keyword : keywords) {
                 if (!keyword.isEmpty()) {
-                    predicates.add(criteriaBuilder.like(root.get("product").get("productName"), "%" + keyword + "%"));
+                    predicates.add(criteriaBuilder.like(productNameWithoutSpaces, "%" + keyword + "%"));
                 }
             }
 
