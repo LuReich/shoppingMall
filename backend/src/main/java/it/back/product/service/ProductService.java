@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.back.category.service.CategoryService;
 import it.back.common.pagination.PageRequestDTO;
@@ -94,6 +95,7 @@ public class ProductService {
         return new PageResponseDTO<>(page, dtos);
     }
 
+    @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Optional<ProductEntity> productOpt = productRepository.findById(id);
         if (productOpt.isEmpty()) {
@@ -105,6 +107,7 @@ public class ProductService {
         dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
         dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
         dto.setProductName(product.getProductName());
+        dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
         dto.setPrice(product.getPrice());
         dto.setStock(product.getStock());
         dto.setThumbnailUrl(product.getThumbnailUrl());
