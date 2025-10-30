@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.back.common.pagination.PageRequestDTO;
-import it.back.review.dto.ReviewDTO;
-
 import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
 import it.back.buyer.dto.BuyerUpdateRequestDTO;
@@ -27,9 +24,11 @@ import it.back.buyer.repository.BuyerRepository;
 import it.back.buyer.service.BuyerService;
 import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.order.dto.OrderResponseDTO;
 import it.back.order.service.OrderService;
+import it.back.review.dto.ReviewDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -50,22 +49,6 @@ public class BuyerController {
         BuyerEntity buyer = buyerRepository.findByBuyerId(loginId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 buyerId 없음: " + loginId));
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(new BuyerResponseDTO(buyer)));
-    }
-
-    // 로그인한 buyer 가 자기가 쓴 리뷰 목록을 보는 용도 (페이지네이션, 상품명 검색 포함)
-    @GetMapping("/reviews")
-    public ResponseEntity<ApiResponse<PageResponseDTO<ReviewDTO>>> getMyReviews(
-            Authentication authentication,
-            PageRequestDTO pageRequestDTO,
-            @RequestParam(name = "productName", required = false) String productName) {
-
-        Long buyerUid = extractUidFromAuth(authentication);
-        if (buyerUid == null) {
-            throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
-        }
-
-        PageResponseDTO<ReviewDTO> result = buyerService.getMyReviews(buyerUid, pageRequestDTO, productName);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
     // buyer 전용 로그인
@@ -155,8 +138,6 @@ public class BuyerController {
     }
     // ...매핑 메서드들...
 
-    
-
     // buyer 회원가입 용
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> registerBuyer(@Valid @RequestBody BuyerRegisterDTO buyerRegisterDto) {
@@ -179,26 +160,28 @@ public class BuyerController {
     public ResponseEntity<ApiResponse<PageResponseDTO<OrderResponseDTO>>> getMyOrders(
             Authentication authentication,
             Pageable pageable) {
-        // 인증 정보에서 buyerUid 추출 (OrderController 참고)
-        Object detailsObj = authentication.getDetails();
-        if (!(detailsObj instanceof Map<?, ?> details)) {
+        Long buyerUid = extractUidFromAuth(authentication);
+        if (buyerUid == null) {
             throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
         }
-        Object roleObj = details.get("role");
-        if (roleObj == null || !"BUYER".equals(roleObj.toString())) {
-            throw new IllegalStateException("구매자(BUYER) 권한이 필요합니다.");
-        }
-        Object uidObj = details.get("uid");
-        Long buyerUid;
-        if (uidObj instanceof Integer i) {
-            buyerUid = i.longValue();
-        } else if (uidObj instanceof Long l) {
-            buyerUid = l;
-        } else {
-            throw new IllegalStateException("uid 타입이 올바르지 않습니다.");
-        }
-        // OrderService에서 주문 이력 조회
+
         PageResponseDTO<OrderResponseDTO> result = orderService.getOrdersByBuyerUid(buyerUid, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+    }
+
+    // 로그인한 buyer 가 자기가 쓴 리뷰 목록을 보는 용도 (페이지네이션, 상품명 검색 포함)
+    @GetMapping("/reviews")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ReviewDTO>>> getMyReviews(
+            Authentication authentication,
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "productName", required = false) String productName) {
+
+        Long buyerUid = extractUidFromAuth(authentication);
+        if (buyerUid == null) {
+            throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
+        }
+
+        PageResponseDTO<ReviewDTO> result = buyerService.getMyReviews(buyerUid, pageRequestDTO, productName);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
@@ -206,28 +189,43 @@ public class BuyerController {
     // Map에서 Long uid 추출 공통 메서드
     private static Long parseUidFromBody(Map<String, Object> body, String key) {
         Object uidObj = body.get(key);
-        if (uidObj instanceof Integer i) return i.longValue();
-        if (uidObj instanceof Long l) return l;
+        if (uidObj instanceof Integer i) {
+            return i.longValue();
+        }
+        if (uidObj instanceof Long l) {
+            return l;
+        }
         if (uidObj instanceof String s) {
-            try { return Long.parseLong(s); } catch (NumberFormatException ignore) {}
+            try {
+                return Long.parseLong(s);
+            } catch (NumberFormatException ignore) {
+            }
         }
         return null;
     }
 
     // JWT에서 uid 추출 공통 메서드
     private static Long extractUidFromAuth(Authentication authentication) {
-        if (authentication == null) return null;
+        if (authentication == null) {
+            return null;
+        }
         Object detailsObj = authentication.getDetails();
         if (detailsObj instanceof Map<?, ?> details) {
             Object uidObj = details.get("uid");
-            if (uidObj instanceof Integer i) return i.longValue();
-            if (uidObj instanceof Long l) return l;
+            if (uidObj instanceof Integer i) {
+                return i.longValue();
+            }
+            if (uidObj instanceof Long l) {
+                return l;
+            }
             if (uidObj instanceof String s) {
-                try { return Long.parseLong(s); } catch (NumberFormatException ignore) {}
+                try {
+                    return Long.parseLong(s);
+                } catch (NumberFormatException ignore) {
+                }
             }
         }
         return null;
     }
-
 
 }
