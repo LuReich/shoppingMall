@@ -238,9 +238,12 @@ public class BuyerService {
 
     /**
      * 아이디 유효성 및 중복 체크.
-     * @throws IllegalArgumentException 형식 오류 또는 중복 아이디
+     * @param buyerId 아이디
+     * @param buyerUid 중복 검사에서 제외할 buyer의 UID (본인/수정대상)
+     * @return true: buyerId가 buyerUid의 것과 동일, false: 사용 가능한 새 아이디
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 아이디
      */
-    public void checkBuyerId(String buyerId) {
+    public boolean checkBuyerId(String buyerId, Long buyerUid) {
         if (buyerId == null || buyerId.isBlank()) {
             throw new IllegalArgumentException("아이디를 입력하세요.");
         }
@@ -248,9 +251,18 @@ public class BuyerService {
         if (!buyerId.matches("^[a-zA-Z][a-zA-Z0-9]{5,19}$")) {
             throw new IllegalArgumentException("아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.");
         }
-        if (buyerRepository.findByBuyerId(buyerId).isPresent()) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+
+        Optional<BuyerEntity> existing = buyerRepository.findByBuyerId(buyerId);
+        if (existing.isEmpty()) {
+            return false; // 사용 가능한 새 아이디
         }
+
+        BuyerEntity found = existing.get();
+        if (buyerUid != null && buyerUid.equals(found.getBuyerUid())) {
+            return true; // 이전과 동일한 아이디 (자신 혹은 수정 대상의 아이디)
+        }
+
+        throw new IllegalArgumentException("이미 사용 중인 아이디입니다."); // 타인의 중복 아이디
     }
 
     @Transactional

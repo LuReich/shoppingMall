@@ -87,11 +87,24 @@ public class SellerController {
 
     // 아이디 중복 체크
     @PostMapping("/check-sellerId")
-    public ResponseEntity<ApiResponse<String>> checkSellerId(@RequestBody Map<String, String> body) {
-        String sellerId = body.get("sellerId");
+    public ResponseEntity<ApiResponse<String>> checkSellerId(@RequestBody Map<String, Object> body,
+            Authentication authentication) {
+
+        String sellerId = (String) body.get("sellerId");
+        Long sellerUid = getUidFromRequest(body, "sellerUid");
+
+        // If UID not in body (self-update or registration), get it from auth token
+        if (sellerUid == null && authentication != null) {
+            String loginId = authentication.getName();
+            sellerUid = sellerRepository.findBySellerId(loginId)
+                                        .map(SellerEntity::getSellerUid)
+                                        .orElse(null);
+        }
+
         try {
-            sellerService.checkSellerId(sellerId);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("사용 가능한 아이디입니다."));
+            boolean isSameAsSelf = sellerService.checkSellerId(sellerId, sellerUid);
+            String message = isSameAsSelf ? "이전과 동일한 아이디입니다." : "사용 가능한 아이디입니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("이미 사용 중인")) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, e.getMessage()));
