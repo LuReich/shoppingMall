@@ -60,4 +60,12 @@ public class ProductImageEntity {
     @UpdateTimestamp
     @Column(name = "update_at")
     private LocalDateTime updateAt;
+
+    // 연관관계 편의 메서드
+    public void setProduct(ProductEntity product) {
+        this.product = product;
+        if (product != null && !product.getProductImages().contains(this)) {
+            product.getProductImages().add(this);
+        }
+    }
 }

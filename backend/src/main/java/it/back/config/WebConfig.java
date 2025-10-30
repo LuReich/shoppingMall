@@ -18,30 +18,26 @@ import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.MultipartConfigElement;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer{
+public class WebConfig implements WebMvcConfigurer {
 
-
-    @Value("${server.file.gallery.path}")
-    private String filePath;
-
-
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/imgs/**")
-            .addResourceLocations("file:" + filePath )
-            .setCachePeriod(0)
-            .resourceChain(true)
-            .addResolver(new PathResourceResolver());
+        // 'file:/' 접두사는 OS에 맞는 파일 시스템 경로를 나타냅니다.
+        String resourcePath = "file:" + uploadDir + "/";
+        registry.addResourceHandler("/uploads/**") // 요청 URL을 /uploads/로 변경
+                .addResourceLocations(resourcePath)
+                .setCachePeriod(0)
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver());
 
     }
 
-
-
-
     //파일제한
     @Bean
-    public MultipartConfigElement multipartConfigElement(){
+    public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         factory.setMaxFileSize(DataSize.of(50, DataUnit.MEGABYTES));
         factory.setMaxRequestSize(DataSize.of(50, DataUnit.MEGABYTES));
