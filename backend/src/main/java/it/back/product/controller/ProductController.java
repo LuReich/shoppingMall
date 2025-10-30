@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import it.back.common.dto.ApiResponse;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductUpdateDTO;
 import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.entity.ProductDetailEntity;
@@ -80,11 +82,42 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(savedProduct));
     }
 
+    // 상품 수정 (이미지 수정/삭제 포함)
+    @PatchMapping("/{productId}")
+    public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(
+            @PathVariable Long productId,
+            Authentication authentication,
+            @RequestPart("productData") ProductUpdateDTO productUpdateDTO,
+            @RequestPart(name = "newMainImage", required = false) MultipartFile newMainImage,
+            @RequestPart(name = "newSubImages", required = false) List<MultipartFile> newSubImages) {
+
+        Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
+
+        ProductDTO updatedProduct = productService.updateProduct(
+                sellerUid,
+                productId,
+                productUpdateDTO,
+                newMainImage,
+                newSubImages);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedProduct));
+    }
+
     // 상품 삭제 용인데 미사용 권장
     @DeleteMapping("/{productId}")
     public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable("productId") Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Product deleted successfully"));
+    }
+
+    // 상품 삭제 (Soft Delete)
+    @PatchMapping("/{productId}/delete")
+    public ResponseEntity<ApiResponse<String>> softDeleteProduct(
+            @PathVariable Long productId,
+            Authentication authentication) {
+
+        Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
+        productService.softDeleteProduct(sellerUid, productId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("상품이 성공적으로 삭제(비활성화)되었습니다."));
     }
 
     // 상품 상세 정보 불러오기
@@ -107,7 +140,7 @@ public class ProductController {
     }
 
     // React Quill 에디터에서 상품 상세 설명 이미지 업로드
-    @PostMapping("/{productId}/description/images")
+    @PostMapping("/{productId}/description/image")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadDescriptionImage(
             @PathVariable Long productId,
             @RequestParam("image") MultipartFile imageFile,

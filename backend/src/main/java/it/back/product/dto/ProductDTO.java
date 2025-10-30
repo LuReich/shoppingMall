@@ -38,7 +38,7 @@ public class ProductDTO {
     public ProductDTO(ProductEntity product) {
         this.productId = product.getProductId();
         this.sellerUid = product.getSeller() != null ? product.getSeller().getSellerUid() : null;
-        this.categoryId = product.getCategoryId();
+        this.categoryId = product.getCategoryId(); // 직접 매핑된 categoryId 사용
         this.productName = product.getProductName();
         this.price = product.getPrice();
         this.stock = product.getStock();

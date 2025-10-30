@@ -61,12 +61,15 @@ public class FileUtils {
     /**
      * 파일 삭제
      */
-    public void deleteFile(String filePath) throws Exception {
-        File deleteFile = new File(filePath);
-
-        if (deleteFile.exists()) {
-            deleteFile.delete();
+    public void deleteFile(String fullPath) {
+        File fileToDelete = new File(fullPath);
+        if (fileToDelete.exists()) {
+            if (!fileToDelete.delete()) {
+                // 파일 삭제 실패 시 예외 발생
+                throw new UncheckedIOException("파일 삭제에 실패했습니다: " + fullPath, new IOException("Failed to delete file"));
+            }
         }
+        // 파일이 존재하지 않으면 아무것도 하지 않음 (오류 아님)
     }
 
     /**

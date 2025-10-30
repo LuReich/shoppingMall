@@ -25,6 +25,7 @@ import it.back.common.utils.FileUtils;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductUpdateDTO;
 import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.entity.ProductDetailEntity;
@@ -106,7 +107,7 @@ public class ProductService {
             ProductDTO dto = new ProductDTO();
             dto.setProductId(product.getProductId());
             dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
-            dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+            dto.setCategoryId(product.getCategoryId()); // 직접 매핑된 categoryId 사용
             dto.setProductName(product.getProductName());
             dto.setPrice(product.getPrice());
             dto.setStock(product.getStock());
@@ -130,8 +131,8 @@ public class ProductService {
         ProductEntity product = productOpt.get();
         ProductDTO dto = new ProductDTO();
         dto.setProductId(product.getProductId());
-        dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
-        dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+        dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null); // seller_uid는 FK로 직접 접근
+        dto.setCategoryId(product.getCategoryId()); // 직접 매핑된 categoryId 사용
         dto.setProductName(product.getProductName());
         dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
         dto.setPrice(product.getPrice());
@@ -200,7 +201,7 @@ public class ProductService {
                 if (file.isEmpty()) {
                     continue;
                 }
-                String storedName = fileUtils.saveFile(file, subPath);
+                String storedName = fileUtils.saveFile(file, subPath); // FileUtils의 saveFile 사용
                 String relativePath = getOsIndependentPath("product", String.valueOf(productId), "sub", storedName);
 
                 ProductImageEntity imageEntity = ProductImageEntity.builder()
@@ -208,7 +209,7 @@ public class ProductService {
                         .imagePath(relativePath).imageSize(file.getSize()).sortOrder(sortOrder++).build();
                 imageEntities.add(imageEntity);
             }
-            List<ProductImageEntity> savedImages = productImageRepository.saveAll(imageEntities);
+            List<ProductImageEntity> savedImages = productImageRepository.saveAll(imageEntities); // saveAll 사용
             // 영속성 컨텍스트 내의 ProductEntity에 이미지 리스트를 명시적으로 설정
             savedProduct.setProductImages(savedImages);
         }
@@ -217,6 +218,106 @@ public class ProductService {
         ProductEntity finalProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("저장된 상품을 다시 찾을 수 없습니다."));
         return new ProductDTO(finalProduct);
+    }
+
+    @Transactional
+    public ProductDTO updateProduct(Long sellerUid, Long productId, ProductUpdateDTO dto,
+            MultipartFile newMainImage, List<MultipartFile> newSubImages) {
+        // 1. 상품 조회 및 권한 확인
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        if (!product.getSeller().getSellerUid().equals(sellerUid)) {
+            throw new AccessDeniedException("해당 상품에 대한 수정 권한이 없습니다.");
+        }
+
+        // 2. 상품 기본 정보 업데이트
+        if (dto.getProductName() != null) {
+            product.setProductName(dto.getProductName());
+        }
+        if (dto.getCategoryId() != null) {
+            product.setCategoryId(dto.getCategoryId());
+        }
+        if (dto.getPrice() != null) {
+            product.setPrice(dto.getPrice());
+        }
+        if (dto.getStock() != null) {
+            product.setStock(dto.getStock());
+        }
+
+        // 3. 상품 상세 정보 업데이트
+        ProductDetailEntity detail = productDetailRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException("상품 상세 정보를 찾을 수 없습니다. ID: " + productId));
+        if (dto.getDescription() != null) {
+            detail.setDescription(dto.getDescription());
+        }
+        if (dto.getShippingInfo() != null) {
+            detail.setShippingInfo(dto.getShippingInfo());
+        }
+        productDetailRepository.save(detail); // 상세 정보 저장
+
+        // 4. 메인 이미지 업데이트
+        if (newMainImage != null && !newMainImage.isEmpty()) {
+            // 기존 메인 이미지 파일 삭제
+            if (product.getThumbnailUrl() != null && !product.getThumbnailUrl().isEmpty()) {
+                String oldMainImageFullPath = getOsIndependentPath(uploadDir, product.getThumbnailUrl());
+                fileUtils.deleteFile(oldMainImageFullPath);
+            }
+            // 새 메인 이미지 저장
+            String productBaseDir = getOsIndependentPath(uploadDir, "product", String.valueOf(productId));
+            String mainImageDir = getOsIndependentPath(productBaseDir, "main");
+            String storedName = fileUtils.saveFile(newMainImage, mainImageDir);
+            String relativePath = getOsIndependentPath("product", String.valueOf(productId), "main", storedName);
+            product.setThumbnailUrl(relativePath);
+        }
+
+        // 5. 서브 이미지 삭제
+        if (dto.getDeleteImageIds() != null && !dto.getDeleteImageIds().isEmpty()) {
+            List<ProductImageEntity> imagesToDelete = productImageRepository.findAllById(dto.getDeleteImageIds());
+            for (ProductImageEntity image : imagesToDelete) {
+                if (!image.getProduct().getProductId().equals(productId)) {
+                    // 다른 상품의 이미지를 삭제하려는 시도 방지
+                    throw new AccessDeniedException("삭제하려는 이미지가 해당 상품에 속하지 않습니다.");
+                }
+                String fullPath = getOsIndependentPath(uploadDir, image.getImagePath());
+                fileUtils.deleteFile(fullPath);
+                // ProductEntity의 productImages 리스트에서도 제거하여 orphanRemoval이 동작하도록 함
+                product.getProductImages().remove(image);
+            }
+            productImageRepository.deleteAll(imagesToDelete); // DB에서 이미지 엔티티 삭제
+        }
+
+        // 6. 새 서브 이미지 추가
+        if (newSubImages != null && !newSubImages.isEmpty()) {
+            List<ProductImageEntity> newImageEntities = new ArrayList<>();
+            // 현재 존재하는 이미지들의 sortOrder를 고려하여 새로운 이미지의 sortOrder를 설정
+            int maxSortOrder = product.getProductImages().stream()
+                    .mapToInt(ProductImageEntity::getSortOrder)
+                    .max().orElse(-1);
+            int currentSortOrder = maxSortOrder + 1;
+
+            String productBaseDir = getOsIndependentPath(uploadDir, "product", String.valueOf(productId));
+            String subImageDir = getOsIndependentPath(productBaseDir, "sub");
+
+            for (MultipartFile file : newSubImages) {
+                if (file.isEmpty()) {
+                    continue;
+                }
+                String storedName = fileUtils.saveFile(file, subImageDir);
+                String relativePath = getOsIndependentPath("product", String.valueOf(productId), "sub", storedName);
+                ProductImageEntity imageEntity = ProductImageEntity.builder()
+                        .product(product).imageName(file.getOriginalFilename()).storedName(storedName)
+                        .imagePath(relativePath).imageSize(file.getSize()).sortOrder(currentSortOrder++).build();
+                newImageEntities.add(imageEntity);
+            }
+            productImageRepository.saveAll(newImageEntities); // DB에 새 이미지 엔티티 저장
+            product.getProductImages().addAll(newImageEntities); // ProductEntity 리스트에 추가
+        }
+
+        productRepository.save(product); // 최종 상품 정보 저장 (cascade로 productDetail도 저장됨)
+        // 모든 정보가 포함된 완전한 Entity를 다시 조회하여 DTO로 변환 후 반환
+        return new ProductDTO(productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException("업데이트된 상품을 다시 찾을 수 없습니다. ID: " + productId)));
     }
 
     @Transactional
@@ -246,6 +347,20 @@ public class ProductService {
         // 프론트엔드에서는 서버 주소(http://localhost:9090)와 이 경로를 조합하여 사용합니다.
         String imageUrl = "/uploads/product/" + productId + "/description/" + storedFileName;
         return imageUrl;
+    }
+
+    @Transactional
+    public void softDeleteProduct(Long sellerUid, Long productId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        if (!product.getSeller().getSellerUid().equals(sellerUid)) {
+            throw new AccessDeniedException("해당 상품에 대한 삭제 권한이 없습니다.");
+        }
+
+        product.setIsDeleted(true);
+        productRepository.save(product);
+        // 실제 파일 삭제는 하지 않음 (복구 가능성을 위해)
     }
 
     public void deleteProduct(Long id) {
