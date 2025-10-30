@@ -104,7 +104,7 @@ public class SellerController {
         String loginId = authentication != null ? authentication.getName() : null;
         String result = sellerService.checkEmail(email, loginId);
         if ("이미 사용 중인 이메일입니다.".equals(result)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.ok(result));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, result));
         }
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
@@ -121,7 +121,7 @@ public class SellerController {
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
         } catch (IllegalArgumentException e) {
             if ("이미 사용 중인 사업자등록번호입니다.".equals(e.getMessage())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.ok(e.getMessage()));
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(409, e.getMessage()));
             }
             throw e;
         }
