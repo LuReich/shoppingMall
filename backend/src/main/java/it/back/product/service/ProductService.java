@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.back.category.service.CategoryService;
 import it.back.common.pagination.PageRequestDTO;
@@ -56,13 +57,17 @@ public class ProductService {
         return new PageResponseDTO<>(page, dtos);
     }
 
-    public PageResponseDTO<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName) {
+    public PageResponseDTO<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName, String companyName) {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
+        // Add fetch join for Seller to avoid N+1 queries
+        spec = spec.and(ProductSpecifications.withSeller());
+
         spec = spec.and(ProductSpecifications.nameContains(productName));
+        spec = spec.and(ProductSpecifications.companyNameContains(companyName));
 
         if (categoryId != null) {
             List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
@@ -83,12 +88,14 @@ public class ProductService {
             dto.setCreateAt(product.getCreateAt());
             dto.setUpdateAt(product.getUpdateAt());
             dto.setIsDeleted(product.getIsDeleted());
+            dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
             return dto;
         }).toList();
 
         return new PageResponseDTO<>(page, dtos);
     }
 
+    @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Optional<ProductEntity> productOpt = productRepository.findById(id);
         if (productOpt.isEmpty()) {
@@ -100,6 +107,7 @@ public class ProductService {
         dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
         dto.setCategoryId(product.getCategory() != null ? product.getCategory().getCategoryId() : null);
         dto.setProductName(product.getProductName());
+        dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
         dto.setPrice(product.getPrice());
         dto.setStock(product.getStock());
         dto.setThumbnailUrl(product.getThumbnailUrl());

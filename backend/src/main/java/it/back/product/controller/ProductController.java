@@ -1,6 +1,5 @@
 package it.back.product.controller;
 
-import it.back.common.pagination.PageRequestDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.back.common.dto.ApiResponse;
+import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
@@ -36,9 +36,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductDTO>>> getAllProducts(
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
-            @RequestParam(name = "productName", required = false) String productName) {
+            @RequestParam(name = "productName", required = false) String productName,
+            @RequestParam(name = "companyName", required = false) String companyName) {
 
-        PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName);
+        PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productPageDto));
     }
 
