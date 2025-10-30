@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.back.common.dto.ApiResponse;
@@ -104,6 +103,9 @@ public class SellerController {
         String email = body.get("email");
         String loginId = authentication != null ? authentication.getName() : null;
         String result = sellerService.checkEmail(email, loginId);
+        if ("이미 사용 중인 이메일입니다.".equals(result)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.ok(result));
+        }
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
@@ -113,11 +115,16 @@ public class SellerController {
             Authentication authentication) {
         String businessRegistrationNumber = body.get("businessRegistrationNumber");
         String loginId = authentication != null ? authentication.getName() : null;
-
-        boolean isSameAsSelf = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, loginId);
-
-        String message = isSameAsSelf ? "이전과 동일한 사업자등록번호입니다." : "사용 가능한 사업자등록번호입니다.";
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+        try {
+            boolean isSameAsSelf = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, loginId);
+            String message = isSameAsSelf ? "이전과 동일한 사업자등록번호입니다." : "사용 가능한 사업자등록번호입니다.";
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
+        } catch (IllegalArgumentException e) {
+            if ("이미 사용 중인 사업자등록번호입니다.".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.ok(e.getMessage()));
+            }
+            throw e;
+        }
     }
 
     // 판매자 탈퇴(비활성화) PATCH 방식
