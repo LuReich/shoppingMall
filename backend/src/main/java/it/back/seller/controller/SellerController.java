@@ -140,6 +140,18 @@ public class SellerController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(400, e.getMessage()));
         }
     }
+
+    // 판매자 탈퇴(비활성화) PATCH 방식
+    @PatchMapping("/withdraw")
+    public ResponseEntity<ApiResponse<String>> sellerWithdraw(
+            Authentication authentication,
+            @RequestBody(required = false) Map<String, String> body) {
+        String loginId = authentication.getName();
+        String withdrawalReason = (body != null) ? body.getOrDefault("withdrawalReason", "") : "";
+        sellerService.sellerWithdraw(loginId, withdrawalReason);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("회원 탈퇴(비활성화) 처리되었습니다."));
+    }
+    
     // ====== 유틸리티 메서드 ======
     // Map에서 Long uid 추출 공통 메서드
     private static Long parseUidFromBody(Map<String, Object> body, String key) {
