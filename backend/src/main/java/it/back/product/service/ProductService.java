@@ -125,24 +125,12 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
-        Optional<ProductEntity> productOpt = productRepository.findById(id);
+        Optional<ProductEntity> productOpt = productRepository.findByIdWithImages(id);
         if (productOpt.isEmpty()) {
             return null;
         }
         ProductEntity product = productOpt.get();
-        ProductDTO dto = new ProductDTO();
-        dto.setProductId(product.getProductId());
-        dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null); // seller_uid는 FK로 직접 접근
-        dto.setCategoryId(product.getCategoryId()); // 직접 매핑된 categoryId 사용
-        dto.setProductName(product.getProductName());
-        dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
-        dto.setPrice(product.getPrice());
-        dto.setStock(product.getStock());
-        dto.setThumbnailUrl(product.getThumbnailUrl());
-        dto.setCreateAt(product.getCreateAt());
-        dto.setUpdateAt(product.getUpdateAt());
-        dto.setIsDeleted(product.getIsDeleted());
-        return dto;
+        return new ProductDTO(product);
     }
 
     @Transactional // 트랜잭션 적용: 상품 정보와 이미지 저장이 하나의 단위로 처리되도록

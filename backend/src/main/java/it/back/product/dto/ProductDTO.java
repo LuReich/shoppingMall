@@ -32,6 +32,7 @@ public class ProductDTO {
     private LocalDateTime updateAt;
     @JsonProperty("isDeleted")
     private Boolean isDeleted;
+    private List<ProductImageDTO> productImages; // 상품 이미지 리스트 추가
 
     // ProductEntity를 ProductDTO로 변환하는 생성자
     public ProductDTO(ProductEntity product) {
@@ -46,5 +47,11 @@ public class ProductDTO {
         this.updateAt = product.getUpdateAt();
         this.isDeleted = product.getIsDeleted();
         this.companyName = product.getSeller() != null ? product.getSeller().getCompanyName() : null;
+        // ProductImageEntity 리스트를 ProductImageDTO 리스트로 변환하여 설정
+        if (product.getProductImages() != null) {
+            this.productImages = product.getProductImages().stream()
+                                    .map(ProductImageDTO::new)
+                                    .collect(Collectors.toList());
+        }
     }
 }
