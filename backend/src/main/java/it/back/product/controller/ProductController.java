@@ -28,6 +28,7 @@ import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductUpdateDTO;
 import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDetailDTO;
+import it.back.product.dto.ProductListDTO;
 import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.service.ProductService;
@@ -43,13 +44,13 @@ public class ProductController {
 
     // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, 만약 로그인한 상태에서 안된다면 긴급 연락 해주세요
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<ProductDTO>>> getAllProducts(
+    public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getAllProducts(
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
             @RequestParam(name = "companyName", required = false) String companyName) {
 
-        PageResponseDTO<ProductDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName);
+        PageResponseDTO<ProductListDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productPageDto));
     }
 
