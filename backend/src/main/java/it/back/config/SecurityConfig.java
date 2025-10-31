@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/category/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/product/create").hasRole("SELLER")
                 .requestMatchers(HttpMethod.GET, "/api/v1/product/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/product/**").hasAnyRole("SELLER", "ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/buyer/**").hasAnyRole("BUYER", "ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/seller/**").hasAnyRole("SELLER", "ADMIN")
                 .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN")
