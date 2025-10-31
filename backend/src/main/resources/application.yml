@@ -8,12 +8,10 @@ server:
       force-request: true
       force-response: true
   port: 9090
-  file:
-    upload:
-      path: C:\\files\\upload\\board\\
-    gallery:
-      path: C:\\files\\upload\\gallery\\
 
+# 파일 업로드 경로 설정
+file:
+  upload-dir: C:/ourshop
 
 spring:
   main:
@@ -80,3 +78,4 @@ logging:
           descriptor:
             sql : trace
   config : classpath:logback.xml
+

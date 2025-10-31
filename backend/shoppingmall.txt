@@ -153,8 +153,13 @@ create table product_detail (
 create table product_image (
     image_id bigint primary key auto_increment comment '이미지 고유 번호',
     product_id bigint not null comment '상품 ID (FK)',
-    image_url varchar(255) not null comment '이미지 파일 경로',
+    image_name varchar(255) not null comment '원본 파일명',
+    stored_name varchar(255) not null unique comment '서버에 저장된 파일명 (UUID)',
+    image_path varchar(255) not null comment '이미지 접근 가능 경로',
+    image_size bigint comment '파일 크기 (bytes)',
     sort_order tinyint default 0 comment '이미지 표시 순서',
+    create_at datetime default now() comment '생성일',
+    update_at datetime default current_timestamp on update current_timestamp comment '수정일',
     foreign key (product_id) references product(product_id) on delete cascade
 ) comment '상품 추가 이미지 테이블';
 
@@ -397,13 +402,13 @@ INSERT INTO product_detail (product_id, description, shipping_info) VALUES
 
 
 /* 상품 추가 이미지 (product_image) */
-INSERT INTO product_image (product_id, image_url, sort_order) VALUES
-(1, '/images/qled_tv_detail_1.jpg', 0),
-(1, '/images/qled_tv_detail_2.jpg', 1),
-(2, '/images/lg_gram_detail_1.jpg', 0),
-(3, '/images/mens_oxford_shirt_detail_1.jpg', 0),
-(3, '/images/mens_oxford_shirt_detail_2.jpg', 1),
-(6, '/images/book_novel_detail_1.jpg', 0);
+INSERT INTO product_image (product_id, image_name, stored_name, image_path, image_size, sort_order) VALUES
+(1, 'qled_tv_detail_1.jpg', 'uuid_qled_tv_detail_1.jpg', '/images/qled_tv_detail_1.jpg', 153600, 0),
+(1, 'qled_tv_detail_2.jpg', 'uuid_qled_tv_detail_2.jpg', '/images/qled_tv_detail_2.jpg', 163840, 1),
+(2, 'lg_gram_detail_1.jpg', 'uuid_lg_gram_detail_1.jpg', '/images/lg_gram_detail_1.jpg', 122880, 0),
+(3, 'mens_oxford_shirt_detail_1.jpg', 'uuid_mens_oxford_shirt_detail_1.jpg', '/images/mens_oxford_shirt_detail_1.jpg', 92160, 0),
+(3, 'mens_oxford_shirt_detail_2.jpg', 'uuid_mens_oxford_shirt_detail_2.jpg', '/images/mens_oxford_shirt_detail_2.jpg', 97280, 1),
+(6, 'book_novel_detail_1.jpg', 'uuid_book_novel_detail_1.jpg', '/images/book_novel_detail_1.jpg', 81920, 0);
 
 
 /* 장바구니 (cart) */
