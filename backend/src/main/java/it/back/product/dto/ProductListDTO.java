@@ -18,7 +18,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDTO {
+public class ProductListDTO {
 
     private Long productId;
     private Long sellerUid;
@@ -32,13 +32,12 @@ public class ProductDTO {
     private LocalDateTime updateAt;
     @JsonProperty("isDeleted")
     private Boolean isDeleted;
-    private List<ProductImageDTO> productImages; // 상품 이미지 리스트 추가
 
-    // ProductEntity를 ProductDTO로 변환하는 생성자
-    public ProductDTO(ProductEntity product) {
+    // ProductEntity를 ProductListDTO로 변환하는 생성자
+    public ProductListDTO(ProductEntity product) {
         this.productId = product.getProductId();
         this.sellerUid = product.getSeller() != null ? product.getSeller().getSellerUid() : null;
-        this.categoryId = product.getCategoryId(); // 직접 매핑된 categoryId 사용
+        this.categoryId = product.getCategoryId();
         this.productName = product.getProductName();
         this.price = product.getPrice();
         this.stock = product.getStock();
@@ -47,11 +46,5 @@ public class ProductDTO {
         this.updateAt = product.getUpdateAt();
         this.isDeleted = product.getIsDeleted();
         this.companyName = product.getSeller() != null ? product.getSeller().getCompanyName() : null;
-        // ProductImageEntity 리스트를 ProductImageDTO 리스트로 변환하여 설정
-        if (product.getProductImages() != null) {
-            this.productImages = product.getProductImages().stream()
-                                    .map(ProductImageDTO::new)
-                                    .collect(Collectors.toList());
-        }
     }
 }

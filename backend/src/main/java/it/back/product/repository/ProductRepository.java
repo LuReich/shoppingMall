@@ -2,6 +2,7 @@
 package it.back.product.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,9 @@ import it.back.product.entity.ProductEntity;
 
 public interface ProductRepository extends JpaRepository<ProductEntity, Long>, JpaSpecificationExecutor<ProductEntity> {
 
+    @Query("SELECT p FROM ProductEntity p LEFT JOIN FETCH p.productImages WHERE p.productId = :id")
+    Optional<ProductEntity> findByIdWithImages(@Param("id") Long id);
+
     @Query("SELECT p FROM ProductEntity p WHERE REPLACE(p.productName, ' ', '') LIKE %:name%")
     Page<ProductEntity> findByProductNameIgnoreSpace(@Param("name") String name, Pageable pageable);
 
@@ -21,5 +25,5 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
     Page<ProductEntity> findByCategoryIdAndProductNameIgnoreSpace(@Param("categoryIds") List<Integer> categoryIds, @Param("name") String name, Pageable pageable);
 
     @Query("SELECT p FROM ProductEntity p WHERE p.category.categoryId IN :categoryIds")
-    Page<ProductEntity> findByCategoryId(@Param("categoryIds") List<Integer> categoryIds, Pageable pageable); // Added @Param
+    Page<ProductEntity> findByCategoryId(@Param("categoryIds") List<Integer> categoryIds, Pageable pageable);
 }
