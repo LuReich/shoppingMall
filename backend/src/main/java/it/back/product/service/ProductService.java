@@ -166,7 +166,6 @@ public class ProductService {
         // 2-1. 상품 상세 정보 저장 (product_detail)
         ProductDetailEntity detail = new ProductDetailEntity();
         detail.setProduct(savedProduct); // 연관관계 설정
-        detail.setDescription(dto.getDescription());
         detail.setShippingInfo(dto.getShippingInfo());
         productDetailRepository.save(detail);
 
