@@ -188,9 +188,9 @@ public class ProductService {
 
         // 4. 대표 이미지 저장 및 상품 정보 업데이트
         String mainImageStoredName = fileUtils.saveFile(mainImage, mainImagePath);
-        // DB에는 상대 경로만 저장 (예: 1/main/uuid_main_image.jpg)
-        String mainImageRelativePath = getOsIndependentPath("product", String.valueOf(productId), "main", mainImageStoredName);
-        savedProduct.setThumbnailUrl(mainImageRelativePath);
+        // DB에는 웹 접근이 가능한 URL 경로를 저장
+        String mainImageUrl = "/uploads/product/" + productId + "/main/" + mainImageStoredName;
+        savedProduct.setThumbnailUrl(mainImageUrl);
 
         // 5. 서브(추가) 이미지 저장
         if (subImages != null && !subImages.isEmpty()) {
@@ -201,11 +201,11 @@ public class ProductService {
                     continue;
                 }
                 String storedName = fileUtils.saveFile(file, subPath); // FileUtils의 saveFile 사용
-                String relativePath = getOsIndependentPath("product", String.valueOf(productId), "sub", storedName);
+                String subImageUrl = "/uploads/product/" + productId + "/sub/" + storedName;
 
                 ProductImageEntity imageEntity = ProductImageEntity.builder()
                         .product(savedProduct).imageName(file.getOriginalFilename()).storedName(storedName)
-                        .imagePath(relativePath).imageSize(file.getSize()).sortOrder(sortOrder++).build();
+                        .imagePath(subImageUrl).imageSize(file.getSize()).sortOrder(sortOrder++).build();
                 imageEntities.add(imageEntity);
             }
             List<ProductImageEntity> savedImages = productImageRepository.saveAll(imageEntities); // saveAll 사용
@@ -271,8 +271,8 @@ public class ProductService {
             String productBaseDir = getOsIndependentPath(uploadDir, "product", String.valueOf(productId));
             String mainImageDir = getOsIndependentPath(productBaseDir, "main");
             String storedName = fileUtils.saveFile(newMainImage, mainImageDir);
-            String relativePath = getOsIndependentPath("product", String.valueOf(productId), "main", storedName);
-            product.setThumbnailUrl(relativePath);
+            String newMainImageUrlPath = "/uploads/product/" + productId + "/main/" + storedName;
+            product.setThumbnailUrl(newMainImageUrlPath);
         }
 
         // 5. 서브 이미지 삭제
@@ -283,7 +283,9 @@ public class ProductService {
                     // 다른 상품의 이미지를 삭제하려는 시도 방지
                     throw new AccessDeniedException("삭제하려는 이미지가 해당 상품에 속하지 않습니다.");
                 }
-                String fullPath = getOsIndependentPath(uploadDir, image.getImagePath());
+                // imagePath가 /uploads/로 시작하므로 앞부분을 제거하고 실제 파일 시스템 경로를 조합
+                String relativePath = image.getImagePath().startsWith("/uploads/") ? image.getImagePath().substring("/uploads/".length()) : image.getImagePath();
+                String fullPath = getOsIndependentPath(uploadDir, relativePath);
                 fileUtils.deleteFile(fullPath);
                 // ProductEntity의 productImages 리스트에서도 제거하여 orphanRemoval이 동작하도록 함
                 product.getProductImages().remove(image);
@@ -308,10 +310,10 @@ public class ProductService {
                     continue;
                 }
                 String storedName = fileUtils.saveFile(file, subImageDir);
-                String relativePath = getOsIndependentPath("product", String.valueOf(productId), "sub", storedName);
+                String newSubImageUrl = "/uploads/product/" + productId + "/sub/" + storedName;
                 ProductImageEntity imageEntity = ProductImageEntity.builder()
                         .product(product).imageName(file.getOriginalFilename()).storedName(storedName)
-                        .imagePath(relativePath).imageSize(file.getSize()).sortOrder(currentSortOrder++).build();
+                        .imagePath(newSubImageUrl).imageSize(file.getSize()).sortOrder(currentSortOrder++).build();
                 newImageEntities.add(imageEntity);
             }
             productImageRepository.saveAll(newImageEntities); // DB에 새 이미지 엔티티 저장
@@ -360,7 +362,7 @@ public class ProductService {
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
                 // 새로운 영구 URL로 src 속성 변경
-                String permanentUrl = "/uploads/product/" + productId + "/description/" + tempFileName;
+                String permanentUrl = "/uploads/product/" + productId + "/description/" + tempFileName; // 슬래시 사용
                 img.attr("src", permanentUrl);
             } else {
                 // 임시 파일이 없는 경우(오류 등), 해당 img 태그를 제거하거나 대체 이미지를 넣을 수 있음
@@ -392,7 +394,7 @@ public class ProductService {
 
         // 3. 임시 이미지 접근 URL 생성 및 반환 (WebConfig 설정과 일치해야 함)
         // 예: /uploads/temp/uuid_image.jpg
-        return "/uploads/temp/" + storedFileName;
+        return "/uploads/temp/" + storedFileName; // 슬래시 사용
     }
 
     @Transactional
@@ -420,7 +422,7 @@ public class ProductService {
         // WebConfig에서 /uploads/** 요청을 처리하므로, 그에 맞는 경로를 만들어준다.
         // 예: /uploads/product/1/description/uuid_image.jpg
         // 프론트엔드에서는 서버 주소(http://localhost:9090)와 이 경로를 조합하여 사용합니다.
-        String imageUrl = "/uploads/product/" + productId + "/description/" + storedFileName;
+        String imageUrl = "/uploads/product/" + productId + "/description/" + storedFileName; // 슬래시 사용
         return imageUrl;
     }
 
