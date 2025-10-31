@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.web.multipart.MultipartFile;
 
 import it.back.category.service.CategoryService;
@@ -42,6 +46,7 @@ import it.back.review.dto.ReviewDTO;
 import it.back.review.entity.ReviewEntity;
 import it.back.review.repository.ReviewRepository;
 import it.back.review.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -155,6 +160,12 @@ public class ProductService {
         // 2-1. 상품 상세 정보 저장 (product_detail)
         ProductDetailEntity detail = new ProductDetailEntity();
         detail.setProduct(savedProduct); // 연관관계 설정
+        // 2-2. 상품 설명(description)의 임시 이미지를 영구 이미지로 전환
+        try {
+            detail.setDescription(moveTempImagesToPermanent(productId, dto.getDescription()));
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException("상품 설명 이미지 처리 중 오류가 발생했습니다.", e);
+        }
         detail.setShippingInfo(dto.getShippingInfo());
         productDetailRepository.save(detail);
 
@@ -236,8 +247,13 @@ public class ProductService {
         // 3. 상품 상세 정보 업데이트
         ProductDetailEntity detail = productDetailRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("상품 상세 정보를 찾을 수 없습니다. ID: " + productId));
-        if (dto.getDescription() != null) {
-            detail.setDescription(dto.getDescription());
+        // 상품 설명(description)의 임시 이미지 처리
+        if (dto.getDescription() != null) { // description 필드가 요청에 포함된 경우에만 처리
+            try {
+                detail.setDescription(moveTempImagesToPermanent(productId, dto.getDescription()));
+            } catch (IOException e) {
+                throw new java.io.UncheckedIOException("상품 설명 이미지 처리 중 오류가 발생했습니다.", e);
+            }
         }
         if (dto.getShippingInfo() != null) {
             detail.setShippingInfo(dto.getShippingInfo());
@@ -306,6 +322,77 @@ public class ProductService {
         // 모든 정보가 포함된 완전한 Entity를 다시 조회하여 DTO로 변환 후 반환
         return new ProductDTO(productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("업데이트된 상품을 다시 찾을 수 없습니다. ID: " + productId)));
+    }
+
+    /**
+     * 상품 설명(HTML)에 포함된 임시 이미지를 영구 경로로 이동시키고, 이미지 경로를 실제 URL로 교체하여 반환합니다.
+     *
+     * @param productId 상품 ID
+     * @param htmlContent 임시 이미지가 포함된 HTML 문자열
+     * @return 이미지 경로가 교체된 HTML 문자열
+     * @throws IOException 파일 이동 중 오류 발생 시
+     */
+    private String moveTempImagesToPermanent(Long productId, String htmlContent) throws IOException {
+        if (htmlContent == null || htmlContent.isEmpty()) {
+            return htmlContent;
+        }
+
+        Document doc = Jsoup.parse(htmlContent);
+        // /uploads/temp/ 로 시작하는 src를 가진 img 태그 선택
+        Elements images = doc.select("img[src^=/uploads/temp/]");
+
+        if (images.isEmpty()) {
+            return htmlContent; // 처리할 임시 이미지가 없으면 원본 HTML 반환
+        }
+
+        String permanentPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
+        Files.createDirectories(Paths.get(permanentPath));
+
+        for (org.jsoup.nodes.Element img : images) {
+            String tempSrc = img.attr("src"); // 예: /uploads/temp/uuid.png
+            String tempFileName = Paths.get(tempSrc).getFileName().toString();
+
+            Path sourcePath = Paths.get(getOsIndependentPath(uploadDir, "temp"), tempFileName);
+            Path destinationPath = Paths.get(permanentPath, tempFileName);
+
+            // 파일이 임시 폴더에 실제로 존재하는지 확인 후 이동
+            if (Files.exists(sourcePath)) {
+                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+                // 새로운 영구 URL로 src 속성 변경
+                String permanentUrl = "/uploads/product/" + productId + "/description/" + tempFileName;
+                img.attr("src", permanentUrl);
+            } else {
+                // 임시 파일이 없는 경우(오류 등), 해당 img 태그를 제거하거나 대체 이미지를 넣을 수 있음
+                // 여기서는 일단 그대로 둠 (broken image로 표시됨)
+            }
+        }
+
+        return doc.body().html();
+    }
+
+    /**
+     * Quill 에디터의 이미지를 임시 폴더에 업로드하고 임시 URL을 반환합니다.
+     *
+     * @param imageFile 업로드된 이미지 파일
+     * @return 웹에서 접근 가능한 임시 이미지 URL
+     */
+    @Transactional
+    public String uploadTempDescriptionImage(MultipartFile imageFile) {
+        // 1. 임시 파일 저장 경로 설정 및 생성
+        String tempPath = getOsIndependentPath(uploadDir, "temp");
+        try {
+            Files.createDirectories(Paths.get(tempPath));
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException("임시 이미지 폴더 생성에 실패했습니다.", e);
+        }
+
+        // 2. 파일 저장
+        String storedFileName = fileUtils.saveFile(imageFile, tempPath);
+
+        // 3. 임시 이미지 접근 URL 생성 및 반환 (WebConfig 설정과 일치해야 함)
+        // 예: /uploads/temp/uuid_image.jpg
+        return "/uploads/temp/" + storedFileName;
     }
 
     @Transactional

@@ -24,5 +24,8 @@ public class ProductCreateDTO {
     @Min(value = 0, message = "재고는 0 이상이어야 합니다.")
     private Integer stock;
 
+    // 상품 상세 설명 (HTML 등)
+    private String description;
+
     private String shippingInfo; // 배송/반품 정보
 }
