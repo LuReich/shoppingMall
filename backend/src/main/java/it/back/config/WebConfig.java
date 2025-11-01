@@ -25,10 +25,18 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 'file:/' 접두사는 OS에 맞는 파일 시스템 경로를 나타냅니다.
-        String resourcePath = "file:" + uploadDir + "/";
-        registry.addResourceHandler("/uploads/**") // 요청 URL을 /uploads/로 변경
-                .addResourceLocations(resourcePath)
+        // 상품 이미지 경로: /product/** 요청을 C:/ourshop/product/ 폴더로 매핑
+        String productResourcePath = "file:" + uploadDir + "/product/";
+        registry.addResourceHandler("/product/**")
+                .addResourceLocations(productResourcePath)
+                .setCachePeriod(0)
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver());
+
+        // 임시 이미지 경로: /temp/** 요청을 C:/ourshop/temp/ 폴더로 매핑
+        String tempResourcePath = "file:" + uploadDir + "/temp/";
+        registry.addResourceHandler("/temp/**")
+                .addResourceLocations(tempResourcePath)
                 .setCachePeriod(0)
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver());
