@@ -222,8 +222,8 @@ public class ProductService {
         // 2-2. 상품 상세 정보 저장 (product_detail)
         ProductDetailEntity detail = new ProductDetailEntity();
         detail.setProduct(savedProduct); // 연관관계 설정
-        // description HTML의 이미지를 실제 저장된 URL로 교체
-        detail.setDescription(replaceImagePlaceholdersWithUrls(dto.getDescription(), descriptionImageUrls));
+        // description HTML의 data-image-id를 실제 저장된 URL로 교체
+        detail.setDescription(replaceImageIdsWithUrls(dto.getDescription(), dto.getImageMapping(), descriptionImageUrls));
         detail.setShippingInfo(dto.getShippingInfo());
         productDetailRepository.save(detail);
 
@@ -392,13 +392,47 @@ public class ProductService {
     }
 
     /**
-     * description HTML에서 blob: URL이나 임시 이미지 경로를 실제 저장된 이미지 URL로 교체합니다. img 태그를
-     * 순서대로 찾아서 descriptionImageUrls의 순서대로 교체합니다.
+     * description HTML의 data-image-id를 실제 저장된 URL로 교체합니다.
      *
-     * @param htmlContent 원본 HTML (blob: URL 또는 임시 경로 포함)
-     * @param descriptionImageUrls 실제 저장된 이미지 URL 리스트
+     * @param htmlContent description HTML (data-image-id 속성 포함)
+     * @param imageMapping 이미지 ID 배열 (순서대로)
+     * @param descriptionImageUrls 실제 저장된 이미지 URL 배열
      * @return URL이 교체된 HTML 문자열
      */
+    private String replaceImageIdsWithUrls(String htmlContent, List<String> imageMapping, List<String> descriptionImageUrls) {
+        if (htmlContent == null || htmlContent.isEmpty()) {
+            return htmlContent;
+        }
+        if (imageMapping == null || imageMapping.isEmpty()) {
+            return htmlContent; // imageMapping이 없으면 원본 그대로 반환
+        }
+
+        Document doc = Jsoup.parse(htmlContent);
+        Elements images = doc.select("img[data-image-id]");
+
+        for (Element img : images) {
+            String imageId = img.attr("data-image-id");
+
+            // imageMapping에서 해당 ID의 인덱스를 찾음
+            int index = imageMapping.indexOf(imageId);
+
+            if (index >= 0 && index < descriptionImageUrls.size()) {
+                // Blob URL을 실제 저장된 URL로 교체
+                img.attr("src", descriptionImageUrls.get(index));
+                // data-image-id 속성 제거 (더 이상 필요 없음)
+                img.removeAttr("data-image-id");
+            }
+        }
+
+        return doc.body().html();
+    }
+
+    /**
+     * 기존 방식: description HTML에서 blob: URL이나 임시 이미지 경로를 실제 저장된 이미지 URL로 교체합니다.
+     *
+     * @deprecated data-image-id 방식으로 대체됨
+     */
+    @Deprecated
     private String replaceImagePlaceholdersWithUrls(String htmlContent, List<String> descriptionImageUrls) {
         if (htmlContent == null || htmlContent.isEmpty() || descriptionImageUrls.isEmpty()) {
             return htmlContent;
