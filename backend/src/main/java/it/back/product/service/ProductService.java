@@ -139,7 +139,7 @@ public class ProductService {
 
     @Transactional // 트랜잭션 적용: 상품 정보와 이미지 저장이 하나의 단위로 처리되도록
     public ProductDTO createProduct(Long sellerUid, ProductCreateDTO dto, MultipartFile mainImage,
-            List<MultipartFile> subImages) {
+            List<MultipartFile> subImages, List<MultipartFile> descriptionImages) {
         // 1. 판매자 정보 조회
         SellerEntity seller = sellerRepository.findById(sellerUid)
                 .orElseThrow(() -> new IllegalArgumentException("판매자 정보를 찾을 수 없습니다."));
@@ -156,15 +156,30 @@ public class ProductService {
         ProductEntity savedProduct = productRepository.save(product);
         Long productId = savedProduct.getProductId();
 
-        // 2-1. 상품 상세 정보 저장 (product_detail)
+        // 2-1. description 이미지들을 먼저 저장하고 실제 URL 생성
+        String descriptionPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
+        List<String> descriptionImageUrls = new ArrayList<>();
+        if (descriptionImages != null && !descriptionImages.isEmpty()) {
+            try {
+                Files.createDirectories(Paths.get(descriptionPath));
+                for (MultipartFile imageFile : descriptionImages) {
+                    if (imageFile.isEmpty()) {
+                        continue;
+                    }
+                    String storedName = fileUtils.saveFile(imageFile, descriptionPath);
+                    String imageUrl = "/product/" + productId + "/description/" + storedName;
+                    descriptionImageUrls.add(imageUrl);
+                }
+            } catch (IOException e) {
+                throw new java.io.UncheckedIOException("상품 설명 이미지 저장 중 오류가 발생했습니다.", e);
+            }
+        }
+
+        // 2-2. 상품 상세 정보 저장 (product_detail)
         ProductDetailEntity detail = new ProductDetailEntity();
         detail.setProduct(savedProduct); // 연관관계 설정
-        // 2-2. 상품 설명(description)의 임시 이미지를 영구 이미지로 전환
-        try {
-            detail.setDescription(moveTempImagesToPermanent(productId, dto.getDescription()));
-        } catch (IOException e) {
-            throw new java.io.UncheckedIOException("상품 설명 이미지 처리 중 오류가 발생했습니다.", e);
-        }
+        // description HTML의 이미지를 실제 저장된 URL로 교체
+        detail.setDescription(replaceImagePlaceholdersWithUrls(dto.getDescription(), descriptionImageUrls));
         detail.setShippingInfo(dto.getShippingInfo());
         productDetailRepository.save(detail);
 
@@ -330,6 +345,38 @@ public class ProductService {
         // 모든 정보가 포함된 완전한 Entity를 다시 조회하여 DTO로 변환 후 반환
         return new ProductDTO(productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("업데이트된 상품을 다시 찾을 수 없습니다. ID: " + productId)));
+    }
+
+    /**
+     * description HTML에서 blob: URL이나 임시 이미지 경로를 실제 저장된 이미지 URL로 교체합니다. img 태그를
+     * 순서대로 찾아서 descriptionImageUrls의 순서대로 교체합니다.
+     *
+     * @param htmlContent 원본 HTML (blob: URL 또는 임시 경로 포함)
+     * @param descriptionImageUrls 실제 저장된 이미지 URL 리스트
+     * @return URL이 교체된 HTML 문자열
+     */
+    private String replaceImagePlaceholdersWithUrls(String htmlContent, List<String> descriptionImageUrls) {
+        if (htmlContent == null || htmlContent.isEmpty() || descriptionImageUrls.isEmpty()) {
+            return htmlContent;
+        }
+
+        Document doc = Jsoup.parse(htmlContent);
+        Elements images = doc.select("img");
+
+        int urlIndex = 0;
+        for (Element img : images) {
+            if (urlIndex >= descriptionImageUrls.size()) {
+                break; // URL이 부족하면 중단
+            }
+            // blob: URL이나 임시 경로를 실제 저장된 URL로 교체
+            String src = img.attr("src");
+            if (src.startsWith("blob:") || src.contains("temp")) {
+                img.attr("src", descriptionImageUrls.get(urlIndex));
+                urlIndex++;
+            }
+        }
+
+        return doc.body().html();
     }
 
     /**
