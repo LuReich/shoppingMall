@@ -356,7 +356,7 @@ public class ProductService {
         String permanentPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
         Files.createDirectories(Paths.get(permanentPath));
 
-        for (Elem ent img : images) {
+        for (Element img : images) {
             String tempSrc = img.attr("src"); // 예: /temp/uuid.png 또는 http://localhost:9090/temp/uuid.png
 
             // URL에서 파일명만 추출
