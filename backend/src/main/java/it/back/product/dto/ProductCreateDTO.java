@@ -28,4 +28,7 @@ public class ProductCreateDTO {
     private String description;
 
     private String shippingInfo; // 배송/반품 정보
+
+    // imageMapping: React Quill에서 data-image-id 순서대로 이미지 ID 배열
+    private java.util.List<String> imageMapping;
 }
