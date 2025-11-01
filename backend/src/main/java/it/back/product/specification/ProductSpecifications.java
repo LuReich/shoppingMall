@@ -93,4 +93,13 @@ public class ProductSpecifications {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+    public static Specification<ProductEntity> productIdEquals(Long productId) {
+        return (root, query, criteriaBuilder) -> {
+            if (productId == null) {
+                return criteriaBuilder.conjunction(); // Always-true predicate
+            }
+            return criteriaBuilder.equal(root.get("productId"), productId);
+        };
+    }
 }

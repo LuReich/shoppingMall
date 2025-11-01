@@ -1,4 +1,3 @@
-
 package it.back.product.repository;
 
 import java.util.List;
@@ -26,4 +25,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
 
     @Query("SELECT p FROM ProductEntity p WHERE p.category.categoryId IN :categoryIds")
     Page<ProductEntity> findByCategoryId(@Param("categoryIds") List<Integer> categoryIds, Pageable pageable);
+
+    // 판매자별 상품 목록 조회 (Seller 정보 포함)
+    @Query("SELECT p FROM ProductEntity p LEFT JOIN FETCH p.seller WHERE p.seller.sellerUid = :sellerUid")
+    Page<ProductEntity> findBySellerUid(@Param("sellerUid") Long sellerUid, Pageable pageable);
 }

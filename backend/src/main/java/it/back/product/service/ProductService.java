@@ -89,7 +89,7 @@ public class ProductService {
         return new PageResponseDTO<>(page, dtos);
     }
 
-    public PageResponseDTO<ProductListDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName, String companyName) {
+    public PageResponseDTO<ProductListDTO> getAllProducts(PageRequestDTO pageRequestDTO, Integer categoryId, String productName, String companyName, Long productId) {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
@@ -100,6 +100,7 @@ public class ProductService {
 
         spec = spec.and(ProductSpecifications.nameContains(productName));
         spec = spec.and(ProductSpecifications.companyNameContains(companyName));
+        spec = spec.and(ProductSpecifications.productIdEquals(productId));
 
         if (categoryId != null) {
             List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
@@ -113,6 +114,46 @@ public class ProductService {
             dto.setProductId(product.getProductId());
             dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
             dto.setCategoryId(product.getCategoryId()); // 직접 매핑된 categoryId 사용
+            dto.setProductName(product.getProductName());
+            dto.setPrice(product.getPrice());
+            dto.setStock(product.getStock());
+            dto.setThumbnailUrl(product.getThumbnailUrl());
+            dto.setCreateAt(product.getCreateAt());
+            dto.setUpdateAt(product.getUpdateAt());
+            dto.setIsDeleted(product.getIsDeleted());
+            dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
+            return dto;
+        }).toList();
+
+        return new PageResponseDTO<>(page, dtos);
+    }
+
+    // 판매자별 상품 목록 조회
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerUid, PageRequestDTO pageRequestDTO, Integer categoryId, String productName) {
+        Pageable pageable = pageRequestDTO.toPageable();
+
+        Specification<ProductEntity> spec = (root, query, criteriaBuilder)
+                -> criteriaBuilder.equal(root.get("seller").get("sellerUid"), sellerUid);
+
+        // Seller fetch join
+        spec = spec.and(ProductSpecifications.withSeller());
+
+        // 상품명 검색 (공백 무시)
+        spec = spec.and(ProductSpecifications.nameContains(productName));
+
+        // 카테고리 검색
+        if (categoryId != null) {
+            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+            spec = spec.and(ProductSpecifications.inCategory(categoryIds));
+        }
+
+        Page<ProductEntity> page = productRepository.findAll(spec, pageable);
+
+        List<ProductListDTO> dtos = page.getContent().stream().map(product -> {
+            ProductListDTO dto = new ProductListDTO();
+            dto.setProductId(product.getProductId());
+            dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
+            dto.setCategoryId(product.getCategoryId());
             dto.setProductName(product.getProductName());
             dto.setPrice(product.getPrice());
             dto.setStock(product.getStock());

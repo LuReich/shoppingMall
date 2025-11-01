@@ -47,9 +47,10 @@ public class ProductController {
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
-            @RequestParam(name = "companyName", required = false) String companyName) {
+            @RequestParam(name = "companyName", required = false) String companyName,
+            @RequestParam(name = "productId", required = false) Long productId) {
 
-        PageResponseDTO<ProductListDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName);
+        PageResponseDTO<ProductListDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName, productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productPageDto));
     }
 
