@@ -374,8 +374,8 @@ public class ProductService {
             if (Files.exists(sourcePath)) {
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
-                // 새로운 영구 URL로 src 속성 변경
-                String permanentUrl = "/product/" + productId + "/description/" + tempFileName; // 슬래시 사용
+                // 새로운 영구 URL로 src 속성 변경 (상대 경로로 저장, 프론트엔드에서 base URL 추가)
+                String permanentUrl = "/product/" + productId + "/description/" + tempFileName;
                 img.attr("src", permanentUrl);
             } else {
                 // 임시 파일이 없는 경우(오류 등), 해당 img 태그를 제거하거나 대체 이미지를 넣을 수 있음
