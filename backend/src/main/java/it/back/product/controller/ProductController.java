@@ -140,7 +140,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(reviewPageDto));
     }
 
-    // React Quill 에디터에서 상품 상세 설명 이미지 업로드
+    // React Quill 수정 용도 예정 에디터에서 상품 상세 설명 이미지 업로드
     @PostMapping("/{productId}/description/image")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadDescriptionImage(
             @PathVariable Long productId,

@@ -4,49 +4,48 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.UUID;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.web.multipart.MultipartFile;
 
 import it.back.category.service.CategoryService;
-import it.back.common.utils.FileUtils;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
-import it.back.product.dto.ProductDTO;
-import it.back.product.dto.ProductUpdateDTO;
+import it.back.common.utils.FileUtils;
 import it.back.product.dto.ProductCreateDTO;
+import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.dto.ProductListDTO;
+import it.back.product.dto.ProductUpdateDTO;
 import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.entity.ProductImageEntity;
 import it.back.product.repository.ProductDetailRepository;
-import it.back.product.repository.ProductRepository;
 import it.back.product.repository.ProductImageRepository;
+import it.back.product.repository.ProductRepository;
 import it.back.product.specification.ProductSpecifications;
-import it.back.seller.entity.SellerEntity;
-import it.back.seller.repository.SellerRepository;
 import it.back.review.dto.ReviewDTO;
 import it.back.review.entity.ReviewEntity;
-import it.back.review.repository.ReviewRepository;
 import it.back.review.service.ReviewService;
-import jakarta.validation.Valid;
+import it.back.seller.entity.SellerEntity;
+import it.back.seller.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -248,9 +247,16 @@ public class ProductService {
         ProductDetailEntity detail = productDetailRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("상품 상세 정보를 찾을 수 없습니다. ID: " + productId));
         // 상품 설명(description)의 임시 이미지 처리
-        if (dto.getDescription() != null) { // description 필드가 요청에 포함된 경우에만 처리
+        if (dto.getDescription() != null) {
             try {
-                detail.setDescription(moveTempImagesToPermanent(productId, dto.getDescription()));
+                // 1. 기존 설명에서 이미지 URL 목록 추출
+                List<String> oldImageUrls = extractImageUrlsFromHtml(detail.getDescription());
+                // 2. 새 설명으로 업데이트하고, 새 설명의 이미지 URL 목록 추출
+                String newDescription = moveTempImagesToPermanent(productId, dto.getDescription());
+                detail.setDescription(newDescription);
+                List<String> newImageUrls = extractImageUrlsFromHtml(newDescription);
+                // 3. 삭제된 이미지(고아 이미지) 파일 시스템에서 삭제
+                deleteOrphanedDescriptionImages(oldImageUrls, newImageUrls);
             } catch (IOException e) {
                 throw new java.io.UncheckedIOException("상품 설명 이미지 처리 중 오류가 발생했습니다.", e);
             }
@@ -340,8 +346,8 @@ public class ProductService {
         }
 
         Document doc = Jsoup.parse(htmlContent);
-        // /temp/ 로 시작하는 src를 가진 img 태그 선택
-        Elements images = doc.select("img[src^=/temp/]");
+        // /temp/ 또는 localhost:9090/temp/ 로 시작하는 src를 가진 img 태그 선택
+        Elements images = doc.select("img[src*=/temp/]");
 
         if (images.isEmpty()) {
             return htmlContent; // 처리할 임시 이미지가 없으면 원본 HTML 반환
@@ -350,9 +356,16 @@ public class ProductService {
         String permanentPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
         Files.createDirectories(Paths.get(permanentPath));
 
-        for (org.jsoup.nodes.Element img : images) {
-            String tempSrc = img.attr("src"); // 예: /uploads/temp/uuid.png
-            String tempFileName = Paths.get(tempSrc).getFileName().toString();
+        for (Element img : images) {
+            String tempSrc = img.attr("src"); // 예: /temp/uuid.png 또는 http://localhost:9090/temp/uuid.png
+
+            // URL에서 파일명만 추출
+            String tempFileName;
+            if (tempSrc.contains("/temp/")) {
+                tempFileName = tempSrc.substring(tempSrc.indexOf("/temp/") + 6); // "/temp/" 이후의 파일명
+            } else {
+                continue; // temp 경로가 아니면 스킵
+            }
 
             Path sourcePath = Paths.get(getOsIndependentPath(uploadDir, "temp"), tempFileName);
             Path destinationPath = Paths.get(permanentPath, tempFileName);
@@ -361,8 +374,8 @@ public class ProductService {
             if (Files.exists(sourcePath)) {
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
-                // 새로운 영구 URL로 src 속성 변경
-                String permanentUrl = "/product/" + productId + "/description/" + tempFileName; // 슬래시 사용
+                // 새로운 영구 URL로 src 속성 변경 (상대 경로로 저장, 프론트엔드에서 base URL 추가)
+                String permanentUrl = "/product/" + productId + "/description/" + tempFileName;
                 img.attr("src", permanentUrl);
             } else {
                 // 임시 파일이 없는 경우(오류 등), 해당 img 태그를 제거하거나 대체 이미지를 넣을 수 있음
@@ -371,6 +384,47 @@ public class ProductService {
         }
 
         return doc.body().html();
+    }
+
+    /**
+     * HTML 문자열에서 모든 이미지의 src 속성 값을 추출합니다.
+     *
+     * @param htmlContent HTML 문자열
+     * @return 이미지 URL 목록
+     */
+    private List<String> extractImageUrlsFromHtml(String htmlContent) {
+        if (htmlContent == null || htmlContent.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Document doc = Jsoup.parse(htmlContent);
+        Elements images = doc.select("img");
+        return images.stream()
+                .map(img -> img.attr("src"))
+                .filter(src -> src != null && !src.isBlank())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 이전 이미지 URL 목록과 새 이미지 URL 목록을 비교하여, 더 이상 사용되지 않는 '고아 이미지'를 파일 시스템에서 삭제합니다.
+     *
+     * @param oldImageUrls 이전 HTML의 이미지 URL 목록
+     * @param newImageUrls 새 HTML의 이미지 URL 목록
+     */
+    private void deleteOrphanedDescriptionImages(List<String> oldImageUrls, List<String> newImageUrls) {
+        Set<String> newUrlSet = new java.util.HashSet<>(newImageUrls);
+
+        oldImageUrls.stream()
+                .filter(oldUrl -> !newUrlSet.contains(oldUrl)) // 새 목록에 없는 이전 URL(삭제된 이미지) 필터링
+                .filter(urlToDelete -> urlToDelete.contains("/product/")) // 시스템 경로가 아닌 웹 URL만 대상으로 함
+                .forEach(urlToDelete -> {
+                    try {
+                        String relativePath = urlToDelete.startsWith("/") ? urlToDelete.substring(1) : urlToDelete;
+                        String fullPath = getOsIndependentPath(uploadDir, relativePath);
+                        fileUtils.deleteFile(fullPath);
+                    } catch (Exception e) {
+                        // 파일 삭제 실패 시 로그를 남길 수 있지만, 일단 진행은 막지 않음
+                    }
+                });
     }
 
     /**

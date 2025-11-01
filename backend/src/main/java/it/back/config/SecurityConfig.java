@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,6 +46,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        // 정적 리소스는 Spring Security 필터를 완전히 우회
+        return (web) -> web.ignoring()
+                .requestMatchers("/product/**", "/temp/**", "/images/**");
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -55,28 +63,38 @@ public class SecurityConfig {
         http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(auth -> auth
+                // 공개 엔드포인트 (인증 불필요)
                 .requestMatchers("/api/v1/buyer/register", "/api/v1/buyer/login").permitAll()
-                .requestMatchers("/api/v1/buyer/check-buyerId", "/api/v1/buyer/check-email", "/api/v1/buyer/check-phone").permitAll()
+                .requestMatchers("/api/v1/buyer/check-buyerId", "/api/v1/buyer/check-email",
+                        "/api/v1/buyer/check-phone").permitAll()
                 .requestMatchers("/api/v1/seller/register", "/api/v1/seller/login").permitAll()
-                .requestMatchers("/api/v1/seller/check-sellerId", "/api/v1/seller/check-email", "/api/v1/seller/check-businessRegistrationNumber").permitAll()
-                .requestMatchers("/api/v1/admin/login").permitAll()
+                .requestMatchers("/api/v1/seller/check-sellerId", "/api/v1/seller/check-email",
+                        "/api/v1/seller/check-businessRegistrationNumber").permitAll()
                 .requestMatchers("/api/v1/seller/public/**").permitAll()
+                .requestMatchers("/api/v1/admin/login").permitAll()
+                .requestMatchers("/api/v1/category/**").permitAll()
+                // 상품 관련 - 조회는 공개, 수정은 SELLER/ADMIN
+                .requestMatchers(HttpMethod.GET, "/api/v1/product/list").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/product/{productId}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/product/{productId}/detail").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/product/{productId}/review").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/product/create").hasRole("SELLER")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/product/**").hasAnyRole("SELLER", "ADMIN")
+                // 리뷰 관련 - BUYER만 작성/수정/삭제
                 .requestMatchers("/api/v1/review/write").hasRole("BUYER")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/review/{reviewId}").hasRole("BUYER")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/review/{reviewId}").hasRole("BUYER")
-                .requestMatchers("/api/v1/buyer/**").hasRole("BUYER")
-                .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
-                .requestMatchers("/api/v1/admin/me").hasRole("ADMIN")
+                // 구매자 관련 - BUYER 권한 필요 (일부는 ADMIN도 가능)
                 .requestMatchers("/api/v1/cart/**").hasRole("BUYER")
                 .requestMatchers("/api/v1/orders/**").hasRole("BUYER")
-                .requestMatchers("/api/v1/category/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/product/create").hasRole("SELLER")
-                .requestMatchers(HttpMethod.PATCH, "/api/v1/product/**").hasAnyRole("SELLER", "ADMIN")
-                .requestMatchers("/api/v1/product/**").permitAll()
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/buyer/**").hasAnyRole("BUYER", "ADMIN")
+                .requestMatchers("/api/v1/buyer/**").hasRole("BUYER")
+                // 판매자 관련 - SELLER 권한 필요 (일부는 ADMIN도 가능)
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/seller/**").hasAnyRole("SELLER", "ADMIN")
-                .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN")
-                .requestMatchers("/**").hasAnyRole("ADMIN")
+                .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
+                // 관리자 관련 - ADMIN만 접근
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated());
 
         return http.build();
