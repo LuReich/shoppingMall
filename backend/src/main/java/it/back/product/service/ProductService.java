@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -345,8 +346,8 @@ public class ProductService {
         }
 
         Document doc = Jsoup.parse(htmlContent);
-        // /temp/ 로 시작하는 src를 가진 img 태그 선택
-        Elements images = doc.select("img[src^=/temp/]");
+        // /temp/ 또는 localhost:9090/temp/ 로 시작하는 src를 가진 img 태그 선택
+        Elements images = doc.select("img[src*=/temp/]");
 
         if (images.isEmpty()) {
             return htmlContent; // 처리할 임시 이미지가 없으면 원본 HTML 반환
@@ -355,9 +356,16 @@ public class ProductService {
         String permanentPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
         Files.createDirectories(Paths.get(permanentPath));
 
-        for (org.jsoup.nodes.Element img : images) {
-            String tempSrc = img.attr("src"); // 예: /uploads/temp/uuid.png
-            String tempFileName = Paths.get(tempSrc).getFileName().toString();
+        for (Elem ent img : images) {
+            String tempSrc = img.attr("src"); // 예: /temp/uuid.png 또는 http://localhost:9090/temp/uuid.png
+
+            // URL에서 파일명만 추출
+            String tempFileName;
+            if (tempSrc.contains("/temp/")) {
+                tempFileName = tempSrc.substring(tempSrc.indexOf("/temp/") + 6); // "/temp/" 이후의 파일명
+            } else {
+                continue; // temp 경로가 아니면 스킵
+            }
 
             Path sourcePath = Paths.get(getOsIndependentPath(uploadDir, "temp"), tempFileName);
             Path destinationPath = Paths.get(permanentPath, tempFileName);

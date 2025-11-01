@@ -18,11 +18,11 @@ public class ProductSpecifications {
 
             // Expression that removes spaces from the productName column
             jakarta.persistence.criteria.Expression<String> productNameWithoutSpaces = criteriaBuilder.function(
-                "replace", 
-                String.class, 
-                root.get("productName"), 
-                criteriaBuilder.literal(" "), 
-                criteriaBuilder.literal("")
+                    "replace",
+                    String.class,
+                    root.get("productName"),
+                    criteriaBuilder.literal(" "),
+                    criteriaBuilder.literal("")
             );
 
             List<Predicate> predicates = new ArrayList<>();
@@ -47,14 +47,17 @@ public class ProductSpecifications {
             if (categoryIds == null || categoryIds.isEmpty()) {
                 return criteriaBuilder.conjunction(); // Always-true predicate
             }
-            return root.get("category").get("categoryId").in(categoryIds);
+            return root.get("categoryId").in(categoryIds);
         };
     }
 
     public static Specification<ProductEntity> withSeller() {
         return (root, query, criteriaBuilder) -> {
             // Ensure the seller is fetched along with the product to avoid N+1 queries
-            root.fetch("seller", jakarta.persistence.criteria.JoinType.LEFT);
+            // Only apply fetch if it's not a count query
+            if (query.getResultType() != Long.class && query.getResultType() != long.class) {
+                root.fetch("seller", jakarta.persistence.criteria.JoinType.LEFT);
+            }
             return criteriaBuilder.conjunction(); // Always-true predicate
         };
     }
@@ -67,11 +70,11 @@ public class ProductSpecifications {
 
             // Expression that removes spaces from the companyName column
             jakarta.persistence.criteria.Expression<String> companyNameWithoutSpaces = criteriaBuilder.function(
-                "replace", 
-                String.class, 
-                root.get("seller").get("companyName"), 
-                criteriaBuilder.literal(" "), 
-                criteriaBuilder.literal("")
+                    "replace",
+                    String.class,
+                    root.get("seller").get("companyName"),
+                    criteriaBuilder.literal(" "),
+                    criteriaBuilder.literal("")
             );
 
             List<Predicate> predicates = new ArrayList<>();
