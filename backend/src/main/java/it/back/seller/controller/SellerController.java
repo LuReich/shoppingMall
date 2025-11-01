@@ -1,4 +1,5 @@
 package it.back.seller.controller;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,10 +12,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.common.pagination.PageRequestDTO;
+import it.back.common.pagination.PageResponseDTO;
+import it.back.product.dto.ProductListDTO;
+import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerRegisterDTO;
 import it.back.seller.dto.SellerResponseDTO;
@@ -32,8 +38,8 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final SellerRepository sellerRepository;
+    private final ProductService productService;
 
-    
     // 로그인한 seller 가 자기 정보 불러오기
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> getMyInfo(Authentication authentication) {
@@ -53,7 +59,6 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseBody));
     }
 
-    
     // 공개용 판매자 정보 조회 (비로그인/로그인 모두 접근 가능)
     @GetMapping("/public/{sellerUid}")
     public ResponseEntity<ApiResponse<SellerPublicDTO>> getSellerPublicInfo(@PathVariable Long sellerUid) {
@@ -72,10 +77,10 @@ public class SellerController {
     public ResponseEntity<ApiResponse<String>> checkSellerId(@RequestBody Map<String, Object> body,
             Authentication authentication) {
         String sellerId = (String) body.get("sellerId");
-            Long sellerUid = parseUidFromBody(body, "sellerUid");
-            if (sellerUid == null) {
-                sellerUid = extractUidFromAuth(authentication);
-            }
+        Long sellerUid = parseUidFromBody(body, "sellerUid");
+        if (sellerUid == null) {
+            sellerUid = extractUidFromAuth(authentication);
+        }
         try {
             boolean isSameAsSelf = sellerService.checkSellerId(sellerId, sellerUid);
             String message = isSameAsSelf ? "이전과 동일한 아이디입니다." : "사용 가능한 아이디입니다.";
@@ -98,16 +103,15 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updated));
     }
 
-
     // 이메일 중복/형식 체크
     @PostMapping("/check-email")
     public ResponseEntity<ApiResponse<String>> checkEmail(@RequestBody Map<String, Object> body,
             Authentication authentication) {
         String email = (String) body.get("sellerEmail");
-            Long sellerUid = parseUidFromBody(body, "sellerUid");
-            if (sellerUid == null) {
-                sellerUid = extractUidFromAuth(authentication);
-            }
+        Long sellerUid = parseUidFromBody(body, "sellerUid");
+        if (sellerUid == null) {
+            sellerUid = extractUidFromAuth(authentication);
+        }
         try {
             boolean isSameAsSelf = sellerService.checkEmail(email, sellerUid);
             String message = isSameAsSelf ? "이전과 동일한 이메일입니다." : "사용 가능한 이메일입니다.";
@@ -125,10 +129,10 @@ public class SellerController {
     public ResponseEntity<ApiResponse<String>> checkBusinessRegistrationNumber(@RequestBody Map<String, Object> body,
             Authentication authentication) {
         String businessRegistrationNumber = (String) body.get("businessRegistrationNumber");
-            Long sellerUid = parseUidFromBody(body, "sellerUid");
-            if (sellerUid == null) {
-                sellerUid = extractUidFromAuth(authentication);
-            }
+        Long sellerUid = parseUidFromBody(body, "sellerUid");
+        if (sellerUid == null) {
+            sellerUid = extractUidFromAuth(authentication);
+        }
         try {
             boolean isSameAsSelf = sellerService.checkBusinessRegistrationNumber(businessRegistrationNumber, sellerUid);
             String message = isSameAsSelf ? "이전과 동일한 사업자등록번호입니다." : "사용 가능한 사업자등록번호입니다.";
@@ -151,29 +155,60 @@ public class SellerController {
         sellerService.sellerWithdraw(loginId, withdrawalReason);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("회원 탈퇴(비활성화) 처리되었습니다."));
     }
-    
+
+    // 판매자가 자신이 등록한 상품 목록 조회 (페이지네이션 + 검색)
+    @GetMapping("/products")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getMyProducts(
+            Authentication authentication,
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
+            @RequestParam(name = "productName", required = false) String productName) {
+        Long sellerUid = extractUidFromAuth(authentication);
+        if (sellerUid == null) {
+            throw new IllegalStateException("인증 정보가 없습니다.");
+        }
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
+    }
+
     // ====== 유틸리티 메서드 ======
     // Map에서 Long uid 추출 공통 메서드
     private static Long parseUidFromBody(Map<String, Object> body, String key) {
         Object uidObj = body.get(key);
-        if (uidObj instanceof Integer i) return i.longValue();
-        if (uidObj instanceof Long l) return l;
+        if (uidObj instanceof Integer i) {
+            return i.longValue();
+        }
+        if (uidObj instanceof Long l) {
+            return l;
+        }
         if (uidObj instanceof String s) {
-            try { return Long.parseLong(s); } catch (NumberFormatException ignore) {}
+            try {
+                return Long.parseLong(s);
+            } catch (NumberFormatException ignore) {
+            }
         }
         return null;
     }
 
     // JWT에서 uid 추출 공통 메서드
     private static Long extractUidFromAuth(Authentication authentication) {
-        if (authentication == null) return null;
+        if (authentication == null) {
+            return null;
+        }
         Object detailsObj = authentication.getDetails();
         if (detailsObj instanceof Map<?, ?> details) {
             Object uidObj = details.get("uid");
-            if (uidObj instanceof Integer i) return i.longValue();
-            if (uidObj instanceof Long l) return l;
+            if (uidObj instanceof Integer i) {
+                return i.longValue();
+            }
+            if (uidObj instanceof Long l) {
+                return l;
+            }
             if (uidObj instanceof String s) {
-                try { return Long.parseLong(s); } catch (NumberFormatException ignore) {}
+                try {
+                    return Long.parseLong(s);
+                } catch (NumberFormatException ignore) {
+                }
             }
         }
         return null;

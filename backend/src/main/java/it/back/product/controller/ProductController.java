@@ -1,7 +1,7 @@
 package it.back.product.controller;
 
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
@@ -24,13 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import it.back.common.dto.ApiResponse;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
-import it.back.product.dto.ProductDTO;
-import it.back.product.dto.ProductUpdateDTO;
 import it.back.product.dto.ProductCreateDTO;
+import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.dto.ProductListDTO;
+import it.back.product.dto.ProductUpdateDTO;
 import it.back.product.entity.ProductDetailEntity;
-import it.back.product.entity.ProductEntity;
 import it.back.product.service.ProductService;
 import it.back.review.dto.ReviewDTO;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +47,10 @@ public class ProductController {
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
-            @RequestParam(name = "companyName", required = false) String companyName) {
+            @RequestParam(name = "companyName", required = false) String companyName,
+            @RequestParam(name = "productId", required = false) Long productId) {
 
-        PageResponseDTO<ProductListDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName);
+        PageResponseDTO<ProductListDTO> productPageDto = productService.getAllProducts(pageRequestDTO, categoryId, productName, companyName, productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productPageDto));
     }
 
@@ -70,7 +70,8 @@ public class ProductController {
             Authentication authentication,
             @RequestPart("productData") ProductCreateDTO productCreateDTO,
             @RequestPart("mainImage") MultipartFile mainImage,
-            @RequestPart(name = "subImages", required = false) List<MultipartFile> subImages) {
+            @RequestPart(name = "subImages", required = false) List<MultipartFile> subImages,
+            @RequestPart(name = "descriptionImages", required = false) List<MultipartFile> descriptionImages) {
 
         Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
 
@@ -78,7 +79,8 @@ public class ProductController {
                 sellerUid,
                 productCreateDTO,
                 mainImage,
-                subImages);
+                subImages,
+                descriptionImages);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(savedProduct));
     }
