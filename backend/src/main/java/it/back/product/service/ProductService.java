@@ -129,7 +129,7 @@ public class ProductService {
     }
 
     // 판매자별 상품 목록 조회
-    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerUid, PageRequestDTO pageRequestDTO, Integer categoryId, String productName) {
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerUid, PageRequestDTO pageRequestDTO, Integer categoryId, String productName, Long productId) {
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<ProductEntity> spec = (root, query, criteriaBuilder)
@@ -140,6 +140,9 @@ public class ProductService {
 
         // 상품명 검색 (공백 무시)
         spec = spec.and(ProductSpecifications.nameContains(productName));
+
+        // 상품 ID 검색
+        spec = spec.and(ProductSpecifications.productIdEquals(productId));
 
         // 카테고리 검색
         if (categoryId != null) {

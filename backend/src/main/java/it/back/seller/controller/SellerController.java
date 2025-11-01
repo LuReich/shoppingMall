@@ -162,12 +162,13 @@ public class SellerController {
             Authentication authentication,
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
-            @RequestParam(name = "productName", required = false) String productName) {
+            @RequestParam(name = "productName", required = false) String productName,
+            @RequestParam(name = "productId", required = false) Long productId) {
         Long sellerUid = extractUidFromAuth(authentication);
         if (sellerUid == null) {
             throw new IllegalStateException("인증 정보가 없습니다.");
         }
-        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName);
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
     }
 
