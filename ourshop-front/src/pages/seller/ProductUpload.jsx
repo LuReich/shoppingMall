@@ -258,29 +258,74 @@ function ProductUpload() {
     setVideoUrl("");
   };
 
-  //이미지 서버 업로드 (백엔드 data-image-id 방식으로 변경)
+  // 이미지 압축 함수
+  const compressImage = useCallback(async (file, quality = 0.8, maxWidth = 1920) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          let width = img.width;
+          let height = img.height;
+          
+          // 최대 너비 제한
+          if (width > maxWidth) {
+            height = (height / width) * maxWidth;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => resolve(new File([blob], file.name, {type: 'image/jpeg'})),
+            'image/jpeg',
+            quality
+          );
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
+  //이미지 서버 업로드 (백엔드 data-image-id 방식 + 자동 압축)
   const uploadFile = useCallback(async (file) => {
     try {
-      console.log("uploadFile 호출:", file.name, file.type, file.size); // 디버깅용
+      console.log("uploadFile 호출:", file.name, file.type, file.size);
+
+      let processedFile = file;
+      const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+
+      // 2MB 이상이면 자동 압축
+      if (file.size > MAX_SIZE) {
+        console.log(`이미지 압축 중... (원본: ${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+        processedFile = await compressImage(file, 0.85, 1920);
+        console.log(`압축 완료! (${(processedFile.size / 1024 / 1024).toFixed(2)}MB)`);
+      }
 
       // 이미지를 Data URL로 변환 (에디터 표시용)
       const reader = new FileReader();
       const dataUrl = await new Promise((resolve, reject) => {
         reader.onload = (e) => resolve(e.target.result);
         reader.onerror = reject;
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(processedFile);
       });
 
-      console.log("Data URL 생성 완료"); // 디버깅용
+      console.log("Data URL 생성 완료");
 
       // 고유 ID 생성
       const imageId = `temp-${imageIdCounter.current++}`;
-      console.log("Image ID 생성:", imageId); // 디버깅용
+      console.log("Image ID 생성:", imageId);
 
-      // 이미지 정보 저장 (원본 파일 보관)
+      // 이미지 정보 저장 (압축된 파일 보관)
       setDescriptionImages(prev => {
-        const updated = [...prev, { id: imageId, file, dataUrl }];
-        console.log("descriptionImages 업데이트:", updated.length, "개"); // 디버깅용
+        const updated = [...prev, { id: imageId, file: processedFile, dataUrl }];
+        console.log("descriptionImages 업데이트:", updated.length, "개");
         return updated;
       });
 
@@ -290,7 +335,7 @@ function ProductUpload() {
       alert("이미지 업로드 실패");
       throw err;
     }
-  }, []);
+  }, [compressImage]);
 
   // 에디터에 이미지 삽입 (data-image-id 추가)
   const insertImage = useCallback((imageId, dataUrl) => {
