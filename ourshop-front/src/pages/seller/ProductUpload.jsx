@@ -34,6 +34,11 @@ function ProductUpload() {
   const [descriptionImages, setDescriptionImages] = useState([]); // {id, file, blobUrl}
   const imageIdCounter = useRef(0);
 
+  // 동영상 링크 모달 state
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+  const quillRef = useRef(null);
+
   // Yup 스키마 정의
   const productSchema = useMemo(() => yup.object({
     productName: yup
@@ -129,8 +134,6 @@ function ProductUpload() {
   const [subImageUrls, setSubImageUrls] = useState([]);
   const [deletedImageIds, setDeletedImageIds] = useState([]); // 수정 시 삭제된 이미지 ID 추적
 
-  const quillRef = useRef(null);
-
 
 
   // 대표 이미지 핸들러
@@ -169,9 +172,6 @@ function ProductUpload() {
   const dragItem = useRef();
   const dragOverItem = useRef();
 
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [videoUrl, setVideoUrl] = useState("");
-
   const handleRemoveSubImage = (indexToRemove) => {
     const imageToRemove = subImageUrls[indexToRemove];
 
@@ -206,6 +206,43 @@ function ProductUpload() {
 
     dragItem.current = null;
     dragOverItem.current = null;
+  };
+
+  // 동영상 삽입 함수
+  const handleVideoInsert = () => {
+    if (!videoUrl.trim()) {
+      alert("동영상 링크를 입력해주세요.");
+      return;
+    }
+
+    const editor = quillRef.current?.getEditor();
+    if (!editor) return;
+
+    const range = editor.getSelection(true);
+    
+    // YouTube, Vimeo 등 embed URL로 변환
+    let embedUrl = videoUrl;
+    
+    // YouTube URL 처리
+    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
+    const youtubeMatch = videoUrl.match(youtubeRegex);
+    if (youtubeMatch) {
+      embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    }
+    
+    // Vimeo URL 처리
+    const vimeoRegex = /vimeo\.com\/(\d+)/;
+    const vimeoMatch = videoUrl.match(vimeoRegex);
+    if (vimeoMatch) {
+      embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    }
+
+    editor.insertEmbed(range.index, "video", embedUrl);
+    editor.setSelection(range.index + 1);
+
+    // 모달 닫고 초기화
+    setIsVideoModalOpen(false);
+    setVideoUrl("");
   };
 
   //이미지 서버 업로드 (백엔드 data-image-id 방식으로 변경)
@@ -464,6 +501,9 @@ function ProductUpload() {
               }, 100);
             };
           },
+          video: function () {
+            setIsVideoModalOpen(true);
+          },
         },
       },
       imageResize: {
@@ -688,6 +728,35 @@ function ProductUpload() {
 
         <button type="submit" className="upload-btn">{isEditMode ? '수정하기' : '등록하기'}</button>
       </form>
+
+      {/* 동영상 링크 입력 모달 */}
+      {isVideoModalOpen && (
+        <div className="video-modal-overlay" onClick={() => setIsVideoModalOpen(false)}>
+          <div className="video-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>동영상 링크 입력</h3>
+            <p className="video-modal-desc">YouTube 또는 Vimeo 링크를 입력하세요</p>
+            <input
+              type="text"
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="video-url-input"
+              autoFocus
+            />
+            <div className="video-modal-buttons">
+              <button type="button" onClick={handleVideoInsert} className="video-insert-btn">
+                삽입
+              </button>
+              <button type="button" onClick={() => {
+                setIsVideoModalOpen(false);
+                setVideoUrl("");
+              }} className="video-cancel-btn">
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

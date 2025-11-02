@@ -176,3 +176,90 @@
   font-size: 0.875rem;
   margin-top: 0.5rem;
 }
+
+/* 동영상 모달 */
+.video-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.video-modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.video-modal-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.video-modal-desc {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.video-url-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.video-url-input:focus {
+  border-color: #7cc7de;
+  box-shadow: 0 0 0 3px rgba(124, 199, 222, 0.15);
+}
+
+.video-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.video-insert-btn,
+.video-cancel-btn {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.video-insert-btn {
+  background-color: #7cc7de;
+  color: white;
+}
+
+.video-insert-btn:hover {
+  background-color: #6ab5ca;
+}
+
+.video-cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.video-cancel-btn:hover {
+  background-color: #d0d0d0;
+}
