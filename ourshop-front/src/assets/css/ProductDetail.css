@@ -319,6 +319,19 @@
     min-height: 300px;
 }
 
+/* 상품 상세 설명 이미지 스타일 (영역 벗어나지 않도록) */
+.tab-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+
+.tab-content p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
 /* 반응형 */
 @media (max-width: 992px) {
     .product-detail-main {

@@ -11,7 +11,7 @@ import * as yup from "yup";
 
 function ProductUpload() {
   const navigate = useNavigate();
-   const { productId } = useParams();
+  const { productId } = useParams();
 
   const { getCategoryList } = useCategory();
   const { uploadTempDescriptionImage, createProduct, getProductDetail, getProductDescription } = useProduct();
@@ -32,35 +32,35 @@ function ProductUpload() {
 
   // Yup 스키마 정의
   const productSchema = useMemo(() => yup.object({
-      productName: yup
-        .string()
-        .required("상품명은 필수 항목입니다."),
-      parentCategoryId: yup
-        .string()
-        .required("대분류 카테고리를 선택해주세요."),
-      categoryId: yup
-        .string()
-        .required("소분류 카테고리를 선택해주세요."),
-      price: yup
-        .number()
-        .typeError("가격은 숫자여야 합니다.")
-        .positive("가격은 0보다 커야 합니다.")
-        .required("가격은 필수 항목입니다."),
-      stock: yup
-        .number()
-        .typeError("재고는 숫자여야 합니다.")
-        .integer("재고는 정수여야 합니다.")
-        .min(0, "재고는 0 이상이어야 합니다.")
-        .required("재고는 필수 항목입니다."),
-      shippingInfo: yup
-        .string(),
-      description: yup
-        .string()
-        .required("상품 상세 설명은 필수 항목입니다."),
-      mainImage: yup
-        .mixed()
-        .test("required", "대표 이미지는 필수 항목입니다.", (value) => isEditMode || (value && value.length > 0)),
-    }), [isEditMode]);
+    productName: yup
+      .string()
+      .required("상품명은 필수 항목입니다."),
+    parentCategoryId: yup
+      .string()
+      .required("대분류 카테고리를 선택해주세요."),
+    categoryId: yup
+      .string()
+      .required("소분류 카테고리를 선택해주세요."),
+    price: yup
+      .number()
+      .typeError("가격은 숫자여야 합니다.")
+      .positive("가격은 0보다 커야 합니다.")
+      .required("가격은 필수 항목입니다."),
+    stock: yup
+      .number()
+      .typeError("재고는 숫자여야 합니다.")
+      .integer("재고는 정수여야 합니다.")
+      .min(0, "재고는 0 이상이어야 합니다.")
+      .required("재고는 필수 항목입니다."),
+    shippingInfo: yup
+      .string(),
+    description: yup
+      .string()
+      .required("상품 상세 설명은 필수 항목입니다."),
+    mainImage: yup
+      .mixed()
+      .test("required", "대표 이미지는 필수 항목입니다.", (value) => isEditMode || (value && value.length > 0)),
+  }), [isEditMode]);
 
   const {
     register,
@@ -96,15 +96,15 @@ function ProductUpload() {
       console.log("기존 상품 데이터:", p);
 
       const subCategory = subCategories.find(sc => sc.categoryId === p.categoryId);
-      
+
       reset({
         productName: p.productName,
         price: p.price,
         stock: p.stock,
         shippingInfo: pd.shippingInfo,
-        description: pd.description ?.replaceAll('src="/temp/', 'src="http://localhost:9090/temp/')
-                                    ?.replaceAll('src="/product/', 'src="http://localhost:9090/product/')
-                                    || '',
+        description: pd.description?.replaceAll('src="/temp/', 'src="http://localhost:9090/temp/')
+          ?.replaceAll('src="/product/', 'src="http://localhost:9090/product/')
+          || '',
         categoryId: p.categoryId,
         parentCategoryId: subCategory?.parentId,
       });
@@ -127,7 +127,7 @@ function ProductUpload() {
 
   const quillRef = useRef(null);
 
-  
+
 
   // 대표 이미지 핸들러
   const handleMainImageChange = (e) => {
@@ -180,7 +180,7 @@ function ProductUpload() {
   const uploadFile = useCallback(async (file) => {
     try {
       console.log("uploadFile 호출:", file.name, file.type, file.size); // 디버깅용
-      
+
       // 이미지를 Data URL로 변환 (에디터 표시용)
       const reader = new FileReader();
       const dataUrl = await new Promise((resolve, reject) => {
@@ -188,20 +188,20 @@ function ProductUpload() {
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
-      
+
       console.log("Data URL 생성 완료"); // 디버깅용
-      
+
       // 고유 ID 생성
       const imageId = `temp-${imageIdCounter.current++}`;
       console.log("Image ID 생성:", imageId); // 디버깅용
-      
+
       // 이미지 정보 저장 (원본 파일 보관)
       setDescriptionImages(prev => {
         const updated = [...prev, { id: imageId, file, dataUrl }];
         console.log("descriptionImages 업데이트:", updated.length, "개"); // 디버깅용
         return updated;
       });
-      
+
       return { imageId, dataUrl };
     } catch (err) {
       console.error("이미지 업로드 실패", err);
@@ -215,20 +215,20 @@ function ProductUpload() {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
-    
+
     console.log("이미지 삽입:", imageId); // 디버깅용
-    
+
     // 이미지를 삽입 (Data URL)
     editor.insertEmbed(range.index, "image", dataUrl);
-    
+
     // 커서를 이미지 다음으로 이동
     editor.setSelection(range.index + 1);
-    
+
     // 방금 삽입한 이미지에 data-image-id 속성 추가
     setTimeout(() => {
       const editorElement = editor.root;
       const images = editorElement.querySelectorAll('img');
-      
+
       // 가장 최근에 추가된 이미지 찾기 (data-image-id가 없는 것)
       for (let i = images.length - 1; i >= 0; i--) {
         const img = images[i];
@@ -276,7 +276,7 @@ function ProductUpload() {
     };
   }, [uploadFile, insertImage]);
 
-  // 이미지 리사이즈 + 순서 변경 (Shift + 드래그) 
+  // 이미지 드래그/드롭 (위치 변경) + 리사이즈 (Shift + 드래그)
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
@@ -290,16 +290,18 @@ function ProductUpload() {
       if (!img) return;
 
       if (e.shiftKey) {
-        isDragging = true;
-        selectedImg = img;
-        startY = e.clientY;
-        img.style.opacity = "0.5";
-      } else {
+        // Shift + 드래그 = 리사이즈
         isResizing = true;
         selectedImg = img;
         startX = e.clientX;
         startWidth = img.offsetWidth;
         img.style.outline = "2px solid #2193b0";
+      } else {
+        // 그냥 드래그 = 위치 변경
+        isDragging = true;
+        selectedImg = img;
+        startY = e.clientY;
+        img.style.opacity = "0.5";
       }
     };
 
@@ -372,24 +374,24 @@ function ProductUpload() {
             input.onchange = async () => {
               const file = input.files?.[0];
               if (!file) return;
-              
+
               console.log("파일 선택됨:", file.name, file.type); // 디버깅용
-              
+
               const { imageId, dataUrl } = await uploadFile(file);
               console.log("업로드 완료:", imageId); // 디버깅용
-              
+
               const quill = this.quill;
               const range = quill.getSelection(true);
-              
+
               // 이미지 삽입 (Data URL)
               quill.insertEmbed(range.index, "image", dataUrl);
               quill.setSelection(range.index + 1);
-              
+
               // data-image-id 속성 추가
               setTimeout(() => {
                 const editorElement = quill.root;
                 const images = editorElement.querySelectorAll('img');
-                
+
                 // 가장 최근에 추가된 이미지 찾기
                 for (let i = images.length - 1; i >= 0; i--) {
                   const img = images[i];
@@ -427,10 +429,10 @@ function ProductUpload() {
     images.forEach(img => {
       const imageId = img.getAttribute('data-image-id');
       imageMapping.push(imageId);
-      
+
       // Data URL을 빈 문자열로 교체 (백엔드가 실제 URL로 채움)
       img.setAttribute('src', '');
-      
+
       // descriptionImages에서 해당 파일 찾기
       const imageData = descriptionImages.find(item => item.id === imageId);
       if (imageData) {
@@ -447,7 +449,7 @@ function ProductUpload() {
       description: cleanedDescription, // Data URL 제거된 HTML 전송
       imageMapping: imageMapping, // 이미지 순서 배열
     };
-    
+
     if (isEditMode) {
       productData.deletedImageIds = deletedImageIds;
     }
@@ -460,11 +462,11 @@ function ProductUpload() {
       "productData",
       new Blob([JSON.stringify(productData)], { type: "application/json" })
     );
-    
+
     if (mainImage && mainImage.length > 0) {
       formData.append("mainImage", mainImage[0]);
     }
-    
+
     if (subImages && subImages.length > 0) {
       Array.from(subImages).forEach((img) => formData.append("subImages", img));
     }
