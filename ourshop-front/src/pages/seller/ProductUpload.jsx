@@ -18,12 +18,11 @@ function ProductUpload() {
   const { productId } = useParams();
 
   const { getCategoryList } = useCategory();
-  const { uploadTempDescriptionImage, createProduct, getProductDetail, getProductDescription } = useProduct();
-
+  const { createProduct, updateProduct, getProductDetail, getProductDescription } = useProduct();
 
   const { data: categoryData } = getCategoryList();
-  const { mutateAsync: uploadTempImage } = uploadTempDescriptionImage();
   const { mutate: createMutate } = createProduct();
+  const { mutate: updateMutate } = updateProduct();
   const { data: productData } = getProductDetail(productId);
   const { data: productDescriptionData } = getProductDescription(productId);
 
@@ -123,9 +122,10 @@ function ProductUpload() {
       const existingImages = p.productImages?.map(img => ({
         url: `http://localhost:9090${img.imagePath}`,
         isNew: false,
-        imageId: img.productImageId // 삭제 추적을 위한 ID
+        imageId: img.imageId // 올바른 필드명: imageId
       })) || [];
       setSubImageUrls(existingImages);
+      console.log("기존 서브 이미지 로드:", existingImages); // 디버깅
     }
   }, [isEditMode, productData, productDescriptionData, subCategories, reset]);
 
@@ -175,11 +175,24 @@ function ProductUpload() {
   const handleRemoveSubImage = (indexToRemove) => {
     const imageToRemove = subImageUrls[indexToRemove];
 
+    console.log("삭제할 이미지:", imageToRemove); // 디버깅
+
     // 수정 모드에서 기존 이미지를 삭제하는 경우, ID를 추적
     if (isEditMode && !imageToRemove.isNew) {
-      setDeletedImageIds(prev => [...prev, imageToRemove.imageId]);
+      console.log("기존 이미지 삭제 - ID:", imageToRemove.imageId); // 디버깅
+      setDeletedImageIds(prev => {
+        const updated = [...prev, imageToRemove.imageId];
+        console.log("업데이트된 deletedImageIds:", updated); // 디버깅
+        return updated;
+      });
     }
 
+    // 화면에서 제거
+    const updatedUrls = subImageUrls.filter((_, i) => i !== indexToRemove);
+    setSubImageUrls(updatedUrls);
+
+    // react-hook-form에 새 파일만 업데이트
+    const newFiles = updatedUrls.filter(img => img.isNew).map(img => img.file);
     setValue("subImages", newFiles, { shouldValidate: true });
   };
 
@@ -514,7 +527,7 @@ function ProductUpload() {
     [uploadFile]
   );
 
-  // 상품 등록 
+  // 상품 등록/수정
   const onSubmit = (data) => {
     const { mainImage, subImages, description, ...productDataFields } = data;
 
@@ -537,29 +550,40 @@ function ProductUpload() {
       // Data URL을 빈 문자열로 교체 (백엔드가 실제 URL로 채움)
       img.setAttribute('src', '');
 
-      // descriptionImages에서 해당 파일 찾기
+      // descriptionImages에서 해당 파일 찾기 (새로 추가된 이미지만)
       const imageData = descriptionImages.find(item => item.id === imageId);
       if (imageData) {
         descriptionFiles.push(imageData.file);
       }
     });
 
-    // 수정된 HTML 가져오기 (Data URL 제거됨)
+    // 기존 이미지는 src를 그대로 유지 (data-image-id가 없는 이미지)
+    const existingImages = doc.querySelectorAll('img:not([data-image-id])');
+    existingImages.forEach(img => {
+      // 기존 이미지는 src를 상대 경로로 변환 (http://localhost:9090 제거)
+      const src = img.getAttribute('src');
+      if (src && src.startsWith('http://localhost:9090')) {
+        img.setAttribute('src', src.replace('http://localhost:9090', ''));
+      }
+    });
+
+    // 수정된 HTML 가져오기
     const cleanedDescription = doc.body.innerHTML;
 
     const productData = {
       ...productDataFields,
       categoryId: Number(productDataFields.categoryId),
-      description: cleanedDescription, // Data URL 제거된 HTML 전송
-      imageMapping: imageMapping, // 이미지 순서 배열
+      description: cleanedDescription,
+      imageMapping: imageMapping, // 새 이미지 순서 배열
     };
 
     if (isEditMode) {
-      productData.deletedImageIds = deletedImageIds;
+      productData.deleteImageIds = deletedImageIds; // 백엔드 DTO와 매칭
     }
 
-    console.log("전송할 productData:", productData); // 디버깅용
-    console.log("전송할 이미지 파일:", descriptionFiles.length, "개"); // 디버깅용
+    console.log("전송할 productData:", productData);
+    console.log("전송할 description 이미지 파일:", descriptionFiles.length, "개");
+    console.log("삭제할 서브 이미지 ID:", deletedImageIds);
 
     const formData = new FormData();
     formData.append(
@@ -575,17 +599,35 @@ function ProductUpload() {
       Array.from(subImages).forEach((img) => formData.append("subImages", img));
     }
 
-    // description 이미지 파일들 추가
+    // description 이미지 파일들 추가 (새로 추가된 것만)
     descriptionFiles.forEach(file => {
       formData.append("description", file);
     });
 
-    createMutate(formData, {
-      onSuccess: () => {
-        alert("상품이 성공적으로 등록되었습니다.");
-        navigate("/");
-      },
-    });
+    // 수정 모드와 등록 모드 분기
+    if (isEditMode) {
+      updateMutate({ productId, formData }, {
+        onSuccess: () => {
+          alert("상품이 성공적으로 수정되었습니다.");
+          navigate("/");
+        },
+        onError: (error) => {
+          console.error("상품 수정 실패:", error);
+          alert("상품 수정에 실패했습니다.");
+        }
+      });
+    } else {
+      createMutate(formData, {
+        onSuccess: () => {
+          alert("상품이 성공적으로 등록되었습니다.");
+          navigate("/");
+        },
+        onError: (error) => {
+          console.error("상품 등록 실패:", error);
+          alert("상품 등록에 실패했습니다.");
+        }
+      });
+    }
   };
 
   return (

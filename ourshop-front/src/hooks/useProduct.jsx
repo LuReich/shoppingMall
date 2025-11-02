@@ -60,12 +60,36 @@ export const useProduct = () => {
       mutationFn: (formData) => productAPI.createProduct(formData),
       onSuccess: () => {
         qc.invalidateQueries(["productList"]);
-        alert( "상품이 성공적으로 등록되었습니다.");
       },
       onError: (err) => {
         console.error(err);
         alert(err.response?.data?.content || "상품 등록 실패.");
       },
+    });
+  };
+
+  // ✅ 상품 수정
+  const updateProduct = () => {
+    return useMutation({
+      mutationFn: ({ productId, formData }) => productAPI.updateProduct(productId, formData),
+      onSuccess: () => {
+        qc.invalidateQueries(["productList"]);
+        qc.invalidateQueries(["product"]);
+        qc.invalidateQueries(["productDescription"]);
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err.response?.data?.content || "상품 수정 실패.");
+      },
+    });
+  };
+
+  // 상품 수정용 데이터 조회
+  const getProductForUpdate = (productId) => {
+    return useQuery({
+      queryKey: ["productForUpdate", productId],
+      queryFn: () => productAPI.getProductForUpdate(productId),
+      enabled: !!productId,
     });
   };
    
@@ -77,6 +101,8 @@ export const useProduct = () => {
     getProductDescription,
     getProductReview,
     uploadTempDescriptionImage,
-    createProduct
+    createProduct,
+    updateProduct,
+    getProductForUpdate
   };
 };
