@@ -2,7 +2,10 @@ import React, { useMemo, useState, useRef, useEffect, useCallback } from "react"
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import Quill from "quill";
+import ImageResize from 'quill-image-resize-module-react';
 import "quill/dist/quill.snow.css";
+
+Quill.register('modules/imageResize', ImageResize);
 import { useProduct } from "../../hooks/useProduct";
 import "../../assets/css/ProductUpload.css";
 import { useCategory } from "../../hooks/useCategory";
@@ -277,31 +280,23 @@ function ProductUpload() {
     };
   }, [uploadFile, insertImage]);
 
-  // 이미지 드래그/드롭 (위치 변경) + 리사이즈 (Shift + 드래그)
+  // 이미지 드래그/드롭 (위치 변경)
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
-    console.log("DND: useEffect init");
+    console.log("DND: useEffect init for drag-to-reorder");
 
     const el = editor.root;
     let selectedImg = null;
     let isDragging = false;
-    let isResizing = false;
-    let startX, startWidth;
 
     const handleMouseDown = (e) => {
+      // Ignore clicks on resize handles
+      if (e.target.classList.contains('ql-resize-handle')) {
+        return;
+      }
       const img = e.target.closest("img");
-      if (!img) return;
-
-      if (e.shiftKey) {
-        console.log("DND: Start resizing", img);
-        isResizing = true;
-        selectedImg = img;
-        startX = e.clientX;
-        startWidth = img.offsetWidth;
-        img.style.outline = "2px solid #2193b0";
-        e.preventDefault();
-      } else {
+      if (img) {
         console.log("DND: Start dragging", img);
         isDragging = true;
         selectedImg = img;
@@ -310,22 +305,13 @@ function ProductUpload() {
     };
 
     const handleMouseMove = (e) => {
-      if (isResizing && selectedImg) {
-        const delta = e.clientX - startX;
-        selectedImg.style.width = `${Math.max(50, startWidth + delta)}px`;
-        e.preventDefault();
-      } else if (isDragging && selectedImg) {
+      if (isDragging && selectedImg) {
         e.preventDefault();
       }
     };
 
     const handleMouseUp = (e) => {
-      if (isResizing && selectedImg) {
-        console.log("DND: End resizing");
-        selectedImg.style.outline = "none";
-        isResizing = false;
-        selectedImg = null;
-      } else if (isDragging && selectedImg) {
+      if (isDragging && selectedImg) {
         console.log("DND: End dragging / MouseUp event");
         isDragging = false;
 
@@ -452,6 +438,10 @@ function ProductUpload() {
           },
         },
       },
+      imageResize: {
+        parchment: Quill.import('parchment'),
+        modules: ['Resize', 'DisplaySize']
+      }
     }),
     [uploadFile]
   );
