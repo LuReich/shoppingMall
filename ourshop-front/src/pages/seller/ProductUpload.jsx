@@ -26,6 +26,10 @@ function ProductUpload() {
   // 상품 수정 모드 구분 (예: 등록 vs 수정)
   const isEditMode = useMemo(() => !!productId, [productId]);
 
+  // description 이미지 관리 (백엔드 data-image-id 방식)
+  const [descriptionImages, setDescriptionImages] = useState([]); // {id, file, blobUrl}
+  const imageIdCounter = useRef(0);
+
   // Yup 스키마 정의
   const productSchema = useMemo(() => yup.object({
       productName: yup
@@ -172,25 +176,69 @@ function ProductUpload() {
     setValue("subImages", newFiles, { shouldValidate: true });
   };
 
-  //이미지 서버 업로드 
+  //이미지 서버 업로드 (백엔드 data-image-id 방식으로 변경)
   const uploadFile = useCallback(async (file) => {
     try {
-      const res = await uploadTempImage(file);
-      return `http://localhost:9090${res?.content?.imageUrl}`;
+      console.log("uploadFile 호출:", file.name, file.type, file.size); // 디버깅용
+      
+      // 이미지를 Data URL로 변환 (에디터 표시용)
+      const reader = new FileReader();
+      const dataUrl = await new Promise((resolve, reject) => {
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      
+      console.log("Data URL 생성 완료"); // 디버깅용
+      
+      // 고유 ID 생성
+      const imageId = `temp-${imageIdCounter.current++}`;
+      console.log("Image ID 생성:", imageId); // 디버깅용
+      
+      // 이미지 정보 저장 (원본 파일 보관)
+      setDescriptionImages(prev => {
+        const updated = [...prev, { id: imageId, file, dataUrl }];
+        console.log("descriptionImages 업데이트:", updated.length, "개"); // 디버깅용
+        return updated;
+      });
+      
+      return { imageId, dataUrl };
     } catch (err) {
       console.error("이미지 업로드 실패", err);
       alert("이미지 업로드 실패");
       throw err;
     }
-  }, [uploadTempImage]);
+  }, []);
 
-  // 에디터에 이미지 삽입 
-  const insertImage = useCallback((url) => {
+  // 에디터에 이미지 삽입 (data-image-id 추가)
+  const insertImage = useCallback((imageId, dataUrl) => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
-    editor.insertEmbed(range.index, "image", url);
+    
+    console.log("이미지 삽입:", imageId); // 디버깅용
+    
+    // 이미지를 삽입 (Data URL)
+    editor.insertEmbed(range.index, "image", dataUrl);
+    
+    // 커서를 이미지 다음으로 이동
     editor.setSelection(range.index + 1);
+    
+    // 방금 삽입한 이미지에 data-image-id 속성 추가
+    setTimeout(() => {
+      const editorElement = editor.root;
+      const images = editorElement.querySelectorAll('img');
+      
+      // 가장 최근에 추가된 이미지 찾기 (data-image-id가 없는 것)
+      for (let i = images.length - 1; i >= 0; i--) {
+        const img = images[i];
+        if (!img.getAttribute('data-image-id') && img.src.startsWith('data:')) {
+          img.setAttribute('data-image-id', imageId);
+          console.log("data-image-id 설정 완료:", imageId);
+          break;
+        }
+      }
+    }, 100);
   }, []);
 
   // 드래그/붙여넣기 이미지 업로드 
@@ -203,8 +251,8 @@ function ProductUpload() {
       e.preventDefault();
       const file = e.dataTransfer?.files?.[0];
       if (file && file.type.startsWith("image/")) {
-        const url = await uploadFile(file);
-        insertImage(url);
+        const { imageId, dataUrl } = await uploadFile(file);
+        insertImage(imageId, dataUrl);
       }
     };
 
@@ -215,8 +263,8 @@ function ProductUpload() {
       if (item) {
         e.preventDefault();
         const file = item.getAsFile();
-        const url = await uploadFile(file);
-        insertImage(url);
+        const { imageId, dataUrl } = await uploadFile(file);
+        insertImage(imageId, dataUrl);
       }
     };
 
@@ -324,11 +372,34 @@ function ProductUpload() {
             input.onchange = async () => {
               const file = input.files?.[0];
               if (!file) return;
-              const url = await uploadFile(file);
+              
+              console.log("파일 선택됨:", file.name, file.type); // 디버깅용
+              
+              const { imageId, dataUrl } = await uploadFile(file);
+              console.log("업로드 완료:", imageId); // 디버깅용
+              
               const quill = this.quill;
               const range = quill.getSelection(true);
-              quill.insertEmbed(range.index, "image", url);
+              
+              // 이미지 삽입 (Data URL)
+              quill.insertEmbed(range.index, "image", dataUrl);
               quill.setSelection(range.index + 1);
+              
+              // data-image-id 속성 추가
+              setTimeout(() => {
+                const editorElement = quill.root;
+                const images = editorElement.querySelectorAll('img');
+                
+                // 가장 최근에 추가된 이미지 찾기
+                for (let i = images.length - 1; i >= 0; i--) {
+                  const img = images[i];
+                  if (!img.getAttribute('data-image-id') && img.src.startsWith('data:')) {
+                    img.setAttribute('data-image-id', imageId);
+                    console.log("툴바: data-image-id 설정 완료:", imageId);
+                    break;
+                  }
+                }
+              }, 100);
             };
           },
         },
@@ -339,32 +410,69 @@ function ProductUpload() {
 
   // 상품 등록 
   const onSubmit = (data) => {
-    const { mainImage, subImages, ...productDataFields } = data;
+    const { mainImage, subImages, description, ...productDataFields } = data;
 
     if (!isEditMode && !mainImage) {
       alert("대표 이미지를 등록해주세요.");
       return;
     }
 
+    // description HTML에서 data-image-id 추출하여 imageMapping 생성
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(description, 'text/html');
+    const images = doc.querySelectorAll('img[data-image-id]');
+    const imageMapping = [];
+    const descriptionFiles = [];
+
+    images.forEach(img => {
+      const imageId = img.getAttribute('data-image-id');
+      imageMapping.push(imageId);
+      
+      // Data URL을 빈 문자열로 교체 (백엔드가 실제 URL로 채움)
+      img.setAttribute('src', '');
+      
+      // descriptionImages에서 해당 파일 찾기
+      const imageData = descriptionImages.find(item => item.id === imageId);
+      if (imageData) {
+        descriptionFiles.push(imageData.file);
+      }
+    });
+
+    // 수정된 HTML 가져오기 (Data URL 제거됨)
+    const cleanedDescription = doc.body.innerHTML;
+
     const productData = {
       ...productDataFields,
       categoryId: Number(productDataFields.categoryId),
+      description: cleanedDescription, // Data URL 제거된 HTML 전송
+      imageMapping: imageMapping, // 이미지 순서 배열
     };
+    
     if (isEditMode) {
       productData.deletedImageIds = deletedImageIds;
     }
+
+    console.log("전송할 productData:", productData); // 디버깅용
+    console.log("전송할 이미지 파일:", descriptionFiles.length, "개"); // 디버깅용
 
     const formData = new FormData();
     formData.append(
       "productData",
       new Blob([JSON.stringify(productData)], { type: "application/json" })
     );
+    
     if (mainImage && mainImage.length > 0) {
       formData.append("mainImage", mainImage[0]);
     }
+    
     if (subImages && subImages.length > 0) {
       Array.from(subImages).forEach((img) => formData.append("subImages", img));
     }
+
+    // description 이미지 파일들 추가
+    descriptionFiles.forEach(file => {
+      formData.append("description", file);
+    });
 
     createMutate(formData, {
       onSuccess: () => {
