@@ -18,12 +18,11 @@ function ProductUpload() {
   const { productId } = useParams();
 
   const { getCategoryList } = useCategory();
-  const { uploadTempDescriptionImage, createProduct, getProductDetail, getProductDescription } = useProduct();
-
+  const { createProduct, updateProduct, getProductDetail, getProductDescription } = useProduct();
 
   const { data: categoryData } = getCategoryList();
-  const { mutateAsync: uploadTempImage } = uploadTempDescriptionImage();
   const { mutate: createMutate } = createProduct();
+  const { mutate: updateMutate } = updateProduct();
   const { data: productData } = getProductDetail(productId);
   const { data: productDescriptionData } = getProductDescription(productId);
 
@@ -33,6 +32,11 @@ function ProductUpload() {
   // description 이미지 관리 (백엔드 data-image-id 방식)
   const [descriptionImages, setDescriptionImages] = useState([]); // {id, file, blobUrl}
   const imageIdCounter = useRef(0);
+
+  // 동영상 링크 모달 state
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+  const quillRef = useRef(null);
 
   // Yup 스키마 정의
   const productSchema = useMemo(() => yup.object({
@@ -118,9 +122,10 @@ function ProductUpload() {
       const existingImages = p.productImages?.map(img => ({
         url: `http://localhost:9090${img.imagePath}`,
         isNew: false,
-        imageId: img.productImageId // 삭제 추적을 위한 ID
+        imageId: img.imageId // 올바른 필드명: imageId
       })) || [];
       setSubImageUrls(existingImages);
+      console.log("기존 서브 이미지 로드:", existingImages); // 디버깅
     }
   }, [isEditMode, productData, productDescriptionData, subCategories, reset]);
 
@@ -128,8 +133,6 @@ function ProductUpload() {
   const [mainImageUrl, setMainImageUrl] = useState(null);
   const [subImageUrls, setSubImageUrls] = useState([]);
   const [deletedImageIds, setDeletedImageIds] = useState([]); // 수정 시 삭제된 이미지 ID 추적
-
-  const quillRef = useRef(null);
 
 
 
@@ -166,18 +169,93 @@ function ProductUpload() {
   };
 
   // 서브 이미지 삭제 핸들러
+  const dragItem = useRef();
+  const dragOverItem = useRef();
+
   const handleRemoveSubImage = (indexToRemove) => {
     const imageToRemove = subImageUrls[indexToRemove];
 
+    console.log("삭제할 이미지:", imageToRemove); // 디버깅
+
     // 수정 모드에서 기존 이미지를 삭제하는 경우, ID를 추적
     if (isEditMode && !imageToRemove.isNew) {
-      setDeletedImageIds(prev => [...prev, imageToRemove.imageId]);
+      console.log("기존 이미지 삭제 - ID:", imageToRemove.imageId); // 디버깅
+      setDeletedImageIds(prev => {
+        const updated = [...prev, imageToRemove.imageId];
+        console.log("업데이트된 deletedImageIds:", updated); // 디버깅
+        return updated;
+      });
     }
 
-    const updatedUrls = subImageUrls.filter((_, index) => index !== indexToRemove);
+    // 화면에서 제거
+    const updatedUrls = subImageUrls.filter((_, i) => i !== indexToRemove);
     setSubImageUrls(updatedUrls);
+
+    // react-hook-form에 새 파일만 업데이트
     const newFiles = updatedUrls.filter(img => img.isNew).map(img => img.file);
     setValue("subImages", newFiles, { shouldValidate: true });
+  };
+
+  const handleSubImageDragStart = (position) => {
+    dragItem.current = position;
+  };
+
+  const handleSubImageDragEnter = (position) => {
+    dragOverItem.current = position;
+  };
+
+  const handleSubImageDrop = () => {
+    if (dragItem.current === dragOverItem.current) return;
+
+    const newSubImageUrls = [...subImageUrls];
+    const dragItemContent = newSubImageUrls[dragItem.current];
+    newSubImageUrls.splice(dragItem.current, 1);
+    newSubImageUrls.splice(dragOverItem.current, 0, dragItemContent);
+    
+    setSubImageUrls(newSubImageUrls);
+
+    const newFiles = newSubImageUrls.filter(img => img.isNew).map(img => img.file);
+    setValue("subImages", newFiles, { shouldValidate: true });
+
+    dragItem.current = null;
+    dragOverItem.current = null;
+  };
+
+  // 동영상 삽입 함수
+  const handleVideoInsert = () => {
+    if (!videoUrl.trim()) {
+      alert("동영상 링크를 입력해주세요.");
+      return;
+    }
+
+    const editor = quillRef.current?.getEditor();
+    if (!editor) return;
+
+    const range = editor.getSelection(true);
+    
+    // YouTube, Vimeo 등 embed URL로 변환
+    let embedUrl = videoUrl;
+    
+    // YouTube URL 처리
+    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
+    const youtubeMatch = videoUrl.match(youtubeRegex);
+    if (youtubeMatch) {
+      embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    }
+    
+    // Vimeo URL 처리
+    const vimeoRegex = /vimeo\.com\/(\d+)/;
+    const vimeoMatch = videoUrl.match(vimeoRegex);
+    if (vimeoMatch) {
+      embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    }
+
+    editor.insertEmbed(range.index, "video", embedUrl);
+    editor.setSelection(range.index + 1);
+
+    // 모달 닫고 초기화
+    setIsVideoModalOpen(false);
+    setVideoUrl("");
   };
 
   //이미지 서버 업로드 (백엔드 data-image-id 방식으로 변경)
@@ -393,7 +471,7 @@ function ProductUpload() {
           ["bold", "italic", "underline", "strike"],
           [{ list: "ordered" }, { list: "bullet" }],
           [{ align: [] }, { color: [] }],
-          ["link", "image"],
+          ["link", "image", "video"],
           ["clean"],
         ],
         handlers: {
@@ -436,6 +514,9 @@ function ProductUpload() {
               }, 100);
             };
           },
+          video: function () {
+            setIsVideoModalOpen(true);
+          },
         },
       },
       imageResize: {
@@ -446,7 +527,7 @@ function ProductUpload() {
     [uploadFile]
   );
 
-  // 상품 등록 
+  // 상품 등록/수정
   const onSubmit = (data) => {
     const { mainImage, subImages, description, ...productDataFields } = data;
 
@@ -469,29 +550,40 @@ function ProductUpload() {
       // Data URL을 빈 문자열로 교체 (백엔드가 실제 URL로 채움)
       img.setAttribute('src', '');
 
-      // descriptionImages에서 해당 파일 찾기
+      // descriptionImages에서 해당 파일 찾기 (새로 추가된 이미지만)
       const imageData = descriptionImages.find(item => item.id === imageId);
       if (imageData) {
         descriptionFiles.push(imageData.file);
       }
     });
 
-    // 수정된 HTML 가져오기 (Data URL 제거됨)
+    // 기존 이미지는 src를 그대로 유지 (data-image-id가 없는 이미지)
+    const existingImages = doc.querySelectorAll('img:not([data-image-id])');
+    existingImages.forEach(img => {
+      // 기존 이미지는 src를 상대 경로로 변환 (http://localhost:9090 제거)
+      const src = img.getAttribute('src');
+      if (src && src.startsWith('http://localhost:9090')) {
+        img.setAttribute('src', src.replace('http://localhost:9090', ''));
+      }
+    });
+
+    // 수정된 HTML 가져오기
     const cleanedDescription = doc.body.innerHTML;
 
     const productData = {
       ...productDataFields,
       categoryId: Number(productDataFields.categoryId),
-      description: cleanedDescription, // Data URL 제거된 HTML 전송
-      imageMapping: imageMapping, // 이미지 순서 배열
+      description: cleanedDescription,
+      imageMapping: imageMapping, // 새 이미지 순서 배열
     };
 
     if (isEditMode) {
-      productData.deletedImageIds = deletedImageIds;
+      productData.deleteImageIds = deletedImageIds; // 백엔드 DTO와 매칭
     }
 
-    console.log("전송할 productData:", productData); // 디버깅용
-    console.log("전송할 이미지 파일:", descriptionFiles.length, "개"); // 디버깅용
+    console.log("전송할 productData:", productData);
+    console.log("전송할 description 이미지 파일:", descriptionFiles.length, "개");
+    console.log("삭제할 서브 이미지 ID:", deletedImageIds);
 
     const formData = new FormData();
     formData.append(
@@ -507,17 +599,35 @@ function ProductUpload() {
       Array.from(subImages).forEach((img) => formData.append("subImages", img));
     }
 
-    // description 이미지 파일들 추가
+    // description 이미지 파일들 추가 (새로 추가된 것만)
     descriptionFiles.forEach(file => {
       formData.append("description", file);
     });
 
-    createMutate(formData, {
-      onSuccess: () => {
-        alert("상품이 성공적으로 등록되었습니다.");
-        navigate("/");
-      },
-    });
+    // 수정 모드와 등록 모드 분기
+    if (isEditMode) {
+      updateMutate({ productId, formData }, {
+        onSuccess: () => {
+          alert("상품이 성공적으로 수정되었습니다.");
+          navigate("/");
+        },
+        onError: (error) => {
+          console.error("상품 수정 실패:", error);
+          alert("상품 수정에 실패했습니다.");
+        }
+      });
+    } else {
+      createMutate(formData, {
+        onSuccess: () => {
+          alert("상품이 성공적으로 등록되었습니다.");
+          navigate("/");
+        },
+        onError: (error) => {
+          console.error("상품 등록 실패:", error);
+          alert("상품 등록에 실패했습니다.");
+        }
+      });
+    }
   };
 
   return (
@@ -616,9 +726,16 @@ function ProductUpload() {
             />
           </label>
           {subImageUrls?.length > 0 && (
-            <div className="sub-image-preview-container">
+            <div className="sub-image-preview-container" onDragOver={(e) => e.preventDefault()}>
               {subImageUrls.map((url, i) => (
-                <div key={i} className="sub-image-preview-item">
+                <div 
+                  key={i} 
+                  className="sub-image-preview-item"
+                  draggable
+                  onDragStart={() => handleSubImageDragStart(i)}
+                  onDragEnter={() => handleSubImageDragEnter(i)}
+                  onDragEnd={handleSubImageDrop}
+                >
                   <img src={url.url} alt={`미리보기 ${i + 1}`} />
                   <button type="button" className="remove-image-btn" onClick={() => handleRemoveSubImage(i)}>
                     ×
@@ -653,6 +770,35 @@ function ProductUpload() {
 
         <button type="submit" className="upload-btn">{isEditMode ? '수정하기' : '등록하기'}</button>
       </form>
+
+      {/* 동영상 링크 입력 모달 */}
+      {isVideoModalOpen && (
+        <div className="video-modal-overlay" onClick={() => setIsVideoModalOpen(false)}>
+          <div className="video-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>동영상 링크 입력</h3>
+            <p className="video-modal-desc">YouTube 또는 Vimeo 링크를 입력하세요</p>
+            <input
+              type="text"
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="video-url-input"
+              autoFocus
+            />
+            <div className="video-modal-buttons">
+              <button type="button" onClick={handleVideoInsert} className="video-insert-btn">
+                삽입
+              </button>
+              <button type="button" onClick={() => {
+                setIsVideoModalOpen(false);
+                setVideoUrl("");
+              }} className="video-cancel-btn">
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

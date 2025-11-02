@@ -45,4 +45,18 @@ export const productAPI = {
         return res.data;
     },
 
+    // 상품 수정
+    updateProduct: async (productId, formData) => {
+        const res = await api.patch(`/product/${productId}`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        return res.data;
+    },
+
+    // 상품 수정용 데이터 조회
+    getProductForUpdate: async (productId) => {
+        const res = await api.get(`/product/${productId}/edit`);
+        return res.data;
+    },
+
 };

@@ -212,7 +212,7 @@ public class ProductService {
                         continue;
                     }
                     String storedName = fileUtils.saveFile(imageFile, descriptionPath);
-                    String imageUrl = "/product/" + productId + "/description/" + storedName;
+                    String imageUrl = "/product/" + productId + "/description/" + storedName; // 경로 복원
                     descriptionImageUrls.add(imageUrl);
                 }
             } catch (IOException e) {
@@ -248,7 +248,7 @@ public class ProductService {
         // 4. 대표 이미지 저장 및 상품 정보 업데이트
         String mainImageStoredName = fileUtils.saveFile(mainImage, mainImagePath);
         // DB에는 웹 접근이 가능한 URL 경로를 저장
-        String mainImageUrl = "/product/" + productId + "/main/" + mainImageStoredName;
+        String mainImageUrl = "/product/" + productId + "/main/" + mainImageStoredName; // 경로 복원
         savedProduct.setThumbnailUrl(mainImageUrl);
 
         // 5. 서브(추가) 이미지 저장
@@ -260,7 +260,7 @@ public class ProductService {
                     continue;
                 }
                 String storedName = fileUtils.saveFile(file, subPath); // FileUtils의 saveFile 사용
-                String subImageUrl = "/product/" + productId + "/sub/" + storedName;
+                String subImageUrl = "/product/" + productId + "/sub/" + storedName; // 경로 복원
 
                 ProductImageEntity imageEntity = ProductImageEntity.builder()
                         .product(savedProduct).imageName(file.getOriginalFilename()).storedName(storedName)
@@ -324,6 +324,9 @@ public class ProductService {
 
         // 3-1. description의 새 이미지 처리 (data-image-id 방식)
         if (dto.getDescription() != null) {
+            // 기존 description의 이미지 URL 목록 추출 (orphan 삭제를 위해)
+            List<String> oldImageUrls = extractImageUrlsFromHtml(detail.getDescription());
+
             String descriptionPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
             List<String> newDescriptionImageUrls = new ArrayList<>();
 
@@ -336,7 +339,7 @@ public class ProductService {
                             continue;
                         }
                         String storedName = fileUtils.saveFile(imageFile, descriptionPath);
-                        String imageUrl = "/product/" + productId + "/description/" + storedName;
+                        String imageUrl = "/product/" + productId + "/description/" + storedName; // 경로 복원
                         newDescriptionImageUrls.add(imageUrl);
                     }
                 } catch (IOException e) {
@@ -351,50 +354,80 @@ public class ProductService {
                     newDescriptionImageUrls
             );
             detail.setDescription(updatedDescription);
+
+            // 새 description의 이미지 URL 목록 추출 (orphan 삭제를 위해)
+            List<String> newImageUrls = extractImageUrlsFromHtml(updatedDescription);
+
+            // 더 이상 사용되지 않는 description 이미지 삭제
+            deleteOrphanedDescriptionImages(oldImageUrls, newImageUrls);
         }
 
         if (dto.getShippingInfo() != null) {
             detail.setShippingInfo(dto.getShippingInfo());
         }
-        productDetailRepository.save(detail); // 상세 정보 저장
+        // productDetailRepository.save(detail)는 productRepository.save(product)에 의해 전파되므로 생략 가능
 
         // 4. 메인 이미지 업데이트
         if (mainImage != null && !mainImage.isEmpty()) {
             // 기존 메인 이미지 파일 삭제
             if (product.getThumbnailUrl() != null && !product.getThumbnailUrl().isEmpty()) {
-                String oldMainImageFullPath = getOsIndependentPath(uploadDir, product.getThumbnailUrl());
+                String oldMainImageRelativePath = product.getThumbnailUrl().replace("/product/", "");
+                String oldMainImageFullPath = getOsIndependentPath(uploadDir, oldMainImageRelativePath);
                 fileUtils.deleteFile(oldMainImageFullPath);
             }
             // 새 메인 이미지 저장
             String productBaseDir = getOsIndependentPath(uploadDir, "product", String.valueOf(productId));
             String mainImageDir = getOsIndependentPath(productBaseDir, "main");
             String storedName = fileUtils.saveFile(mainImage, mainImageDir);
-            String newMainImageUrlPath = "/product/" + productId + "/main/" + storedName;
+            String newMainImageUrlPath = "/product/" + productId + "/main/" + storedName; // 경로 복원
             product.setThumbnailUrl(newMainImageUrlPath);
         }
 
-        // 5. 서브 이미지 삭제
+        // 5. 서브 이미지 업데이트 (JPA orphanRemoval 활용)
         if (dto.getDeleteImageIds() != null && !dto.getDeleteImageIds().isEmpty()) {
-            List<ProductImageEntity> imagesToDelete = productImageRepository.findAllById(dto.getDeleteImageIds());
+            System.out.println("=== 서브 이미지 삭제 시작 ===");
+            System.out.println("삭제할 이미지 ID 목록: " + dto.getDeleteImageIds());
+
+            // 5-1. 삭제할 이미지 ID Set 생성
+            Set<Long> deleteIds = new java.util.HashSet<>(dto.getDeleteImageIds());
+
+            // 5-2. product가 관리하는 이미지 목록에서 삭제 대상을 찾아 제거
+            List<ProductImageEntity> imagesToDelete = product.getProductImages().stream()
+                    .filter(img -> deleteIds.contains(img.getImageId()))
+                    .collect(Collectors.toList());
+
+            System.out.println("삭제할 이미지 엔티티 수: " + imagesToDelete.size());
+
+            // 5-3. 파일 시스템에서 실제 파일 삭제
             for (ProductImageEntity image : imagesToDelete) {
-                if (!image.getProduct().getProductId().equals(productId)) {
-                    // 다른 상품의 이미지를 삭제하려는 시도 방지
-                    throw new AccessDeniedException("삭제하려는 이미지가 해당 상품에 속하지 않습니다.");
-                }
-                // imagePath가 /product/ 또는 /temp/ 로 시작하므로 앞부분을 제거하고 실제 파일 시스템 경로를 조합
-                String relativePath = image.getImagePath().startsWith("/") ? image.getImagePath().substring(1) : image.getImagePath();
+                System.out.println("이미지 경로(DB): " + image.getImagePath());
+
+                String relativePath = image.getImagePath().startsWith("/")
+                        ? image.getImagePath().substring(1)
+                        : image.getImagePath();
+
                 String fullPath = getOsIndependentPath(uploadDir, relativePath);
-                fileUtils.deleteFile(fullPath);
-                // ProductEntity의 productImages 리스트에서도 제거하여 orphanRemoval이 동작하도록 함
-                product.getProductImages().remove(image);
+                System.out.println("파일 삭제 시도 - 전체 경로: " + fullPath);
+
+                File fileToDelete = new File(fullPath);
+                System.out.println("파일 존재 여부: " + fileToDelete.exists());
+
+                if (fileToDelete.exists()) {
+                    fileUtils.deleteFile(fullPath);
+                    System.out.println("파일 삭제 완료: " + fullPath);
+                } else {
+                    System.out.println("파일이 존재하지 않음: " + fullPath);
+                }
             }
-            productImageRepository.deleteAll(imagesToDelete); // DB에서 이미지 엔티티 삭제
+
+            // 5-4. 컬렉션에서 제거 -> orphanRemoval=true에 의해 DB에서도 삭제됨
+            product.getProductImages().removeAll(imagesToDelete);
+            System.out.println("=== 서브 이미지 삭제 완료 ===");
         }
 
         // 6. 새 서브 이미지 추가
         if (subImages != null && !subImages.isEmpty()) {
-            List<ProductImageEntity> newImageEntities = new ArrayList<>();
-            // 현재 존재하는 이미지들의 sortOrder를 고려하여 새로운 이미지의 sortOrder를 설정
+            // 현재 남아있는 이미지들의 최대 정렬 순서를 찾음
             int maxSortOrder = product.getProductImages().stream()
                     .mapToInt(ProductImageEntity::getSortOrder)
                     .max().orElse(-1);
@@ -407,18 +440,20 @@ public class ProductService {
                 if (file.isEmpty()) {
                     continue;
                 }
+
                 String storedName = fileUtils.saveFile(file, subImageDir);
-                String newSubImageUrl = "/product/" + productId + "/sub/" + storedName;
+                String newSubImageUrl = "/product/" + productId + "/sub/" + storedName; // 경로 복원
                 ProductImageEntity imageEntity = ProductImageEntity.builder()
-                        .product(product).imageName(file.getOriginalFilename()).storedName(storedName)
+                        .product(product) // 연관관계의 주인에게 자신을 설정
+                        .imageName(file.getOriginalFilename()).storedName(storedName)
                         .imagePath(newSubImageUrl).imageSize(file.getSize()).sortOrder(currentSortOrder++).build();
-                newImageEntities.add(imageEntity);
+
+                // 컬렉션에 추가 -> CascadeType.ALL에 의해 DB에도 저장됨
+                product.getProductImages().add(imageEntity);
             }
-            productImageRepository.saveAll(newImageEntities); // DB에 새 이미지 엔티티 저장
-            product.getProductImages().addAll(newImageEntities); // ProductEntity 리스트에 추가
         }
 
-        productRepository.save(product); // 최종 상품 정보 저장 (cascade로 productDetail도 저장됨)
+        productRepository.save(product); // 변경된 product 엔티티 저장 (이미지 삭제/추가 모두 반영)
         // 모든 정보가 포함된 완전한 Entity를 다시 조회하여 DTO로 변환 후 반환
         return new ProductDTO(productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("업데이트된 상품을 다시 찾을 수 없습니다. ID: " + productId)));
@@ -533,7 +568,7 @@ public class ProductService {
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
                 // 새로운 영구 URL로 src 속성 변경 (상대 경로로 저장, 프론트엔드에서 base URL 추가)
-                String permanentUrl = "/product/" + productId + "/description/" + tempFileName;
+                String permanentUrl = "/product/" + productId + "/description/" + tempFileName; // 경로 복원
                 img.attr("src", permanentUrl);
             } else {
                 // 임시 파일이 없는 경우(오류 등), 해당 img 태그를 제거하거나 대체 이미지를 넣을 수 있음
