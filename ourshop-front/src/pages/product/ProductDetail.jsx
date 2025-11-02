@@ -170,18 +170,24 @@ function ProductDetail() {
       <div className="product-detail-main">
         <div className="image-gallery">
           <div className="main-image-container">
-            <img
-              src={
-                activeImage
-                  ? activeImage.startsWith('http')
+            {activeImage ? (
+              <img
+                src={
+                  activeImage.startsWith('http')
                     ? activeImage
                     : `http://localhost:9090${activeImage}`
-                  : ''
-              }
-              alt={product.productName || "상품 이미지"}
-              className="main-image"
-              onError={(e) => (e.target.src = '/images/no-image.png')}
-            />
+                }
+                alt={product.productName || "상품 이미지"}
+                className="main-image"
+                onError={(e) => (e.target.src = '/images/no-image.png')}
+              />
+            ) : (
+              <img
+                src="/images/no-image.png"
+                alt={product.productName || "상품 이미지"}
+                className="main-image"
+              />
+            )}
           </div>
 
           <div className="thumbnail-list">
