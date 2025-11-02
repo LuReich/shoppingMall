@@ -156,39 +156,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(reviewPageDto));
     }
 
-    // React Quill 수정 용도 예정 에디터에서 상품 상세 설명 이미지 업로드
-    @PostMapping("/{productId}/description/image")
-    public ResponseEntity<ApiResponse<Map<String, String>>> uploadDescriptionImage(
-            @PathVariable Long productId,
-            @RequestParam("image") MultipartFile imageFile,
-            Authentication authentication) {
-
-        Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
-
-        String imageUrl = productService.uploadDescriptionImage(sellerUid, productId, imageFile);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("imageUrl", imageUrl);
-
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(response));
-    }
-
-    // React Quill 에디터에서 상품 상세 설명 이미지 임시 업로드 (productId 없음)
-    @PostMapping("/description/temp")
-    public ResponseEntity<ApiResponse<Map<String, String>>> uploadTempDescriptionImage(
-            @RequestParam("image") MultipartFile imageFile,
-            Authentication authentication) {
-
-        getSellerUidFromAuthWithRoleCheck(authentication); // 판매자 권한만 있는지 체크
-
-        String tempImageUrl = productService.uploadTempDescriptionImage(imageFile);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("imageUrl", tempImageUrl);
-
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(response));
-    }
-
     // 일단 넣어놓기만 한 거라 미사용 권장
     @PostMapping("/{productId}/detail")
     public ResponseEntity<ApiResponse<ProductDetailEntity>> createOrUpdateProductDetail(@PathVariable("productId") Long productId,

@@ -1,0 +1,178 @@
+.product-upload-container {
+  width: 70%;
+  margin: 50px auto;
+}
+
+.product-upload-container {
+  width: 70%;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.product-upload-container h2 {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: #333;
+}
+
+.product-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.product-upload-form input[type="text"],
+.product-upload-form input[type="number"],
+.product-upload-form select {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.product-upload-form input:focus,
+.product-upload-form select:focus {
+  border-color: #7cc7de;
+  box-shadow: 0 0 0 3px rgba(124, 199, 222, 0.15);
+}
+
+.category-select-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.category-select-group select {
+  flex: 1;
+}
+
+.file-input-group {
+  padding: 1rem;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.file-input-group:hover {
+  border-color: #7cc7de;
+}
+
+.file-input-group p {
+  color: #888;
+  font-size: 15px;
+}
+
+.file-input-group input[type="file"] {
+  display: none;
+}
+
+.file-preview {
+  margin-top: 1rem;
+  font-size: 14px;
+  color: #555;
+}
+
+.main-image-preview-container {
+  margin-top: 1rem;
+}
+
+.main-image-preview-item {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.main-image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.sub-image-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.sub-image-preview-item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.sub-image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.upload-btn {
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 1.5rem;
+  background-color: #7cc7de;
+}
+
+.upload-btn:hover {
+  background-color: #6ab5ca;
+}
+
+/* React Quill 높이 조정 */
+.quill-editor-container {
+  height: 800px;
+  margin-bottom: 40px;
+}
+
+.error-message {
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

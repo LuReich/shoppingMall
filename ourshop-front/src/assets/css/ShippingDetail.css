@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+/* 전체 레이아웃 */
+.shipping-info-container {
+  width: 78%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* 제목 */
+.shipping-info-container h2 {
+  font-size: 26px;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* 테이블 */
+.shipping-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  table-layout: fixed;
+}
+
+.shipping-table th {
+  background-color: #7cc7de;
+  color: white;
+  font-weight: 600;
+  padding: 14px;
+}
+
+.shipping-table td {
+  padding: 14px 10px;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #eee;
+  color: #555;
+}
+
+/* 상품정보 셀 (이미지 + 텍스트 가로 정렬) */
+.detail-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  text-align: left;
+}
+
+/* 이미지 */
+.detail-info img {
+  width: 65px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* 상품명 + 업체명 */
+.detail-info div p:first-child {
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 2px;
+}
+.detail-info div p:last-child {
+  font-size: 13px;
+  color: #888;
+}
+
+/* 상태 셀 */
+.status-box {
+  display: flex;
+  flex-direction: column; /* 상태 + 버튼 세로 정렬 */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.status-box p {
+  font-weight: 500;
+  color: #333;
+}
+
+/* 버튼 */
+.status-btn-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+.status-btn-box button,
+.review-upload-link
+ {
+  border: 1px solid #7cc7de;
+  border-radius: 4px;
+  background-color: white;
+  color: #333;
+  font-size: 13px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  width: 90px;
+  text-decoration: none;
+}
+
+.status-btn-box button:hover,
+.review-upload-link:hover {
+  background-color: #7cc7de;
+  color: white;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .shipping-info-container {
+    width: 95%;
+  }
+
+  .shipping-table th,
+  .shipping-table td {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .detail-info img {
+    width: 55px;
+    height: 55px;
+  }
+
+  .status-btn-box button {
+    width: 80px;
+    font-size: 12px;
+  }
+}

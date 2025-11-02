@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+.sort-section {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px 0 20px 0;
+}
+
+.sort-section select {
+    margin-left: 5px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
