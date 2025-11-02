@@ -585,59 +585,6 @@ public class ProductService {
                 });
     }
 
-    /**
-     * Quill 에디터의 이미지를 임시 폴더에 업로드하고 임시 URL을 반환합니다.
-     *
-     * @param imageFile 업로드된 이미지 파일
-     * @return 웹에서 접근 가능한 임시 이미지 URL
-     */
-    @Transactional
-    public String uploadTempDescriptionImage(MultipartFile imageFile) {
-        // 1. 임시 파일 저장 경로 설정 및 생성
-        String tempPath = getOsIndependentPath(uploadDir, "temp");
-        try {
-            Files.createDirectories(Paths.get(tempPath));
-        } catch (IOException e) {
-            throw new java.io.UncheckedIOException("임시 이미지 폴더 생성에 실패했습니다.", e);
-        }
-
-        // 2. 파일 저장
-        String storedFileName = fileUtils.saveFile(imageFile, tempPath);
-
-        // 3. 임시 이미지 접근 URL 생성 및 반환 (WebConfig 설정과 일치해야 함)
-        // 예: /temp/uuid_image.jpg
-        return "/temp/" + storedFileName; // 슬래시 사용
-    }
-
-    @Transactional
-    public String uploadDescriptionImage(Long sellerUid, Long productId, MultipartFile imageFile) {
-        // 1. 상품 소유권 확인
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
-
-        if (!product.getSeller().getSellerUid().equals(sellerUid)) {
-            throw new AccessDeniedException("해당 상품에 대한 수정 권한이 없습니다.");
-        }
-
-        // 2. 파일 저장 경로 설정 및 생성
-        String descriptionPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
-        try {
-            Files.createDirectories(Paths.get(descriptionPath));
-        } catch (IOException e) {
-            throw new java.io.UncheckedIOException("상품 설명 이미지 폴더 생성에 실패했습니다.", e);
-        }
-
-        // 3. 파일 저장
-        String storedFileName = fileUtils.saveFile(imageFile, descriptionPath);
-
-        // 4. 이미지 접근 URL 생성 및 반환
-        // WebConfig에서 /uploads/** 요청을 처리하므로, 그에 맞는 경로를 만들어준다.
-        // 예: /product/1/description/uuid_image.jpg
-        // 프론트엔드에서는 서버 주소(http://localhost:9090)와 이 경로를 조합하여 사용합니다.
-        String imageUrl = "/product/" + productId + "/description/" + storedFileName; // 슬래시 사용
-        return imageUrl;
-    }
-
     @Transactional
     public void softDeleteProduct(Long sellerUid, Long productId) {
         ProductEntity product = productRepository.findById(productId)
