@@ -1,0 +1,66 @@
+@charset 'UTF-8';
+
+.productCard {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.productCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.productImageWrapper {
+    width: 100%;
+    padding-top: 100%;
+    /* 1:1 비율 */
+    position: relative;
+    overflow: hidden;
+}
+
+.productImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.productInfo {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.productName {
+    font-size: 16px;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+    flex-grow: 1;
+    /* 이름이 길어도 가격이 아래에 붙도록 */
+}
+
+.productPrice {
+    margin-top: auto;
+    /* 가격을 아래로 */
+}
+
+.productPrice .originalPrice {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 13px;
+    margin-right: 8px;
+}
+
+.productPrice .salePrice {
+    font-size: 18px;
+    font-weight: bold;
+}
