@@ -33,7 +33,8 @@ import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.dto.ProductListDTO;
-import it.back.product.dto.ProductUpdateDTO;
+import it.back.product.dto.ProductUpdateRequestDTO;
+import it.back.product.dto.ProductUpdateResponseDTO;
 import it.back.product.entity.ProductDetailEntity;
 import it.back.product.entity.ProductEntity;
 import it.back.product.entity.ProductImageEntity;
@@ -183,7 +184,7 @@ public class ProductService {
 
     @Transactional // 트랜잭션 적용: 상품 정보와 이미지 저장이 하나의 단위로 처리되도록
     public ProductDTO createProduct(Long sellerUid, ProductCreateDTO dto, MultipartFile mainImage,
-            List<MultipartFile> subImages, List<MultipartFile> descriptionImages) {
+            List<MultipartFile> subImages, List<MultipartFile> description) {
         // 1. 판매자 정보 조회
         SellerEntity seller = sellerRepository.findById(sellerUid)
                 .orElseThrow(() -> new IllegalArgumentException("판매자 정보를 찾을 수 없습니다."));
@@ -203,10 +204,10 @@ public class ProductService {
         // 2-1. description 이미지들을 먼저 저장하고 실제 URL 생성
         String descriptionPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
         List<String> descriptionImageUrls = new ArrayList<>();
-        if (descriptionImages != null && !descriptionImages.isEmpty()) {
+        if (description != null && !description.isEmpty()) {
             try {
                 Files.createDirectories(Paths.get(descriptionPath));
-                for (MultipartFile imageFile : descriptionImages) {
+                for (MultipartFile imageFile : description) {
                     if (imageFile.isEmpty()) {
                         continue;
                     }
@@ -277,9 +278,24 @@ public class ProductService {
         return new ProductDTO(finalProduct);
     }
 
+    @Transactional(readOnly = true)
+    public ProductUpdateResponseDTO getProductForUpdate(Long sellerUid, Long productId) {
+        // 1. 상품 조회 (이미지 포함)
+        ProductEntity product = productRepository.findByIdWithImages(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        // 2. 권한 확인
+        if (!product.getSeller().getSellerUid().equals(sellerUid)) {
+            throw new AccessDeniedException("해당 상품에 대한 수정 권한이 없습니다.");
+        }
+
+        // 3. ProductUpdateResponseDTO로 변환하여 반환
+        return new ProductUpdateResponseDTO(product);
+    }
+
     @Transactional
-    public ProductDTO updateProduct(Long sellerUid, Long productId, ProductUpdateDTO dto,
-            MultipartFile newMainImage, List<MultipartFile> newSubImages) {
+    public ProductDTO updateProduct(Long sellerUid, Long productId, ProductUpdateRequestDTO dto,
+            MultipartFile mainImage, List<MultipartFile> subImages, List<MultipartFile> description) {
         // 1. 상품 조회 및 권한 확인
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
@@ -305,28 +321,45 @@ public class ProductService {
         // 3. 상품 상세 정보 업데이트
         ProductDetailEntity detail = productDetailRepository.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("상품 상세 정보를 찾을 수 없습니다. ID: " + productId));
-        // 상품 설명(description)의 임시 이미지 처리
+
+        // 3-1. description의 새 이미지 처리 (data-image-id 방식)
         if (dto.getDescription() != null) {
-            try {
-                // 1. 기존 설명에서 이미지 URL 목록 추출
-                List<String> oldImageUrls = extractImageUrlsFromHtml(detail.getDescription());
-                // 2. 새 설명으로 업데이트하고, 새 설명의 이미지 URL 목록 추출
-                String newDescription = moveTempImagesToPermanent(productId, dto.getDescription());
-                detail.setDescription(newDescription);
-                List<String> newImageUrls = extractImageUrlsFromHtml(newDescription);
-                // 3. 삭제된 이미지(고아 이미지) 파일 시스템에서 삭제
-                deleteOrphanedDescriptionImages(oldImageUrls, newImageUrls);
-            } catch (IOException e) {
-                throw new java.io.UncheckedIOException("상품 설명 이미지 처리 중 오류가 발생했습니다.", e);
+            String descriptionPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
+            List<String> newDescriptionImageUrls = new ArrayList<>();
+
+            // 새 이미지가 있으면 저장
+            if (description != null && !description.isEmpty()) {
+                try {
+                    Files.createDirectories(Paths.get(descriptionPath));
+                    for (MultipartFile imageFile : description) {
+                        if (imageFile.isEmpty()) {
+                            continue;
+                        }
+                        String storedName = fileUtils.saveFile(imageFile, descriptionPath);
+                        String imageUrl = "/product/" + productId + "/description/" + storedName;
+                        newDescriptionImageUrls.add(imageUrl);
+                    }
+                } catch (IOException e) {
+                    throw new java.io.UncheckedIOException("상품 설명 이미지 저장 중 오류가 발생했습니다.", e);
+                }
             }
+
+            // 기존 description과 새 description을 병합 (data-image-id가 있는 것만 교체)
+            String updatedDescription = replaceImageIdsWithUrls(
+                    dto.getDescription(),
+                    dto.getImageMapping(),
+                    newDescriptionImageUrls
+            );
+            detail.setDescription(updatedDescription);
         }
+
         if (dto.getShippingInfo() != null) {
             detail.setShippingInfo(dto.getShippingInfo());
         }
         productDetailRepository.save(detail); // 상세 정보 저장
 
         // 4. 메인 이미지 업데이트
-        if (newMainImage != null && !newMainImage.isEmpty()) {
+        if (mainImage != null && !mainImage.isEmpty()) {
             // 기존 메인 이미지 파일 삭제
             if (product.getThumbnailUrl() != null && !product.getThumbnailUrl().isEmpty()) {
                 String oldMainImageFullPath = getOsIndependentPath(uploadDir, product.getThumbnailUrl());
@@ -335,7 +368,7 @@ public class ProductService {
             // 새 메인 이미지 저장
             String productBaseDir = getOsIndependentPath(uploadDir, "product", String.valueOf(productId));
             String mainImageDir = getOsIndependentPath(productBaseDir, "main");
-            String storedName = fileUtils.saveFile(newMainImage, mainImageDir);
+            String storedName = fileUtils.saveFile(mainImage, mainImageDir);
             String newMainImageUrlPath = "/product/" + productId + "/main/" + storedName;
             product.setThumbnailUrl(newMainImageUrlPath);
         }
@@ -359,7 +392,7 @@ public class ProductService {
         }
 
         // 6. 새 서브 이미지 추가
-        if (newSubImages != null && !newSubImages.isEmpty()) {
+        if (subImages != null && !subImages.isEmpty()) {
             List<ProductImageEntity> newImageEntities = new ArrayList<>();
             // 현재 존재하는 이미지들의 sortOrder를 고려하여 새로운 이미지의 sortOrder를 설정
             int maxSortOrder = product.getProductImages().stream()
@@ -370,7 +403,7 @@ public class ProductService {
             String productBaseDir = getOsIndependentPath(uploadDir, "product", String.valueOf(productId));
             String subImageDir = getOsIndependentPath(productBaseDir, "sub");
 
-            for (MultipartFile file : newSubImages) {
+            for (MultipartFile file : subImages) {
                 if (file.isEmpty()) {
                     continue;
                 }

@@ -28,7 +28,8 @@ import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.dto.ProductListDTO;
-import it.back.product.dto.ProductUpdateDTO;
+import it.back.product.dto.ProductUpdateRequestDTO;
+import it.back.product.dto.ProductUpdateResponseDTO;
 import it.back.product.entity.ProductDetailEntity;
 import it.back.product.service.ProductService;
 import it.back.review.dto.ReviewDTO;
@@ -71,7 +72,7 @@ public class ProductController {
             @RequestPart("productData") ProductCreateDTO productCreateDTO,
             @RequestPart("mainImage") MultipartFile mainImage,
             @RequestPart(name = "subImages", required = false) List<MultipartFile> subImages,
-            @RequestPart(name = "descriptionImages", required = false) List<MultipartFile> descriptionImages) {
+            @RequestPart(name = "description", required = false) List<MultipartFile> description) {
 
         Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
 
@@ -80,9 +81,20 @@ public class ProductController {
                 productCreateDTO,
                 mainImage,
                 subImages,
-                descriptionImages);
+                description);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(savedProduct));
+    }
+
+    // 상품 수정 정보 조회 (수정 화면용)
+    @GetMapping("/{productId}/edit")
+    public ResponseEntity<ApiResponse<ProductUpdateResponseDTO>> getProductForUpdate(
+            @PathVariable Long productId,
+            Authentication authentication) {
+
+        Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
+        ProductUpdateResponseDTO productData = productService.getProductForUpdate(sellerUid, productId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productData));
     }
 
     // 상품 수정 (이미지 수정/삭제 포함)
@@ -90,18 +102,20 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(
             @PathVariable Long productId,
             Authentication authentication,
-            @RequestPart("productData") ProductUpdateDTO productUpdateDTO,
-            @RequestPart(name = "newMainImage", required = false) MultipartFile newMainImage,
-            @RequestPart(name = "newSubImages", required = false) List<MultipartFile> newSubImages) {
+            @RequestPart("productData") ProductUpdateRequestDTO productData,
+            @RequestPart(name = "mainImage", required = false) MultipartFile mainImage,
+            @RequestPart(name = "subImages", required = false) List<MultipartFile> subImages,
+            @RequestPart(name = "description", required = false) List<MultipartFile> description) {
 
         Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
 
         ProductDTO updatedProduct = productService.updateProduct(
                 sellerUid,
                 productId,
-                productUpdateDTO,
-                newMainImage,
-                newSubImages);
+                productData,
+                mainImage,
+                subImages,
+                description);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedProduct));
     }
 
