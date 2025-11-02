@@ -22,6 +22,12 @@ import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.review.specification.ReviewSpecifications;
 
+import it.back.product.repository.ProductLikeRepository;
+import it.back.review.service.ReviewService;
+import it.back.product.dto.ProductListDTO;
+import it.back.product.entity.ProductEntity;
+import it.back.product.entity.ProductLikeEntity;
+
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
@@ -43,6 +49,8 @@ public class BuyerService {
 
     private final BuyerRepository buyerRepository;
     private final ReviewRepository reviewRepository;
+    private final ProductLikeRepository productLikeRepository;
+    private final ReviewService reviewService;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
     private final Validator validator;
@@ -359,6 +367,23 @@ public class BuyerService {
             dto.setOrderDetailId(review.getOrderDetail().getOrderDetailId());
             return dto;
         }).toList();
+
+        return new PageResponseDTO<>(page, dtos);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponseDTO<ProductListDTO> getLikedProducts(Long buyerUid, PageRequestDTO pageRequestDTO, String productName, String companyName, Long productId) {
+        Pageable pageable = pageRequestDTO.toPageable();
+
+        Page<ProductLikeEntity> page = productLikeRepository.findLikedProductsByBuyer(buyerUid, productName, companyName, productId, pageable);
+
+        List<ProductListDTO> dtos = page.getContent().stream().map(likeEntity -> {
+            ProductEntity product = likeEntity.getProduct();
+            ProductListDTO dto = new ProductListDTO(product);
+            dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(product.getProductId()));
+            dto.setAverageRating(reviewService.calculateAverageRating(product.getProductId()));
+            return dto;
+        }).collect(Collectors.toList());
 
         return new PageResponseDTO<>(page, dtos);
     }
