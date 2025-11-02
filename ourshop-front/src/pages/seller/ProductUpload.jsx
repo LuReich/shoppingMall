@@ -166,6 +166,12 @@ function ProductUpload() {
   };
 
   // 서브 이미지 삭제 핸들러
+  const dragItem = useRef();
+  const dragOverItem = useRef();
+
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
+
   const handleRemoveSubImage = (indexToRemove) => {
     const imageToRemove = subImageUrls[indexToRemove];
 
@@ -174,10 +180,32 @@ function ProductUpload() {
       setDeletedImageIds(prev => [...prev, imageToRemove.imageId]);
     }
 
-    const updatedUrls = subImageUrls.filter((_, index) => index !== indexToRemove);
-    setSubImageUrls(updatedUrls);
-    const newFiles = updatedUrls.filter(img => img.isNew).map(img => img.file);
     setValue("subImages", newFiles, { shouldValidate: true });
+  };
+
+  const handleSubImageDragStart = (position) => {
+    dragItem.current = position;
+  };
+
+  const handleSubImageDragEnter = (position) => {
+    dragOverItem.current = position;
+  };
+
+  const handleSubImageDrop = () => {
+    if (dragItem.current === dragOverItem.current) return;
+
+    const newSubImageUrls = [...subImageUrls];
+    const dragItemContent = newSubImageUrls[dragItem.current];
+    newSubImageUrls.splice(dragItem.current, 1);
+    newSubImageUrls.splice(dragOverItem.current, 0, dragItemContent);
+    
+    setSubImageUrls(newSubImageUrls);
+
+    const newFiles = newSubImageUrls.filter(img => img.isNew).map(img => img.file);
+    setValue("subImages", newFiles, { shouldValidate: true });
+
+    dragItem.current = null;
+    dragOverItem.current = null;
   };
 
   //이미지 서버 업로드 (백엔드 data-image-id 방식으로 변경)
@@ -393,7 +421,7 @@ function ProductUpload() {
           ["bold", "italic", "underline", "strike"],
           [{ list: "ordered" }, { list: "bullet" }],
           [{ align: [] }, { color: [] }],
-          ["link", "image"],
+          ["link", "image", "video"],
           ["clean"],
         ],
         handlers: {
@@ -616,9 +644,16 @@ function ProductUpload() {
             />
           </label>
           {subImageUrls?.length > 0 && (
-            <div className="sub-image-preview-container">
+            <div className="sub-image-preview-container" onDragOver={(e) => e.preventDefault()}>
               {subImageUrls.map((url, i) => (
-                <div key={i} className="sub-image-preview-item">
+                <div 
+                  key={i} 
+                  className="sub-image-preview-item"
+                  draggable
+                  onDragStart={() => handleSubImageDragStart(i)}
+                  onDragEnter={() => handleSubImageDragEnter(i)}
+                  onDragEnd={handleSubImageDrop}
+                >
                   <img src={url.url} alt={`미리보기 ${i + 1}`} />
                   <button type="button" className="remove-image-btn" onClick={() => handleRemoveSubImage(i)}>
                     ×
