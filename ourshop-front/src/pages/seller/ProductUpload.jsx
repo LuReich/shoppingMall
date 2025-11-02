@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill-new";
+import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { useProduct } from "../../hooks/useProduct";
 import "../../assets/css/ProductUpload.css";
@@ -280,28 +281,31 @@ function ProductUpload() {
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
-    const el = editor.root;
+    console.log("DND: useEffect init");
 
+    const el = editor.root;
     let selectedImg = null;
-    let startX, startY, startWidth, isResizing = false, isDragging = false;
+    let isDragging = false;
+    let isResizing = false;
+    let startX, startWidth;
 
     const handleMouseDown = (e) => {
       const img = e.target.closest("img");
       if (!img) return;
 
       if (e.shiftKey) {
-        // Shift + 드래그 = 리사이즈
+        console.log("DND: Start resizing", img);
         isResizing = true;
         selectedImg = img;
         startX = e.clientX;
         startWidth = img.offsetWidth;
         img.style.outline = "2px solid #2193b0";
+        e.preventDefault();
       } else {
-        // 그냥 드래그 = 위치 변경
+        console.log("DND: Start dragging", img);
         isDragging = true;
         selectedImg = img;
-        startY = e.clientY;
-        img.style.opacity = "0.5";
+        e.preventDefault();
       }
     };
 
@@ -309,38 +313,80 @@ function ProductUpload() {
       if (isResizing && selectedImg) {
         const delta = e.clientX - startX;
         selectedImg.style.width = `${Math.max(50, startWidth + delta)}px`;
+        e.preventDefault();
       } else if (isDragging && selectedImg) {
-        const deltaY = e.clientY - startY;
-        selectedImg.style.transform = `translateY(${deltaY}px)`;
+        e.preventDefault();
       }
     };
 
     const handleMouseUp = (e) => {
       if (isResizing && selectedImg) {
+        console.log("DND: End resizing");
         selectedImg.style.outline = "none";
-        selectedImg = null;
         isResizing = false;
-      } else if (isDragging && selectedImg) {
-        const imgs = [...el.querySelectorAll("img")];
-        const index = imgs.indexOf(selectedImg);
-        const deltaY = e.clientY - startY;
-        const next = deltaY > 0 ? imgs[index + 1] : imgs[index - 1];
-        if (next) {
-          const parent = selectedImg.parentNode;
-          parent.insertBefore(selectedImg, deltaY > 0 ? next.nextSibling : next);
-        }
-        selectedImg.style.opacity = "1";
-        selectedImg.style.transform = "none";
         selectedImg = null;
+      } else if (isDragging && selectedImg) {
+        console.log("DND: End dragging / MouseUp event");
         isDragging = false;
+
+        const editor = quillRef.current.getEditor();
+        const blot = Quill.find(selectedImg, true);
+        if (!blot) {
+            console.error("DND: Could not find blot for selected image.", selectedImg);
+            selectedImg = null;
+            return;
+        }
+        const originalIndex = editor.getIndex(blot);
+        console.log(`DND: Original index: ${originalIndex}`);
+
+        // Find drop position by iterating through lines
+        let targetIndex = editor.getLength(); // Default to the very end
+        const lines = editor.getLines();
+        for (const line of lines) {
+            const bounds = line.domNode.getBoundingClientRect();
+            if (e.clientY < bounds.top + bounds.height / 2) {
+                targetIndex = editor.getIndex(line);
+                break;
+            }
+        }
+        
+        console.log(`DND: Target index: ${targetIndex}`);
+
+        const imageSrc = blot.domNode.src;
+        const imageId = blot.domNode.getAttribute('data-image-id');
+        console.log(`DND: Image ID: ${imageId}, Src: ${imageSrc.substring(0, 50)}...`);
+
+        // Only move if the position is different
+        if (targetIndex !== originalIndex && targetIndex !== originalIndex + 1) {
+            console.log("DND: Moving image...");
+            const newIndex = originalIndex < targetIndex ? targetIndex - 1 : targetIndex;
+            editor.deleteText(originalIndex, 1, 'user');
+            console.log(`DND: Deleting from ${originalIndex}, Inserting at ${newIndex}`);
+            editor.insertEmbed(newIndex, 'image', imageSrc, 'user');
+            
+            setTimeout(() => {
+                const [newBlot] = editor.getLeaf(newIndex);
+                if (newBlot && newBlot.statics.blotName === 'image') {
+                    newBlot.domNode.setAttribute('data-image-id', imageId);
+                    console.log(`DND: Re-applied data-image-id '${imageId}' to new image blot.`);
+                } else {
+                    console.error(`DND: Failed to re-apply data-image-id. Blot at new index ${newIndex} is not the expected image.`, newBlot);
+                }
+            }, 100);
+        } else {
+            console.log("DND: No move needed, target is same as original or adjacent.");
+        }
+        selectedImg = null;
       }
     };
 
+    // Use document for mousemove and mouseup to handle cases where the mouse leaves the editor
     el.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
+      console.log("DND: useEffect cleanup");
       el.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
