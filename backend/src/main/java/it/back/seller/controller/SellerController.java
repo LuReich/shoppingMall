@@ -61,8 +61,20 @@ public class SellerController {
 
     // 공개용 판매자 정보 조회 (비로그인/로그인 모두 접근 가능)
     @GetMapping("/public/{sellerUid}")
-    public ResponseEntity<ApiResponse<SellerPublicDTO>> getSellerPublicInfo(@PathVariable Long sellerUid) {
+    public ResponseEntity<ApiResponse<SellerPublicDTO>> getSellerPublicInfo(@PathVariable("sellerUid") Long sellerUid) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerService.getSellerPublicInfo(sellerUid)));
+    }
+
+    // 공개용 판매자 상품 목록 조회 (비로그인/로그인 모두 접근 가능)
+    @GetMapping("/public/{sellerUid}/product/list")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getPublicSellerProducts(
+            @PathVariable("sellerUid") Long sellerUid,
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
+            @RequestParam(name = "productName", required = false) String productName,
+            @RequestParam(name = "productId", required = false) Long productId) {
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
     }
 
     // seller 등록용
