@@ -28,6 +28,7 @@ import it.back.product.dto.ProductListDTO;
 import it.back.product.entity.ProductEntity;
 import it.back.product.entity.ProductLikeEntity;
 
+import it.back.admin.dto.AdminUpdateBuyerRequestDTO; // New import
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.dto.BuyerRegisterDTO;
 import it.back.buyer.dto.BuyerResponseDTO;
@@ -192,6 +193,111 @@ public class BuyerService {
 
         // 변경사항은 @Transactional에 의해 자동 반영
         return buyer;
+    }
+
+    @Transactional
+    public BuyerResponseDTO adminUpdateBuyer(Long buyerUid, AdminUpdateBuyerRequestDTO dto) {
+        BuyerEntity buyer = buyerRepository.findById(buyerUid)
+                .orElseThrow(() -> new IllegalArgumentException("Buyer not found with uid: " + buyerUid));
+
+        // Update buyerId
+        if (dto.getBuyerId() != null && !dto.getBuyerId().isBlank()) {
+            if (!buyer.getBuyerId().equals(dto.getBuyerId())) { // Only check uniqueness if ID is actually changed
+                buyerRepository.findByBuyerId(dto.getBuyerId()).ifPresent(existing -> {
+                    throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+                });
+            }
+            buyer.setBuyerId(dto.getBuyerId());
+        }
+
+        // Update password
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            Set<ConstraintViolation<AdminUpdateBuyerRequestDTO>> pwViolations = validator.validateProperty(dto, "password");
+            if (!pwViolations.isEmpty()) {
+                throw new ConstraintViolationException(pwViolations);
+            }
+            buyer.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        // Update nickname
+        if (dto.getNickname() != null) {
+            buyer.setNickname(dto.getNickname());
+        }
+
+        // Update buyerEmail
+        if (dto.getBuyerEmail() != null && !dto.getBuyerEmail().isBlank()) {
+            if (!buyer.getBuyerEmail().equals(dto.getBuyerEmail())) { // Only check uniqueness if email is actually changed
+                buyerRepository.findByBuyerEmail(dto.getBuyerEmail()).ifPresent(existing -> {
+                    throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+                });
+            }
+            Set<ConstraintViolation<AdminUpdateBuyerRequestDTO>> emailViolations = validator.validateProperty(dto, "buyerEmail");
+            if (!emailViolations.isEmpty()) {
+                throw new ConstraintViolationException(emailViolations);
+            }
+            buyer.setBuyerEmail(dto.getBuyerEmail());
+        }
+
+        // Update isActive
+        if (dto.getIsActive() != null) {
+            buyer.setActive(dto.getIsActive());
+        }
+
+        // Update withdrawalStatus
+        if (dto.getWithdrawalStatus() != null) {
+            buyer.setWithdrawalStatus(dto.getWithdrawalStatus());
+        }
+
+        // Update withdrawalReason
+        if (dto.getWithdrawalReason() != null) {
+            buyer.setWithdrawalReason(dto.getWithdrawalReason());
+        }
+
+        // Update BuyerDetailEntity fields
+        BuyerDetailEntity detail = buyer.getBuyerDetail();
+        if (detail == null) {
+            detail = new BuyerDetailEntity();
+            detail.setBuyer(buyer);
+            buyer.setBuyerDetail(detail);
+        }
+
+        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+            if (!detail.getPhone().equals(dto.getPhone())) { // Only check uniqueness if phone is actually changed
+                buyerRepository.findAll().stream()
+                        .filter(b -> b.getBuyerDetail() != null && dto.getPhone().equals(b.getBuyerDetail().getPhone()))
+                        .filter(b -> !b.getBuyerUid().equals(buyerUid))
+                        .findAny()
+                        .ifPresent(b -> {
+                            throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
+                        });
+            }
+            detail.setPhone(dto.getPhone());
+        }
+        if (dto.getAddress() != null) {
+            detail.setAddress(dto.getAddress());
+        }
+        if (dto.getAddressDetail() != null) {
+            detail.setAddressDetail(dto.getAddressDetail());
+        }
+        if (dto.getBirth() != null) {
+            detail.setBirth(dto.getBirth());
+        }
+        if (dto.getGender() != null) {
+            try {
+                detail.setGender(BuyerDetailEntity.Gender.valueOf(dto.getGender().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("gender 값이 올바르지 않습니다. (허용값: MALE, FEMALE, UNSELECTED)");
+            }
+        }
+
+        // Explicitly validate the entity
+        Set<ConstraintViolation<BuyerEntity>> violations = validator.validate(buyer);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
+        buyerRepository.save(buyer); // Save changes
+        return new BuyerResponseDTO(buyer);
     }
 
     /**
