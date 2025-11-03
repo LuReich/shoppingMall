@@ -128,6 +128,8 @@ create table product (
     price int unsigned not null comment '가격',
     stock int unsigned not null comment '재고 수량',
     thumbnail_url varchar(255) comment '대표 이미지 URL (목록 조회 성능용)',
+    like_count int unsigned default 0 comment '좋아요 수',
+    average_rating decimal(2,1) default 0.0 comment '평균 별점',
     create_at datetime default now() comment '상품 등록일',
     update_at datetime default current_timestamp on update current_timestamp comment '상품 수정일',
     is_deleted boolean default false comment '상품 삭제 여부 (Soft Delete)',
