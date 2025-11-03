@@ -122,7 +122,7 @@ function ProductUpload() {
       const existingImages = p.productImages?.map(img => ({
         url: `http://localhost:9090${img.imagePath}`,
         isNew: false,
-        imageId: img.imageId // 올바른 필드명: imageId
+        imageId: img.imageId // 올른 필드명: imageId
       })) || [];
       setSubImageUrls(existingImages);
       console.log("기존 서브 이미지 로드:", existingImages); // 디버깅
@@ -133,8 +133,6 @@ function ProductUpload() {
   const [mainImageUrl, setMainImageUrl] = useState(null);
   const [subImageUrls, setSubImageUrls] = useState([]);
   const [deletedImageIds, setDeletedImageIds] = useState([]); // 수정 시 삭제된 이미지 ID 추적
-
-
 
   // 대표 이미지 핸들러
   const handleMainImageChange = (e) => {
@@ -211,7 +209,7 @@ function ProductUpload() {
     const dragItemContent = newSubImageUrls[dragItem.current];
     newSubImageUrls.splice(dragItem.current, 1);
     newSubImageUrls.splice(dragOverItem.current, 0, dragItemContent);
-    
+
     setSubImageUrls(newSubImageUrls);
 
     const newFiles = newSubImageUrls.filter(img => img.isNew).map(img => img.file);
@@ -232,17 +230,17 @@ function ProductUpload() {
     if (!editor) return;
 
     const range = editor.getSelection(true);
-    
+
     // YouTube, Vimeo 등 embed URL로 변환
     let embedUrl = videoUrl;
-    
+
     // YouTube URL 처리
     const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
     const youtubeMatch = videoUrl.match(youtubeRegex);
     if (youtubeMatch) {
       embedUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}`;
     }
-    
+
     // Vimeo URL 처리
     const vimeoRegex = /vimeo\.com\/(\d+)/;
     const vimeoMatch = videoUrl.match(vimeoRegex);
@@ -267,22 +265,22 @@ function ProductUpload() {
         img.onload = () => {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-          
+
           let width = img.width;
           let height = img.height;
-          
+
           // 최대 너비 제한
           if (width > maxWidth) {
             height = (height / width) * maxWidth;
             width = maxWidth;
           }
-          
+
           canvas.width = width;
           canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
-          
+
           canvas.toBlob(
-            (blob) => resolve(new File([blob], file.name, {type: 'image/jpeg'})),
+            (blob) => resolve(new File([blob], file.name, { type: 'image/jpeg' })),
             'image/jpeg',
             quality
           );
@@ -296,19 +294,13 @@ function ProductUpload() {
   //이미지 서버 업로드 (백엔드 data-image-id 방식 + 자동 압축)
   const uploadFile = useCallback(async (file) => {
     try {
-      console.log("uploadFile 호출:", file.name, file.type, file.size);
-
       let processedFile = file;
       const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
-      // 2MB 이상이면 자동 압축
       if (file.size > MAX_SIZE) {
-        console.log(`이미지 압축 중... (원본: ${(file.size / 1024 / 1024).toFixed(2)}MB)`);
         processedFile = await compressImage(file, 0.85, 1920);
-        console.log(`압축 완료! (${(processedFile.size / 1024 / 1024).toFixed(2)}MB)`);
       }
 
-      // 이미지를 Data URL로 변환 (에디터 표시용)
       const reader = new FileReader();
       const dataUrl = await new Promise((resolve, reject) => {
         reader.onload = (e) => resolve(e.target.result);
@@ -316,18 +308,9 @@ function ProductUpload() {
         reader.readAsDataURL(processedFile);
       });
 
-      console.log("Data URL 생성 완료");
-
-      // 고유 ID 생성
       const imageId = `temp-${imageIdCounter.current++}`;
-      console.log("Image ID 생성:", imageId);
 
-      // 이미지 정보 저장 (압축된 파일 보관)
-      setDescriptionImages(prev => {
-        const updated = [...prev, { id: imageId, file: processedFile, dataUrl }];
-        console.log("descriptionImages 업데이트:", updated.length, "개");
-        return updated;
-      });
+      setDescriptionImages(prev => [...prev, { id: imageId, file: processedFile, dataUrl }]);
 
       return { imageId, dataUrl };
     } catch (err) {
@@ -343,25 +326,16 @@ function ProductUpload() {
     if (!editor) return;
     const range = editor.getSelection(true);
 
-    console.log("이미지 삽입:", imageId); // 디버깅용
-
-    // 이미지를 삽입 (Data URL)
     editor.insertEmbed(range.index, "image", dataUrl);
-
-    // 커서를 이미지 다음으로 이동
     editor.setSelection(range.index + 1);
 
-    // 방금 삽입한 이미지에 data-image-id 속성 추가
     setTimeout(() => {
       const editorElement = editor.root;
       const images = editorElement.querySelectorAll('img');
-
-      // 가장 최근에 추가된 이미지 찾기 (data-image-id가 없는 것)
       for (let i = images.length - 1; i >= 0; i--) {
         const img = images[i];
         if (!img.getAttribute('data-image-id') && img.src.startsWith('data:')) {
           img.setAttribute('data-image-id', imageId);
-          console.log("data-image-id 설정 완료:", imageId);
           break;
         }
       }
@@ -385,7 +359,7 @@ function ProductUpload() {
               insertImage(imageId, dataUrl);
             } catch (error) {
               console.error("Drop image upload failed", error);
-              break; // Stop on first error
+              break;
             }
           }
         }
@@ -412,99 +386,118 @@ function ProductUpload() {
     };
   }, [uploadFile, insertImage]);
 
-  // 이미지 드래그/드롭 (위치 변경)
+  // ==================================================================
+  // =========== 이미지 드래그/드롭 (위치 변경) - 개선된 로직 ===========
+  // ==================================================================
   useEffect(() => {
     const editor = quillRef.current?.getEditor();
     if (!editor) return;
-    console.log("DND: useEffect init for drag-to-reorder");
 
     const el = editor.root;
     let selectedImg = null;
     let isDragging = false;
+    let dragGhost = null; // 드래그하는 동안 보여줄 반투명 이미지
 
     const handleMouseDown = (e) => {
-      // Ignore clicks on resize handles
+      // 리사이즈 핸들을 클릭한 경우는 무시
       if (e.target.classList.contains('ql-resize-handle')) {
         return;
       }
       const img = e.target.closest("img");
       if (img) {
-        console.log("DND: Start dragging", img);
         isDragging = true;
         selectedImg = img;
+
+        // 드래그 시작 시 반투명 '고스트' 이미지 생성
+        dragGhost = img.cloneNode();
+        dragGhost.style.position = 'absolute';
+        dragGhost.style.opacity = '0.5';
+        dragGhost.style.pointerEvents = 'none'; // 마우스 이벤트 방해 방지
+        document.body.appendChild(dragGhost);
+
+        // 고스트 위치 업데이트
+        dragGhost.style.left = `${e.clientX - dragGhost.width / 2}px`;
+        dragGhost.style.top = `${e.clientY - dragGhost.height / 2}px`;
+
         e.preventDefault();
       }
     };
 
     const handleMouseMove = (e) => {
       if (isDragging && selectedImg) {
+        // 고스트 이미지 위치를 마우스 따라 이동
+        if (dragGhost) {
+          dragGhost.style.left = `${e.clientX - dragGhost.width / 2}px`;
+          dragGhost.style.top = `${e.clientY - dragGhost.height / 2}px`;
+        }
         e.preventDefault();
       }
     };
 
     const handleMouseUp = (e) => {
       if (isDragging && selectedImg) {
-        console.log("DND: End dragging / MouseUp event");
         isDragging = false;
+
+        // 고스트 이미지 제거
+        if (dragGhost) {
+          document.body.removeChild(dragGhost);
+          dragGhost = null;
+        }
 
         const editor = quillRef.current.getEditor();
         const blot = Quill.find(selectedImg, true);
         if (!blot) {
-            console.error("DND: Could not find blot for selected image.", selectedImg);
-            selectedImg = null;
-            return;
+          selectedImg = null;
+          return;
         }
+
         const originalIndex = editor.getIndex(blot);
-        console.log(`DND: Original index: ${originalIndex}`);
-
-        // Find drop position by iterating through lines
-        let targetIndex = editor.getLength(); // Default to the very end
-        const lines = editor.getLines();
-        for (const line of lines) {
-            const bounds = line.domNode.getBoundingClientRect();
-            if (e.clientY < bounds.top + bounds.height / 2) {
-                targetIndex = editor.getIndex(line);
-                break;
-            }
-        }
-        
-        console.log(`DND: Target index: ${targetIndex}`);
-
         const imageSrc = blot.domNode.src;
         const imageId = blot.domNode.getAttribute('data-image-id');
-        console.log(`DND: Image ID: ${imageId}, Src: ${imageSrc.substring(0, 50)}...`);
 
-        // Only move if the position is different
-        if (targetIndex !== originalIndex && targetIndex !== originalIndex + 1) {
-            console.log("DND: Moving image...");
-            const newIndex = originalIndex < targetIndex ? targetIndex - 1 : targetIndex;
-            editor.deleteText(originalIndex, 1, 'user');
-            console.log(`DND: Deleting from ${originalIndex}, Inserting at ${newIndex}`);
-            editor.insertEmbed(newIndex, 'image', imageSrc, 'user');
-            
-            setTimeout(() => {
-                const [newBlot] = editor.getLeaf(newIndex);
-                if (newBlot && newBlot.statics.blotName === 'image') {
-                    newBlot.domNode.setAttribute('data-image-id', imageId);
-                    console.log(`DND: Re-applied data-image-id '${imageId}' to new image blot.`);
-                } else {
-                    console.error(`DND: Failed to re-apply data-image-id. Blot at new index ${newIndex} is not the expected image.`, newBlot);
-                }
-            }, 100);
+        // ==== 핵심 개선: 마우스 좌표로 정확한 텍스트 위치 찾기 ====
+        let targetIndex = 0;
+        // document.caretRangeFromPoint는 Firefox/Chrome에서 지원
+        // 일부 브라우저에서는 caretPositionFromPoint 사용
+        const range = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
+
+        if (range && editor.root.contains(range.startContainer)) {
+          const targetBlot = Quill.find(range.startContainer, true);
+          if (targetBlot) {
+            targetIndex = editor.getIndex(targetBlot) + range.startOffset;
+          }
         } else {
-            console.log("DND: No move needed, target is same as original or adjacent.");
+          // 에디터 밖에서 드롭하거나, 범위를 찾지 못하면 이동하지 않음
+          selectedImg = null;
+          return;
         }
+        // =========================================================
+
+        // 위치가 실제로 변경되었을 때만 DOM 조작
+        const newIndex = originalIndex < targetIndex ? targetIndex - 1 : targetIndex;
+        if (newIndex !== originalIndex) {
+          editor.deleteText(originalIndex, 1, 'user');
+          editor.insertEmbed(newIndex, 'image', imageSrc, 'user');
+
+          // data-image-id를 다시 적용
+          setTimeout(() => {
+            const [newBlot] = editor.getLeaf(newIndex);
+            if (newBlot && newBlot.statics.blotName === 'image') {
+              newBlot.domNode.setAttribute('data-image-id', imageId);
+            }
+          }, 100);
+        }
+
         selectedImg = null;
       }
     };
 
-    // Use document for mousemove and mouseup to handle cases where the mouse leaves the editor
+    // document에 이벤트를 등록하여 에디터 밖으로 마우스가 나가도 추적
     el.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      console.log("DND: useEffect cleanup");
       el.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -545,7 +538,7 @@ function ProductUpload() {
                     insertImage(imageId, dataUrl);
                   } catch (error) {
                     console.error("Toolbar image upload failed", error);
-                    break; 
+                    break;
                   }
                 }
               }
@@ -561,7 +554,7 @@ function ProductUpload() {
         modules: ['Resize', 'DisplaySize']
       }
     }),
-    [uploadFile]
+    [uploadFile, insertImage] // insertImage를 의존성 배열에 추가
   );
 
   // 상품 등록/수정
@@ -573,7 +566,6 @@ function ProductUpload() {
       return;
     }
 
-    // description HTML에서 data-image-id 추출하여 imageMapping 생성
     const parser = new DOMParser();
     const doc = parser.parseFromString(description, 'text/html');
     const images = doc.querySelectorAll('img[data-image-id]');
@@ -583,49 +575,37 @@ function ProductUpload() {
     images.forEach(img => {
       const imageId = img.getAttribute('data-image-id');
       imageMapping.push(imageId);
-
-      // Data URL을 빈 문자열로 교체 (백엔드가 실제 URL로 채움)
       img.setAttribute('src', '');
-
-      // descriptionImages에서 해당 파일 찾기 (새로 추가된 이미지만)
       const imageData = descriptionImages.find(item => item.id === imageId);
       if (imageData) {
         descriptionFiles.push(imageData.file);
       }
     });
 
-    // 기존 이미지는 src를 그대로 유지 (data-image-id가 없는 이미지)
     const existingImages = doc.querySelectorAll('img:not([data-image-id])');
     existingImages.forEach(img => {
-      // 기존 이미지는 src를 상대 경로로 변환 (http://localhost:9090 제거)
       const src = img.getAttribute('src');
       if (src && src.startsWith('http://localhost:9090')) {
         img.setAttribute('src', src.replace('http://localhost:9090', ''));
       }
     });
 
-    // 수정된 HTML 가져오기
     const cleanedDescription = doc.body.innerHTML;
 
     const productData = {
       ...productDataFields,
       categoryId: Number(productDataFields.categoryId),
       description: cleanedDescription,
-      imageMapping: imageMapping, // 새 이미지 순서 배열
+      imageMapping: imageMapping,
     };
 
     if (isEditMode) {
       productData.deleteImageIds = deletedImageIds;
     }
 
-    // If editing and a new main image is uploaded, add the old URL for deletion.
     if (isEditMode && mainImage && mainImage.length > 0 && initialProductData?.content?.thumbnailUrl) {
       productData.deleteMainImage = initialProductData.content.thumbnailUrl;
     }
-
-    console.log("전송할 productData:", productData);
-    console.log("전송할 description 이미지 파일:", descriptionFiles.length, "개");
-    console.log("삭제할 서브 이미지 ID:", deletedImageIds);
 
     const formData = new FormData();
     formData.append(
@@ -633,22 +613,18 @@ function ProductUpload() {
       new Blob([JSON.stringify(productData)], { type: "application/json" })
     );
 
-    // Append the new main image file if it exists
     if (mainImage && mainImage.length > 0) {
       formData.append("mainImage", mainImage[0]);
     }
 
-    // Append new sub-image files
     if (subImages && subImages.length > 0) {
       Array.from(subImages).forEach((img) => formData.append("subImages", img));
     }
 
-    // description 이미지 파일들 추가 (새로 추가된 것만)
     descriptionFiles.forEach(file => {
       formData.append("description", file);
     });
 
-    // 수정 모드와 등록 모드 분기
     if (isEditMode) {
       updateMutate({ productId, formData }, {
         onSuccess: () => {
@@ -772,8 +748,8 @@ function ProductUpload() {
           {subImageUrls?.length > 0 && (
             <div className="sub-image-preview-container" onDragOver={(e) => e.preventDefault()}>
               {subImageUrls.map((url, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className="sub-image-preview-item"
                   draggable
                   onDragStart={() => handleSubImageDragStart(i)}
