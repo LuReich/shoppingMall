@@ -189,7 +189,7 @@ public class BuyerController {
     }
 
     @PostMapping("/likes/{productId}")
-    public ResponseEntity<ApiResponse<String>> toggleLike(Authentication authentication, @PathVariable Long productId) {
+    public ResponseEntity<ApiResponse<String>> toggleLike(Authentication authentication, @PathVariable("productId") Long productId) {
         Long buyerUid = extractUidFromAuth(authentication);
         if (buyerUid == null) {
             throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
