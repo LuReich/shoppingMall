@@ -45,7 +45,9 @@ public class ReviewService {
         if (!review.getBuyer().getBuyerId().equals(userId)) {
             throw new IllegalAccessException("본인 리뷰만 삭제할 수 있습니다.");
         }
+        Long productId = review.getProduct().getProductId();
         reviewRepository.delete(review);
+        updateProductAverageRating(productId); // 평점 업데이트
     }
 
     @Transactional
@@ -70,6 +72,7 @@ public class ReviewService {
         review.setContent(request.getContent());
         review.setRating(request.getRating());
         reviewRepository.save(review);
+        updateProductAverageRating(review.getProduct().getProductId()); // 평점 업데이트
     }
 
     @Transactional(readOnly = true)
@@ -126,6 +129,8 @@ public class ReviewService {
         review.setCreateAt(LocalDateTime.now());
         reviewRepository.save(review);
 
+        updateProductAverageRating(product.getProductId()); // 평점 업데이트
+
         resultMap.put("resultCode", 200);
         resultMap.put("resultMsg", "리뷰가 등록되었습니다.");
         resultMap.put("reviewId", review.getReviewId());
@@ -142,5 +147,11 @@ public class ReviewService {
                 .mapToInt(ReviewEntity::getRating)
                 .average()
                 .orElse(0.0);
+    }
+
+    // 상품 평점 업데이트
+    private void updateProductAverageRating(Long productId) {
+        Double averageRating = reviewRepository.calculateAverageRating(productId);
+        productRepository.updateAverageRating(productId, averageRating);
     }
 }

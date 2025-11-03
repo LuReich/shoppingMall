@@ -112,23 +112,9 @@ public class ProductService {
 
         Page<ProductEntity> page = productRepository.findAll(spec, pageable);
 
-        List<ProductListDTO> dtos = page.getContent().stream().map(product -> {
-            ProductListDTO dto = new ProductListDTO();
-            dto.setProductId(product.getProductId());
-            dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
-            dto.setCategoryId(product.getCategoryId()); // 직접 매핑된 categoryId 사용
-            dto.setProductName(product.getProductName());
-            dto.setPrice(product.getPrice());
-            dto.setStock(product.getStock());
-            dto.setThumbnailUrl(product.getThumbnailUrl());
-            dto.setCreateAt(product.getCreateAt());
-            dto.setUpdateAt(product.getUpdateAt());
-            dto.setIsDeleted(product.getIsDeleted());
-            dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
-            dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(product.getProductId()));
-            dto.setAverageRating(reviewService.calculateAverageRating(product.getProductId()));
-            return dto;
-        }).toList();
+        List<ProductListDTO> dtos = page.getContent().stream()
+                .map(ProductListDTO::new)
+                .collect(Collectors.toList());
 
         return new PageResponseDTO<>(page, dtos);
     }
@@ -157,23 +143,9 @@ public class ProductService {
 
         Page<ProductEntity> page = productRepository.findAll(spec, pageable);
 
-        List<ProductListDTO> dtos = page.getContent().stream().map(product -> {
-            ProductListDTO dto = new ProductListDTO();
-            dto.setProductId(product.getProductId());
-            dto.setSellerUid(product.getSeller() != null ? product.getSeller().getSellerUid() : null);
-            dto.setCategoryId(product.getCategoryId());
-            dto.setProductName(product.getProductName());
-            dto.setPrice(product.getPrice());
-            dto.setStock(product.getStock());
-            dto.setThumbnailUrl(product.getThumbnailUrl());
-            dto.setCreateAt(product.getCreateAt());
-            dto.setUpdateAt(product.getUpdateAt());
-            dto.setIsDeleted(product.getIsDeleted());
-            dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
-            dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(product.getProductId()));
-            dto.setAverageRating(reviewService.calculateAverageRating(product.getProductId()));
-            return dto;
-        }).toList();
+        List<ProductListDTO> dtos = page.getContent().stream()
+                .map(ProductListDTO::new)
+                .collect(Collectors.toList());
 
         return new PageResponseDTO<>(page, dtos);
     }
@@ -185,10 +157,7 @@ public class ProductService {
             return null;
         }
         ProductEntity product = productOpt.get();
-        ProductDTO productDTO = new ProductDTO(product);
-        productDTO.setLikeCount((int) productLikeRepository.countByProduct_ProductId(id));
-        productDTO.setAverageRating(reviewService.calculateAverageRating(id));
-        return productDTO;
+        return new ProductDTO(product);
     }
 
     @Transactional // 트랜잭션 적용: 상품 정보와 이미지 저장이 하나의 단위로 처리되도록
@@ -651,17 +620,20 @@ public class ProductService {
     }
 
     public ProductDetailDTO getProductDetail(Long productId) {
-        Optional<ProductDetailEntity> detailOpt = productDetailRepository.findById(productId);
-        if (detailOpt.isEmpty()) {
-            return null;
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        ProductDetailEntity detail = product.getProductDetail();
+        if (detail == null) {
+            return null; // 상세 정보가 없는 경우
         }
-        ProductDetailEntity detail = detailOpt.get();
+
         ProductDetailDTO dto = new ProductDetailDTO();
         dto.setProductId(detail.getProductId());
         dto.setDescription(detail.getDescription());
         dto.setShippingInfo(detail.getShippingInfo());
-        dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(productId));
-        dto.setAverageRating(reviewService.calculateAverageRating(productId));
+        dto.setLikeCount(product.getLikeCount()); // Entity에서 직접 가져옴
+        dto.setAverageRating(product.getAverageRating()); // Entity에서 직접 가져옴
         // 리뷰는 별도 API에서 제공
         return dto;
     }

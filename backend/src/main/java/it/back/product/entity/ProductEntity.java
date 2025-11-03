@@ -61,6 +61,12 @@ public class ProductEntity {
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
 
+    @Column(name = "like_count")
+    private Integer likeCount = 0;
+
+    @Column(name = "average_rating")
+    private Double averageRating = 0.0;
+
     @CreationTimestamp
     @Column(name = "create_at", updatable = false)
     private LocalDateTime createAt;

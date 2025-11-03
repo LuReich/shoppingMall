@@ -49,6 +49,8 @@ public class ProductDTO {
         this.updateAt = product.getUpdateAt();
         this.isDeleted = product.getIsDeleted();
         this.companyName = product.getSeller() != null ? product.getSeller().getCompanyName() : null;
+        this.likeCount = product.getLikeCount();
+        this.averageRating = product.getAverageRating();
         // ProductImageEntity 리스트를 ProductImageDTO 리스트로 변환하여 설정
         if (product.getProductImages() != null) {
             this.productImages = product.getProductImages().stream()

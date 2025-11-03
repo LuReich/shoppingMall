@@ -48,5 +48,7 @@ public class ProductListDTO {
         this.updateAt = product.getUpdateAt();
         this.isDeleted = product.getIsDeleted();
         this.companyName = product.getSeller() != null ? product.getSeller().getCompanyName() : null;
+        this.likeCount = product.getLikeCount();
+        this.averageRating = product.getAverageRating();
     }
 }
