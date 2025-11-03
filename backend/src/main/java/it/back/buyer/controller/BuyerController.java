@@ -200,13 +200,14 @@ public class BuyerController {
         return ResponseEntity.ok(ApiResponse.ok(message));
     }
 
+    // buyer 좋아요 한 상품 조회
     @GetMapping("/likes")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getLikedProducts(
             Authentication authentication,
             PageRequestDTO pageRequestDTO,
-            @RequestParam(required = false) String productName,
-            @RequestParam(required = false) String companyName,
-            @RequestParam(required = false) Long productId) {
+            @RequestParam(name = "productName", required = false) String productName,
+            @RequestParam(name = "companyName", required = false) String companyName,
+            @RequestParam(name = "productId", required = false) Long productId) {
         Long buyerUid = extractUidFromAuth(authentication);
         if (buyerUid == null) {
             throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
