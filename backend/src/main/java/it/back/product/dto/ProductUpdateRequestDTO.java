@@ -24,4 +24,7 @@ public class ProductUpdateRequestDTO {
 
     // 이미지 관리 (삭제할 기존 서브 이미지 ID 목록)
     private List<Long> deleteImageIds;
+
+    // 삭제할 기존 메인 이미지 URL
+    private String deleteMainImage;
 }
