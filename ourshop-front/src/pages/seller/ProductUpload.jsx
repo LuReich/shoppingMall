@@ -812,8 +812,10 @@ function ProductUpload() {
           </div>
           {errors.description && <p className="error-message">{errors.description.message}</p>}
         </div>
-
-        <button type="submit" className="upload-btn">{isEditMode ? '수정하기' : '등록하기'}</button>
+        <div className="upload-btn-group">
+          <button type="submit" className="upload-btn">{isEditMode ? '수정하기' : '등록하기'}</button>
+          <button type="button" className="back-btn" onClick={() => navigate(-1)}>취소</button>
+        </div>
       </form>
 
       {/* 동영상 링크 입력 모달 */}

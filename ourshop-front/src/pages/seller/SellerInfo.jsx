@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import "../../assets/css/Register.css";
+import "../../assets/css/Info.css";
 import { useRegister } from "../../hooks/useRegister";
 import { authStore } from "../../store/authStore";
 import WithdrawModal from "../../components/common/WithdrawModal";
@@ -222,30 +222,30 @@ function SellerInfo() {
   };
 
   return (
-    <div className="register-container">
+    <div className="my-info-container">
       <h2>업체 정보 관리</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* 비밀번호 (선택적 변경) */}
-        <div className="form-group">
+        <div className="info-group">
           <label>새 비밀번호</label>
           <input type="password" {...register("password")} placeholder="변경할 경우에만 입력하세요" />
           <p className="error">{errors.password?.message}</p>
         </div>
-        <div className="form-group">
+        <div className="info-group">
           <label>새 비밀번호 확인</label>
           <input type="password" {...register("confirmPassword")} />
           <p className="error">{errors.confirmPassword?.message}</p>
         </div>
 
         {/* 업체명 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>업체명</label>
           <input type="text" {...register("company_name")} />
           <p className="error">{errors.company_name?.message}</p>
         </div>
 
         {/* 이메일 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>이메일</label>
           <div className="input-with-button">
             <input type="text" {...register("seller_email")} />
@@ -256,7 +256,7 @@ function SellerInfo() {
         </div>
 
         {/* 사업자등록번호 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>사업자등록번호</label>
           <div className="input-with-button">
             <input type="text"
@@ -270,7 +270,7 @@ function SellerInfo() {
         </div>
 
         {/* 전화번호 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>전화번호</label>
           <div className="input-with-button">
             <input type="text" {...register("phone")} onChange={handlePhoneChange} maxLength="13" />
@@ -281,7 +281,7 @@ function SellerInfo() {
         </div>
 
         {/* 주소 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>주소</label>
           <div className="input-with-button">
             <input type="text" {...register("address")} placeholder="주소" />
@@ -291,13 +291,13 @@ function SellerInfo() {
         </div>
 
         {/* 상세 주소 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>상세 주소</label>
           <input type="text" {...register("address_detail")} />
         </div>
 
         {/* 업체 상세 정보 */}
-        <div className="form-group">
+        <div className="info-group">
           <label>업체 상세 정보</label>
           <input type="text" {...register("company_detail")} />
         </div>

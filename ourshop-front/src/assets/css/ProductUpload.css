@@ -147,7 +147,13 @@
   line-height: 24px;
 }
 
-.upload-btn {
+.upload-btn-group {
+  display: flex;
+  gap: 10px;
+
+}
+.upload-btn,
+.back-btn {
   width: 100%;
   padding: 14px 0;
   border: none;
@@ -158,11 +164,22 @@
   cursor: pointer;
   transition: all 0.25s ease;
   margin-top: 1.5rem;
+}
+
+.upload-btn{
   background-color: #7cc7de;
 }
 
 .upload-btn:hover {
   background-color: #6ab5ca;
+}
+
+.back-btn{
+  background-color: #d5d5d5;
+}
+
+.back-btn:hover {
+  background-color: #c2c2c2;
 }
 
 /* React Quill 높이 조정 */

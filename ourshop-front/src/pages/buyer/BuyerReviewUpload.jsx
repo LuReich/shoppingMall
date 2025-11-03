@@ -88,9 +88,12 @@ function BuyerReviewUpload(props) {
                         rows="10"
                     />
                 </div>
-                <button type="submit" className="submit-btn">
-                    {isEditMode ? '수정하기' : '등록하기'}
-                </button>
+                <div className="review-form-btns">
+                    <button type="submit" className="submit-btn">
+                        {isEditMode ? '수정하기' : '등록하기'}
+                    </button>
+                    <button type="button" className="cancel-btn" onClick={() => navigate(-1)}>취소</button>
+                </div>
             </form>
         </div>
     );

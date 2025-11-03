@@ -37,6 +37,12 @@ function BuyerShippingDetail(props) {
       return reviews?.find(x => x.orderDetailId === orderDetailId)? true : false;
     } 
 
+    const sortCateg = {
+      "price": "totalPrice",
+      "createAt": "createAt",
+    }
+
+
     //한글 변환
     const statusKor = {
         "PAID": "결제완료",
@@ -44,14 +50,13 @@ function BuyerShippingDetail(props) {
         "DELIVERED": "배송완료",
         "CANCELED": "취소"
     }
-
-    
+   
     
     return (
         <div className='shipping-info-container'>
             <h2>주문/배송 조회</h2>
             {/* 정렬 옵션 */}
-           <Sort sort={sort} setSort={setSort} setPage={setPage}/>
+           <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
             <table className='shipping-table'>
                 <thead>
                     <tr>

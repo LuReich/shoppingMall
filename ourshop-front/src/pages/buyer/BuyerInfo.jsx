@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import "../../assets/css/BuyerInfo.css";
+import "../../assets/css/Info.css";
 import { authStore } from "../../store/authStore";
 import { useRegister } from "../../hooks/useRegister";
 import { useNavigate } from "react-router";
@@ -211,7 +211,7 @@ useEffect(() => {
 
 
   return (
-    <div className="buyer-info-container">
+    <div className="my-info-container">
       <h2>회원 정보 수정</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3>회원 정보</h3>

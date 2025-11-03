@@ -79,11 +79,46 @@ button {
 }
 
 .user-list {
-  border-top: 1px solid #eee;
-  padding-top: 10px;
+  width: 100%;
+  margin-top: 20px;
 }
 
-.user-item {
+.user-list table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 14px;
+}
+
+.user-list th,
+.user-list td {
+  padding: 12px 8px;
   border-bottom: 1px solid #eee;
-  padding: 10px 0;
+}
+
+.user-list th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+}
+
+.user-list td {
+  color: #555;
+}
+
+.user-list tbody tr:hover {
+  background-color: #f5faff;
+}
+
+.no-results {
+  text-align: center;
+  padding: 50px 0;
+  color: #888;
+  font-size: 16px;
+}
+
+.radio-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }

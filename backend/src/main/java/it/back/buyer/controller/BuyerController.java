@@ -67,7 +67,7 @@ public class BuyerController {
     // buyer 자기 정보 수정
     @PatchMapping("/{buyerUid}")
     public ResponseEntity<ApiResponse<BuyerResponseDTO>> updateBuyer(
-            @PathVariable Long buyerUid,
+            @PathVariable("buyerUid") Long buyerUid,
             @Valid @RequestBody BuyerUpdateRequestDTO request,
             Authentication authentication) {
 
@@ -200,7 +200,7 @@ public class BuyerController {
         return ResponseEntity.ok(ApiResponse.ok(message));
     }
 
-    // buyer 좋아요 한 상품 조회
+    // buyer 좋아요 한 상품 조회, 상품의 좋아요 많은 순, 평점 높은 순 정렬
     @GetMapping("/like/product/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getLikedProducts(
             Authentication authentication,

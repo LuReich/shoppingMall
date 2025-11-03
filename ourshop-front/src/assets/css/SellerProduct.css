@@ -16,33 +16,19 @@
     margin-bottom: 40px;
 }
 
-.seller-product {
+.seller-product-top{
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px 20px;
-}
-
-.seller-product-item {
-    position: relative;
-}
-
-.seller-product-checkbox{
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 20px;
-    height: 20px;
-    z-index: 10;
-    cursor: pointer;
-}
-
-.seller-btn-box {
-    grid-column: 1 / -1; /* 전체 너비를 차지하도록 설정 */
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.seller-btn-box {
+    width: 100%;
+    display: flex;
+    justify-content: start;
     gap: 10px;
-    margin-top: 20px;
 }
 
 .seller-btn-box button {
@@ -63,6 +49,42 @@
 .seller-btn-box button:hover {
     background-color: #6ab8d0;
 }
+
+
+.seller-product {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px 20px;
+}
+
+.seller-product-item {
+    position: relative;
+}
+
+/*.seller-product-checkbox{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    z-index: 10;
+    cursor: pointer;
+}*/
+
+.seller-product-update{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    padding: 8px;
+    z-index: 10;
+    cursor: pointer;
+    background-color: #2c8cda;
+    border-radius: 4px;
+    color: white;
+}
+
 
 @media (max-width: 992px) {
     .seller-product {

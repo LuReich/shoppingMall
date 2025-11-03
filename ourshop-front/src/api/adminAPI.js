@@ -8,4 +8,9 @@ export const adminAPI = {
         return res.data;
     },
 
+    getDetail: async (mode, uid) => {
+        const res = await api.get(`/admin/${mode}/${uid}/detail`);
+        return res.data;
+    },
+
 }

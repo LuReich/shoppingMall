@@ -2,7 +2,7 @@
 
 /* 전체 레이아웃 */
 .shipping-info-container {
-  width: 78%;
+  width: 90%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -11,11 +11,10 @@
 
 /* 제목 */
 .shipping-info-container h2 {
-  font-size: 26px;
+  font-size: 28px;
   text-align: center;
   font-weight: 600;
-  margin-bottom: 10px;
-  color: #333;
+  margin-bottom: 40px;
 }
 
 /* 테이블 */

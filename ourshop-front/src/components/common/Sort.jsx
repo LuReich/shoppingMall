@@ -1,7 +1,9 @@
 import React from 'react';
 import '../../assets/css/Sort.css'
 
-function Sort({sort, setSort, setPage }) {
+function Sort({sort, setSort, setPage, sortCateg }) {
+
+    
     return (
         <div className="sort-section">
                     {/*<label htmlFor="sort">정렬: </label>*/}
@@ -13,11 +15,38 @@ function Sort({sort, setSort, setPage }) {
                            setPage(0);
                          }}
                        >
-                         <option value="price,desc">가격 높은순</option>
-                         <option value="price,asc">가격 낮은순</option>
-                         <option value="createAt,asc">오래된순</option>
-                         <option value="createAt,desc">최신순</option>
-                         <option value="productName,asc">상품명 가나다순</option>
+                         {sortCateg?.price && 
+                         <>
+                          <option value={`${sortCateg?.price},desc`}>가격 높은순</option>
+                          <option value={`${sortCateg?.price},asc`}>가격 낮은순</option>
+                         </>
+                        }
+                        {
+                          sortCateg?.likeCount && 
+                          <>
+                            <option value={`${sortCateg?.likeCount},desc`}>좋아요순</option>
+                          </>
+                        }
+                        {
+                          sortCateg?.createAt && 
+                          <>
+                            <option value={`${sortCateg?.createAt},asc`}>오래된순</option>
+                            <option value={`${sortCateg?.createAt},desc`}>최신순</option>
+                          </>
+                        }
+                        {
+                          sortCateg?.productName && 
+                          <>
+                            <option value={`${sortCateg?.productName},desc`}>가나다순</option>
+                          </>  
+                        }
+                        {
+                          sortCateg?.rating && 
+                          <>
+                            <option value={`${sortCateg?.rating},desc`}>평점 높은순</option>
+                            <option value={`${sortCateg?.rating},asc`}>평점 낮은순</option>
+                          </>  
+                        }
                        </select>
                    </div>
     );

@@ -33,6 +33,7 @@ function ProductList() {
   });
 
 
+
   if (isLoading) return <p>상품리스트 가져오는 중...</p>;
   if (isError) return <p>상품리스트 가져오기 실패</p>;
 
@@ -40,15 +41,23 @@ function ProductList() {
   const productList = products?.content?.content || [];
   const totalPages = products?.content?.totalPages || 0;
 
-   console.log("검색어", keywords);
+  console.log("검색어", keywords);
+  console.log("상품 리스트", productList);
    
+  const sortCateg = {
+      "price": "price",
+      "createAt": "createAt",
+      "productName": "productName",
+      "likeCount" : "likeCount",
+      "rating": "averageRating"
+  }
 
   return (
     <div className="product-list-container">
       <h2>{categoryName ? `${categoryName} 상품 목록` : keywords? `[${keywords}]에 대한 검색결과`: "전체 상품 목록"}</h2>
 
       {/* 정렬 옵션 */}
-        <Sort sort={sort} setSort={setSort} setPage={setPage}/>
+        <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
       {/* 상품 목록 */}
       <div className="product-box">
         {productList.length > 0 ? (

@@ -4,9 +4,15 @@ import { Link, useNavigate } from 'react-router';
 import { authStore } from '../../store/authStore';
 function MyPageDropDown(props) {
     
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
-    const role = authStore(state => state.role);
+    const {setLogout, role} = authStore(state => state);
+
+    //로그아웃
+    const handleLogout = () => {
+        setLogout();
+        navigate("/");
+    }
 
     return (
         <div className='mypage-drop-down'>
@@ -16,6 +22,8 @@ function MyPageDropDown(props) {
                     <Link className='link-btn' to='/buyer/mypage/info'>회원 정보 관리</Link>
                     <Link className='link-btn' to='/buyer/mypage/shipping'>주문/배송 조회</Link>
                     <Link className='link-btn' to='/buyer/mypage/review'>리뷰 관리</Link>
+                    <Link className='link-btn' to='/buyer/mypage/likes'>찜한 상품</Link>
+                    <p className='link-btn' onClick={handleLogout}>로그아웃</p>
                 </>
                 :
                 role === "SELLER"?
@@ -23,10 +31,12 @@ function MyPageDropDown(props) {
                         <Link className='link-btn' to='/seller/mypage/info'>업체 정보 관리</Link>
                         <Link className='link-btn' to='/seller/mypage/products'>업체 상품 관리</Link>
                         <Link className='link-btn' to='#'>판매 내역 관리</Link>
+                        <p className='link-btn' onClick={handleLogout}>로그아웃</p>
                     </>
                     :
                     <>
                         <Link className='link-btn' to='#'>관리자 정보 관리</Link>
+                        <p className='link-btn' onClick={handleLogout}>로그아웃</p>
                     </>
             }  
         </div>

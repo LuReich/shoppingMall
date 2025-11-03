@@ -128,6 +128,8 @@ create table product (
     price int unsigned not null comment '가격',
     stock int unsigned not null comment '재고 수량',
     thumbnail_url varchar(255) comment '대표 이미지 URL (목록 조회 성능용)',
+    like_count int unsigned default 0 comment '좋아요 수',
+    average_rating decimal(2,1) default 0.0 comment '평균 별점',
     create_at datetime default now() comment '상품 등록일',
     update_at datetime default current_timestamp on update current_timestamp comment '상품 수정일',
     is_deleted boolean default false comment '상품 삭제 여부 (Soft Delete)',
@@ -382,13 +384,13 @@ INSERT INTO category (category_id, parent_id, category_name) VALUES
 (16, 13, 'IT/과학');
 
 /* 상품 기본 정보 (product) */
-INSERT INTO product (seller_uid, category_id, product_name, price, stock, thumbnail_url) VALUES
-(1, 4, '삼성 65인치 QLED TV', 1800000, 80, '/images/qled_tv_thumbnail.jpg'), /* TV/가전 (category_id 4) */
-(1, 2, 'LG그램 16인치 노트북', 1600000, 120, '/images/lg_gram_thumbnail.jpg'), /* 노트북/PC (category_id 2) */
-(2, 10, '남성 옥스포드 셔츠', 55000, 150, '/images/mens_oxford_shirt_thumbnail.jpg'), /* 남성의류 (category_id 10) */
-(2, 11, '여성 플리츠 스커트', 68000, 100, '/images/womens_skirt_thumbnail.jpg'), /* 여성의류 (category_id 11) */
-(1, 6, '제주 감귤 3kg', 18000, 250, '/images/tangerine_thumbnail.jpg'), /* 신선식품 (category_id 6) */
-(2, 14, '책 이름은 아직 정해지지 않았다', 15000, 50, '/images/book_novel_thumbnail.jpg'); /* 소설/에세이 (category_id 14) */
+INSERT INTO product (seller_uid, category_id, product_name, price, stock, thumbnail_url, like_count, average_rating) VALUES
+(1, 4, '삼성 65인치 QLED TV', 1800000, 80, '/images/qled_tv_thumbnail.jpg', 1, 4.0), /* TV/가전 (category_id 4) */
+(1, 2, 'LG그램 16인치 노트북', 1600000, 120, '/images/lg_gram_thumbnail.jpg', 1, 0.0), /* 노트북/PC (category_id 2) */
+(2, 10, '남성 옥스포드 셔츠', 55000, 150, '/images/mens_oxford_shirt_thumbnail.jpg', 0, 5.0), /* 남성의류 (category_id 10) */
+(2, 11, '여성 플리츠 스커트', 68000, 100, '/images/womens_skirt_thumbnail.jpg', 1, 4.0), /* 여성의류 (category_id 11) */
+(1, 6, '제주 감귤 3kg', 18000, 250, '/images/tangerine_thumbnail.jpg', 0, 0.0), /* 신선식품 (category_id 6) */
+(2, 14, '책 이름은 아직 정해지지 않았다', 15000, 50, '/images/book_novel_thumbnail.jpg', 1, 0.0); /* 소설/에세이 (category_id 14) */
 
 
 /* 상품 상세 정보 (product_detail) */

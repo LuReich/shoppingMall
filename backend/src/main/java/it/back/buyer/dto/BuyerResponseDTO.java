@@ -35,6 +35,8 @@ public class BuyerResponseDTO {
     private LocalDateTime updateAt;
     @JsonProperty("isActive")
     private Boolean isActive;
+    private BuyerEntity.WithdrawalStatus withdrawalStatus; // New field
+    private String withdrawalReason; // New field
     private String role;
     // 필요시 Buyer 엔티티의 모든 필드 추가
 
@@ -54,6 +56,8 @@ public class BuyerResponseDTO {
         this.createAt = buyer.getCreateAt();
         this.updateAt = buyer.getUpdateAt();
         this.isActive = buyer.isActive();
+        this.withdrawalStatus = buyer.getWithdrawalStatus(); // Set new field
+        this.withdrawalReason = buyer.getWithdrawalReason(); // Set new field
         this.role = "BUYER";
     }
 }

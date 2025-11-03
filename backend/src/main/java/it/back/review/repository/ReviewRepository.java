@@ -24,4 +24,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>, Jpa
             + "JOIN FETCH p.seller "
             + "WHERE p.productId = :productId")
     List<ReviewEntity> findAllByProductIdWithBuyerAndSeller(@Param("productId") Long productId);
+
+    @Query("SELECT COALESCE(AVG(r.rating), 0.0) FROM ReviewEntity r WHERE r.product.productId = :productId")
+    Double calculateAverageRating(@Param("productId") Long productId);
 }

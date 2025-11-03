@@ -11,19 +11,27 @@ export const useSeller = () => {
         });
     };
 
-    //판매자 상품 조회
-    
+    //판매자 상품 조회 
     const getSellerProductList = (params ={}) => {
-            return useQuery({
-                queryKey: ["sellerProducts", params],
-                queryFn: () => sellerAPI.getProduct(params),
-            });
-        };
+        return useQuery({
+            queryKey: ["sellerProducts", params],
+            queryFn: () => sellerAPI.getProduct(params),
+        });
+    };
+
+    //판매자 공개 상품 조회 (누구나 조회 가능)
+    const getPublicSellerProductList = (sellerUid, params={}) => {
+        return useQuery({
+            queryKey: ["publicSellerProducts", sellerUid, params],
+            queryFn: () => sellerAPI.getPublicProducts(sellerUid, params),
+        });
+    }
     
         
 
     return {
         getShopInfo,
-        getSellerProductList
+        getSellerProductList,
+        getPublicSellerProductList
     }
 }

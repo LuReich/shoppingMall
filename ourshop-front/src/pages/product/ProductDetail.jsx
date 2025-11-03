@@ -8,6 +8,7 @@ import ProductReviews from '../../components/product/ProductReviews';
 import ProductInquiry from '../../components/product/ProductInquiry';
 import { authStore } from '../../store/authStore';
 import { useCart } from '../../hooks/useCart';
+import LikesBtn from '../../components/common/LikesBtn';
 
 function ProductDetail() {
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
@@ -87,14 +88,12 @@ function ProductDetail() {
 
   const categoryPath = findCategoryPath(categories, product?.categoryId) || [];
 
-  // ✅ 리뷰 평균
+  // 리뷰 길이
   const reviewLength = productReviews?.length || 0;
-  const averageRating = reviewLength
-    ? (productReviews.reduce((sum, r) => sum + r.rating, 0) / reviewLength).toFixed(1)
-    : 0;
 
   if (isLoading) return <p>상품 조회중...</p>;
   if (isError) return <p>상품 조회에 실패했습니다.</p>;
+
 
   // ✅ 수량 변경
   const handleQuantityChange = (amount) => {
@@ -161,12 +160,11 @@ function ProductDetail() {
             >
               {cat.categoryName}
             </Link>
-            {index < categoryPath.length - 1 && ' > '}
+            {index < categoryPath.length && ' > '}
           </span>
         ))}
         <span> {product.productName}</span>
       </nav>
-
       <div className="product-detail-main">
         <div className="image-gallery">
           <div className="main-image-container">
@@ -211,14 +209,17 @@ function ProductDetail() {
         </div>
 
         <div className="info-panel">
-          <h1>{product.productName}</h1>
-          <p className="short-desc" onClick={() => navigate('/shop', { state: product.sellerUid })}>
-            {product.companyName}
-          </p>
+          <div className='info-top-box'>
+            <h1>{product.productName}</h1>
+             {(role=="BUYER" || !isLogin) && <LikesBtn styleProps={"like-box"} product={product}/>}
+          </div>
+          <div className="short-desc">
+            <p className='company-name' onClick={() => navigate('/shop',  { state: { sellerUid: product.sellerUid } })}>{product.companyName}</p>
+          </div>
 
           <div className="review-summary">
-            <span className="stars">{'★'.repeat(Math.round(averageRating))}</span>
-            <span className="rating">{averageRating} ({reviewLength}개 리뷰)</span>
+            <span className="stars">{'★'.repeat(Math.round(product.averageRating))}</span>
+            <span className="rating">{product.averageRating} ({reviewLength}개 리뷰)</span>
           </div>
 
           <div className="price-section">

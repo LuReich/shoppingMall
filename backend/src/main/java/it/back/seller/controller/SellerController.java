@@ -108,7 +108,7 @@ public class SellerController {
     // 판매자 자기 정보 수정 (PATCH)
     @PatchMapping("/{sellerUid}")
     public ResponseEntity<ApiResponse<SellerResponseDTO>> updateSeller(
-            @PathVariable Long sellerUid,
+            @PathVariable("sellerUid") Long sellerUid,
             @Valid @RequestBody SellerUpdateRequestDTO request,
             Authentication authentication) {
         SellerResponseDTO updated = sellerService.updateSeller(sellerUid, request, authentication);

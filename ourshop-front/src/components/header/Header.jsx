@@ -30,10 +30,10 @@ function Header(props) {
     console.log("롤", role);
 
     //로그아웃
-    const handleLogout = () => {
+    /*const handleLogout = () => {
         setLogout();
         navigate("/");
-    }
+    }*/
    
     //카테고리 드롭다운 open
     const handleMenuEnter = () => {
@@ -72,7 +72,7 @@ function Header(props) {
     return (
         <header className="header">
             <div className="header-content">
-                {isLogin && user && <p className='logout-btn' onClick={handleLogout}>로그아웃</p>}
+                {/*isLogin && user && <p className='logout-btn' onClick={handleLogout}>로그아웃</p>*/}
                 <div className='nav-total-box'>
                 <div className="header-left">
                     <Link to="/" className="logo">우리샵</Link>

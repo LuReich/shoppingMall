@@ -13,8 +13,9 @@ function AdminUserManage() {
     const [searchField, setSearchField] = useState("buyerId"); // 기본값: 아이디
     const [searchKeyword, setSearchKeyword] = useState("");
     const [searchParams, setSearchParams] = useState({});
+    const [uid, setUid] = useState(null);
 
-    const { getUserList } = useAdmin();
+    const { getUserList, getUserDetail } = useAdmin();
 
 
     const { data: userList, isLoading, isError, refetch } = getUserList(mode, {
@@ -24,7 +25,7 @@ function AdminUserManage() {
         ...searchParams,
     }, true) //enable 제어;
 
-
+    const {data: userDetail} = getUserDetail(mode, uid)
     const totalPages = userList?.content?.totalPages || 0;
 
     // 검색 버튼 클릭 시 검색조건 업데이트
@@ -46,7 +47,18 @@ function AdminUserManage() {
     if (isLoading) return <p>로딩중...</p>;
     if (isError) return <p>회원 리스트를 불러올 수 없습니다.</p>;
 
+    //디버깅
     console.log("사용자 정보", userList);
+    console.log("모드", mode);
+    console.log("uid", uid);
+    console.log("사용자 상세 정보", userDetail);
+
+    const sortCateg = {
+      "createAt": "createAt",
+      "productName": "nickname"
+    }
+
+    const detail = userDetail?.content?.content;
 
     return (
         <div className='admin-user-manage'>
@@ -55,7 +67,7 @@ function AdminUserManage() {
                 <button type='button' className={`mode-select-btn ${mode === "buyer" ? "active" : ""}`} onClick={()=>setMode("buyer")}>구매자 회원관리</button>
                 <button type='button' className={`mode-select-btn ${mode === "seller" ? "active" : ""}`} onClick={()=>setMode("seller")}>판매자 회원관리</button>
             </div>
-            {/* ✅ 검색 영역 */}
+            {/* 검색 영역 */}
             <form className="search-user-bar" onSubmit={handleSearchSubmit}>
                 <select
                     value={searchField}
@@ -108,34 +120,56 @@ function AdminUserManage() {
             </form>
 
             {/* 정렬 */}
-            <Sort sort={sort} setPage={setPage} setSort={setSort} />
+            <Sort sort={sort} setPage={setPage} setSort={setSort} sortCateg={sortCateg} />
 
-            {/* 회원 리스트 (임시 출력) */}
-                <div className="user-list">
-                    {userList?.content?.content?.length > 0 ? (
-                        userList.content.content.map((user) => (
-                            mode === "buyer" ? (
-                                <div key={user.buyerUid} className="user-item">
-                                    <p><strong>{user.nickname}</strong> ({user.buyerId})</p>
-                                    <p>{user.buyerEmail} | {user.phone}</p>
-                                    <p>상태: {user.isActive ? "활성" : "비활성"}</p>
-                                    {user.withdrawalStatus&& <p>탈퇴 상태: {user.withdrawalStatus}</p>}
-                                    {user.withdrawalReason&& <p>탈퇴 사유: {user.withdrawalReason}</p>}
-                                </div>
-                            ) : (
-                                <div key={user.sellerUid} className="user-item">
-                                    <p><strong>{user.companyName}</strong> ({user.sellerUid})</p>
-                                    <p>{user.sellerEmail}</p>
-                                    <p>상태: {user.isActive ? "활성" : "비활성"}</p>
-                                    {user.withdrawalStatus&& <p>탈퇴 상태: {user.withdrawalStatus}</p>}
-                                    {user.withdrawalReason&& <p>탈퇴 사유: {user.withdrawalReason}</p>}
-                                </div>
+            {/* 회원 리스트 */}
+            <div className="user-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>아이디</th>
+                            <th>{mode === 'buyer' ? '닉네임' : '업체명'}</th>
+                            <th>이메일</th>
+                            {/*<th>전화번호</th>*/}
+                            <th>활성 상태</th>
+                            <th>탈퇴 상태</th>
+                            <th>가입일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {userList?.content?.content?.length > 0 ? (
+                            userList.content.content.map((user) => (
+                                mode === "buyer" ? (
+                                    <tr key={user.buyerUid} onClick={() => setUid(user.buyerUid)}>
+                                        <td>{user.buyerUid}</td>
+                                        <td>{user.buyerId}</td>
+                                        <td>{user.nickname}</td>
+                                        <td>{user.buyerEmail}</td>
+                                        {/*<td>{user.phone}</td>*/}
+                                        <td>{user.isActive ? "활성" : "비활성"}</td>
+                                        <td>{user.withdrawalStatus || '-'}</td>
+                                        <td>{new Date(user.createAt).toLocaleDateString()}</td>
+                                    </tr>
+                                ) : (
+                                    <tr key={user.sellerUid} onClick={() => setUid(user.sellerUid)}>
+                                        <td>{user.sellerUid}</td>
+                                        <td>{user.sellerId}</td>
+                                        <td>{user.companyName}</td>
+                                        <td>{user.sellerEmail}</td>
+                                        {/*<td>{user.phone}</td>*/}
+                                        <td>{user.isActive ? "활성" : "비활성"}</td>
+                                        <td>{user.withdrawalStatus || '-'}</td>
+                                        <td>{new Date(user.createAt).toLocaleDateString()}</td>
+                                    </tr>
                                 )
                             ))
                         ) : (
-                        <p>검색 결과가 없습니다.</p>
-                    )}
-                </div>
+                            <tr><td colSpan="8" className="no-results">검색 결과가 없습니다.</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
                 {totalPages && (
                     <Pagination
                         page={page}

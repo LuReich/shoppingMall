@@ -40,6 +40,24 @@ export const useProduct = () => {
       enabled: !!productId,
     });
   };
+
+  // 상품 수정용 데이터 조회
+  const getProductForUpdate = (productId) => {
+    return useQuery({
+      queryKey: ["productForUpdate", productId],
+      queryFn: () => productAPI.getProductForUpdate(productId),
+      enabled: !!productId,
+    });
+  };
+
+  //좋아요 누른 상품 조회
+  const getLikedProducts = (params = {}) => {
+    
+    return useQuery({
+      queryKey: ["likedProducts", params],
+      queryFn: () => productAPI.getLikedProducts(params),
+    });
+  }
   
   /* ---------------------------- MUTATIONS ---------------------------- */
 
@@ -84,14 +102,22 @@ export const useProduct = () => {
     });
   };
 
-  // 상품 수정용 데이터 조회
-  const getProductForUpdate = (productId) => {
-    return useQuery({
-      queryKey: ["productForUpdate", productId],
-      queryFn: () => productAPI.getProductForUpdate(productId),
-      enabled: !!productId,
+
+
+  //상품 좋아요
+  const likeProduct = () => {
+    return useMutation({
+      mutationFn: (productId) => productAPI.likeProduct(productId),
+      onSuccess: (res) => {
+        qc.invalidateQueries(["product"]);
+        console.log("좋아요", res.content);
+      
+      },
+      onError: (err) => {
+        console.error(err);
+      },
     });
-  };
+  }
    
         
 
@@ -100,9 +126,11 @@ export const useProduct = () => {
     getProductDetail,
     getProductDescription,
     getProductReview,
+    getLikedProducts,
     uploadTempDescriptionImage,
     createProduct,
     updateProduct,
-    getProductForUpdate
+    getProductForUpdate,
+    likeProduct
   };
 };

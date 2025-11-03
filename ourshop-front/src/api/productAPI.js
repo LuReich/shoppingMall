@@ -20,11 +20,26 @@ export const productAPI = {
         return res.data; 
     },
 
+
     // 상품 상세 정보(설명, 배송정보, 리뷰 포함)
     getDetailWithReview: async (productId) => {
         const res = await api.get(`/product/${productId}/detail`);
         return res.data;
     },
+
+     // 상품 수정용 데이터 조회
+    getProductForUpdate: async (productId) => {
+        const res = await api.get(`/product/${productId}/edit`);
+        return res.data;
+    },
+
+
+    //좋아요한 상품 조회 (구매자-로그인 필요)
+    getLikedProducts: async (params = {}) => {
+        const res = await api.get("/buyer/like/product/list", { params });
+        return res.data;
+    },
+
 
     // ReactQuill 에디터 이미지 임시 업로드
     uploadTempDescriptionImage: async (imageFile) => {
@@ -53,10 +68,12 @@ export const productAPI = {
         return res.data;
     },
 
-    // 상품 수정용 데이터 조회
-    getProductForUpdate: async (productId) => {
-        const res = await api.get(`/product/${productId}/edit`);
+    //상품 좋아요
+    likeProduct: async (productId) => {
+        const res = await api.post(`/buyer/like/${productId}`);
         return res.data;
-    },
+    }
+   
+    
 
 };

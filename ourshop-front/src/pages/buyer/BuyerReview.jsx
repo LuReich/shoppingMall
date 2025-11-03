@@ -33,10 +33,16 @@ function BuyerReview(props) {
         }
     }
 
+    const sortCateg = {
+      "createAt": "createAt",
+      "rating": "rating"
+    }
+
+
     return (
         <div className='buyer-review-container'>
             <h2>나의 리뷰</h2>
-            <Sort sort={sort} setSort={setSort} setPage={setPage}/>
+            <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
             <div className='review-table'>
                 <table >
                     <thead>

@@ -1,20 +1,20 @@
 @charset "UTF-8";
 
 /* 전체 컨테이너 */
-.buyer-info-container {
-  width: 65%;
+.my-info-container {
+  width: 90%;
   border-radius: 4px;
 }
 
 /* 타이틀 */
-.buyer-info-container h2 {
+.my-info-container h2 {
     font-size: 28px;
     text-align: center;
     font-weight: 600;
     margin-bottom: 40px;
 }
 
-.buyer-info-container h3{
+.my-info-container h3{
     font-size: 20px;
     margin-bottom: 10px;
     padding-left: 10px;
