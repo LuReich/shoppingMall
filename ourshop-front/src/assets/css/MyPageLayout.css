@@ -1,0 +1,42 @@
+@charset "UTf-8";
+
+.mypage-layout{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    width: 78%;
+}
+
+.side-menu-bar-wrapper{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+    padding: 30px 25px;
+    position: sticky; /*스크롤 내려도 고정*/
+    top: 130px; /*스크롤 내려도 고정*/
+    gap: 30px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mypage-content{
+    flex: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+@media (max-width: 992px) {
+    .side-menu-bar-wrapper {
+        display: none;
+    }
+    .mypage-layout {
+        width: 90%;
+    }
+}

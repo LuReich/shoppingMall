@@ -1,0 +1,121 @@
+@charset "UTF-8";
+
+.shop-info-container {
+    width: 78%;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.shop-info-container > h2 {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.shop-info-box {
+    background: linear-gradient(to right, rgb(176, 196, 255), #6ac7e3, rgb(188, 146, 251));
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 20px;
+    color: white;
+    /* 애니메이션 효과 */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+}
+
+.shop-info-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px 40px;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.shop-info-detail p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #444;
+}
+
+.shop-info-detail p svg {
+    font-size: 18px;
+    color: #7cc7de;
+}
+
+.shop-product-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.shop-product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.shop-product-header h2 {
+    width: 100%;
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.shop-product-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px 20px;
+    margin-bottom: 40px;
+}
+
+.shop-product-grid .no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px 0;
+    color: #888;
+    font-size: 16px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+    .shop-info-container {
+        width: 90%;
+    }
+}
+
+@media (max-width: 992px) {
+    .shop-product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .shop-product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 서서히 나타나는 애니메이션 키프레임 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
