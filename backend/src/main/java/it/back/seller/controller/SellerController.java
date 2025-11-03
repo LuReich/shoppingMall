@@ -169,7 +169,7 @@ public class SellerController {
     }
 
     // 판매자가 자신이 등록한 상품 목록 조회 (페이지네이션 + 검색)
-    @GetMapping("/products")
+    @GetMapping("/product/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getMyProducts(
             Authentication authentication,
             PageRequestDTO pageRequestDTO,
