@@ -188,6 +188,7 @@ public class BuyerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
     }
 
+    // 상품 좋아요
     @PostMapping("/likes/{productId}")
     public ResponseEntity<ApiResponse<String>> toggleLike(Authentication authentication, @PathVariable("productId") Long productId) {
         Long buyerUid = extractUidFromAuth(authentication);
