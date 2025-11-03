@@ -131,4 +131,16 @@ public class ReviewService {
         resultMap.put("reviewId", review.getReviewId());
         return resultMap;
     }
+
+    @Transactional(readOnly = true)
+    public Double calculateAverageRating(Long productId) {
+        List<ReviewEntity> reviews = reviewRepository.findByProduct_ProductId(productId);
+        if (reviews.isEmpty()) {
+            return 0.0;
+        }
+        return reviews.stream()
+                .mapToInt(ReviewEntity::getRating)
+                .average()
+                .orElse(0.0);
+    }
 }

@@ -32,6 +32,8 @@ public class ProductListDTO {
     private LocalDateTime updateAt;
     @JsonProperty("isDeleted")
     private Boolean isDeleted;
+    private Double averageRating;
+    private Integer likeCount;
 
     // ProductEntity를 ProductListDTO로 변환하는 생성자
     public ProductListDTO(ProductEntity product) {

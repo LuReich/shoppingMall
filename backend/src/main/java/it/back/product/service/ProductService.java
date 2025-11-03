@@ -40,6 +40,7 @@ import it.back.product.entity.ProductEntity;
 import it.back.product.entity.ProductImageEntity;
 import it.back.product.repository.ProductDetailRepository;
 import it.back.product.repository.ProductImageRepository;
+import it.back.product.repository.ProductLikeRepository;
 import it.back.product.repository.ProductRepository;
 import it.back.product.specification.ProductSpecifications;
 import it.back.review.dto.ReviewDTO;
@@ -59,6 +60,7 @@ public class ProductService {
     private final ProductImageRepository productImageRepository; // 상품 이미지 저장을 위해 추가
     private final CategoryService categoryService;
     private final ReviewService reviewService;
+    private final ProductLikeRepository productLikeRepository;
     private final FileUtils fileUtils; // 파일 처리를 위해 추가
 
     @Value("${file.upload-dir}")
@@ -123,6 +125,8 @@ public class ProductService {
             dto.setUpdateAt(product.getUpdateAt());
             dto.setIsDeleted(product.getIsDeleted());
             dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
+            dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(product.getProductId()));
+            dto.setAverageRating(reviewService.calculateAverageRating(product.getProductId()));
             return dto;
         }).toList();
 
@@ -166,6 +170,8 @@ public class ProductService {
             dto.setUpdateAt(product.getUpdateAt());
             dto.setIsDeleted(product.getIsDeleted());
             dto.setCompanyName(product.getSeller() != null ? product.getSeller().getCompanyName() : null);
+            dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(product.getProductId()));
+            dto.setAverageRating(reviewService.calculateAverageRating(product.getProductId()));
             return dto;
         }).toList();
 
@@ -179,7 +185,10 @@ public class ProductService {
             return null;
         }
         ProductEntity product = productOpt.get();
-        return new ProductDTO(product);
+        ProductDTO productDTO = new ProductDTO(product);
+        productDTO.setLikeCount((int) productLikeRepository.countByProduct_ProductId(id));
+        productDTO.setAverageRating(reviewService.calculateAverageRating(id));
+        return productDTO;
     }
 
     @Transactional // 트랜잭션 적용: 상품 정보와 이미지 저장이 하나의 단위로 처리되도록
@@ -651,6 +660,8 @@ public class ProductService {
         dto.setProductId(detail.getProductId());
         dto.setDescription(detail.getDescription());
         dto.setShippingInfo(detail.getShippingInfo());
+        dto.setLikeCount((int) productLikeRepository.countByProduct_ProductId(productId));
+        dto.setAverageRating(reviewService.calculateAverageRating(productId));
         // 리뷰는 별도 API에서 제공
         return dto;
     }

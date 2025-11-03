@@ -28,6 +28,8 @@ import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.order.dto.OrderResponseDTO;
 import it.back.order.service.OrderService;
+import it.back.product.dto.ProductListDTO;
+import it.back.product.service.ProductLikeService;
 import it.back.review.dto.ReviewDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ public class BuyerController {
     private final BuyerService buyerService;
     private final BuyerRepository buyerRepository;
     private final OrderService orderService;
+    private final ProductLikeService productLikeService;
 
     // 로그인한 buyer 가 자기 정보 보는 용도
     @GetMapping("/me")
@@ -183,6 +186,33 @@ public class BuyerController {
 
         PageResponseDTO<ReviewDTO> result = buyerService.getMyReviews(buyerUid, pageRequestDTO, productName);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(result));
+    }
+
+    @PostMapping("/likes/{productId}")
+    public ResponseEntity<ApiResponse<String>> toggleLike(Authentication authentication, @PathVariable Long productId) {
+        Long buyerUid = extractUidFromAuth(authentication);
+        if (buyerUid == null) {
+            throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
+        }
+        boolean liked = productLikeService.toggleLike(buyerUid, productId);
+        String message = liked ? "상품을 좋아합니다." : "상품 좋아요를 취소합니다.";
+        return ResponseEntity.ok(ApiResponse.ok(message));
+    }
+
+    @GetMapping("/likes")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getLikedProducts(
+            Authentication authentication,
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) String companyName,
+            @RequestParam(required = false) Long productId) {
+        Long buyerUid = extractUidFromAuth(authentication);
+        if (buyerUid == null) {
+            throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
+        }
+
+        PageResponseDTO<ProductListDTO> result = buyerService.getLikedProducts(buyerUid, pageRequestDTO, productName, companyName, productId);
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 
     // ====== 유틸리티 메서드 ======
