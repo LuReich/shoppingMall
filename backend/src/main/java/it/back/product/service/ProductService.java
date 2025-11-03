@@ -331,6 +331,10 @@ public class ProductService {
                     dto.getImageMapping(),
                     newDescriptionImageUrls
             );
+
+            // [안전장치] Base64 이미지를 파일로 변환
+            updatedDescription = processBase64Images(updatedDescription, productId);
+
             detail.setDescription(updatedDescription);
 
             // 새 description의 이미지 URL 목록 추출 (orphan 삭제를 위해)
@@ -349,8 +353,9 @@ public class ProductService {
         if (mainImage != null && !mainImage.isEmpty()) {
             // 기존 메인 이미지 파일 삭제
             if (product.getThumbnailUrl() != null && !product.getThumbnailUrl().isEmpty()) {
-                String oldMainImageRelativePath = product.getThumbnailUrl().replace("/product/", "");
-                String oldMainImageFullPath = getOsIndependentPath(uploadDir, oldMainImageRelativePath);
+                String oldMainImageUrl = product.getThumbnailUrl();
+                String relativePath = oldMainImageUrl.startsWith("/") ? oldMainImageUrl.substring(1) : oldMainImageUrl;
+                String oldMainImageFullPath = getOsIndependentPath(uploadDir, relativePath);
                 fileUtils.deleteFile(oldMainImageFullPath);
             }
             // 새 메인 이미지 저장
@@ -645,5 +650,62 @@ public class ProductService {
 
     public ProductDetailEntity saveProductDetail(ProductDetailEntity detail) {
         return productDetailRepository.save(detail);
+    }
+
+    /**
+     * [안전장치] HTML 컨텐츠에 포함된 Base64 인코딩된 이미지를 디코딩하여 파일로 저장하고, src 속성을 실제 URL로
+     * 교체합니다.
+     *
+     * @param htmlContent Base64 이미지가 포함될 수 있는 HTML 문자열
+     * @param productId 상품 ID
+     * @return Base64 이미지가 실제 URL로 대체된 HTML 문자열
+     */
+    private String processBase64Images(String htmlContent, Long productId) {
+        if (htmlContent == null || !htmlContent.contains("data:image")) {
+            return htmlContent;
+        }
+
+        Document doc = Jsoup.parse(htmlContent);
+        Elements images = doc.select("img[src^=data:image]");
+
+        if (images.isEmpty()) {
+            return htmlContent;
+        }
+
+        String descriptionPath = getOsIndependentPath(uploadDir, "product", String.valueOf(productId), "description");
+        try {
+            Files.createDirectories(Paths.get(descriptionPath));
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException("상품 설명 이미지 폴더 생성에 실패했습니다.", e);
+        }
+
+        for (Element img : images) {
+            String base64Src = img.attr("src");
+            String[] parts = base64Src.split(",");
+            if (parts.length != 2) {
+                continue; // 잘못된 형식의 Base64 데이터
+            }
+
+            // ex: data:image/png;base64
+            String mimeType = parts[0].substring(parts[0].indexOf(':') + 1, parts[0].indexOf(';'));
+            String extension = mimeType.substring(mimeType.indexOf('/') + 1);
+            byte[] imageBytes = java.util.Base64.getDecoder().decode(parts[1]);
+
+            String storedName = java.util.UUID.randomUUID().toString() + "." + extension;
+            Path destinationPath = Paths.get(descriptionPath, storedName);
+
+            try {
+                Files.write(destinationPath, imageBytes);
+            } catch (IOException e) {
+                // 개별 이미지 저장 실패 시, 해당 이미지는 변환하지 않고 넘어가도록 처리 (전체 프로세스 중단 방지)
+                e.printStackTrace();
+                continue;
+            }
+
+            String newUrl = "/product/" + productId + "/description/" + storedName;
+            img.attr("src", newUrl);
+        }
+
+        return doc.body().html();
     }
 }

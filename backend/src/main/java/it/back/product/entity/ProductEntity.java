@@ -1,7 +1,6 @@
 package it.back.product.entity;
 
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -61,9 +60,11 @@ public class ProductEntity {
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
 
+    @Builder.Default
     @Column(name = "like_count")
     private Integer likeCount = 0;
 
+    @Builder.Default
     @Column(name = "average_rating")
     private Double averageRating = 0.0;
 

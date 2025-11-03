@@ -23,7 +23,7 @@ function ProductUpload() {
   const { data: categoryData } = getCategoryList();
   const { mutate: createMutate } = createProduct();
   const { mutate: updateMutate } = updateProduct();
-  const { data: productData } = getProductDetail(productId);
+  const { data: initialProductData } = getProductDetail(productId);
   const { data: productDescriptionData } = getProductDescription(productId);
 
   // 상품 수정 모드 구분 (예: 등록 vs 수정)
@@ -98,8 +98,8 @@ function ProductUpload() {
 
   // 수정 모드 시 기본 값 세팅
   useEffect(() => {
-    if (isEditMode && productData?.content && productDescriptionData?.content && subCategories.length > 0) {
-      const p = productData.content;
+    if (isEditMode && initialProductData?.content && productDescriptionData?.content && subCategories.length > 0) {
+      const p = initialProductData.content;
       const pd = productDescriptionData.content;
       console.log("기존 상품 데이터:", p);
 
@@ -127,7 +127,7 @@ function ProductUpload() {
       setSubImageUrls(existingImages);
       console.log("기존 서브 이미지 로드:", existingImages); // 디버깅
     }
-  }, [isEditMode, productData, productDescriptionData, subCategories, reset]);
+  }, [isEditMode, initialProductData, productDescriptionData, subCategories, reset]);
 
   // 이미지 미리보기 상태
   const [mainImageUrl, setMainImageUrl] = useState(null);
@@ -376,10 +376,19 @@ function ProductUpload() {
 
     const handleDrop = async (e) => {
       e.preventDefault();
-      const file = e.dataTransfer?.files?.[0];
-      if (file && file.type.startsWith("image/")) {
-        const { imageId, dataUrl } = await uploadFile(file);
-        insertImage(imageId, dataUrl);
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        for (const file of files) {
+          if (file.type.startsWith("image/")) {
+            try {
+              const { imageId, dataUrl } = await uploadFile(file);
+              insertImage(imageId, dataUrl);
+            } catch (error) {
+              console.error("Drop image upload failed", error);
+              break; // Stop on first error
+            }
+          }
+        }
       }
     };
 
@@ -520,43 +529,26 @@ function ProductUpload() {
           ["clean"],
         ],
         handlers: {
-          image: function () {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = "image/*";
+          image: () => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.setAttribute('multiple', true);
             input.click();
 
             input.onchange = async () => {
-              const file = input.files?.[0];
-              if (!file) return;
-
-              console.log("파일 선택됨:", file.name, file.type); // 디버깅용
-
-              const { imageId, dataUrl } = await uploadFile(file);
-              console.log("업로드 완료:", imageId); // 디버깅용
-
-              const quill = this.quill;
-              const range = quill.getSelection(true);
-
-              // 이미지 삽입 (Data URL)
-              quill.insertEmbed(range.index, "image", dataUrl);
-              quill.setSelection(range.index + 1);
-
-              // data-image-id 속성 추가
-              setTimeout(() => {
-                const editorElement = quill.root;
-                const images = editorElement.querySelectorAll('img');
-
-                // 가장 최근에 추가된 이미지 찾기
-                for (let i = images.length - 1; i >= 0; i--) {
-                  const img = images[i];
-                  if (!img.getAttribute('data-image-id') && img.src.startsWith('data:')) {
-                    img.setAttribute('data-image-id', imageId);
-                    console.log("툴바: data-image-id 설정 완료:", imageId);
-                    break;
+              const files = input.files;
+              if (files) {
+                for (const file of files) {
+                  try {
+                    const { imageId, dataUrl } = await uploadFile(file);
+                    insertImage(imageId, dataUrl);
+                  } catch (error) {
+                    console.error("Toolbar image upload failed", error);
+                    break; 
                   }
                 }
-              }, 100);
+              }
             };
           },
           video: function () {
@@ -623,7 +615,12 @@ function ProductUpload() {
     };
 
     if (isEditMode) {
-      productData.deleteImageIds = deletedImageIds; // 백엔드 DTO와 매칭
+      productData.deleteImageIds = deletedImageIds;
+    }
+
+    // If editing and a new main image is uploaded, add the old URL for deletion.
+    if (isEditMode && mainImage && mainImage.length > 0 && initialProductData?.content?.thumbnailUrl) {
+      productData.deleteMainImage = initialProductData.content.thumbnailUrl;
     }
 
     console.log("전송할 productData:", productData);
@@ -636,10 +633,12 @@ function ProductUpload() {
       new Blob([JSON.stringify(productData)], { type: "application/json" })
     );
 
+    // Append the new main image file if it exists
     if (mainImage && mainImage.length > 0) {
       formData.append("mainImage", mainImage[0]);
     }
 
+    // Append new sub-image files
     if (subImages && subImages.length > 0) {
       Array.from(subImages).forEach((img) => formData.append("subImages", img));
     }
