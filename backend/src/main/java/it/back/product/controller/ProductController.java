@@ -42,7 +42,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, 만약 로그인한 상태에서 안된다면 긴급 연락 해주세요
+    // 모든 상품 리스트 보기, 비로그인 상태에서도 볼 수 있긴한데, likeCount 정렬 및 평점 정렬
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getAllProducts(
             PageRequestDTO pageRequestDTO,
@@ -89,7 +89,7 @@ public class ProductController {
     // 상품 수정 정보 조회 (수정 화면용)
     @GetMapping("/{productId}/edit")
     public ResponseEntity<ApiResponse<ProductUpdateResponseDTO>> getProductForUpdate(
-            @PathVariable Long productId,
+            @PathVariable("productId") Long productId,
             Authentication authentication) {
 
         Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
@@ -100,7 +100,7 @@ public class ProductController {
     // 상품 수정 (이미지 수정/삭제 포함)
     @PatchMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductDTO>> updateProduct(
-            @PathVariable Long productId,
+            @PathVariable("productId") Long productId,
             Authentication authentication,
             @RequestPart("productData") ProductUpdateRequestDTO productData,
             @RequestPart(name = "mainImage", required = false) MultipartFile mainImage,
@@ -129,7 +129,7 @@ public class ProductController {
     // 상품 삭제 (Soft Delete)
     @PatchMapping("/{productId}/delete")
     public ResponseEntity<ApiResponse<String>> softDeleteProduct(
-            @PathVariable Long productId,
+            @PathVariable("productId") Long productId,
             Authentication authentication) {
 
         Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
@@ -150,7 +150,7 @@ public class ProductController {
     // 상품별 리뷰 목록 조회 (페이지네이션 포함)
     @GetMapping("/{productId}/review")
     public ResponseEntity<ApiResponse<PageResponseDTO<ReviewDTO>>> getProductReviews(
-            @PathVariable Long productId,
+            @PathVariable("productId") Long productId,
             @PageableDefault(size = 10) Pageable pageable) {
         PageResponseDTO<ReviewDTO> reviewPageDto = productService.getProductReviews(productId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(reviewPageDto));

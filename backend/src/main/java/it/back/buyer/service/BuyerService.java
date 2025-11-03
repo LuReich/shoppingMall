@@ -262,6 +262,14 @@ public class BuyerService {
         }
 
         if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+            // 전화번호 유효성 검사 (숫자만, 10~11자리)
+            if (!dto.getPhone().matches("\\d+")) {
+                throw new IllegalArgumentException("전화번호는 숫자만 입력해야 합니다.");
+            }
+            if (dto.getPhone().length() < 10 || dto.getPhone().length() > 11) {
+                throw new IllegalArgumentException("전화번호는 10~11자리여야 합니다.");
+            }
+
             if (!detail.getPhone().equals(dto.getPhone())) { // Only check uniqueness if phone is actually changed
                 buyerRepository.findAll().stream()
                         .filter(b -> b.getBuyerDetail() != null && dto.getPhone().equals(b.getBuyerDetail().getPhone()))

@@ -36,7 +36,7 @@ public class ReviewController {
     // 리뷰 수정 API (buyer만 가능, PATCH)
     @PreAuthorize("hasRole('BUYER')")
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<ApiResponse<String>> updateReview(@PathVariable Long reviewId, @RequestBody ReviewCreateRequest request, Principal principal) {
+    public ResponseEntity<ApiResponse<String>> updateReview(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewCreateRequest request, Principal principal) {
         try {
             reviewService.updateReview(reviewId, request, principal.getName());
             return ResponseEntity.ok(ApiResponse.ok("리뷰가 수정되었습니다."));
@@ -50,7 +50,7 @@ public class ReviewController {
     // 리뷰 삭제 API (buyer만 가능)
     @PreAuthorize("hasRole('BUYER')")
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable Long reviewId, Principal principal) {
+    public ResponseEntity<ApiResponse<String>> deleteReview(@PathVariable("reviewId") Long reviewId, Principal principal) {
         try {
             reviewService.deleteReview(reviewId, principal.getName());
             return ResponseEntity.ok(ApiResponse.ok("리뷰가 삭제되었습니다."));
