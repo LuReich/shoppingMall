@@ -189,19 +189,19 @@ public class BuyerController {
     }
 
     // 상품 좋아요
-    @PostMapping("/likes/{productId}")
+    @PostMapping("/like/{productId}")
     public ResponseEntity<ApiResponse<String>> toggleLike(Authentication authentication, @PathVariable("productId") Long productId) {
         Long buyerUid = extractUidFromAuth(authentication);
         if (buyerUid == null) {
             throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
         }
         boolean liked = productLikeService.toggleLike(buyerUid, productId);
-        String message = liked ? "상품 좋아요 누름 ㅇㅇ" : "상품 좋아요 취소 ㅇㅇ";
+        String message = liked ? "상품을 좋아합니다." : "상품 좋아요를 취소합니다.";
         return ResponseEntity.ok(ApiResponse.ok(message));
     }
 
     // buyer 좋아요 한 상품 조회
-    @GetMapping("/likes")
+    @GetMapping("/like/product/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getLikedProducts(
             Authentication authentication,
             PageRequestDTO pageRequestDTO,
