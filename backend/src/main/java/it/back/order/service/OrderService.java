@@ -62,6 +62,7 @@ public class OrderService {
                 detail.setQuantity(detailDTO.getQuantity());
                 detail.setPricePerItem(detailDTO.getPricePerItem());
                 detail.setOrderDetailStatus(OrderDetailEntity.OrderDetailStatus.valueOf(detailDTO.getOrderDetailStatus()));
+                detail.setStatusReason(detailDTO.getStatusReason());
                 detail.setOrder(order);
                 return detail;
             }).collect(Collectors.toList());
@@ -96,6 +97,7 @@ public class OrderService {
                 d.setQuantity(detail.getQuantity());
                 d.setPricePerItem(detail.getPricePerItem());
                 d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
+                d.setStatusReason(detail.getStatusReason());
                 var product = productMap.get(detail.getProductId());
                 if (product != null) {
                     d.setProductName(product.getProductName());
@@ -149,6 +151,7 @@ public class OrderService {
                             d.setQuantity(detail.getQuantity());
                             d.setPricePerItem(detail.getPricePerItem());
                             d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
+                            d.setStatusReason(detail.getStatusReason());
                             var product = productMap.get(detail.getProductId());
                             if (product != null) {
                                 d.setProductName(product.getProductName());
@@ -230,6 +233,7 @@ public class OrderService {
                     dto.setQuantity(detail.getQuantity());
                     dto.setPricePerItem(detail.getPricePerItem());
                     dto.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
+                    dto.setStatusReason(detail.getStatusReason());
 
                     var product = productMap.get(detail.getProductId());
                     if (product != null) {

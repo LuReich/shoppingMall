@@ -604,7 +604,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void softDeleteProduct(Long sellerUid, Long productId) {
+    public void softDeleteProduct(Long sellerUid, Long productId, String reason) {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
 
@@ -613,13 +613,15 @@ public class ProductService {
         }
 
         product.setIsDeleted(true);
+        product.setDeletedBySellerReason(reason);
         productRepository.save(product);
         // 실제 파일 삭제는 하지 않음 (복구 가능성을 위해)
     }
 
-    public void deleteProduct(Long id) {
+    public void deleteProduct(Long id, String reason) {
         productRepository.findById(id).ifPresent(product -> {
             product.setIsDeleted(true);
+            product.setDeletedByAdminReason(reason);
             productRepository.save(product);
         });
     }
@@ -639,6 +641,9 @@ public class ProductService {
         dto.setShippingInfo(detail.getShippingInfo());
         dto.setLikeCount(product.getLikeCount()); // Entity에서 직접 가져옴
         dto.setAverageRating(product.getAverageRating()); // Entity에서 직접 가져옴
+        dto.setIsDeleted(product.getIsDeleted());
+        dto.setDeletedByAdminReason(product.getDeletedByAdminReason());
+        dto.setDeletedBySellerReason(product.getDeletedBySellerReason());
         // 리뷰는 별도 API에서 제공
         return dto;
     }

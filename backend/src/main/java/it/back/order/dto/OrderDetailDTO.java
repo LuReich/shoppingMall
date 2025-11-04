@@ -17,6 +17,7 @@ public class OrderDetailDTO {
     private Integer quantity;
     private Integer pricePerItem;
     private String orderDetailStatus; // Enum 문자열로 처리
+    private String statusReason;
 
     // 추가 정보: 상품명, 썸네일, 판매회사명
     private String productName;

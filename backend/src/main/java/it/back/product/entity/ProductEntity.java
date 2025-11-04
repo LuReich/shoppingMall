@@ -79,6 +79,12 @@ public class ProductEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @Column(name = "deleted_by_admin_reason")
+    private String deletedByAdminReason;
+
+    @Column(name = "deleted_by_seller_reason")
+    private String deletedBySellerReason;
+
     @Column(name = "category_id")
     private Integer categoryId; // 직접 매핑할 category_id
 

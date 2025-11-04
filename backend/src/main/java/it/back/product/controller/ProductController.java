@@ -121,8 +121,8 @@ public class ProductController {
 
     // 상품 삭제 용인데 미사용 권장
     @DeleteMapping("/{productId}")
-    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable("productId") Long productId) {
-        productService.deleteProduct(productId);
+    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable("productId") Long productId, @RequestParam(name = "reason", required = false) String reason) {
+        productService.deleteProduct(productId, reason);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Product deleted successfully"));
     }
 
@@ -130,10 +130,11 @@ public class ProductController {
     @PatchMapping("/{productId}/delete")
     public ResponseEntity<ApiResponse<String>> softDeleteProduct(
             @PathVariable("productId") Long productId,
-            Authentication authentication) {
+            Authentication authentication,
+            @RequestParam(name = "reason", required = false) String reason) {
 
         Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
-        productService.softDeleteProduct(sellerUid, productId);
+        productService.softDeleteProduct(sellerUid, productId, reason);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("상품이 성공적으로 삭제(비활성화)되었습니다."));
     }
 
