@@ -7,6 +7,7 @@ import it.back.order.repository.OrderDetailRepository;
 import it.back.order.dto.OrderResponseDTO;
 import it.back.order.dto.OrderDTO;
 import it.back.order.dto.OrderDetailDTO;
+import it.back.order.dto.OrderDetailSellerResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -275,5 +276,57 @@ public class OrderService {
                 page.getTotalPages(),
                 page.isLast()
         );
+    }
+
+    @Transactional
+    public OrderDetailSellerResponseDTO updateOrderDetailStatus(Long sellerUid, Long orderDetailId, String newStatus, String statusReason) {
+        OrderDetailEntity orderDetail = orderDetailRepository.findById(orderDetailId)
+                .orElseThrow(() -> new IllegalArgumentException("주문 상세를 찾을 수 없습니다: " + orderDetailId));
+
+        if (!orderDetail.getSellerUid().equals(sellerUid)) {
+            throw new SecurityException("해당 주문 상세를 수정할 권한이 없습니다.");
+        }
+
+        // 상태 업데이트
+        orderDetail.setOrderDetailStatus(OrderDetailEntity.OrderDetailStatus.valueOf(newStatus.toUpperCase()));
+        orderDetail.setOrderDetailStatusReason(statusReason);
+        orderDetailRepository.save(orderDetail);
+
+        // 메인 주문 상태 업데이트 확인
+        updateOrderStatusIfAllDelivered(orderDetail.getOrder().getOrderId());
+
+        // 업데이트된 OrderDetailSellerResponseDTO 반환
+        OrderDetailSellerResponseDTO dto = new OrderDetailSellerResponseDTO();
+        dto.setOrderDetailId(orderDetail.getOrderDetailId());
+        dto.setProductId(orderDetail.getProductId());
+        dto.setQuantity(orderDetail.getQuantity());
+        dto.setPricePerItem(orderDetail.getPricePerItem());
+        dto.setOrderDetailStatus(orderDetail.getOrderDetailStatus() != null ? orderDetail.getOrderDetailStatus().name() : null);
+        dto.setOrderDetailStatusReason(orderDetail.getOrderDetailStatusReason());
+
+        // 상품 정보 매핑
+        productRepository.findById(orderDetail.getProductId()).ifPresent(product -> {
+            dto.setProductName(product.getProductName());
+            dto.setProductThumbnailUrl(product.getThumbnailUrl());
+        });
+
+        // 판매자 정보 매핑
+        sellerRepository.findById(orderDetail.getSellerUid()).ifPresent(seller -> {
+            dto.setCompanyName(seller.getCompanyName());
+        });
+
+        // 수령인 정보 매핑 (OrderEntity에서)
+        OrderEntity order = orderDetail.getOrder();
+        if (order != null) {
+            dto.setRecipientName(order.getRecipientName());
+            dto.setRecipientPhone(order.getBuyerPhone());
+            dto.setRecipientAddress(order.getRecipientAddress());
+            dto.setRecipientAddressDetail(order.getRecipientAddressDetail());
+        }
+
+        dto.setCreateAt(orderDetail.getCreateAt());
+        dto.setUpdateAt(orderDetail.getUpdateAt());
+
+        return dto;
     }
 }
