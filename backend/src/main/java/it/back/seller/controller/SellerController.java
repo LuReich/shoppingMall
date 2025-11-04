@@ -20,6 +20,7 @@ import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.order.dto.OrderDetailSellerResponseDTO;
+import it.back.order.dto.OrderDetailStatusUpdateRequestDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
@@ -204,6 +205,19 @@ public class SellerController {
         }
         PageResponseDTO<OrderDetailSellerResponseDTO> orderDetails = orderService.getSellerOrderDetails(sellerUid, pageRequestDTO.toPageable(), productName, productId, categoryId, orderDetailStatus, recipientName, recipientPhone, recipientAddress, recipientAddressDetail);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderDetails));
+    }
+
+    @PatchMapping("/orderDetail/{orderDetailId}/delivery-status")
+    public ResponseEntity<ApiResponse<OrderDetailSellerResponseDTO>> updateOrderDetailStatus(
+            @PathVariable("orderDetailId") Long orderDetailId,
+            @Valid @RequestBody OrderDetailStatusUpdateRequestDTO requestDTO,
+            Authentication authentication) {
+        Long sellerUid = extractUidFromAuth(authentication);
+        if (sellerUid == null) {
+            throw new IllegalStateException("인증 정보가 없습니다.");
+        }
+        OrderDetailSellerResponseDTO updatedOrderDetail = orderService.updateOrderDetailStatus(sellerUid, orderDetailId, requestDTO.getOrderDetailStatus(), requestDTO.getOrderDetailStatusReason());
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedOrderDetail));
     }
 
     // ====== 유틸리티 메서드 ======
