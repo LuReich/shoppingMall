@@ -203,9 +203,7 @@ public class BuyerService {
         // Update buyerId
         if (dto.getBuyerId() != null && !dto.getBuyerId().isBlank()) {
             if (!buyer.getBuyerId().equals(dto.getBuyerId())) { // Only check uniqueness if ID is actually changed
-                buyerRepository.findByBuyerId(dto.getBuyerId()).ifPresent(existing -> {
-                    throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-                });
+                checkBuyerId(dto.getBuyerId(), buyerUid); // Use helper for validation and uniqueness
             }
             buyer.setBuyerId(dto.getBuyerId());
         }

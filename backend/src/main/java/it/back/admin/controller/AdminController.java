@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.dto.AdminUpdateBuyerRequestDTO; // New import
+import it.back.admin.dto.AdminUpdateSellerRequestDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.service.AdminService;
 import it.back.buyer.dto.BuyerDTO;
@@ -30,6 +31,7 @@ import it.back.common.pagination.PageResponseDTO;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.repository.SellerRepository;
+import it.back.seller.service.SellerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -42,6 +44,7 @@ public class AdminController {
     private final BuyerRepository buyerRepository;
     private final SellerRepository sellerRepository;
     private final BuyerService buyerService; // Inject BuyerService
+    private final SellerService sellerService; // Inject SellerService
 
     // 로그인 한 admin 이 자신의 정보 불러오기 마이페이지 개인 정보 수정용
     @GetMapping("/me")
@@ -93,6 +96,15 @@ public class AdminController {
             @Valid @RequestBody AdminUpdateBuyerRequestDTO request) {
         BuyerResponseDTO updatedBuyer = buyerService.adminUpdateBuyer(buyerUid, request);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedBuyer));
+    }
+
+    // admin 전용 seller 정보 수정 (UID 제외)
+    @PatchMapping("/update/seller/{sellerUid}")
+    public ResponseEntity<ApiResponse<SellerResponseDTO>> adminUpdateSeller(
+            @PathVariable("sellerUid") Long sellerUid,
+            @Valid @RequestBody AdminUpdateSellerRequestDTO request) {
+        SellerResponseDTO updatedSeller = sellerService.adminUpdateSeller(sellerUid, request);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedSeller));
     }
 
     // seller 리스트 보기 관리자 페이지 전용

@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.repository.AdminRepository;
@@ -24,8 +26,14 @@ import it.back.seller.dto.SellerDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
 import it.back.admin.specification.SellerSpecifications;
+import it.back.admin.dto.AdminUpdateSellerRequestDTO;
+import it.back.seller.dto.SellerResponseDTO;
+import it.back.seller.entity.SellerDetailEntity;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,6 +45,7 @@ public class AdminService {
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
+    private final Validator validator;
 
     public AdminEntity getAdminEntityById(String adminId) {
         return adminRepository.findByAdminId(adminId)
@@ -129,5 +138,4 @@ public class AdminService {
                 .collect(Collectors.toList());
         return new PageResponseDTO<>(page, sellerList);
     }
-
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 
 public class SellerRegisterDTO {
 
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9]{4,19}$", message = "아이디는 영문으로 시작해야 하며, 5~20자의 영문 또는 숫자 조합이어야 합니다.")
     private String sellerId;
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "^\\S*$", message = "비밀번호에는 공백을 포함할 수 없습니다.")

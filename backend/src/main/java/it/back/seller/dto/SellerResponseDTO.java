@@ -1,5 +1,6 @@
 package it.back.seller.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.back.seller.entity.SellerEntity;
 import lombok.Getter;
@@ -8,6 +9,24 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@JsonPropertyOrder({
+    "sellerUid",
+    "sellerId",
+    "companyName",
+    "sellerEmail",
+    "businessRegistrationNumber",
+    "companyInfo",
+    "phone",
+    "address",
+    "addressDetail",
+    "isVerified",
+    "isActive",
+    "withdrawalStatus",
+    "withdrawalReason",
+    "createAt",
+    "updateAt",
+    "role"
+})
 public class SellerResponseDTO {
 
 
@@ -16,12 +35,6 @@ public class SellerResponseDTO {
     private String sellerId;
     private String companyName;
     private String sellerEmail;
-    @JsonProperty("isVerified")
-    private Boolean isVerified;
-    @JsonProperty("isActive")
-    private Boolean isActive;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
 
     // SellerDetailEntity 정보
     private String businessRegistrationNumber;
@@ -29,6 +42,15 @@ public class SellerResponseDTO {
     private String phone;
     private String address;
     private String addressDetail;
+
+    @JsonProperty("isVerified")
+    private Boolean isVerified;
+    @JsonProperty("isActive")
+    private Boolean isActive;
+    private String withdrawalStatus;
+    private String withdrawalReason;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
     private String role;
 
     public SellerResponseDTO(SellerEntity seller) {
@@ -38,6 +60,8 @@ public class SellerResponseDTO {
         this.sellerEmail = seller.getSellerEmail();
         this.isVerified = seller.isVerified();
         this.isActive = seller.isActive();
+        this.withdrawalStatus = seller.getWithdrawalStatus() != null ? seller.getWithdrawalStatus().name() : null;
+        this.withdrawalReason = seller.getWithdrawalReason();
         this.createAt = seller.getCreateAt();
         this.updateAt = seller.getUpdateAt();
 
