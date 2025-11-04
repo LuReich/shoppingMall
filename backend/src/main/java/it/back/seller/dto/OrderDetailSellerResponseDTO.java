@@ -11,13 +11,15 @@ import lombok.Setter;
 @Setter
 public class OrderDetailSellerResponseDTO {
     private Long orderDetailId;
-    private Integer quantity;
-    private Integer pricePerItem;
 
     // Product Info (for seller's own products)
     private String productName;
-    private String productThumbnailUrl;
     private String companyName;
+
+    private Integer quantity;
+    private Integer pricePerItem;
+
+    private String productThumbnailUrl;
 
     // Recipient Info from OrderEntity
     private String recipientName;
