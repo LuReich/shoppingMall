@@ -62,7 +62,7 @@ public class OrderService {
                 detail.setQuantity(detailDTO.getQuantity());
                 detail.setPricePerItem(detailDTO.getPricePerItem());
                 detail.setOrderDetailStatus(OrderDetailEntity.OrderDetailStatus.valueOf(detailDTO.getOrderDetailStatus()));
-                detail.setStatusReason(detailDTO.getStatusReason());
+                detail.setOrderDetailStatusReason(detailDTO.getOrderDetailStatusReason());
                 detail.setOrder(order);
                 return detail;
             }).collect(Collectors.toList());
@@ -97,8 +97,7 @@ public class OrderService {
                 d.setQuantity(detail.getQuantity());
                 d.setPricePerItem(detail.getPricePerItem());
                 d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
-                d.setStatusReason(detail.getStatusReason());
-                var product = productMap.get(detail.getProductId());
+                                            d.setOrderDetailStatusReason(detail.getOrderDetailStatusReason());                var product = productMap.get(detail.getProductId());
                 if (product != null) {
                     d.setProductName(product.getProductName());
                     d.setProductThumbnailUrl(product.getThumbnailUrl());
@@ -151,7 +150,7 @@ public class OrderService {
                             d.setQuantity(detail.getQuantity());
                             d.setPricePerItem(detail.getPricePerItem());
                             d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
-                            d.setStatusReason(detail.getStatusReason());
+                            d.setOrderDetailStatusReason(detail.getOrderDetailStatusReason());
                             var product = productMap.get(detail.getProductId());
                             if (product != null) {
                                 d.setProductName(product.getProductName());
@@ -198,13 +197,17 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponseDTO<it.back.seller.dto.OrderDetailSellerResponseDTO> getSellerOrderDetails(
+    public PageResponseDTO<it.back.order.dto.OrderDetailSellerResponseDTO> getSellerOrderDetails(
             Long sellerUid,
             Pageable pageable,
             String productName,
             Long productId,
             Integer categoryId,
-            String orderDetailStatus) {
+            String orderDetailStatus,
+            String recipientName,
+            String recipientPhone,
+            String recipientAddress,
+            String recipientAddressDetail) {
 
         Specification<OrderDetailEntity> spec = (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction(); // Start with an always-true predicate
@@ -214,6 +217,10 @@ public class OrderService {
             predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasProductId(productId).toPredicate(root, query, criteriaBuilder));
             predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasProductName(productName).toPredicate(root, query, criteriaBuilder));
             predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasOrderDetailStatus(orderDetailStatus).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasRecipientName(recipientName).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasRecipientPhone(recipientPhone).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasRecipientAddress(recipientAddress).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasRecipientAddressDetail(recipientAddressDetail).toPredicate(root, query, criteriaBuilder));
 
             return predicate;
         };
@@ -226,14 +233,14 @@ public class OrderService {
                 .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
 
         // OrderDetailDTO로 변환
-        List<it.back.seller.dto.OrderDetailSellerResponseDTO> dtoList = page.getContent().stream()
+        List<it.back.order.dto.OrderDetailSellerResponseDTO> dtoList = page.getContent().stream()
                 .map(detail -> {
-                    it.back.seller.dto.OrderDetailSellerResponseDTO dto = new it.back.seller.dto.OrderDetailSellerResponseDTO();
+                    it.back.order.dto.OrderDetailSellerResponseDTO dto = new it.back.order.dto.OrderDetailSellerResponseDTO();
                     dto.setOrderDetailId(detail.getOrderDetailId());
                     dto.setQuantity(detail.getQuantity());
                     dto.setPricePerItem(detail.getPricePerItem());
                     dto.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
-                    dto.setStatusReason(detail.getStatusReason());
+                    dto.setOrderDetailStatusReason(detail.getOrderDetailStatusReason());
 
                     var product = productMap.get(detail.getProductId());
                     if (product != null) {

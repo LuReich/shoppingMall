@@ -19,7 +19,7 @@ import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
-import it.back.seller.dto.OrderDetailSellerResponseDTO;
+import it.back.order.dto.OrderDetailSellerResponseDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
@@ -193,12 +193,16 @@ public class SellerController {
             @RequestParam(name = "productName", required = false) String productName,
             @RequestParam(name = "productId", required = false) Long productId,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
-            @RequestParam(name = "orderDetailStatus", required = false) String orderDetailStatus) {
+            @RequestParam(name = "orderDetailStatus", required = false) String orderDetailStatus,
+            @RequestParam(name = "recipientName", required = false) String recipientName,
+            @RequestParam(name = "recipientPhone", required = false) String recipientPhone,
+            @RequestParam(name = "recipientAddress", required = false) String recipientAddress,
+            @RequestParam(name = "recipientAddressDetail", required = false) String recipientAddressDetail) {
         Long sellerUid = extractUidFromAuth(authentication);
         if (sellerUid == null) {
             throw new IllegalStateException("인증 정보가 없습니다.");
         }
-        PageResponseDTO<OrderDetailSellerResponseDTO> orderDetails = orderService.getSellerOrderDetails(sellerUid, pageRequestDTO.toPageable(), productName, productId, categoryId, orderDetailStatus);
+        PageResponseDTO<OrderDetailSellerResponseDTO> orderDetails = orderService.getSellerOrderDetails(sellerUid, pageRequestDTO.toPageable(), productName, productId, categoryId, orderDetailStatus, recipientName, recipientPhone, recipientAddress, recipientAddressDetail);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderDetails));
     }
 

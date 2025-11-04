@@ -88,4 +88,40 @@ public class OrderDetailSpecifications {
             return criteriaBuilder.equal(productJoin.get("categoryId"), categoryId);
         };
     }
+
+    public static Specification<OrderDetailEntity> hasRecipientName(String recipientName) {
+        return (root, query, criteriaBuilder) -> {
+            if (recipientName == null || recipientName.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("order").get("recipientName"), "%" + recipientName + "%");
+        };
+    }
+
+    public static Specification<OrderDetailEntity> hasRecipientPhone(String recipientPhone) {
+        return (root, query, criteriaBuilder) -> {
+            if (recipientPhone == null || recipientPhone.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("order").get("buyerPhone"), "%" + recipientPhone + "%");
+        };
+    }
+
+    public static Specification<OrderDetailEntity> hasRecipientAddress(String recipientAddress) {
+        return (root, query, criteriaBuilder) -> {
+            if (recipientAddress == null || recipientAddress.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("order").get("recipientAddress"), "%" + recipientAddress + "%");
+        };
+    }
+
+    public static Specification<OrderDetailEntity> hasRecipientAddressDetail(String recipientAddressDetail) {
+        return (root, query, criteriaBuilder) -> {
+            if (recipientAddressDetail == null || recipientAddressDetail.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("order").get("recipientAddressDetail"), "%" + recipientAddressDetail + "%");
+        };
+    }
 }

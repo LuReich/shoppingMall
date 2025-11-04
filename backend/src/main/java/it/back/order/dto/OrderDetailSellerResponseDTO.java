@@ -1,4 +1,4 @@
-package it.back.seller.dto;
+package it.back.order.dto;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +28,7 @@ public class OrderDetailSellerResponseDTO {
     private String recipientAddressDetail;
 
     private String orderDetailStatus;
-    private String statusReason;
+    private String orderDetailStatusReason;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createAt;
