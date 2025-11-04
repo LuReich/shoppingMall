@@ -242,14 +242,10 @@ public class BuyerService {
         }
 
         // Update withdrawalStatus
-        if (dto.getWithdrawalStatus() != null) {
-            buyer.setWithdrawalStatus(dto.getWithdrawalStatus());
-        }
+        buyer.setWithdrawalStatus(dto.getWithdrawalStatus());
 
         // Update withdrawalReason
-        if (dto.getWithdrawalReason() != null) {
-            buyer.setWithdrawalReason(dto.getWithdrawalReason());
-        }
+        buyer.setWithdrawalReason(dto.getWithdrawalReason());
 
         // Update BuyerDetailEntity fields
         BuyerDetailEntity detail = buyer.getBuyerDetail();
