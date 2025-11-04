@@ -213,7 +213,7 @@ create table order_detail (
     quantity int unsigned not null comment '주문 수량',
     price_per_item int unsigned not null comment '주문 시점의 개당 가격',
     order_detail_status enum('PAID', 'SHIPPING', 'DELIVERED', 'CANCELED') not null default 'PAID' comment '주문상세별 상태(배송/처리)',
-    status_reason text default null comment '주문상세 상태 변경/취소/거절/반품 등 사유',
+    order_detail_status_reason text default null comment '주문상세 상태 변경/취소/거절/반품 등 사유',
     create_at datetime default now() comment '주문일',
     update_at datetime default current_timestamp on update current_timestamp comment '주문상태 변경일',
     foreign key (order_id) references orders(order_id) on delete cascade,

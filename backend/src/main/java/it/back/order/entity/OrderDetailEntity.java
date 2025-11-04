@@ -44,8 +44,8 @@ public class OrderDetailEntity {
     @Column(name = "order_detail_status", nullable = false)
     private OrderDetailStatus orderDetailStatus = OrderDetailStatus.PAID;
 
-    @Column(name = "status_reason")
-    private String statusReason;
+    @Column(name = "order_detail_status_reason")
+    private String orderDetailStatusReason;
 
 
     @Column(name = "create_at", updatable = false)
