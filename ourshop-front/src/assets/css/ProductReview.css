@@ -3,10 +3,23 @@
 .customer-reviews-section .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: end;
     border-bottom: 2px solid #333;
     padding-bottom: 15px;
 }
+
+.review-summary-box{
+    font-size: 22px;
+    font-weight: bold;
+    width: 100%;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
 
 .write-review-btn {
     background-color: #333;
@@ -23,7 +36,7 @@
 }
 
 .review-box{
-    border-bottom: 1px solid #7cc7de;
+    border-bottom: 1px solid #727171;
     padding: 50px 10px;
     display: flex;
     flex-direction: row;
@@ -39,11 +52,21 @@
     flex: 3;
 }
 
+.star-box{
+    color: #fcc419;
+    font-size: 20px;
+}
 .product-info-box{
     display: flex;
     flex-direction: row;
     gap: 10px;
     color: #aaa;
+}
+
+.review-star-and-info{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .date-box{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { useProduct } from '../../hooks/useProduct';
 import { useCategory } from '../../hooks/useCategory';
@@ -9,11 +9,15 @@ import ProductInquiry from '../../components/product/ProductInquiry';
 import { authStore } from '../../store/authStore';
 import { useCart } from '../../hooks/useCart';
 import LikesBtn from '../../components/common/LikesBtn';
+import RecommendBox from '../../components/recommendation/RecommendBox';
 
 function ProductDetail() {
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
   const navigate = useNavigate();
   const { productId } = useParams();
+
+  // 하단 리뷰 탭으로 스크롤하기 위한 ref
+  const reviewsRef = useRef(null);
 
   const { isLogin, role } = authStore(state => state);
 
@@ -94,6 +98,13 @@ function ProductDetail() {
   if (isLoading) return <p>상품 조회중...</p>;
   if (isError) return <p>상품 조회에 실패했습니다.</p>;
 
+  // 리뷰 섹션으로 스크롤하고 탭을 변경하는 함수
+  const handleScrollToReviews = () => {
+    setActiveTab('reviews');
+    reviewsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  console.log("상품", product);
 
   // ✅ 수량 변경
   const handleQuantityChange = (amount) => {
@@ -217,7 +228,7 @@ function ProductDetail() {
             <p className='company-name' onClick={() => navigate('/shop',  { state: { sellerUid: product.sellerUid } })}>{product.companyName}</p>
           </div>
 
-          <div className="review-summary">
+          <div className="review-summary" onClick={handleScrollToReviews} style={{cursor: 'pointer'}}>
             <span className="stars">{'★'.repeat(Math.round(product.averageRating))}</span>
             <span className="rating">{product.averageRating} ({reviewLength}개 리뷰)</span>
           </div>
@@ -262,7 +273,9 @@ function ProductDetail() {
         </div>
       </div>
 
-      <div className="product-extra-details">
+      <RecommendBox product={product}/>
+
+      <div className="product-extra-details" ref={reviewsRef}>
         <nav className="tabs-nav">
           <button className={activeTab === 'info' ? 'active' : ''} onClick={() => setActiveTab('info')}>상품 정보</button>
           <button className={activeTab === 'reviews' ? 'active' : ''} onClick={() => setActiveTab('reviews')}>리뷰 ({reviewLength})</button>
@@ -274,7 +287,7 @@ function ProductDetail() {
             <ProductDescription productDescription={productDescription} />
           )}
           {activeTab === 'reviews' && (
-            <ProductReviews productReviews={productReviews} />
+            <ProductReviews product={product} />
           )}
           {activeTab === 'shipping' && (
             <ProductInquiry />

@@ -2,19 +2,20 @@
 
 .buyer-review-container {
   width: 90%;
-  box-sizing: border-box;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .buyer-review-container h2 {
     font-size: 28px;
     text-align: center;
     font-weight: 600;
-    margin-bottom: 40px;
+    margin-bottom: 40px; /* 제목과 정렬 컴포넌트 사이 간격 */
 }
 
 .review-table {
-  width: 100%;
-  margin-top: 25px;
+  width: 100%; 
 }
 
 .review-table table {

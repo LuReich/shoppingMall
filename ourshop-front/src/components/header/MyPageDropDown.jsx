@@ -22,7 +22,7 @@ function MyPageDropDown(props) {
                     <Link className='link-btn' to='/buyer/mypage/info'>회원 정보 관리</Link>
                     <Link className='link-btn' to='/buyer/mypage/shipping'>주문/배송 조회</Link>
                     <Link className='link-btn' to='/buyer/mypage/review'>리뷰 관리</Link>
-                    <Link className='link-btn' to='/buyer/mypage/likes'>찜한 상품</Link>
+                    <Link className='link-btn' to='/buyer/mypage/likes'>좋아요한 상품</Link>
                     <p className='link-btn' onClick={handleLogout}>로그아웃</p>
                 </>
                 :

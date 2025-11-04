@@ -8,9 +8,18 @@ export const adminAPI = {
         return res.data;
     },
 
+    //회원 상세정보 가져오기
     getDetail: async (mode, uid) => {
         const res = await api.get(`/admin/${mode}/${uid}/detail`);
         return res.data;
     },
 
+    //관리자 권한 - 회원 정보 수정
+    update: async (mode, uid, data) => {
+        const res = await api.patch(`/admin/update/${mode}/${uid}`, data);
+        return res.data;
+    }
+
+
+ 
 }

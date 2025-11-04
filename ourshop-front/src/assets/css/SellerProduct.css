@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 .seller-product-container{
-    width: 78%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;

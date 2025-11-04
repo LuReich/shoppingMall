@@ -316,21 +316,21 @@
 
 /* 탭 섹션 */
 .product-extra-details {
-    margin-top: 100px;
+    margin-top: 80px;
 }
 
 .tabs-nav {
     display: flex;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid black;
 }
 
 .tabs-nav button {
+    flex: 1;
     padding: 15px 20px;
     font-size: 16px;
     background: none;
     border: none;
     cursor: pointer;
-    color: #888;
     border-bottom: 3px solid transparent;
     margin-bottom: -1px;
 }

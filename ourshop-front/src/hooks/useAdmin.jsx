@@ -1,7 +1,12 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { adminAPI } from "../api/adminAPI"
+import { useNavigate } from "react-router";
 
 export const useAdmin = () => {
+
+    const qc = useQueryClient();
+    const navigate = useNavigate();
+
     //회원 리스트 조회
     const getUserList = (mode, params = {},  enabled = true) => {
         return useQuery({
@@ -17,12 +22,31 @@ export const useAdmin = () => {
         return useQuery({
             queryKey: ["userDetail", mode, uid],
             queryFn: () => adminAPI.getDetail(mode, uid),
-            enabled: !!uid && uid > 0, // uid가 유효한 값일 때만 쿼리를 실행합니다.
+        });
+    };
+
+    //회원 정보 수정
+    const updateUser = () =>{
+        return useMutation({
+            mutationFn: ({mode, uid, data}) => adminAPI.update(mode, uid, data),
+            onSuccess: (res, variables) => {
+                const { mode, uid } = variables;
+                qc.invalidateQueries({ queryKey: ["userDetail", mode, uid] }); 
+                qc.invalidateQueries({ queryKey: ["userList", mode] });
+                console.log("회원정보 수정 성공:", res);
+                alert("회원정보가 수정되었습니다");
+            },
+            onError: (err) => {
+                const msg = err.response?.data?.content || "회원정보 수정에 실패했습니다.";
+                console.error("회원정보 수정 실패:", err);
+                alert(msg);
+            }
         })
     }
 
     return { 
         getUserList,
         getUserDetail,
+        updateUser,  
      };
 }

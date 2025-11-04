@@ -37,7 +37,7 @@ function Sort({sort, setSort, setPage, sortCateg }) {
                         {
                           sortCateg?.productName && 
                           <>
-                            <option value={`${sortCateg?.productName},desc`}>가나다순</option>
+                            <option value={`${sortCateg?.productName},asc`}>가나다순</option>
                           </>  
                         }
                         {
