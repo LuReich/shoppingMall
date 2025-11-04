@@ -3,6 +3,7 @@ package it.back.buyer.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.back.buyer.entity.BuyerDetailEntity;
 import it.back.buyer.entity.BuyerEntity;
@@ -11,6 +12,23 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@JsonPropertyOrder({
+    "buyerUid",
+    "buyerId",
+    "buyerEmail",
+    "nickname",
+    "phone",
+    "address",
+    "addressDetail",
+    "birth",
+    "gender",
+    "isActive",
+    "withdrawalStatus",
+    "withdrawalReason",
+    "createAt",
+    "updateAt",
+    "role"
+})
 public class BuyerResponseDTO {
 
     // 기본 생성자 (에러 메시지 전달용)
@@ -31,14 +49,15 @@ public class BuyerResponseDTO {
     private String addressDetail;
     private LocalDate birth;
     private BuyerDetailEntity.Gender gender;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    // 필요시 Buyer 엔티티의 모든 필드 추가
+
     @JsonProperty("isActive")
     private Boolean isActive;
-    private BuyerEntity.WithdrawalStatus withdrawalStatus; // New field
-    private String withdrawalReason; // New field
+    private BuyerEntity.WithdrawalStatus withdrawalStatus;
+    private String withdrawalReason;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
     private String role;
-    // 필요시 Buyer 엔티티의 모든 필드 추가
 
     public BuyerResponseDTO(BuyerEntity buyer) {
         this.buyerUid = buyer.getBuyerUid();

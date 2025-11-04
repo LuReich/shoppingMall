@@ -23,6 +23,7 @@ import it.back.seller.dto.SellerUpdateRequestDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
+import it.back.admin.dto.AdminUpdateSellerRequestDTO; // New import
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -169,7 +170,12 @@ public class SellerService {
     }
 
 
-    // 이메일 중복/형식 체크
+    /**
+     * 이메일 유효성 및 중복 체크.
+     * @param email 이메일
+     * @param sellerUid 중복 검사에서 제외할 seller의 UID (본인/수정대상)
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 이메일
+     */
     public boolean checkEmail(String email, Long sellerUid) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("이메일을 입력하세요.");
@@ -180,31 +186,26 @@ public class SellerService {
         
         Optional<SellerEntity> existing = sellerRepository.findBySellerEmail(email);
         if (existing.isEmpty()) {
-            return false; // 사용 가능한 새 이메일
+            return false; // Available
         }
-        
-        SellerEntity found = existing.get();
-        if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
-            return true; // 이전과 동일한 이메일 (자신 혹은 수정 대상의 이메일)
-        }
-        
-        throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+
+        // If existing, check if it's the same user
+        return sellerUid != null && sellerUid.equals(existing.get().getSellerUid());
     }
 
     /**
      * 아이디 유효성 및 중복 체크.
      * @param sellerId 아이디
      * @param sellerUid 중복 검사에서 제외할 seller의 UID (본인/수정대상)
-     * @return true: sellerId가 sellerUid의 것과 동일, false: 사용 가능한 새 아이디
      * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 아이디
      */
     public boolean checkSellerId(String sellerId, Long sellerUid) {
         if (sellerId == null || sellerId.isBlank()) {
             throw new IllegalArgumentException("아이디를 입력하세요.");
         }
-        // 아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.
-        if (!sellerId.matches("^[a-zA-Z][a-zA-Z0-9]{5,19}$")) {
-            throw new IllegalArgumentException("아이디는 영문으로 시작해야 하며, 6~20자의 영문 또는 숫자 조합이어야 합니다.");
+        // 아이디는 영문으로 시작해야 하며, 5~20자의 영문 또는 숫자 조합이어야 합니다.
+        if (!sellerId.matches("^[a-zA-Z][a-zA-Z0-9]{4,19}$")) {
+            throw new IllegalArgumentException("아이디는 영문으로 시작해야 하며, 5~20자의 영문 또는 숫자 조합이어야 합니다.");
         }
 
         Optional<SellerEntity> existing = sellerRepository.findBySellerId(sellerId);
@@ -213,14 +214,33 @@ public class SellerService {
         }
 
         SellerEntity found = existing.get();
-        if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
-            return true; // 이전과 동일한 아이디 (자신 혹은 수정 대상의 아이디)
-        }
-
-        throw new IllegalArgumentException("이미 사용 중인 아이디입니다."); // 타인의 중복 아이디
+        // If existing, check if it's the same user
+        return sellerUid != null && sellerUid.equals(found.getSellerUid());
     }
 
-    // 사업자등록번호 유효성 및 중복 체크
+    /**
+     * 전화번호 유효성 체크. (중복 체크 없음)
+     * @param phone 전화번호
+     * @throws IllegalArgumentException 형식 오류 또는 길이 오류
+     */
+    public void checkPhone(String phone) {
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException("전화번호를 입력하세요.");
+        }
+        if (!phone.matches("^\\d+$")) {
+            throw new IllegalArgumentException("전화번호는 숫자만 입력해야 합니다.");
+        }
+        if (phone.length() < 10 || phone.length() > 11) {
+            throw new IllegalArgumentException("전화번호는 10~11자리여야 합니다.");
+        }
+    }
+
+    /**
+     * 사업자등록번호 유효성 및 중복 체크.
+     * @param businessRegistrationNumber 사업자등록번호
+     * @param sellerUid 중복 검사에서 제외할 seller의 UID (본인/수정대상)
+     * @throws IllegalArgumentException 형식 오류 또는 타인의 중복 사업자등록번호
+     */
     public boolean checkBusinessRegistrationNumber(String businessRegistrationNumber, Long sellerUid) {
         if (businessRegistrationNumber == null || businessRegistrationNumber.isBlank()) {
             throw new IllegalArgumentException("사업자등록번호를 입력하세요.");
@@ -230,17 +250,12 @@ public class SellerService {
         }
         
         Optional<SellerEntity> existing = sellerRepository.findBySellerDetail_BusinessRegistrationNumber(businessRegistrationNumber);
-        
         if (existing.isEmpty()) {
-            return false; // 사용 가능한 새 번호
+            return false; // Available
         }
 
-        SellerEntity found = existing.get();
-        if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
-            return true; // 이전과 동일한 사업자등록번호
-        }
-
-        throw new IllegalArgumentException("이미 사용 중인 사업자등록번호입니다.");
+        // If existing, check if it's the same user
+        return sellerUid != null && sellerUid.equals(existing.get().getSellerUid());
     }
 
     @Transactional
@@ -335,6 +350,101 @@ public class SellerService {
             throw new ConstraintViolationException(violations);
         }
         // 변경사항은 @Transactional에 의해 자동 반영
+        return new SellerResponseDTO(seller);
+    }
+
+    @Transactional
+    public SellerResponseDTO adminUpdateSeller(Long sellerUid, AdminUpdateSellerRequestDTO dto) {
+        SellerEntity seller = sellerRepository.findById(sellerUid)
+                .orElseThrow(() -> new IllegalArgumentException("Seller not found with uid: " + sellerUid));
+
+        // Update sellerId
+        if (dto.getSellerId() != null && !dto.getSellerId().isBlank()) {
+            if (!seller.getSellerId().equals(dto.getSellerId())) { // Only check uniqueness if ID is actually changed
+                checkSellerId(dto.getSellerId(), sellerUid); // Use helper for validation and uniqueness
+            }
+            seller.setSellerId(dto.getSellerId());
+        }
+
+        // Update password
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            Set<ConstraintViolation<AdminUpdateSellerRequestDTO>> pwViolations = validator.validateProperty(dto, "password");
+            if (!pwViolations.isEmpty()) {
+                throw new ConstraintViolationException(pwViolations);
+            }
+            seller.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        // Update companyName
+        if (dto.getCompanyName() != null) {
+            seller.setCompanyName(dto.getCompanyName());
+        }
+
+        // Update sellerEmail
+        if (dto.getSellerEmail() != null && !dto.getSellerEmail().isBlank()) {
+            if (!seller.getSellerEmail().equals(dto.getSellerEmail())) { // Only check uniqueness if email is actually changed
+                checkEmail(dto.getSellerEmail(), sellerUid); // Use helper for validation and uniqueness
+            }
+            seller.setSellerEmail(dto.getSellerEmail());
+        }
+
+        // Update isActive
+        if (dto.getIsActive() != null) {
+            seller.setActive(dto.getIsActive());
+        }
+
+        // Update isVerified
+        if (dto.getIsVerified() != null) {
+            seller.setVerified(dto.getIsVerified());
+        }
+
+        // Update withdrawalStatus
+        if (dto.getWithdrawalStatus() != null) {
+            seller.setWithdrawalStatus(dto.getWithdrawalStatus());
+        }
+
+        // Update withdrawalReason
+        if (dto.getWithdrawalReason() != null) {
+            seller.setWithdrawalReason(dto.getWithdrawalReason());
+        }
+
+        // Update SellerDetailEntity fields
+        SellerDetailEntity detail = seller.getSellerDetail();
+        if (detail == null) {
+            detail = new SellerDetailEntity();
+            detail.setSeller(seller);
+            seller.setSellerDetail(detail);
+        }
+
+        if (dto.getPhone() != null && !dto.getPhone().isBlank()) {
+            if (!detail.getPhone().equals(dto.getPhone())) { // Only check uniqueness if phone is actually changed
+                checkPhone(dto.getPhone()); // Use helper for validation and uniqueness (no sellerUid needed for non-unique check)
+            }
+            detail.setPhone(dto.getPhone());
+        }
+        if (dto.getBusinessRegistrationNumber() != null && !dto.getBusinessRegistrationNumber().isBlank()) {
+            if (!detail.getBusinessRegistrationNumber().equals(dto.getBusinessRegistrationNumber())) { // Only check uniqueness if BRN is actually changed
+                checkBusinessRegistrationNumber(dto.getBusinessRegistrationNumber(), sellerUid); // Use helper for validation and uniqueness
+            }
+            detail.setBusinessRegistrationNumber(dto.getBusinessRegistrationNumber());
+        }
+        if (dto.getCompanyInfo() != null) {
+            detail.setCompanyInfo(dto.getCompanyInfo());
+        }
+        if (dto.getAddress() != null) {
+            detail.setAddress(dto.getAddress());
+        }
+        if (dto.getAddressDetail() != null) {
+            detail.setAddressDetail(dto.getAddressDetail());
+        }
+
+        // Explicitly validate the entity
+        Set<ConstraintViolation<SellerEntity>> violations = validator.validate(seller);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
+        sellerRepository.save(seller); // Save changes
         return new SellerResponseDTO(seller);
     }
 
