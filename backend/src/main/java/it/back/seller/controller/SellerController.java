@@ -186,7 +186,7 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
     }
 
-    @GetMapping("/orderDetails/list")
+    @GetMapping("/orderDetail/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<OrderDetailDTO>>> getSellerOrderDetails(
             Authentication authentication,
             PageRequestDTO pageRequestDTO,
