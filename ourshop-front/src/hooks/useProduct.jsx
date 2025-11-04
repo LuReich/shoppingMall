@@ -33,7 +33,7 @@ export const useProduct = () => {
   };
 
   //상품 리뷰 조회
-  const getProductReview = (productId, params = { page: 0, size: 10 }) => {
+  const getProductReview = (productId, params = {}) => {
     return useQuery({
       queryKey: ["productReview", productId, params],
       queryFn: () => productAPI.getReviews(productId, params),

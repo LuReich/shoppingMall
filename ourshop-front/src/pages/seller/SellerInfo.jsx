@@ -11,7 +11,7 @@ import WithdrawModal from "../../components/common/WithdrawModal";
 const schema = yup.object().shape({
   password: yup
     .string()
-    .min(6, "비밀번호는 최소 6자 이상이어야 합니다.")
+    .min(4, "비밀번호는 최소 4자 이상이어야 합니다.")
     .matches(/^[0-9]+$/, "비밀번호는 숫자만 가능합니다.")
     .notRequired(),
   confirmPassword: yup

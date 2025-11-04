@@ -1,0 +1,48 @@
+@charset "UTF_8";
+
+.recommend-box{
+    width: 100%;
+}
+
+.recommend-title {
+    font-size: 24px;
+    text-align: left;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.recommend-product-list {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    border-top: 2px solid #7cc7de;
+    padding: 20px 0;
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.recommend-product-card-wrapper {
+    width: 190px; /* 카드의 너비를 고정값으로 설정 */
+    flex-shrink: 0;
+}
+
+/* ProductCard.module.css의 클래스명을 직접 참조하여 스타일 재정의 */
+.recommend-product-card-wrapper > a {
+    /* ProductCard의 루트 요소인 Link(a 태그)를 선택 */
+    font-size: 13px;
+}
+
+/* 추천 상품 카드 내 상품명 폰트 크기 조정 */
+.recommend-product-card-wrapper [class*="productName"] {
+    font-size: 13px; /* 기존 16px에서 조정 */
+    margin-bottom: 8px;
+}
+
+/* 추천 상품 카드 내 가격 폰트 크기 조정 */
+.recommend-product-card-wrapper [class*="salePrice"] {
+    font-size: 13px; /* 기존 18px에서 조정 */
+}
+.recommend-product-card-wrapper [class*="originalPrice"] {
+    font-size: 12px; /* 기존 13px에서 조정 */
+}

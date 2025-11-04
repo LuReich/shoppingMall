@@ -66,13 +66,11 @@ export const router = createBrowserRouter([
           { path: "products/upload", Component: ProductUpload },
           { path: "products/:productId", Component: ProductUpload },
         ],
-      },
-      {
-        path: "admin",
-        Component: AdminHome,
-        children: [{ index: true, Component: AdminUserManage }],
-      },
+      }
     ],
+  },
+  { path: "admin", Component: AdminHome,
+        children: [{ index: true, Component: AdminUserManage }],
   },
   { path: "/login", Component: Login },
   { path: "/register/buyer", Component: BuyerRegister },

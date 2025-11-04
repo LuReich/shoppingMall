@@ -28,7 +28,7 @@ function SideMenuBar(props) {
                     <NavLink className='side-link-btn' to='/buyer/mypage/shipping'>주문/배송 조회</NavLink>
                     <NavLink className='side-link-btn' to='/buyer/mypage/review'>리뷰 관리</NavLink>
                     <NavLink className='side-link-btn' to='/buyer/mypage/likes'>좋아요한 상품</NavLink>
-                    <p className='side-link-btn' onClick={handleLogout}>로그아웃</p>
+                    <p className='side-logout-btn' onClick={handleLogout}>로그아웃</p>
                 </>
                 :
                 role === "SELLER"?
@@ -36,12 +36,12 @@ function SideMenuBar(props) {
                         <NavLink className='side-link-btn' to='/seller/mypage/info'>업체 정보 관리</NavLink>
                         <NavLink className='side-link-btn' to='/seller/mypage/products'>업체 상품 관리</NavLink>
                         <NavLink className='side-link-btn' to='/seller/mypage/post'>판매 내역 관리</NavLink>
-                        <p className='side-link-btn' onClick={handleLogout}>로그아웃</p>
+                        <p className='side-logout-btn' onClick={handleLogout}>로그아웃</p>
                     </>
                     :
                     <>
                         <Link className='side-link-btn' to='#'>관리자 정보 관리</Link>
-                        <p className='side-link-btn' onClick={handleLogout}>로그아웃</p>
+                        <p className='side-logout-btn' onClick={handleLogout}>로그아웃</p>
                     </>
             } 
             </div> 

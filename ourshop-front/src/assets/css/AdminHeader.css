@@ -1,12 +1,11 @@
 @charset 'UTF-8';
 
 .admin-header-container{
-    width: 78%;
+    width: 78%; /* Header와 너비 통일 */
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 25px 0;
 }
 
 .admin-header-container h2{

@@ -13,7 +13,7 @@
     width: 100%;
 }
 
-
+.side-logout-btn,
 .side-link-btn{
     text-decoration: none;
     color: black;
@@ -23,11 +23,19 @@
     
 }
 
+.side-logout-btn:hover,
 .side-link-btn:hover{
     background-color: #f5f5f5;
-    color: #2193b0;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.side-link-btn:hover{
+    color: #2193b0;
+}
+
+.side-logout-btn:hover{
+    color: red;
 }
 
 .side-link-btn.active{
@@ -36,3 +44,4 @@
     font-weight: bold;
     border-radius: 4px;
 }
+
