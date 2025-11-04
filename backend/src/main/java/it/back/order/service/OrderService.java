@@ -237,6 +237,7 @@ public class OrderService {
                 .map(detail -> {
                     it.back.order.dto.OrderDetailSellerResponseDTO dto = new it.back.order.dto.OrderDetailSellerResponseDTO();
                     dto.setOrderDetailId(detail.getOrderDetailId());
+                    dto.setProductId(detail.getProductId());
                     dto.setQuantity(detail.getQuantity());
                     dto.setPricePerItem(detail.getPricePerItem());
                     dto.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
