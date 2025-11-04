@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import it.back.product.entity.ProductEntity;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 
 public class ProductSpecifications {
@@ -56,7 +57,7 @@ public class ProductSpecifications {
             // Ensure the seller is fetched along with the product to avoid N+1 queries
             // Only apply fetch if it's not a count query
             if (query.getResultType() != Long.class && query.getResultType() != long.class) {
-                root.fetch("seller", jakarta.persistence.criteria.JoinType.LEFT);
+                root.fetch("seller", JoinType.LEFT);
             }
             return criteriaBuilder.conjunction(); // Always-true predicate
         };

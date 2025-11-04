@@ -27,6 +27,10 @@ public class OrderDetailEntity {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    private it.back.product.entity.ProductEntity product;
+
     @Column(name = "seller_uid", nullable = false)
     private Long sellerUid;
 
