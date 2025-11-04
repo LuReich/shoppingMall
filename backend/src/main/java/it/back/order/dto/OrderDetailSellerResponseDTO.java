@@ -13,6 +13,7 @@ public class OrderDetailSellerResponseDTO {
     private Long orderDetailId;
 
     // Product Info (for seller's own products)
+    private Long productId;
     private String productName;
     private String companyName;
 
