@@ -399,14 +399,10 @@ public class SellerService {
         }
 
         // Update withdrawalStatus
-        if (dto.getWithdrawalStatus() != null) {
-            seller.setWithdrawalStatus(dto.getWithdrawalStatus());
-        }
+        seller.setWithdrawalStatus(dto.getWithdrawalStatus());
 
         // Update withdrawalReason
-        if (dto.getWithdrawalReason() != null) {
-            seller.setWithdrawalReason(dto.getWithdrawalReason());
-        }
+        seller.setWithdrawalReason(dto.getWithdrawalReason());
 
         // Update SellerDetailEntity fields
         SellerDetailEntity detail = seller.getSellerDetail();
