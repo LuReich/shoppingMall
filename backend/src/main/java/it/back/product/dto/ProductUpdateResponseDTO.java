@@ -41,10 +41,14 @@ public class ProductUpdateResponseDTO {
     private String shippingInfo;
 
     // 메타 정보
+    @JsonProperty("isDeleted")
+    private Boolean isDeleted;
+    private String deletedByAdminReason;
+    private String deletedBySellerReason;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
-    @JsonProperty("isDeleted")
-    private Boolean isDeleted;    // ProductEntity를 ProductUpdateResponseDTO로 변환하는 생성자
+
+    // ProductEntity를 ProductUpdateResponseDTO로 변환하는 생성자
 
     public ProductUpdateResponseDTO(ProductEntity product) {
         this.productId = product.getProductId();
@@ -55,9 +59,12 @@ public class ProductUpdateResponseDTO {
         this.price = product.getPrice();
         this.stock = product.getStock();
         this.thumbnailUrl = product.getThumbnailUrl();
+        this.isDeleted = product.getIsDeleted();
+        this.deletedByAdminReason = product.getDeletedByAdminReason();
+        this.deletedBySellerReason = product.getDeletedBySellerReason();
         this.createAt = product.getCreateAt();
         this.updateAt = product.getUpdateAt();
-        this.isDeleted = product.getIsDeleted();
+
 
         // 상품 상세 정보
         if (product.getProductDetail() != null) {

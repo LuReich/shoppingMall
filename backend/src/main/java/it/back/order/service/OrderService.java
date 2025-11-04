@@ -16,7 +16,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
+
 import it.back.common.pagination.PageResponseDTO;
+import it.back.order.specification.OrderDetailSpecifications;
 import it.back.product.entity.ProductEntity;
 import it.back.product.repository.ProductRepository;
 import it.back.seller.repository.SellerRepository;
@@ -34,19 +38,21 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDTO createOrder(OrderDTO orderDTO) {
-    OrderEntity order = new OrderEntity();
-    order.setBuyerUid(orderDTO.getBuyerUid());
-    // buyerUid로 BuyerDetailEntity에서 phone 조회 후 세팅
-    buyerDetailRepository.findByBuyerUid(orderDTO.getBuyerUid())
-        .ifPresentOrElse(
-            detail -> order.setBuyerPhone(detail.getPhone()),
-            () -> { throw new IllegalArgumentException("구매자 상세 정보(전화번호)를 찾을 수 없습니다."); }
-        );
-    order.setTotalPrice(orderDTO.getTotalPrice());
-    order.setRecipientName(orderDTO.getRecipientName());
-    order.setRecipientAddress(orderDTO.getRecipientAddress());
-    order.setRecipientAddressDetail(orderDTO.getRecipientAddressDetail());
-    order.setOrderStatus(OrderEntity.OrderStatus.valueOf(orderDTO.getOrderStatus()));
+        OrderEntity order = new OrderEntity();
+        order.setBuyerUid(orderDTO.getBuyerUid());
+        // buyerUid로 BuyerDetailEntity에서 phone 조회 후 세팅
+        buyerDetailRepository.findByBuyerUid(orderDTO.getBuyerUid())
+                .ifPresentOrElse(
+                        detail -> order.setBuyerPhone(detail.getPhone()),
+                        () -> {
+                            throw new IllegalArgumentException("구매자 상세 정보(전화번호)를 찾을 수 없습니다.");
+                        }
+                );
+        order.setTotalPrice(orderDTO.getTotalPrice());
+        order.setRecipientName(orderDTO.getRecipientName());
+        order.setRecipientAddress(orderDTO.getRecipientAddress());
+        order.setRecipientAddressDetail(orderDTO.getRecipientAddressDetail());
+        order.setOrderStatus(OrderEntity.OrderStatus.valueOf(orderDTO.getOrderStatus()));
 
         if (orderDTO.getOrderDetails() != null) {
             List<OrderDetailEntity> details = orderDTO.getOrderDetails().stream().map(detailDTO -> {
@@ -56,6 +62,7 @@ public class OrderService {
                 detail.setQuantity(detailDTO.getQuantity());
                 detail.setPricePerItem(detailDTO.getPricePerItem());
                 detail.setOrderDetailStatus(OrderDetailEntity.OrderDetailStatus.valueOf(detailDTO.getOrderDetailStatus()));
+                detail.setStatusReason(detailDTO.getStatusReason());
                 detail.setOrder(order);
                 return detail;
             }).collect(Collectors.toList());
@@ -74,12 +81,12 @@ public class OrderService {
         dto.setOrderId(saved.getOrderId());
         dto.setCreateAt(saved.getCreateAt());
         dto.setUpdateAt(saved.getUpdateAt());
-    dto.setRecipientName(saved.getRecipientName());
-    dto.setRecipientAddress(saved.getRecipientAddress());
-    dto.setRecipientAddressDetail(saved.getRecipientAddressDetail());
-    dto.setBuyerPhone(saved.getBuyerPhone());
-    dto.setStatus(saved.getOrderStatus().name());
-    dto.setTotalPrice(saved.getTotalPrice());
+        dto.setRecipientName(saved.getRecipientName());
+        dto.setRecipientAddress(saved.getRecipientAddress());
+        dto.setRecipientAddressDetail(saved.getRecipientAddressDetail());
+        dto.setBuyerPhone(saved.getBuyerPhone());
+        dto.setStatus(saved.getOrderStatus().name());
+        dto.setTotalPrice(saved.getTotalPrice());
         // 주문상세 전체를 리스트로 매핑 + 상품/판매자 정보 + 주문/상세 생성일/수정일 포함
         if (saved.getOrderDetails() != null) {
             List<OrderDetailDTO> detailDTOs = saved.getOrderDetails().stream().map(detail -> {
@@ -90,6 +97,7 @@ public class OrderService {
                 d.setQuantity(detail.getQuantity());
                 d.setPricePerItem(detail.getPricePerItem());
                 d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
+                d.setStatusReason(detail.getStatusReason());
                 var product = productMap.get(detail.getProductId());
                 if (product != null) {
                     d.setProductName(product.getProductName());
@@ -143,6 +151,7 @@ public class OrderService {
                             d.setQuantity(detail.getQuantity());
                             d.setPricePerItem(detail.getPricePerItem());
                             d.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
+                            d.setStatusReason(detail.getStatusReason());
                             var product = productMap.get(detail.getProductId());
                             if (product != null) {
                                 d.setProductName(product.getProductName());
@@ -158,7 +167,7 @@ public class OrderService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-        
+
         // 3. 올바른 정보가 담긴 page 객체를 사용
         return new PageResponseDTO<>(
                 dtoList,
@@ -186,5 +195,77 @@ public class OrderService {
                 orderRepository.save(order);
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponseDTO<it.back.seller.dto.OrderDetailSellerResponseDTO> getSellerOrderDetails(
+            Long sellerUid,
+            Pageable pageable,
+            String productName,
+            Long productId,
+            Integer categoryId,
+            String orderDetailStatus) {
+
+        Specification<OrderDetailEntity> spec = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction(); // Start with an always-true predicate
+
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasSellerUid(sellerUid).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasCategoryId(categoryId).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasProductId(productId).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasProductName(productName).toPredicate(root, query, criteriaBuilder));
+            predicate = criteriaBuilder.and(predicate, OrderDetailSpecifications.hasOrderDetailStatus(orderDetailStatus).toPredicate(root, query, criteriaBuilder));
+
+            return predicate;
+        };
+
+        Page<OrderDetailEntity> page = orderDetailRepository.findAll(spec, pageable);
+
+        // 상품 및 판매자 정보 매핑을 위한 ID 수집
+        List<Long> productIds = page.getContent().stream().map(OrderDetailEntity::getProductId).distinct().toList();
+        Map<Long, ProductEntity> productMap = productRepository.findAllById(productIds).stream()
+                .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
+
+        // OrderDetailDTO로 변환
+        List<it.back.seller.dto.OrderDetailSellerResponseDTO> dtoList = page.getContent().stream()
+                .map(detail -> {
+                    it.back.seller.dto.OrderDetailSellerResponseDTO dto = new it.back.seller.dto.OrderDetailSellerResponseDTO();
+                    dto.setOrderDetailId(detail.getOrderDetailId());
+                    dto.setQuantity(detail.getQuantity());
+                    dto.setPricePerItem(detail.getPricePerItem());
+                    dto.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
+                    dto.setStatusReason(detail.getStatusReason());
+
+                    var product = productMap.get(detail.getProductId());
+                    if (product != null) {
+                        dto.setProductName(product.getProductName());
+                        dto.setProductThumbnailUrl(product.getThumbnailUrl());
+                    }
+                    sellerRepository.findById(detail.getSellerUid()).ifPresent(seller -> {
+                        dto.setCompanyName(seller.getCompanyName());
+                    });
+
+                    // Recipient Info from OrderEntity
+                    OrderEntity order = detail.getOrder();
+                    if (order != null) {
+                        dto.setRecipientName(order.getRecipientName());
+                        dto.setRecipientPhone(order.getBuyerPhone());
+                        dto.setRecipientAddress(order.getRecipientAddress());
+                        dto.setRecipientAddressDetail(order.getRecipientAddressDetail());
+                    }
+
+                    dto.setCreateAt(detail.getCreateAt());
+                    dto.setUpdateAt(detail.getUpdateAt());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(
+                dtoList,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 }

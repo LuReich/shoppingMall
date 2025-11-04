@@ -1,6 +1,7 @@
-package it.back.order.dto;
+package it.back.seller.dto;
 
 import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
@@ -8,24 +9,29 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderDetailDTO {
-
+public class OrderDetailSellerResponseDTO {
     private Long orderDetailId;
-    private Integer categoryId;
-    private Long productId;
-    private Long sellerUid;
+
+    // Product Info (for seller's own products)
+    private String productName;
+    private String companyName;
+
     private Integer quantity;
     private Integer pricePerItem;
-    private String orderDetailStatus; // Enum 문자열로 처리
+
+    private String productThumbnailUrl;
+
+    // Recipient Info from OrderEntity
+    private String recipientName;
+    private String recipientPhone;
+    private String recipientAddress;
+    private String recipientAddressDetail;
+
+    private String orderDetailStatus;
     private String statusReason;
 
-    // 추가 정보: 상품명, 썸네일, 판매회사명
-    private String productName;
-    private String productThumbnailUrl;
-    private String companyName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateAt;
-
 }

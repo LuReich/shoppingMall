@@ -19,6 +19,7 @@ import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
+import it.back.seller.dto.OrderDetailSellerResponseDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
@@ -39,6 +40,7 @@ public class SellerController {
     private final SellerService sellerService;
     private final SellerRepository sellerRepository;
     private final ProductService productService;
+    private final it.back.order.service.OrderService orderService;
 
     // 로그인한 seller 가 자기 정보 불러오기
     @GetMapping("/me")
@@ -182,6 +184,22 @@ public class SellerController {
         }
         PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
+    }
+
+    @GetMapping("/orderDetail/list")
+    public ResponseEntity<ApiResponse<PageResponseDTO<OrderDetailSellerResponseDTO>>> getSellerOrderDetails(
+            Authentication authentication,
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "productName", required = false) String productName,
+            @RequestParam(name = "productId", required = false) Long productId,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
+            @RequestParam(name = "orderDetailStatus", required = false) String orderDetailStatus) {
+        Long sellerUid = extractUidFromAuth(authentication);
+        if (sellerUid == null) {
+            throw new IllegalStateException("인증 정보가 없습니다.");
+        }
+        PageResponseDTO<OrderDetailSellerResponseDTO> orderDetails = orderService.getSellerOrderDetails(sellerUid, pageRequestDTO.toPageable(), productName, productId, categoryId, orderDetailStatus);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderDetails));
     }
 
     // ====== 유틸리티 메서드 ======

@@ -10,4 +10,7 @@ public class ProductDetailDTO {
     private String shippingInfo;
     private Double averageRating;
     private Integer likeCount;
+    private Boolean isDeleted;
+    private String deletedByAdminReason;
+    private String deletedBySellerReason;
 }
