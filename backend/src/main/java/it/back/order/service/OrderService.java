@@ -195,7 +195,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponseDTO<OrderDetailDTO> getSellerOrderDetails(
+    public PageResponseDTO<it.back.seller.dto.OrderDetailSellerResponseDTO> getSellerOrderDetails(
             Long sellerUid,
             Pageable pageable,
             String productName,
@@ -223,12 +223,10 @@ public class OrderService {
                 .collect(Collectors.toMap(p -> p.getProductId(), p -> p));
 
         // OrderDetailDTO로 변환
-        List<OrderDetailDTO> dtoList = page.getContent().stream()
+        List<it.back.seller.dto.OrderDetailSellerResponseDTO> dtoList = page.getContent().stream()
                 .map(detail -> {
-                    OrderDetailDTO dto = new OrderDetailDTO();
+                    it.back.seller.dto.OrderDetailSellerResponseDTO dto = new it.back.seller.dto.OrderDetailSellerResponseDTO();
                     dto.setOrderDetailId(detail.getOrderDetailId());
-                    dto.setProductId(detail.getProductId());
-                    dto.setSellerUid(detail.getSellerUid());
                     dto.setQuantity(detail.getQuantity());
                     dto.setPricePerItem(detail.getPricePerItem());
                     dto.setOrderDetailStatus(detail.getOrderDetailStatus() != null ? detail.getOrderDetailStatus().name() : null);
@@ -237,15 +235,19 @@ public class OrderService {
                     if (product != null) {
                         dto.setProductName(product.getProductName());
                         dto.setProductThumbnailUrl(product.getThumbnailUrl());
-                        dto.setCategoryId(product.getCategoryId());
                     }
-                    // 판매자 회사명은 이미 sellerUid로 필터링되었으므로, 현재 sellerUid의 companyName을 가져오면 됨
-                    // 여기서는 OrderDetailDTO에 companyName 필드가 있으므로, 필요하다면 sellerRepository에서 조회하여 설정
-                    // 또는, OrderDetailEntity에 SellerEntity와의 관계가 있다면 join을 통해 가져올 수 있음
-                    // 여기서는 간단히 sellerRepository에서 조회하는 방식으로 처리 (성능 고려 필요)
                     sellerRepository.findById(detail.getSellerUid()).ifPresent(seller -> {
                         dto.setCompanyName(seller.getCompanyName());
                     });
+
+                    // Recipient Info from OrderEntity
+                    OrderEntity order = detail.getOrder();
+                    if (order != null) {
+                        dto.setRecipientName(order.getRecipientName());
+                        dto.setRecipientPhone(order.getBuyerPhone());
+                        dto.setRecipientAddress(order.getRecipientAddress());
+                        dto.setRecipientAddressDetail(order.getRecipientAddressDetail());
+                    }
 
                     dto.setCreateAt(detail.getCreateAt());
                     dto.setUpdateAt(detail.getUpdateAt());

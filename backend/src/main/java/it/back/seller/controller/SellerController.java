@@ -19,7 +19,7 @@ import it.back.common.dto.ApiResponse;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
-import it.back.order.dto.OrderDetailDTO;
+import it.back.seller.dto.OrderDetailSellerResponseDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
@@ -187,7 +187,7 @@ public class SellerController {
     }
 
     @GetMapping("/orderDetail/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<OrderDetailDTO>>> getSellerOrderDetails(
+    public ResponseEntity<ApiResponse<PageResponseDTO<OrderDetailSellerResponseDTO>>> getSellerOrderDetails(
             Authentication authentication,
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "productName", required = false) String productName,
@@ -198,7 +198,7 @@ public class SellerController {
         if (sellerUid == null) {
             throw new IllegalStateException("인증 정보가 없습니다.");
         }
-        PageResponseDTO<OrderDetailDTO> orderDetails = orderService.getSellerOrderDetails(sellerUid, pageRequestDTO.toPageable(), productName, productId, categoryId, orderDetailStatus);
+        PageResponseDTO<OrderDetailSellerResponseDTO> orderDetails = orderService.getSellerOrderDetails(sellerUid, pageRequestDTO.toPageable(), productName, productId, categoryId, orderDetailStatus);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderDetails));
     }
 

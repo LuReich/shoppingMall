@@ -133,6 +133,8 @@ create table product (
     create_at datetime default now() comment '상품 등록일',
     update_at datetime default current_timestamp on update current_timestamp comment '상품 수정일',
     is_deleted boolean default false comment '상품 삭제 여부 (Soft Delete)',
+    deleted_by_admin_reason text default null comment '관리자에 의한 상품 삭제/복구 사유',
+    deleted_by_seller_reason text default null comment '판매자에 의한 상품 삭제 사유',
     foreign key (seller_uid) references seller(seller_uid) on delete cascade,
     foreign key (category_id) references category(category_id)
 ) comment '상품 기본 정보 테이블 (목록용)';
