@@ -66,7 +66,7 @@ public class CartController {
     @PatchMapping("/{cartId}")
     public ResponseEntity<ApiResponse<CartItemResponseDTO>> updateCartQuantity(
             Authentication authentication,
-            @PathVariable Long cartId,
+            @PathVariable("cartId") Long cartId,
             @RequestBody Map<String, Integer> payload) {
         long buyerUid = getBuyerUid(authentication);
         int quantity = payload.get("quantity");
@@ -78,7 +78,7 @@ public class CartController {
     @DeleteMapping("/{cartId}")
     public ResponseEntity<ApiResponse<String>> removeFromCart(
             Authentication authentication,
-            @PathVariable Long cartId) {
+            @PathVariable("cartId") Long cartId) {
         long buyerUid = getBuyerUid(authentication);
         String message = cartService.deleteCartItem(cartId, buyerUid);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
