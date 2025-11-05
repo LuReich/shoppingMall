@@ -31,6 +31,8 @@ import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.FileUtils;
 import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductDeletedByAdminRequestDTO;
+import it.back.product.dto.ProductDeletedBySellerRequestDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.dto.ProductUpdateRequestDTO;
@@ -604,7 +606,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void softDeleteProduct(Long sellerUid, Long productId, String reason) {
+    public ProductDTO softDeleteProduct(Long sellerUid, Long productId, ProductDeletedBySellerRequestDTO requestDTO) {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
 
@@ -613,9 +615,31 @@ public class ProductService {
         }
 
         product.setIsDeleted(true);
-        product.setDeletedBySellerReason(reason);
-        productRepository.save(product);
+        product.setDeletedBySellerReason(requestDTO.getDeletedBySellerReason());
+        product.setDeletedByAdminReason(null); // 판매자가 삭제 시, 기존 관리자 사유는 초기화
+        ProductEntity updatedProduct = productRepository.save(product);
+        return new ProductDTO(updatedProduct);
         // 실제 파일 삭제는 하지 않음 (복구 가능성을 위해)
+    }
+
+    @Transactional
+    public ProductDTO updateProductDeletionStatusByAdmin(Long productId, ProductDeletedByAdminRequestDTO requestDTO) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        product.setIsDeleted(requestDTO.getIsDeleted());
+        product.setDeletedByAdminReason(requestDTO.getDeletedByAdminReason());
+
+        // 관리자가 판매자 삭제 사유를 직접 설정하는 경우
+        if (requestDTO.getDeletedBySellerReason() != null) {
+            product.setDeletedBySellerReason(requestDTO.getDeletedBySellerReason());
+        } else if (!requestDTO.getIsDeleted()) {
+            // 상품이 복구되고, 관리자가 별도 사유를 입력하지 않은 경우 판매자 삭제 사유 초기화
+            product.setDeletedBySellerReason(null);
+        }
+
+        ProductEntity updatedProduct = productRepository.save(product);
+        return new ProductDTO(updatedProduct);
     }
 
     public void deleteProduct(Long id, String reason) {

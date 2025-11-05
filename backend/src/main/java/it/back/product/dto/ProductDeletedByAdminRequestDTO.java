@@ -8,4 +8,5 @@ import lombok.Setter;
 public class ProductDeletedByAdminRequestDTO {
     private Boolean isDeleted;
     private String deletedByAdminReason;
+    private String deletedBySellerReason; // Allow admin to modify seller's reason
 }

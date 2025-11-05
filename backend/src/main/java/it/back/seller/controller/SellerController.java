@@ -21,6 +21,8 @@ import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.order.dto.OrderDetailSellerResponseDTO;
 import it.back.order.dto.OrderDetailStatusUpdateRequestDTO;
+import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductDeletedBySellerRequestDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
@@ -185,6 +187,21 @@ public class SellerController {
         }
         PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
+    }
+
+    // 상품 삭제 (Soft Delete)
+    @PatchMapping("/delete/product/{productId}")
+    public ResponseEntity<ApiResponse<ProductDTO>> softDeleteProduct(
+            @PathVariable("productId") Long productId,
+            Authentication authentication,
+            @RequestBody ProductDeletedBySellerRequestDTO requestDTO) {
+
+        Long sellerUid = extractUidFromAuth(authentication);
+        if (sellerUid == null) {
+            throw new IllegalStateException("인증 정보가 없습니다.");
+        }
+        ProductDTO updatedProduct = productService.softDeleteProduct(sellerUid, productId, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedProduct));
     }
 
     @GetMapping("/orderDetail/list")
