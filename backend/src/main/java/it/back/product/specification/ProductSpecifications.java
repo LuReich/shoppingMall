@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import it.back.product.entity.ProductEntity;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 
@@ -70,7 +71,7 @@ public class ProductSpecifications {
             }
 
             // Expression that removes spaces from the companyName column
-            jakarta.persistence.criteria.Expression<String> companyNameWithoutSpaces = criteriaBuilder.function(
+            Expression<String> companyNameWithoutSpaces = criteriaBuilder.function(
                     "replace",
                     String.class,
                     root.get("seller").get("companyName"),
