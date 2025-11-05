@@ -35,6 +35,7 @@ export const useRegister = (mode) => {
       setIsIdChecked(false);
     },
   })
+
   // 이메일 중복확인
   const checkEmail = useMutation({
     mutationFn: (email) => registerAPI.checkEmail(mode, email),
@@ -103,6 +104,7 @@ export const useRegister = (mode) => {
     mutationFn: ({ buyerUid, data }) => registerAPI.update(mode, buyerUid, data),
     onSuccess: (res, variables) => {
       qc.invalidateQueries(["myInfo"]);
+      console.log(res);
       updateUser(variables.data);
       alert(res.message || "회원정보가 수정되었습니다!");
       navigate('/');
@@ -123,6 +125,7 @@ export const useRegister = (mode) => {
       qc.clear();  // React Query 캐시 초기화
       navigate("/"); // 메인 페이지로 이동
     },
+
     onError: (err) => {
       console.error("회원탈퇴 실패:", err);
       alert(err.response?.data?.content || "회원탈퇴 중 오류가 발생했습니다.");

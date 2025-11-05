@@ -138,7 +138,7 @@
 }
 
 /* 가입 버튼 */
-.register-btn{
+.register-seller-btn{
   width: 100%;
   padding: 14px 0;
   border: none;
@@ -154,7 +154,7 @@
 
 
 
-.register-btn:hover {
+.register-seller-btn:hover {
   background-color: #6ab5ca;
 }
 

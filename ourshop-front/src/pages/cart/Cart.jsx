@@ -82,6 +82,14 @@ function Cart(props) {
       let raw = quantities[cartId];
       // 빈 입력이면 1로
       let q = Number(raw || 1);
+
+      // alert 조건 추가
+      if (q < 1) {
+        alert("최소 주문 수량은 1개입니다.");
+      } else if (q > 50) {
+        alert("최대 주문 수량은 50개입니다.");
+      }
+
       q = clamp(q, 1, 50); // 1~50 제한
 
       // UI 값 보정

@@ -127,11 +127,22 @@ function ProductDetail() {
     const maxAllowed = clamp(stockLimit, 1, 50);
     let q = Number(quantity);
 
-    if (!quantity || Number.isNaN(q)) q = 1;
-    q = clamp(q, 1, maxAllowed);
+    if (!quantity || Number.isNaN(q)) {
+      alert("유효한 수량을 입력해주세요.");
+      q = 1;
+    }
+
+    if (q < 1) {
+      alert("최소 구매 수량은 1개입니다.");
+      q = 1;
+    } else if (q > maxAllowed) {
+      alert(`최대 구매 가능 수량은 ${maxAllowed}개입니다.`);
+      q = maxAllowed;
+    }
 
     setQuantity(String(q));
   };
+
 
   const handleQuantityKeyDown = (e) => {
     if (e.key === 'Enter') e.currentTarget.blur();

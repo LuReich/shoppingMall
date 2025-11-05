@@ -21,40 +21,34 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-.seller-btn-box {
-    width: 100%;
-    display: flex;
-    justify-content: start;
-    gap: 10px;
+    justify-content: end;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid black;
 }
 
-.seller-btn-box button {
-    padding: 10px 25px;
+.seller-product-upload {
+    padding: 8px 29px;
     border: none;
     border-radius: 4px;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
-}
-
-.seller-btn-box button {
-    background-color: #7cc7de;
+    background-color: black;
     color: white;
 }
 
-.seller-btn-box button:hover {
-    background-color: #6ab8d0;
+
+.seller-product-upload:hover {
+    background-color: #888888;
 }
 
 
 .seller-product {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px 20px;
 }
 
@@ -70,7 +64,7 @@
     height: 20px;
     z-index: 10;
     cursor: pointer;
-}*/
+}
 
 .seller-product-update{
     position: absolute;
@@ -80,10 +74,51 @@
     padding: 8px;
     z-index: 10;
     cursor: pointer;
-    background-color: #2c8cda;
+    background-color: #00000082;
     border-radius: 4px;
     color: white;
+}*/
+
+.product-update-btn-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    gap: 8px;
 }
+
+.seller-product-delete,
+.seller-product-update{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    margin: 0 2px;
+}
+
+.seller-product-delete{
+    flex: 1;
+    background-color: #ececec;
+    color: #888888;
+}
+
+.seller-product-delete:hover{
+    color: rgb(246, 108, 108);
+}
+.seller-product-update{
+    flex: 5;
+    background-color: #7cc7de;
+    color: white;
+}
+
+.seller-product-update:hover{
+    background-color: #6ab8d0;
+}
+
 
 
 @media (max-width: 992px) {

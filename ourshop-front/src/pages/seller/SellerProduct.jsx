@@ -55,12 +55,9 @@ function SellerProduct(props) {
         <div className='seller-product-container'>
             <h2>판매 상품 관리</h2>
             <div className='seller-product-top'>
-                <div className='seller-btn-box'>
-                    {/*<button type='button' onClick={updateBtn}>상품 수정</button>*/}
-                    <button type='button' onClick={()=> navigate(`/seller/mypage/products/upload`)}>상품 등록</button>
-                </div>
-                <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
+                <button type='button' className='seller-product-upload' onClick={()=> navigate(`/seller/mypage/products/upload`)}>상품 등록</button>
              </div>
+             <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
             <div className='seller-product'>
                 {
                     products?.map(x => (
@@ -70,10 +67,16 @@ function SellerProduct(props) {
                                 value={x.productId} 
                                 onChange={() => handleCheck(x.productId)}
                                 checked={check === x.productId} />*/}
-                                <button type='button' 
-                                className='seller-product-update'
-                                onClick={() => updateBtn(x.productId)}>상품 수정</button>
                             <ProductCard product={x} />
+                            <div className='product-update-btn-box'>
+                                <button type='button' 
+                                    className='seller-product-update'
+                                    onClick={() => updateBtn(x.productId)}>상품 수정</button>
+                                <button type='button' 
+                                    className='seller-product-delete'
+                                >삭제</button>
+                            </div>
+                            
                         </div>
                     ))
                 }

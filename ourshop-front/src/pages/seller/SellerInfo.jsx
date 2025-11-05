@@ -7,22 +7,28 @@ import { useRegister } from "../../hooks/useRegister";
 import { authStore } from "../../store/authStore";
 import WithdrawModal from "../../components/common/WithdrawModal";
 
-// Yup 스키마 정의 (회원가입과 유사하지만, 비밀번호는 선택적으로 변경)
+// Yup 스키마
 const schema = yup.object().shape({
   password: yup
     .string()
+    .transform((v) => (v === "" ? undefined : v)) //공백 undefined로 처리해줘야 입력안할때도 수정됨
     .min(4, "비밀번호는 최소 4자 이상이어야 합니다.")
     .matches(/^[0-9]+$/, "비밀번호는 숫자만 가능합니다.")
     .notRequired(),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "비밀번호가 일치하지 않습니다."),
-  company_name: yup.string().required("업체명을 입력해주세요."),
-  seller_email: yup
+  confirmPassword: yup.string().when("password", {
+    is: (val) => val && val.length > 0, // 비밀번호를 입력한 경우
+    then: (schema) =>
+      schema
+        .required("비밀번호 확인을 입력해주세요.")
+        .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
+    otherwise: (schema) => schema.notRequired(), // 입력 안 했을 때는 검사 안 함
+  }),
+  companyName: yup.string().required("업체명을 입력해주세요."),
+  sellerEmail: yup
     .string()
     .email("올바른 이메일 형식이 아닙니다.")
     .required("이메일을 입력해주세요."),
-  business_registration_number: yup
+  businessRegistrationNumber: yup
     .string()
     .required("사업자등록번호를 입력해주세요.")
     .matches(/^\d{3}-\d{2}-\d{5}$/, "사업자등록번호는 10자리 숫자 형식(XXX-XX-XXXXX)이어야 합니다."),
@@ -31,18 +37,15 @@ const schema = yup.object().shape({
     .required("전화번호를 입력해주세요.")
     .matches(/^[0-9-]+$/, "숫자만 입력해주세요."),
   address: yup.string().required("주소를 입력해주세요."),
-  address_detail: yup.string(),
-  company_detail: yup.string().required("업체 상세 정보를 입력해주세요."),
+  addressDetail: yup.string(),
+  companyDetail: yup.string().required("업체 상세 정보를 입력해주세요."),
 });
 
 function SellerInfo() {
-    
-
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const { user } = authStore();
-  const sellerUid = user?.content?.sellerUid;
+  const seller = user?.content;
+  const sellerUid = seller?.sellerUid;
 
   const {
     register,
@@ -50,7 +53,6 @@ function SellerInfo() {
     formState: { errors },
     setValue,
     watch,
-    reset,
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -73,146 +75,146 @@ function SellerInfo() {
     setBusinessNumberMsg,
     setIsEmailChecked,
     setIsPhoneChecked,
-    setIsBusinessNumberChecked
+    setIsBusinessNumberChecked,
   } = useRegister("seller");
 
-  // 기존 회원 정보로 폼 초기화
+  // 이메일 도메인 선택 (BuyerInfo 방식)
+  const [selectedDomain, setSelectedDomain] = useState("");
+  const [customDomain, setCustomDomain] = useState("");
+
+  // 기본값 세팅
   useEffect(() => {
-    if (user?.content) {
-      const {
-        companyName,
-        sellerEmail,
-        phone,
-        businessRegistrationNumber,
-        address,
-        addressDetail,
-        companyInfo,
-      } = user.content;
-      reset({
-        company_name: companyName,
-        seller_email: sellerEmail,
-        business_registration_number: businessRegistrationNumber,
-        phone,
-        address,
-        address_detail: addressDetail,
-        company_detail: companyInfo,
-      });
-    }
-  }, [user, reset]);
+    if (seller) {
+      setValue("companyName", seller.companyName);
+      setValue("sellerEmail", seller.sellerEmail);
+      setValue(
+        "businessRegistrationNumber",
+        seller.businessRegistrationNumber?.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")
+      );
+      setValue("phone", seller.phone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
+      setValue("address", seller.address);
+      setValue("addressDetail", seller.addressDetail);
+      setValue("companyDetail", seller.companyInfo);
 
-
-  const onSubmit = (data) => {
-    // 이메일, 전화번호가 변경되었지만 중복 확인을 하지 않은 경우
-    if (user.content.sellerEmail !== data.seller_email && !isEmailChecked) {
-      return alert("변경된 이메일의 중복 확인을 해주세요.");
-    }
-    if (user.content.phone !== data.phone.replace(/-/g, "") && !isPhoneChecked) {
-      return alert("변경된 전화번호의 중복 확인을 해주세요.");
-    }
-    if (user.content.businessRegistrationNumber !== data.business_registration_number.replace(/-/g, "") && !isBusinessNumberChecked) {
-      return alert("변경된 사업자등록번호의 중복 확인을 해주세요.");
-    }
-
-    const updateData = {
-      companyName: data.company_name,
-      sellerEmail: data.seller_email,
-      phone: data.phone.replace(/-/g, ""),
-      businessRegistrationNumber: data.business_registration_number.replace(/-/g, ""),
-      address: data.address,
-      addressDetail: data.address_detail,
-      companyDetail: data.company_detail,
-    };
-
-    // 비밀번호가 입력된 경우에만 추가
-    if (data.password) {
-      updateData.password = data.password;
-    }
-
-    updateUserInfo.mutate({ uid: sellerUid, data: updateData });
-  };
-
-  // 회원 탈퇴 모달 열기
-  const handleWithdraw = () => {
-    setIsModalOpen(true);
-  };
-
-  // 모달에서 '탈퇴하기' 버튼 클릭 시 실행
-  const handleConfirmWithdraw = (reason) => {
-    withdrawUser.mutate(reason || ""); // 입력이 없으면 빈 문자열로 전달
-    setIsModalOpen(false);
-  };
-  
-  // 전화번호 자동 하이픈
-  const handlePhoneChange = (e) => {
-    const rawValue = e.target.value.replace(/[^0-9]/g, "");
-    let formatted = rawValue;
-    if (rawValue.startsWith('02')){
-      if(rawValue.length <=2){
-        formatted = rawValue;
-      }else if(rawValue.length <= 6){
-        formatted = `${rawValue.slice(0, 2)}-${rawValue.slice(2)}`;
-      }else if(rawValue.length <= 10){
-        formatted = `${rawValue.slice(0, 2)}-${rawValue.slice(2, 6)}-${rawValue.slice(6)}`;
+      // 이메일 분리
+      if (seller.sellerEmail) {
+        const [emailId, domain] = seller.sellerEmail.split("@");
+        setValue("emailId", emailId);
+        setValue("sellerEmail", seller.sellerEmail);
+        if (["naver.com", "daum.net", "gmail.com"].includes(domain)) {
+          setSelectedDomain(domain);
+        } else {
+          setSelectedDomain("custom");
+          setCustomDomain(domain);
+        }
       }
+    }
+  }, [seller, setValue]);
+
+  // 이메일 합치기
+  const handleEmailChange = (field, value) => {
+    const emailId = field === "id" ? value : watch("emailId");
+    let domain = "";
+
+    if (field === "domain") {
+      domain =
+        selectedDomain === "custom"
+          ? value
+          : value === "custom"
+          ? customDomain
+          : value;
     } else {
-      if(rawValue.length > 3 && rawValue.length <= 7){
-        formatted = `${rawValue.slice(0, 3)}-${rawValue.slice(3)}`;
-      } else if (rawValue.length > 7) {
-        formatted = `${rawValue.slice(0, 3)}-${rawValue.slice(3, 7)}-${rawValue.slice(7, 11)}`;
-      }
+      domain = selectedDomain === "custom" ? customDomain : selectedDomain;
+    }
+
+    const fullEmail =
+      emailId && domain ? `${emailId}@${domain}` : emailId ? `${emailId}@` : "";
+    setValue("sellerEmail", fullEmail, { shouldValidate: true });
+  };
+
+  // 전화번호 하이픈
+  const handlePhoneChange = (e) => {
+    const raw = e.target.value.replace(/[^0-9]/g, "");
+    let formatted = raw;
+    if (raw.startsWith("02")) {
+      if (raw.length <= 2) formatted = raw;
+      else if (raw.length <= 6) formatted = `${raw.slice(0, 2)}-${raw.slice(2)}`;
+      else formatted = `${raw.slice(0, 2)}-${raw.slice(2, 6)}-${raw.slice(6, 10)}`;
+    } else {
+      if (raw.length > 3 && raw.length <= 7) formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+      else if (raw.length > 7)
+        formatted = `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
     }
     setValue("phone", formatted, { shouldValidate: true });
   };
 
-  // 사업자등록번호 자동 하이픈
+  // 사업자등록번호 하이픈
   const handleBusinessNumberChange = (e) => {
-    const rawValue = e.target.value.replace(/[^0-9]/g, "");
-    const formatted = rawValue.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
-    setValue("business_registration_number", formatted.substring(0, 12), { shouldValidate: true });
+    const raw = e.target.value.replace(/[^0-9]/g, "");
+    let formatted = raw;
+    if (raw.length > 3 && raw.length <= 5) {
+      formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    } else if (raw.length > 5) {
+      formatted = `${raw.slice(0, 3)}-${raw.slice(3, 5)}-${raw.slice(5, 10)}`;
+    }
+    setValue("businessRegistrationNumber", formatted, { shouldValidate: true });
   };
 
-  // 중복확인 핸들러
-  const handleCheckEmail = () => {
-    const email = watch("seller_email");
-    if (!email) return alert("이메일을 입력해주세요.");
-    checkEmail.mutate(email);
-  };
+  // 이메일 / 사업자번호 자동 체크
+  const sellerEmail = watch("sellerEmail");
+  const phoneValue = watch("phone");
+  const businessValue = watch("businessRegistrationNumber");
 
-  const handleCheckPhone = () => {
-    const phone = watch("phone");
-    if (!phone) return alert("전화번호를 입력해주세요.");
-    checkPhone.mutate(phone.replace(/-/g, ""));
-  };
-
-  const handleCheckBusinessNumber = () => {
-    const businessNumber = watch("business_registration_number");
-    if (!businessNumber) return alert("사업자등록번호를 입력해주세요.");
-    checkBusinessNumber.mutate(businessNumber.replace(/-/g, ""));
-  };
-
-  // 입력 변경 시 중복확인 상태 초기화
+  // 이메일 자동체크
   useEffect(() => {
-    if (watch("seller_email") !== user?.content?.sellerEmail) {
+    if (sellerEmail === seller?.sellerEmail) {
+      setIsEmailChecked(true);
+      setEmailMsg("기존 이메일 그대로입니다.");
+    } else {
       setIsEmailChecked(false);
       setEmailMsg("");
     }
-  }, [watch("seller_email"), user]);
+  }, [sellerEmail, seller]);
 
+  // 전화번호 자동체크
   useEffect(() => {
-    if (watch("phone") !== user?.content?.phone) {
+    const formatted = seller?.phone?.replace(/-/g, "");
+    const current = phoneValue?.replace(/-/g, "");
+    if (formatted === current) {
+      setIsPhoneChecked(true);
+      setPhoneMsg("기존 전화번호 그대로입니다.");
+    } else {
       setIsPhoneChecked(false);
       setPhoneMsg("");
     }
-  }, [watch("phone"), user]);
+  }, [phoneValue, seller]);
 
+  // 사업자등록번호 자동체크
   useEffect(() => {
-    if (watch("business_registration_number") !== user?.content?.businessRegistrationNumber) {
+    const formatted = seller?.businessRegistrationNumber?.replace(/-/g, "");
+    const current = businessValue?.replace(/-/g, "");
+    if (formatted === current) {
+      setIsBusinessNumberChecked(true);
+      setBusinessNumberMsg("기존 사업자등록번호 그대로입니다.");
+    } else {
       setIsBusinessNumberChecked(false);
       setBusinessNumberMsg("");
     }
-  }, [watch("business_registration_number"), user]);
+  }, [businessValue, seller]);
 
-  // 다음 주소 팝업
+  // 중복확인 핸들러
+  const handleCheckEmail = () => {
+    const email = watch("sellerEmail");
+    if (!email) return alert("이메일을 입력해주세요.");
+    checkEmail.mutate(email);
+  };
+  const handleCheckBusinessNumber = () => {
+    const number = watch("businessRegistrationNumber");
+    if (!number) return alert("사업자등록번호를 입력해주세요.");
+    checkBusinessNumber.mutate(number.replace(/-/g, ""));
+  };
+
+  // 주소 팝업
   const openDaumPostcode = () => {
     new window.daum.Postcode({
       oncomplete: function (data) {
@@ -221,14 +223,52 @@ function SellerInfo() {
     }).open();
   };
 
+  // 수정 제출
+  const onSubmit = (data) => {
+    if (seller.sellerEmail !== data.sellerEmail && !isEmailChecked)
+      return alert("이메일 중복확인을 해주세요.");
+    if (seller.phone !== data.phone.replace(/-/g, "") && !isPhoneChecked)
+      return alert("전화번호 중복확인을 해주세요.");
+    if (
+      seller.businessRegistrationNumber !==
+        data.businessRegistrationNumber.replace(/-/g, "") &&
+      !isBusinessNumberChecked
+    )
+      return alert("사업자등록번호 중복확인을 해주세요.");
+
+    const updateData = {
+      companyName: data.companyName,
+      sellerEmail: data.sellerEmail,
+      phone: data.phone.replace(/-/g, ""),
+      businessRegistrationNumber: data.businessRegistrationNumber.replace(/-/g, ""),
+      address: data.address,
+      addressDetail: data.addressDetail,
+      companyDetail: data.companyDetail,
+    };
+
+    // 새 비밀번호가 입력된 경우에만 추가
+    if (data.password && data.password.trim() !== "") {
+      updateData.password = data.password;
+    }
+
+    updateUserInfo.mutate({ buyerUid: sellerUid, data: updateData });
+  };
+
+  // 회원 탈퇴
+  const handleWithdraw = () => setIsModalOpen(true);
+  const handleConfirmWithdraw = (reason) => {
+    withdrawUser.mutate(reason || "");
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="my-info-container">
       <h2>업체 정보 관리</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* 비밀번호 (선택적 변경) */}
+        {/* 비밀번호 */}
         <div className="info-group">
           <label>새 비밀번호</label>
-          <input type="password" {...register("password")} placeholder="변경할 경우에만 입력하세요" />
+          <input type="password" {...register("password")} placeholder="변경할 경우 입력" />
           <p className="error">{errors.password?.message}</p>
         </div>
         <div className="info-group">
@@ -240,41 +280,96 @@ function SellerInfo() {
         {/* 업체명 */}
         <div className="info-group">
           <label>업체명</label>
-          <input type="text" {...register("company_name")} />
-          <p className="error">{errors.company_name?.message}</p>
+          <input type="text" {...register("companyName")} />
+          <p className="error">{errors.companyName?.message}</p>
         </div>
 
         {/* 이메일 */}
         <div className="info-group">
           <label>이메일</label>
-          <div className="input-with-button">
-            <input type="text" {...register("seller_email")} />
+          <div className="email-box">
+            <input
+              type="text"
+              placeholder="이메일 아이디"
+              {...register("emailId")}
+              onChange={(e) => handleEmailChange("id", e.target.value)}
+            />
+            <span>@</span>
+            <select
+              value={selectedDomain}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedDomain(val);
+                handleEmailChange("domain", val);
+              }}
+            >
+              <option value="" disabled>
+                도메인 선택
+              </option>
+              <option value="naver.com">naver.com</option>
+              <option value="daum.net">daum.net</option>
+              <option value="gmail.com">gmail.com</option>
+              <option value="custom">직접입력</option>
+            </select>
             <button type="button" onClick={handleCheckEmail}>중복확인</button>
           </div>
-          <p className="error">{errors.seller_email?.message}</p>
-          {emailMsg && <p className={`ok ${isEmailChecked ? "active" : ""}`}>{emailMsg}</p>}
+
+          {selectedDomain === "custom" && (
+            <input
+              type="text"
+              placeholder="도메인을 직접 입력하세요"
+              className="custom-domain"
+              value={customDomain}
+              onChange={(e) => {
+                const newDomain = e.target.value;
+                setCustomDomain(newDomain);
+                handleEmailChange("domain", newDomain);
+              }}
+            />
+          )}
+
+          <p className="error">{errors.sellerEmail?.message}</p>
+          {emailMsg ? (
+            <p className={`ok ${isEmailChecked ? "active" : ""}`}>{emailMsg}</p>
+          ) : (
+            !isEmailChecked && <p className="ok">이메일 중복체크 필수</p>
+          )}
         </div>
 
         {/* 사업자등록번호 */}
         <div className="info-group">
           <label>사업자등록번호</label>
           <div className="input-with-button">
-            <input type="text"
-              {...register("business_registration_number")}
+            <input
+              type="text"
+              {...register("businessRegistrationNumber")}
               onChange={handleBusinessNumberChange}
+              maxLength="12"
             />
-            <button type="button" onClick={handleCheckBusinessNumber}>중복확인</button>
+            <button type="button" onClick={handleCheckBusinessNumber}>
+              중복확인
+            </button>
           </div>
-          <p className="error">{errors.business_registration_number?.message}</p>
-          {businessNumberMsg && <p className={`ok ${isBusinessNumberChecked ? "active" : ""}`}>{businessNumberMsg}</p>}
+          <p className="error">{errors.businessRegistrationNumber?.message}</p>
+          {businessNumberMsg ? (
+            <p className={`ok ${isBusinessNumberChecked ? "active" : ""}`}>
+              {businessNumberMsg}
+            </p>
+          ) : (
+            !isBusinessNumberChecked && <p className="ok">사업자등록번호 중복체크 필수</p>
+          )}
         </div>
 
         {/* 전화번호 */}
         <div className="info-group">
           <label>전화번호</label>
           <div className="input-with-button">
-            <input type="text" {...register("phone")} onChange={handlePhoneChange} maxLength="13" />
-            <button type="button" onClick={handleCheckPhone}>중복확인</button>
+            <input
+              type="text"
+              {...register("phone")}
+              onChange={handlePhoneChange}
+              maxLength="13"
+            />
           </div>
           <p className="error">{errors.phone?.message}</p>
           {phoneMsg && <p className={`ok ${isPhoneChecked ? "active" : ""}`}>{phoneMsg}</p>}
@@ -285,26 +380,33 @@ function SellerInfo() {
           <label>주소</label>
           <div className="input-with-button">
             <input type="text" {...register("address")} placeholder="주소" />
-            <button type="button" onClick={openDaumPostcode}>주소 검색</button>
+            <button type="button" onClick={openDaumPostcode}>
+              주소 검색
+            </button>
           </div>
           <p className="error">{errors.address?.message}</p>
         </div>
 
-        {/* 상세 주소 */}
+        {/* 상세주소 */}
         <div className="info-group">
           <label>상세 주소</label>
-          <input type="text" {...register("address_detail")} />
+          <input type="text" {...register("addressDetail")} />
         </div>
 
-        {/* 업체 상세 정보 */}
+        {/* 업체 상세정보 */}
         <div className="info-group">
           <label>업체 상세 정보</label>
-          <input type="text" {...register("company_detail")} />
+          <input type="text" {...register("companyDetail")} />
         </div>
 
-        <button className="update-btn" type="submit">정보 수정하기</button>
-        <button className="withdraw-btn" type="button" onClick={handleWithdraw}>회원 탈퇴</button>
+        <button className="update-btn" type="submit">
+          정보 수정하기
+        </button>
+        <button className="withdraw-btn" type="button" onClick={handleWithdraw}>
+          회원 탈퇴
+        </button>
       </form>
+
       <WithdrawModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

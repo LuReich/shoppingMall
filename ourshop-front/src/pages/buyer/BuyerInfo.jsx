@@ -123,6 +123,39 @@ function BuyerInfo() {
         setValue("buyerEmail", fullEmail, { shouldValidate: true });
   };
 
+   // 이메일을 수정하는 순간, 다시 중복체크가 필요하도록 초기화
+  const buyerEmail = watch("buyerEmail");
+
+  useEffect(() => {
+    // 기존 이메일과 동일하면 자동 통과
+    if (buyerEmail === user?.buyerEmail) {
+      setIsEmailChecked(true);
+      setEmailMsg("기존 이메일 그대로입니다.");
+    } else {
+      setIsEmailChecked(false);
+      setEmailMsg("");
+    }
+}, [buyerEmail, user]);
+
+
+  // 전화번호를 수정하는 순간, 다시 중복체크가 필요하도록 초기화
+  const phoneValue = watch("phone");
+
+  useEffect(() => {
+    const formattedUserPhone = user?.phone?.replace(/-/g, "");
+    const currentInput = phoneValue?.replace(/-/g, "");
+
+    // 기존 번호와 동일하면 자동 통과
+    if (formattedUserPhone === currentInput) {
+      setIsPhoneChecked(true);
+      setPhoneMsg("기존 전화번호 그대로입니다.");
+    } else {
+      setIsPhoneChecked(false);
+      setPhoneMsg("");
+    }
+  }, [phoneValue, user]);
+
+
   // 이메일 중복확인
   const handleCheckEmail = () => {
     const email = watch("buyerEmail");
@@ -137,19 +170,7 @@ function BuyerInfo() {
     checkPhone.mutate(phone?.replace(/-/g, ""));
   };
 
-   // 이메일을 수정하는 순간, 다시 중복체크가 필요하도록 초기화
-  const buyerEmail = watch("buyerEmail");
-  useEffect(() => {
-    setIsEmailChecked(false);
-    setEmailMsg("");
-  }, [buyerEmail]);
 
-  // 전화번호를 수정하는 순간, 다시 중복체크가 필요하도록 초기화
-  const phoneValue = watch("phone");
-  useEffect(() => {
-    setIsPhoneChecked(false);
-    setPhoneMsg("");
-  }, [phoneValue]);
 
   // 주소 검색
   const openDaumPostcode = () => {
