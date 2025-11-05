@@ -374,7 +374,7 @@ function SellerRegister() {
           <input type="text" {...register("company_detail")} />
         </div>
 
-        <button type="submit">가입하기</button>
+        <button type="submit" className="register-seller-btn">가입하기</button>
       </form>
     </div>
   );

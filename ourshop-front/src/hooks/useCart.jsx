@@ -32,7 +32,7 @@ export const useCart = () => {
       mutationFn: ({ cartId, quantity }) => cartAPI.updateQuantity(cartId, quantity),
       onSuccess: () => {
         qc.invalidateQueries(["cartList"]);
-         alert("수량 변경 완료");
+         console.log("수량 변경 완료");
       },
       onError: () => alert("수량 변경 실패"),
     });

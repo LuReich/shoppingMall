@@ -241,7 +241,12 @@ public class ProductService {
         ProductDetailEntity detail = new ProductDetailEntity();
         detail.setProduct(savedProduct); // 연관관계 설정
         // description HTML의 data-image-id를 실제 저장된 URL로 교체
-        detail.setDescription(replaceImageIdsWithUrls(dto.getDescription(), dto.getImageMapping(), descriptionImageUrls));
+        String descriptionHtml = replaceImageIdsWithUrls(dto.getDescription(), dto.getImageMapping(), descriptionImageUrls);
+
+        // [안전장치] Base64 이미지를 파일로 변환
+        descriptionHtml = processBase64Images(descriptionHtml, productId);
+
+        detail.setDescription(descriptionHtml);
         detail.setShippingInfo(dto.getShippingInfo());
         productDetailRepository.save(detail);
 
