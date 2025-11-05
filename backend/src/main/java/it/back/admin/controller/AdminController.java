@@ -30,6 +30,7 @@ import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.product.dto.ProductDTO;
 import it.back.product.dto.ProductDeletedByAdminRequestDTO;
+import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerResponseDTO;
@@ -135,6 +136,19 @@ public class AdminController {
                 .map(SellerResponseDTO::new)
                 .orElse(null);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(dto));
+    }
+
+    // admin 전용 전체 상품 리스트 불러오기
+    @GetMapping("/product/list")
+    public ResponseEntity<ApiResponse<PageResponseDTO<ProductListDTO>>> getAllProductsForAdmin(
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
+            @RequestParam(name = "productName", required = false) String productName,
+            @RequestParam(name = "companyName", required = false) String companyName,
+            @RequestParam(name = "productId", required = false) Long productId,
+            @RequestParam(name = "isDeleted", required = false) Boolean isDeleted) {
+        PageResponseDTO<ProductListDTO> productPageDto = productService.getAllProductsForAdmin(pageRequestDTO, categoryId, productName, companyName, productId, isDeleted);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(productPageDto));
     }
 
     // admin 전용 상품 삭제 상태 변경 (soft delete, restore)

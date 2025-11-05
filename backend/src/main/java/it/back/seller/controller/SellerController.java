@@ -78,7 +78,7 @@ public class SellerController {
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
             @RequestParam(name = "productId", required = false) Long productId) {
-        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId, false);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
     }
 
@@ -180,12 +180,13 @@ public class SellerController {
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
-            @RequestParam(name = "productId", required = false) Long productId) {
+            @RequestParam(name = "productId", required = false) Long productId,
+            @RequestParam(name = "isDeleted", required = false) Boolean isDeleted) {
         Long sellerUid = extractUidFromAuth(authentication);
         if (sellerUid == null) {
             throw new IllegalStateException("인증 정보가 없습니다.");
         }
-        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId, isDeleted);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
     }
 
