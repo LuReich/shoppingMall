@@ -622,7 +622,7 @@ function ProductUpload() {
     }
 
     descriptionFiles.forEach(file => {
-      formData.append("descriptionImages", file);
+      formData.append("description", file);
     });
 
     if (isEditMode) {
