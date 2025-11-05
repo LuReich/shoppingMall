@@ -32,6 +32,8 @@ import ProductUpload from "../pages/seller/ProductUpload";
 // Admin
 import AdminHome from "../pages/admin/AdminHome";
 import AdminUserManage from "../pages/admin/AdminUserManage";
+import SellerShippingDetail from "../pages/seller/SellerShippingDetail";
+import SellerOrderDetailInfo from "../pages/seller/SellerOrderDetailInfo";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +67,8 @@ export const router = createBrowserRouter([
           { path: "products", Component: SellerProduct },
           { path: "products/upload", Component: ProductUpload },
           { path: "products/:productId", Component: ProductUpload },
+          { path: "shipping", Component: SellerShippingDetail },
+          { path: "shipping/detail", Component: SellerOrderDetailInfo },
         ],
       }
     ],

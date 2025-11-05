@@ -41,8 +41,8 @@ export const useAdmin = () => {
                 console.error("회원정보 수정 실패:", err);
                 alert(msg);
             }
-        })
-    }
+        });
+    };
 
     return { 
         getUserList,

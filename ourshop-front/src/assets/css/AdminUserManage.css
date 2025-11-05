@@ -119,7 +119,53 @@ button {
 }
 
 .radio-wrap {
+  width: 100%;
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+}
+    
+
+/* 라디오 버튼 그룹 스타일 */
+.radio-group {
+    margin: 0 10px;
+    flex: 1;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 라디오 버튼 숨기기 */
+.radio-wrap input[type="radio"] {
+    display: none;
+}
+
+/* 라벨을 버튼처럼 스타일링 */
+.radio-wrap span {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* 둥근 모서리 */
+    background-color: #f8f9fa;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* 선택된 라디오 버튼의 라벨 스타일 */
+.radio-wrap input[type="radio"]:checked + span {
+     /* 활성 색상 */
+    color: #7cc7de;
+    border-color: #7cc7de;
+    font-weight: 600;
+}
+
+.user-list table {
+    width: 100%;
+    border-collapse: collapse;
+
 }

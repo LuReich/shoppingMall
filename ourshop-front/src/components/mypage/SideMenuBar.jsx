@@ -35,7 +35,7 @@ function SideMenuBar(props) {
                     <>
                         <NavLink className='side-link-btn' to='/seller/mypage/info'>업체 정보 관리</NavLink>
                         <NavLink className='side-link-btn' to='/seller/mypage/products'>업체 상품 관리</NavLink>
-                        <NavLink className='side-link-btn' to='/seller/mypage/post'>판매 내역 관리</NavLink>
+                        <NavLink className='side-link-btn' to='/seller/mypage/shipping'>판매 내역 관리</NavLink>
                         <p className='side-logout-btn' onClick={handleLogout}>로그아웃</p>
                     </>
                     :

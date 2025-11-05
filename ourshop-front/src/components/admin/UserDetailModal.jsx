@@ -116,7 +116,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
           <form className="modal-form" onSubmit={handleUpdate}>
             <div className="modal-main">
               {/* 왼쪽 컬럼 */}
-              <div>
+               <div className='modal-col'>
                 <div className="modal-group">
                   <label>아이디</label>
                   <div className="modal-with-button">
@@ -234,7 +234,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
             <form className="modal-form" onSubmit={handleUpdate}>
               <div className="modal-main">
                 {/* 왼쪽 컬럼 */}
-                <div>
+                 <div className='modal-col'>
                   <div className="modal-group">
                     <label>아이디</label>
                     <div className="modal-with-button">
@@ -261,10 +261,6 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                     <input type='text' value={sellerDetail.companyName} readOnly />
                   </div>
                   <div className="modal-group">
-                    <label>사업자 등록번호</label>
-                    <input type='text' value={sellerDetail.businessRegistrationNumber} readOnly />
-                  </div>
-                  <div className="modal-group">
                     <label>이메일</label>
                     <input type='text'
                       value={sellerDetail.sellerEmail}
@@ -274,10 +270,6 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                     <label>휴대폰 번호</label>
                     <input type='text' value={sellerDetail.phone} readOnly />
                   </div>
-                  </div>
-                   
-                  {/* 오른쪽 컬럼 */}
-                  <div>
                   <div className="modal-group">
                     <label>주소</label>
                     <input type='text' value={sellerDetail.address} readOnly />
@@ -285,6 +277,13 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                   <div className="modal-group">
                     <label>상세주소</label>
                     <input type='text' value={sellerDetail.addressDetail} readOnly />
+                  </div>
+                </div>       
+                {/* 오른쪽 컬럼 */}
+                <div className='modal-col'>
+                  <div className="modal-group">
+                    <label>사업자 등록번호</label>
+                    <input type='text' value={sellerDetail.businessRegistrationNumber} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>회사 소개</label>

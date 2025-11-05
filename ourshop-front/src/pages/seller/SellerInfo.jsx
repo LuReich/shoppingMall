@@ -266,6 +266,7 @@ function SellerInfo() {
       <h2>업체 정보 관리</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* 비밀번호 */}
+        <h3>비밀번호 변경</h3>
         <div className="info-group">
           <label>새 비밀번호</label>
           <input type="password" {...register("password")} placeholder="변경할 경우 입력" />
@@ -278,6 +279,7 @@ function SellerInfo() {
         </div>
 
         {/* 업체명 */}
+        <h3>회원 정보</h3>
         <div className="info-group">
           <label>업체명</label>
           <input type="text" {...register("companyName")} />
@@ -396,7 +398,7 @@ function SellerInfo() {
         {/* 업체 상세정보 */}
         <div className="info-group">
           <label>업체 상세 정보</label>
-          <input type="text" {...register("companyDetail")} />
+          <textarea {...register("companyDetail")} style={{height: "100px", textAlign: "start"}}/>
         </div>
 
         <button className="update-btn" type="submit">

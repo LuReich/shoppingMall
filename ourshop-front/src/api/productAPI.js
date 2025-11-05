@@ -72,7 +72,13 @@ export const productAPI = {
     likeProduct: async (productId) => {
         const res = await api.post(`/buyer/like/${productId}`);
         return res.data;
-    }
+    },
+
+    //판매자 상품 삭제 및 이유 등록
+    deleteBySeller: async(productId, data) => {
+        const res = await api.delete(`/seller/delete/product/${productId}`,data);
+        return res.data;
+    },
    
     
 

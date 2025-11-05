@@ -85,6 +85,11 @@
   gap: 20px 30px;
 
 }
+.modal-col{
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
 .modal-group {
   display: flex;
   flex-direction: column;
