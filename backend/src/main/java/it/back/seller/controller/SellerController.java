@@ -21,6 +21,8 @@ import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.order.dto.OrderDetailSellerResponseDTO;
 import it.back.order.dto.OrderDetailStatusUpdateRequestDTO;
+import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductDeletedBySellerRequestDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
@@ -76,7 +78,7 @@ public class SellerController {
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
             @RequestParam(name = "productId", required = false) Long productId) {
-        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId, false);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
     }
 
@@ -178,13 +180,29 @@ public class SellerController {
             PageRequestDTO pageRequestDTO,
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "productName", required = false) String productName,
-            @RequestParam(name = "productId", required = false) Long productId) {
+            @RequestParam(name = "productId", required = false) Long productId,
+            @RequestParam(name = "isDeleted", required = false) Boolean isDeleted) {
         Long sellerUid = extractUidFromAuth(authentication);
         if (sellerUid == null) {
             throw new IllegalStateException("인증 정보가 없습니다.");
         }
-        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId);
+        PageResponseDTO<ProductListDTO> products = productService.getProductsBySeller(sellerUid, pageRequestDTO, categoryId, productName, productId, isDeleted);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(products));
+    }
+
+    // 상품 삭제 (Soft Delete)
+    @PatchMapping("/delete/product/{productId}")
+    public ResponseEntity<ApiResponse<ProductDTO>> softDeleteProduct(
+            @PathVariable("productId") Long productId,
+            Authentication authentication,
+            @RequestBody ProductDeletedBySellerRequestDTO requestDTO) {
+
+        Long sellerUid = extractUidFromAuth(authentication);
+        if (sellerUid == null) {
+            throw new IllegalStateException("인증 정보가 없습니다.");
+        }
+        ProductDTO updatedProduct = productService.softDeleteProduct(sellerUid, productId, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedProduct));
     }
 
     @GetMapping("/orderDetail/list")

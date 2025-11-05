@@ -126,18 +126,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("Product deleted successfully"));
     }
 
-    // 상품 삭제 (Soft Delete)
-    @PatchMapping("/{productId}/delete")
-    public ResponseEntity<ApiResponse<String>> softDeleteProduct(
-            @PathVariable("productId") Long productId,
-            Authentication authentication,
-            @RequestParam(name = "reason", required = false) String reason) {
-
-        Long sellerUid = getSellerUidFromAuthWithRoleCheck(authentication);
-        productService.softDeleteProduct(sellerUid, productId, reason);
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok("상품이 성공적으로 삭제(비활성화)되었습니다."));
-    }
-
     // 상품 상세 정보 불러오기
     @GetMapping("/{productId}/detail")
     public ResponseEntity<ApiResponse<ProductDetailDTO>> getProductDetail(@PathVariable("productId") Long productId) {

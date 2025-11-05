@@ -103,4 +103,13 @@ public class ProductSpecifications {
             return criteriaBuilder.equal(root.get("productId"), productId);
         };
     }
+
+    public static Specification<ProductEntity> isDeleted(Boolean isDeleted) {
+        return (root, query, criteriaBuilder) -> {
+            if (isDeleted == null) {
+                return criteriaBuilder.conjunction(); // Always-true predicate
+            }
+            return criteriaBuilder.equal(root.get("isDeleted"), isDeleted);
+        };
+    }
 }

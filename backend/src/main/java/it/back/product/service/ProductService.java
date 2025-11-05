@@ -31,6 +31,8 @@ import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.FileUtils;
 import it.back.product.dto.ProductCreateDTO;
 import it.back.product.dto.ProductDTO;
+import it.back.product.dto.ProductDeletedByAdminRequestDTO;
+import it.back.product.dto.ProductDeletedBySellerRequestDTO;
 import it.back.product.dto.ProductDetailDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.dto.ProductUpdateRequestDTO;
@@ -101,6 +103,40 @@ public class ProductService {
         // Add fetch join for Seller to avoid N+1 queries
         spec = spec.and(ProductSpecifications.withSeller());
 
+        // 기본적으로 삭제되지 않은 상품만 조회
+        spec = spec.and(ProductSpecifications.isDeleted(false));
+
+        spec = spec.and(ProductSpecifications.nameContains(productName));
+        spec = spec.and(ProductSpecifications.companyNameContains(companyName));
+        spec = spec.and(ProductSpecifications.productIdEquals(productId));
+
+        if (categoryId != null) {
+            List<Integer> categoryIds = categoryService.getCategoryWithChild(categoryId);
+            spec = spec.and(ProductSpecifications.inCategory(categoryIds));
+        }
+
+        Page<ProductEntity> page = productRepository.findAll(spec, pageable);
+
+        List<ProductListDTO> dtos = page.getContent().stream()
+                .map(ProductListDTO::new)
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(page, dtos);
+    }
+
+    // 관리자용 상품 목록 조회
+    public PageResponseDTO<ProductListDTO> getAllProductsForAdmin(PageRequestDTO pageRequestDTO, Integer categoryId, String productName, String companyName, Long productId, Boolean isDeleted) {
+
+        Pageable pageable = pageRequestDTO.toPageable();
+
+        Specification<ProductEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+
+        // Add fetch join for Seller to avoid N+1 queries
+        spec = spec.and(ProductSpecifications.withSeller());
+
+        // isDeleted 파라미터가 있으면 해당 값으로, 없으면 모든 상품 조회
+        spec = spec.and(ProductSpecifications.isDeleted(isDeleted));
+
         spec = spec.and(ProductSpecifications.nameContains(productName));
         spec = spec.and(ProductSpecifications.companyNameContains(companyName));
         spec = spec.and(ProductSpecifications.productIdEquals(productId));
@@ -120,7 +156,7 @@ public class ProductService {
     }
 
     // 판매자별 상품 목록 조회
-    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerUid, PageRequestDTO pageRequestDTO, Integer categoryId, String productName, Long productId) {
+    public PageResponseDTO<ProductListDTO> getProductsBySeller(Long sellerUid, PageRequestDTO pageRequestDTO, Integer categoryId, String productName, Long productId, Boolean isDeleted) {
         Pageable pageable = pageRequestDTO.toPageable();
 
         Specification<ProductEntity> spec = (root, query, criteriaBuilder)
@@ -128,6 +164,9 @@ public class ProductService {
 
         // Seller fetch join
         spec = spec.and(ProductSpecifications.withSeller());
+
+        // isDeleted 파라미터가 있으면 해당 값으로 필터링. 없으면(null) 모든 상품 조회.
+        spec = spec.and(ProductSpecifications.isDeleted(isDeleted));
 
         // 상품명 검색 (공백 무시)
         spec = spec.and(ProductSpecifications.nameContains(productName));
@@ -277,6 +316,10 @@ public class ProductService {
         // 1. 상품 조회 및 권한 확인
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        if (product.getIsDeleted()) {
+            throw new IllegalStateException("삭제된 상품은 수정할 수 없습니다.");
+        }
 
         if (!product.getSeller().getSellerUid().equals(sellerUid)) {
             throw new AccessDeniedException("해당 상품에 대한 수정 권한이 없습니다.");
@@ -604,7 +647,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void softDeleteProduct(Long sellerUid, Long productId, String reason) {
+    public ProductDTO softDeleteProduct(Long sellerUid, Long productId, ProductDeletedBySellerRequestDTO requestDTO) {
         ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
 
@@ -613,9 +656,31 @@ public class ProductService {
         }
 
         product.setIsDeleted(true);
-        product.setDeletedBySellerReason(reason);
-        productRepository.save(product);
+        product.setDeletedBySellerReason(requestDTO.getDeletedBySellerReason());
+        product.setDeletedByAdminReason(null); // 판매자가 삭제 시, 기존 관리자 사유는 초기화
+        ProductEntity updatedProduct = productRepository.save(product);
+        return new ProductDTO(updatedProduct);
         // 실제 파일 삭제는 하지 않음 (복구 가능성을 위해)
+    }
+
+    @Transactional
+    public ProductDTO updateProductDeletionStatusByAdmin(Long productId, ProductDeletedByAdminRequestDTO requestDTO) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. ID: " + productId));
+
+        product.setIsDeleted(requestDTO.getIsDeleted());
+        product.setDeletedByAdminReason(requestDTO.getDeletedByAdminReason());
+
+        // 관리자가 판매자 삭제 사유를 직접 설정하는 경우
+        if (requestDTO.getDeletedBySellerReason() != null) {
+            product.setDeletedBySellerReason(requestDTO.getDeletedBySellerReason());
+        } else if (!requestDTO.getIsDeleted()) {
+            // 상품이 복구되고, 관리자가 별도 사유를 입력하지 않은 경우 판매자 삭제 사유 초기화
+            product.setDeletedBySellerReason(null);
+        }
+
+        ProductEntity updatedProduct = productRepository.save(product);
+        return new ProductDTO(updatedProduct);
     }
 
     public void deleteProduct(Long id, String reason) {
