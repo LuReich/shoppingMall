@@ -10,7 +10,7 @@ import it.back.buyer.entity.BuyerEntity;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 
-public class BuyerSpecifications {
+public class AdminBuyerSpecification {
 
     public static Specification<BuyerEntity> isActive(Boolean isActive) {
         return (root, query, criteriaBuilder) -> {

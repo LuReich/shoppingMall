@@ -26,6 +26,7 @@ import it.back.product.dto.ProductDeletedBySellerRequestDTO;
 import it.back.product.dto.ProductListDTO;
 import it.back.product.service.ProductService;
 import it.back.seller.dto.SellerPublicDTO;
+import it.back.seller.dto.SellerPublicListDTO;
 import it.back.seller.dto.SellerRegisterDTO;
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.dto.SellerUpdateRequestDTO;
@@ -68,6 +69,18 @@ public class SellerController {
     @GetMapping("/public/{sellerUid}")
     public ResponseEntity<ApiResponse<SellerPublicDTO>> getSellerPublicInfo(@PathVariable("sellerUid") Long sellerUid) {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerService.getSellerPublicInfo(sellerUid)));
+    }
+
+    @GetMapping("/public/list")
+    public ResponseEntity<ApiResponse<PageResponseDTO<SellerPublicListDTO>>> getSellerPublicList(
+            PageRequestDTO pageRequestDTO,
+            @RequestParam(name = "sellerUid", required = false) Long sellerUid,
+            @RequestParam(name = "companyName", required = false) String companyName,
+            @RequestParam(name = "businessRegistrationNumber", required = false) String businessRegistrationNumber,
+            @RequestParam(name = "phone", required = false) String phone,
+            @RequestParam(name = "address", required = false) String address) {
+        PageResponseDTO<SellerPublicListDTO> sellerList = sellerService.getSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerList));
     }
 
     // 공개용 판매자 상품 목록 조회 (비로그인/로그인 모두 접근 가능)

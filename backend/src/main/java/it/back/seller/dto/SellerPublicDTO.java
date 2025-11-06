@@ -9,14 +9,15 @@ public class SellerPublicDTO {
     private Long sellerUid;
     private String companyName;
     private String sellerEmail;
-    private LocalDateTime createAt;
-    private Boolean isVerified;
-    private Boolean isActive;
     private String businessRegistrationNumber;
     private String companyInfo;
     private String phone;
     private String address;
     private String addressDetail;
+    private Boolean isVerified;
+    private Boolean isActive;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
     public void setVerified(Boolean isVerified) {
         this.isVerified = isVerified;
