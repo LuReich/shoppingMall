@@ -132,6 +132,7 @@ public class FaqService {
         responseDto.setFaqCategory(faqEntity.getFaqCategory().name());
         responseDto.setFaqQuestion(faqEntity.getFaqQuestion());
         responseDto.setFaqAnswer(faqEntity.getFaqAnswer());
+        responseDto.setSortOrder(faqEntity.getSortOrder());
         responseDto.setCreateAt(faqEntity.getCreateAt());
         responseDto.setUpdateAt(faqEntity.getUpdateAt());
         return responseDto;

@@ -1,5 +1,20 @@
 package it.back.faq.controller;
 
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import it.back.common.dto.ApiResponse;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
@@ -10,12 +25,6 @@ import it.back.faq.dto.FaqUpdateRequestDTO;
 import it.back.faq.entity.FaqEntity;
 import it.back.faq.service.FaqService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/faq")
@@ -36,7 +45,7 @@ public class FaqController {
     }
 
     @GetMapping("/{faqId}")
-    public ResponseEntity<ApiResponse<FaqDetailResponseDTO>> getFaqById(@PathVariable Integer faqId) {
+    public ResponseEntity<ApiResponse<FaqDetailResponseDTO>> getFaqById(@PathVariable("faqId") Integer faqId) {
         FaqDetailResponseDTO faq = faqService.getFaqById(faqId);
         return ResponseEntity.ok(ApiResponse.ok(faq));
     }
@@ -53,7 +62,7 @@ public class FaqController {
 
     @PatchMapping("/update/{faqId}")
     public ResponseEntity<ApiResponse<FaqDetailResponseDTO>> updateFaq(
-            @PathVariable Integer faqId,
+            @PathVariable("faqId") Integer faqId,
             @RequestBody FaqUpdateRequestDTO requestDto,
             Authentication authentication) {
 
@@ -64,7 +73,7 @@ public class FaqController {
 
     @DeleteMapping("/delete/{faqId}")
     public ResponseEntity<ApiResponse<Void>> deleteFaq(
-            @PathVariable Integer faqId,
+            @PathVariable("faqId") Integer faqId,
             Authentication authentication) {
 
         getAdminUidFromAuthWithRoleCheck(authentication); // Check for admin role
