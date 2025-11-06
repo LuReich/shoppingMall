@@ -61,7 +61,7 @@ export const useProduct = () => {
   
   /* ---------------------------- MUTATIONS ---------------------------- */
 
-  // ✅ React Quill 이미지 임시 업로드
+  // React Quill 이미지 임시 업로드
   const uploadTempDescriptionImage = () => {
     return useMutation({
       mutationFn: (imageFile) => productAPI.uploadTempDescriptionImage(imageFile),
@@ -72,7 +72,7 @@ export const useProduct = () => {
     });
   };
 
-  // ✅ 상품 등록
+  // 상품 등록
   const createProduct = () => {
     return useMutation({
       mutationFn: (formData) => productAPI.createProduct(formData),
@@ -86,7 +86,7 @@ export const useProduct = () => {
     });
   };
 
-  // ✅ 상품 수정
+  // 상품 수정
   const updateProduct = () => {
     return useMutation({
       mutationFn: ({ productId, formData }) => productAPI.updateProduct(productId, formData),
@@ -102,8 +102,6 @@ export const useProduct = () => {
     });
   };
 
-
-
   //상품 좋아요
   const likeProduct = () => {
     return useMutation({
@@ -115,8 +113,31 @@ export const useProduct = () => {
       },
       onError: (err) => {
         console.error(err);
+        
+      },
+    });  
+
+  };
+
+  //판매자 상품 삭제 및 이유 등록
+  const deleteProduct = () => {
+    return useMutation({
+      mutationFn: ({productId, data}) => productAPI.deleteProduct(productId, data),
+      onSuccess: (res) => {
+        qc.invalidateQueries(["productList"]);
+        console.log("상품 삭제", res.content);
+        alert(res.content || "상품이 성공적으로 삭제되었습니다.")
+      
+      },
+      onError: (err) => {
+        console.error(err);
+        alert(err.response?.data?.content || "상품삭제 실패.");
       },
     });
+
+
+
+
   }
    
         
@@ -131,6 +152,7 @@ export const useProduct = () => {
     createProduct,
     updateProduct,
     getProductForUpdate,
-    likeProduct
+    likeProduct,
+    deleteProduct
   };
-};
+}

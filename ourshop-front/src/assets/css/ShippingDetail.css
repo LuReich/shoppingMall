@@ -39,6 +39,10 @@
   color: #555;
 }
 
+.shipping-detail-row:hover{
+  background-color: aliceblue;
+}
+
 /* 상품정보 셀 (이미지 + 텍스트 가로 정렬) */
 .detail-info {
   display: flex;
@@ -48,6 +52,11 @@
   gap: 15px;
   text-align: left;
 }
+
+.detail-info:hover{
+  text-decoration: underline;
+}
+
 
 /* 이미지 */
 .detail-info img {
@@ -111,6 +120,72 @@
   background-color: #7cc7de;
   color: white;
 }
+
+
+.status-box select{
+  border: 1px solid #7cc7de;
+  border-radius: 4px;
+  background-color: white;
+  color: #333;
+  font-size: 13px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+
+/* SelleShippingDetail 모달 스타일 */
+.order-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.214);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.seller-order-detail-modal-content {
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.modal-close-btn:hover {
+  color: #333;
+}
+
+/* SellerOrderDetailInfo 컴포넌트 내부 스타일 조정 */
+.modal-content .order-complete {
+  width: 100%;
+  margin: 0;
+  padding: 20px 10px;
+  box-shadow: none;
+}
+
+
 
 /* 반응형 */
 @media (max-width: 900px) {

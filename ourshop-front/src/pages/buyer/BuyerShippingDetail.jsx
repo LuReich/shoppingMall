@@ -3,10 +3,12 @@ import { useOrder } from '../../hooks/useOrder';
 import "../../assets/css/ShippingDetail.css";
 import Pagination from '../../components/common/Pagenation';
 import Sort from '../../components/common/Sort';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useReviews } from '../../hooks/useReview';
 
 function BuyerShippingDetail(props) {
+
+    const navigate = useNavigate();
 
     // 페이지 & 정렬 상태
     const [page, setPage] = useState(0);
@@ -82,7 +84,7 @@ function BuyerShippingDetail(props) {
                             }
 
                             <td>
-                              <div className="detail-info">
+                              <div className="detail-info" onClick={() => navigate(`/product/${detail.productId}`)}>
                                 <img src={detail.productThumbnailUrl} alt={detail.productName} />
                                 <div>
                                   <p>{detail.productName}</p>

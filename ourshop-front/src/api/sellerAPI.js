@@ -1,3 +1,4 @@
+import { get } from "react-hook-form";
 import api from "../axios/axios";
 
 export const sellerAPI = {
@@ -18,6 +19,19 @@ export const sellerAPI = {
     getPublicProducts: async (sellerUid, params={}) => {
       const res = await api.get(`/seller/public/${sellerUid}/product/list`, { params });
       return res.data;
+    },
+
+    //판매자 배송 상품 조회
+    getDeliveryProducts: async (params={}) =>{
+      const res = await api.get("seller/orderDetail/list", {params});
+      return res.data;
+    
+    },
+
+     //판매자 배송상태 수정
+    update: async (orderDetailId, data) => {
+        const res = await api.patch(`/seller/orderDetail/${orderDetailId}/delivery-status`, data);
+        return res.data;
     }
 
 

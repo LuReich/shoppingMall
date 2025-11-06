@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useAdmin } from '../../hooks/useAdmin';
 import Sort from '../../components/common/Sort';
 import '../../assets/css/AdminUserManage.css';
@@ -19,6 +19,11 @@ function AdminUserManage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { getUserList } = useAdmin();
+
+    //검색 카테고리 변경시 전체 목록 나오도록
+    useEffect(()=> {
+         setSearchParams({});
+    }, [searchField]);
 
 
     const { data: userList, isLoading, isError, refetch } = getUserList(mode, {
@@ -59,10 +64,8 @@ function AdminUserManage() {
 
     const sortCateg = {
       "createAt": "createAt",
-      "productName": "nickname"
+      "productName": mode=== "buyer"? "nickname" : "companyName",
     }
-
-    
 
     // 회원 상세 모달 열기
     const onpenDetailBtn = (uid) => {
@@ -74,6 +77,8 @@ function AdminUserManage() {
     console.log("uid", uid);
     console.log("isModalOpen", isModalOpen);
     console.log("mode", mode);
+
+    
    
     return (
         <div className='admin-user-manage'>
@@ -95,10 +100,11 @@ function AdminUserManage() {
                     <option value="phone">전화번호</option>
                     <option value="isActive">회원 활성 상태</option>
                     <option value="withdrawalStatus">회원 탈퇴 상태</option>
+                    {mode === "seller" && <option value="isVerified">판매 승인 상태</option>}
                 </select>
                 {
                     searchField === "withdrawalStatus" ?
-                    <>
+                    <div class="radio-group">
                     <label class="radio-wrap">
                         <input type="radio" name="status" value="VOLUNTARY" onChange={(e) => setSearchKeyword(e.target.value)} />
                         <span>자발</span>
@@ -107,10 +113,10 @@ function AdminUserManage() {
                         <input type="radio" name="status" value="FORCED_BY_ADMI" onChange={(e) => setSearchKeyword(e.target.value)} />
                         <span>강제</span>
                     </label>
-                    </>
+                    </div>
                     :
                     searchField === "isActive" ?
-                    <>
+                    <div class="radio-group">
                     <label class="radio-wrap">
                         <input type="radio" name="status" value={1} onChange={(e) => setSearchKeyword(e.target.value)}/>
                         <span>활성</span>
@@ -119,7 +125,19 @@ function AdminUserManage() {
                         <input type="radio" name="status" value={0} onChange={(e) => setSearchKeyword(e.target.value)}/>
                         <span>비활성</span>
                     </label>
-                    </>
+                    </div>
+                    :
+                    searchField === "isVerified"?
+                    <div class="radio-group">
+                    <label className='radio-wrap'>
+                        <input type="radio" name="status" value={1} onChange={(e) => setSearchKeyword(e.target.value)}/>
+                        <span>인증</span>
+                    </label>
+                    <label className='radio-wrap'>
+                        <input type="radio" name="status" value={0} onChange={(e) => setSearchKeyword(e.target.value)}/>
+                        <span>미인증</span>
+                    </label>
+                    </div>
                     :
                     <input
                         type="text"
@@ -150,6 +168,7 @@ function AdminUserManage() {
                             <th>활성 상태</th>
                             <th>탈퇴 상태</th>
                             <th>가입일</th>
+                            {mode==="seller" && <th>판매 승인 상태</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -172,8 +191,9 @@ function AdminUserManage() {
                                         <td>{user.companyName}</td>
                                         <td>{user.sellerEmail}</td>
                                         <td>{user.isActive ? "활성" : "비활성"}</td>
-                                        <td>{user.withdrawalStatus || '-'}</td>
+                                        <td>{user.withdrawalStatus ? user.withdrawalStatus === "VOLUNTARY" ? "자발" : "강제" :'-'}</td>
                                         <td>{new Date(user.createAt).toLocaleDateString()}</td>
+                                        <td>{user.isVerified ? "인증" : "미인증"}</td>
                                     </tr>
                                 )
                             ))
@@ -186,13 +206,13 @@ function AdminUserManage() {
                     <UserDetailModal uid={uid} mode={mode} setIsModalOpen={setIsModalOpen} />
                 )}
             </div> 
-                {totalPages && (
+                {totalPages ? (
                     <Pagination
                         page={page}
                         totalPages={totalPages}
                         onPageChange={(p) => setPage(p)}
-                    />
-                )}
+                    />) : null
+                }
         </div>
     ); 
 }

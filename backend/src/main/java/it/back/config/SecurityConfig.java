@@ -73,6 +73,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/seller/public/**").permitAll()
                 .requestMatchers("/api/v1/admin/login").permitAll()
                 .requestMatchers("/api/v1/category/**").permitAll()
+                .requestMatchers("/api/v1/faq/list", "/api/v1/faq/{faqId}").permitAll()
                 // 상품 관련 - 조회는 공개, 수정은 SELLER/ADMIN
                 .requestMatchers(HttpMethod.GET, "/api/v1/product/list").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/product/{productId}").permitAll()

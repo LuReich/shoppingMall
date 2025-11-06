@@ -17,12 +17,13 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
     if (!form.username || !form.password) {
       alert("아이디와 비밀번호를 입력하세요.");
       return;
     }
-    loginMutate({ mode: selectedMode, credentials: form });
+    loginMutate({ mode: selectedMode, credentials: form }); 
   };
 
   // 회원가입 버튼 클릭 시 이동
@@ -87,7 +88,7 @@ function Login() {
       </div>
 
       {/* 로그인 폼 */}
-      <div className="login-form">
+      <form className="login-form" onSubmit={handleLogin}>
         <input
           type="text"
           name="username"
@@ -109,8 +110,8 @@ function Login() {
 
         <div className="login-actions">
           <button
+            type="submit"
             className="login-btn"
-            onClick={handleLogin}
             disabled={isPending}
           >
             {isPending ? "로그인 중..." : getTitle()}
@@ -132,7 +133,7 @@ function Login() {
             )}
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
