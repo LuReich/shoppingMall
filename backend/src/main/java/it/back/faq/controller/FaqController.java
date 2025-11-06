@@ -72,13 +72,14 @@ public class FaqController {
     }
 
     @DeleteMapping("/delete/{faqId}")
-    public ResponseEntity<ApiResponse<Void>> deleteFaq(
+    public ResponseEntity<ApiResponse<String>> deleteFaq(
             @PathVariable("faqId") Integer faqId,
             Authentication authentication) {
 
         getAdminUidFromAuthWithRoleCheck(authentication); // Check for admin role
         faqService.deleteFaq(faqId);
-        return ResponseEntity.noContent().build(); // Returns 204 No Content
+        String message = String.format("%d번 FAQ를 삭제했습니다.", faqId);
+        return ResponseEntity.ok(ApiResponse.ok(message));
     }
 
     private Integer getAdminUidFromAuthWithRoleCheck(Authentication authentication) {
