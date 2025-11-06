@@ -33,7 +33,8 @@ public class FaqService {
     public PageResponseDTO<FaqListResponseDTO> getFaqs(
             PageRequestDTO pageRequestDTO,
             FaqEntity.FaqTarget faqTarget,
-            FaqEntity.FaqCategory faqCategory) {
+            FaqEntity.FaqCategory faqCategory,
+            String keyword) {
 
         
         Pageable pageable = pageRequestDTO.toPageable();
@@ -44,6 +45,9 @@ public class FaqService {
         }
         if (faqCategory != null) {
             spec = spec.and(FaqSpecification.equalFaqCategory(faqCategory));
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            spec = spec.and(FaqSpecification.searchByKeyword(keyword));
         }
 
         Page<FaqEntity> page = faqRepository.findAll(spec, pageable);
@@ -139,6 +143,10 @@ public class FaqService {
         listDto.setFaqTarget(faqEntity.getFaqTarget().name());
         listDto.setFaqCategory(faqEntity.getFaqCategory().name());
         listDto.setFaqQuestion(faqEntity.getFaqQuestion());
+        listDto.setFaqAnswer(faqEntity.getFaqAnswer());
+        listDto.setSortOrder(faqEntity.getSortOrder());
+        listDto.setCreateAt(faqEntity.getCreateAt());
+        listDto.setUpdateAt(faqEntity.getUpdateAt());
         return listDto;
     }
 }

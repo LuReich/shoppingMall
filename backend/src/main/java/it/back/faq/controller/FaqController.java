@@ -28,9 +28,10 @@ public class FaqController {
     public ResponseEntity<ApiResponse<PageResponseDTO<FaqListResponseDTO>>> getFaqs(
             PageRequestDTO pageRequestDTO,
             @RequestParam(required = false) FaqEntity.FaqTarget faqTarget,
-            @RequestParam(required = false) FaqEntity.FaqCategory faqCategory) {
+            @RequestParam(required = false) FaqEntity.FaqCategory faqCategory,
+            @RequestParam(required = false) String keyword) {
 
-        PageResponseDTO<FaqListResponseDTO> faqs = faqService.getFaqs(pageRequestDTO, faqTarget, faqCategory);
+        PageResponseDTO<FaqListResponseDTO> faqs = faqService.getFaqs(pageRequestDTO, faqTarget, faqCategory, keyword);
         return ResponseEntity.ok(ApiResponse.ok(faqs));
     }
 
