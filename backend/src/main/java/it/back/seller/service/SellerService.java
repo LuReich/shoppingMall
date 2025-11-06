@@ -6,24 +6,31 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.back.admin.dto.AdminUpdateSellerRequestDTO;
 import it.back.common.dto.LoginRequestDTO;
+import it.back.common.pagination.PageRequestDTO;
+import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
-import it.back.seller.dto.SellerRegisterDTO;
+import it.back.seller.dto.SellerPublicListDTO;
+import it.back.seller.dto.SellerRegisterDTO; // New import
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.dto.SellerUpdateRequestDTO;
 import it.back.seller.entity.SellerDetailEntity;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
-import it.back.admin.dto.AdminUpdateSellerRequestDTO; // New import
+import it.back.seller.specification.SellerPublicSpecification;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -90,9 +97,43 @@ public class SellerService {
         dto.setSellerUid(seller.getSellerUid());
         dto.setCompanyName(seller.getCompanyName());
         dto.setSellerEmail(seller.getSellerEmail());
+        dto.setIsVerified(seller.isVerified());
+        dto.setIsActive(seller.isActive());
         dto.setCreateAt(seller.getCreateAt());
-        dto.setVerified(seller.isVerified());
-        dto.setActive(seller.isActive());
+        dto.setUpdateAt(seller.getUpdateAt());
+        if (detail != null) {
+            dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
+            dto.setCompanyInfo(detail.getCompanyInfo());
+            dto.setPhone(detail.getPhone());
+            dto.setAddress(detail.getAddress());
+            dto.setAddressDetail(detail.getAddressDetail());
+        }
+        return dto;
+    }
+
+    public PageResponseDTO<SellerPublicListDTO> getSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName, String businessRegistrationNumber, String phone, String address) {
+        Pageable pageable = pageRequestDTO.toPageable();
+        Specification<SellerEntity> spec = SellerPublicSpecification.search(sellerUid, companyName, businessRegistrationNumber, phone, address);
+        Page<SellerEntity> sellers = sellerRepository.findAll(spec, pageable);
+
+        List<SellerPublicListDTO> dtoList = sellers.getContent().stream()
+                .map(this::convertToSellerPublicListDTO)
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(sellers, dtoList);
+    }
+
+    private SellerPublicListDTO convertToSellerPublicListDTO(SellerEntity seller) {
+        SellerPublicListDTO dto = new SellerPublicListDTO();
+        dto.setSellerUid(seller.getSellerUid());
+        dto.setCompanyName(seller.getCompanyName());
+        dto.setSellerEmail(seller.getSellerEmail());
+        dto.setIsVerified(seller.isVerified());
+        dto.setIsActive(seller.isActive());
+        dto.setCreateAt(seller.getCreateAt());
+        dto.setUpdateAt(seller.getUpdateAt());
+
+        SellerDetailEntity detail = seller.getSellerDetail();
         if (detail != null) {
             dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
             dto.setCompanyInfo(detail.getCompanyInfo());
