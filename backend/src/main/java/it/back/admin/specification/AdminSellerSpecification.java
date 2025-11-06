@@ -9,7 +9,7 @@ import it.back.seller.entity.SellerEntity;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 
-public class AdminSellerSpecifications {
+public class AdminSellerSpecification {
 
     public static Specification<SellerEntity> hasSellerUid(Long sellerUid) {
         return (root, query, criteriaBuilder) -> {
