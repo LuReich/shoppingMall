@@ -17,7 +17,7 @@ import it.back.admin.repository.AdminRepository;
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.entity.BuyerEntity;
 import it.back.buyer.repository.BuyerRepository;
-import it.back.admin.specification.BuyerSpecifications;
+import it.back.admin.specification.AdminBuyerSpecifications;
 import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
@@ -25,7 +25,7 @@ import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
-import it.back.admin.specification.SellerSpecifications;
+import it.back.admin.specification.AdminSellerSpecifications;
 import it.back.admin.dto.AdminUpdateSellerRequestDTO;
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.entity.SellerDetailEntity;
@@ -75,13 +75,13 @@ public class AdminService {
 
         Specification<BuyerEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
-        spec = spec.and(BuyerSpecifications.hasBuyerUid(buyerUid));
-        spec = spec.and(BuyerSpecifications.hasBuyerId(buyerId));
-        spec = spec.and(BuyerSpecifications.hasNickname(nickname));
-        spec = spec.and(BuyerSpecifications.hasBuyerEmail(buyerEmail));
-        spec = spec.and(BuyerSpecifications.hasPhone(phone));
-        spec = spec.and(BuyerSpecifications.isActive(isActive));
-        spec = spec.and(BuyerSpecifications.hasWithdrawalStatus(withdrawalStatus));
+        spec = spec.and(AdminBuyerSpecifications.hasBuyerUid(buyerUid));
+        spec = spec.and(AdminBuyerSpecifications.hasBuyerId(buyerId));
+        spec = spec.and(AdminBuyerSpecifications.hasNickname(nickname));
+        spec = spec.and(AdminBuyerSpecifications.hasBuyerEmail(buyerEmail));
+        spec = spec.and(AdminBuyerSpecifications.hasPhone(phone));
+        spec = spec.and(AdminBuyerSpecifications.isActive(isActive));
+        spec = spec.and(AdminBuyerSpecifications.hasWithdrawalStatus(withdrawalStatus));
 
         Page<BuyerEntity> page = buyerRepository.findAll(spec, pageable);
         List<BuyerDTO> buyerList = page.getContent().stream()
@@ -109,15 +109,15 @@ public class AdminService {
 
         Specification<SellerEntity> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
 
-        spec = spec.and(SellerSpecifications.hasSellerUid(sellerUid));
-        spec = spec.and(SellerSpecifications.hasSellerId(sellerId));
-        spec = spec.and(SellerSpecifications.hasCompanyName(companyName));
-        spec = spec.and(SellerSpecifications.hasSellerEmail(sellerEmail));
-        spec = spec.and(SellerSpecifications.hasPhone(phone));
-        spec = spec.and(SellerSpecifications.hasBusinessRegistrationNumber(businessRegistrationNumber));
-        spec = spec.and(SellerSpecifications.isActive(isActive));
-        spec = spec.and(SellerSpecifications.isVerified(isVerified));
-        spec = spec.and(SellerSpecifications.hasWithdrawalStatus(withdrawalStatus));
+        spec = spec.and(AdminSellerSpecifications.hasSellerUid(sellerUid));
+        spec = spec.and(AdminSellerSpecifications.hasSellerId(sellerId));
+        spec = spec.and(AdminSellerSpecifications.hasCompanyName(companyName));
+        spec = spec.and(AdminSellerSpecifications.hasSellerEmail(sellerEmail));
+        spec = spec.and(AdminSellerSpecifications.hasPhone(phone));
+        spec = spec.and(AdminSellerSpecifications.hasBusinessRegistrationNumber(businessRegistrationNumber));
+        spec = spec.and(AdminSellerSpecifications.isActive(isActive));
+        spec = spec.and(AdminSellerSpecifications.isVerified(isVerified));
+        spec = spec.and(AdminSellerSpecifications.hasWithdrawalStatus(withdrawalStatus));
 
         Page<SellerEntity> page = sellerRepository.findAll(spec, pageable);
         List<SellerDTO> sellerList = page.getContent().stream()
