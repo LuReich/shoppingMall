@@ -1,11 +1,13 @@
 package it.back.seller.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class SellerPublicDTO {
-
+@Getter
+@Setter
+public class SellerPublicListDTO {
     private Long sellerUid;
     private String companyName;
     private String sellerEmail;
@@ -14,16 +16,10 @@ public class SellerPublicDTO {
     private String phone;
     private String address;
     private String addressDetail;
-    private Boolean isVerified;
-    private Boolean isActive;
+    private boolean isVerified;
+    private boolean isActive;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateAt;
-
-    public void setVerified(Boolean isVerified) {
-        this.isVerified = isVerified;
-    }
-
-    public void setActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
 }
