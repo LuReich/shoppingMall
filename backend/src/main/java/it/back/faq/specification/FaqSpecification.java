@@ -8,6 +8,8 @@ import jakarta.persistence.criteria.Predicate;
 
 import java.util.List;
 
+import jakarta.persistence.criteria.Expression;
+
 @Component
 public class FaqSpecification {
 
@@ -26,9 +28,9 @@ public class FaqSpecification {
             }
 
             // DB 필드에서 공백을 제거하는 표현식
-            jakarta.persistence.criteria.Expression<String> questionWithoutSpaces = criteriaBuilder.function(
+            Expression<String> questionWithoutSpaces = criteriaBuilder.function(
                     "replace", String.class, root.get("faqQuestion"), criteriaBuilder.literal(" "), criteriaBuilder.literal(""));
-            jakarta.persistence.criteria.Expression<String> answerWithoutSpaces = criteriaBuilder.function(
+            Expression<String> answerWithoutSpaces = criteriaBuilder.function(
                     "replace", String.class, root.get("faqAnswer"), criteriaBuilder.literal(" "), criteriaBuilder.literal(""));
 
             // 검색어를 공백 기준으로 분리
