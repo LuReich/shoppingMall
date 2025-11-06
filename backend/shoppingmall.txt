@@ -8,8 +8,8 @@
 /* 기존 테이블이 존재하면 삭제 (역순으로 삭제하여 FK 제약 조건 문제 방지) */
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS `buyer_inquiry_images`;
-DROP TABLE IF EXISTS `seller_inquiry_images`;
+DROP TABLE IF EXISTS `buyer_inquiry_image`;
+DROP TABLE IF EXISTS `seller_inquiry_image`;
 DROP TABLE IF EXISTS `faq`;
 DROP TABLE IF EXISTS `seller_inquiry`;
 DROP TABLE IF EXISTS `buyer_inquiry`;
@@ -334,7 +334,7 @@ create table faq (
 /* ----------------------------------------------------- */
 /* table `buyer_inquiry_images` (구매자 문의 첨부 이미지)   */
 /* ----------------------------------------------------- */
-CREATE TABLE `buyer_inquiry_images` (
+CREATE TABLE `buyer_inquiry_image` (
     `image_id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '이미지 고유 번호',
     `inquiry_id` BIGINT NOT NULL COMMENT '구매자 문의 ID (FK)',
     `uploader_type` ENUM('USER', 'ADMIN') NOT NULL COMMENT '업로더 (USER: 문의 작성자, ADMIN: 답변 관리자)',
@@ -350,7 +350,7 @@ CREATE TABLE `buyer_inquiry_images` (
 /* ----------------------------------------------------- */
 /* table `seller_inquiry_images` (판매자 문의 첨부 이미지)  */
 /* ----------------------------------------------------- */
-CREATE TABLE `seller_inquiry_images` (
+CREATE TABLE `seller_inquiry_image` (
     `image_id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '이미지 고유 번호',
     `inquiry_id` BIGINT NOT NULL COMMENT '판매자 문의 ID (FK)',
     `uploader_type` ENUM('USER', 'ADMIN') NOT NULL COMMENT '업로더 (USER: 문의 작성자, ADMIN: 답변 관리자)',
