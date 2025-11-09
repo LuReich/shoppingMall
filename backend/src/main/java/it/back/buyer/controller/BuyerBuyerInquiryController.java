@@ -58,9 +58,10 @@ public class BuyerBuyerInquiryController {
     }
 
     @DeleteMapping("/delete/buyerInquiry/{buyerInquiryId}")
-    public ResponseEntity<ApiResponse<Void>> deleteBuyerInquiry(@PathVariable("buyerInquiryId") Long buyerInquiryId,
+    public ResponseEntity<ApiResponse<String>> deleteBuyerInquiry(@PathVariable("buyerInquiryId") Long buyerInquiryId,
             Authentication authentication) {
         buyerBuyerInquiryService.deleteBuyerInquiry(buyerInquiryId, authentication.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(null));
+        String message = buyerInquiryId + "번 문의를 삭제했습니다.";
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(message));
     }
 }
