@@ -92,7 +92,13 @@ public class BuyerBuyerInquiryService {
             deleteInquiryImages(inquiry, dto.getDeletedImageIds());
         }
 
-        if (newImages != null && !newImages.isEmpty()) {
+        boolean addingNewImages = newImages != null && !newImages.isEmpty();
+        if (!addingNewImages && inquiry.getImages().isEmpty()) {
+            String directoryPath = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getId();
+            fileUtils.deleteDirectory(directoryPath);
+        }
+
+        if (addingNewImages) {
             saveInquiryImages(inquiry, newImages);
         }
 
@@ -107,11 +113,16 @@ public class BuyerBuyerInquiryService {
             throw new IllegalArgumentException("문의 작성자만 삭제할 수 있습니다.");
         }
 
+        String directoryPath = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getId();
+
         // Delete associated images from the file system
         inquiry.getImages().forEach(image -> {
-            String filePath = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getId() + "/" + image.getStoredName();
+            String filePath = directoryPath + "/" + image.getStoredName();
             fileUtils.deleteFile(filePath);
         });
+
+        // Delete the now-empty directory
+        fileUtils.deleteDirectory(directoryPath);
 
         buyerInquiryRepository.delete(inquiry);
     }
