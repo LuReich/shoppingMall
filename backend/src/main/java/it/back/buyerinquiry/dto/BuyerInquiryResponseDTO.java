@@ -49,13 +49,25 @@ public class BuyerInquiryResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ImageInfo {
-        private Long id;
+        private Long imageId;
+        private Long inquiryId;
+        private it.back.buyerinquiry.entity.BuyerInquiryImageEntity.UploaderType uploaderType;
+        private String imageName;
+        private String storedName;
         private String imagePath;
+        private Long imageSize;
+        private LocalDateTime createdAt;
 
         public static ImageInfo fromEntity(it.back.buyerinquiry.entity.BuyerInquiryImageEntity imageEntity) {
             return ImageInfo.builder()
-                    .id(imageEntity.getId())
+                    .imageId(imageEntity.getId())
+                    .inquiryId(imageEntity.getBuyerInquiry().getId())
+                    .uploaderType(imageEntity.getUploaderType())
+                    .imageName(imageEntity.getImageName())
+                    .storedName(imageEntity.getStoredName())
                     .imagePath(imageEntity.getImagePath())
+                    .imageSize(imageEntity.getImageSize())
+                    .createdAt(imageEntity.getCreatedAt())
                     .build();
         }
     }

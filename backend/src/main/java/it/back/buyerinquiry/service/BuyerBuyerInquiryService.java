@@ -48,6 +48,7 @@ public class BuyerBuyerInquiryService {
 
         if (images != null && !images.isEmpty()) {
             saveInquiryImages(savedInquiry, images);
+            savedInquiry = buyerInquiryRepository.save(savedInquiry);
         }
         return BuyerInquiryResponseDTO.fromEntity(savedInquiry);
     }
