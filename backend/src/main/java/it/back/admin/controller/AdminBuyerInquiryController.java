@@ -47,7 +47,7 @@ public class AdminBuyerInquiryController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseDTO));
     }
 
-    @PatchMapping("/answer/{buyerInquiryId}")
+    @PatchMapping("/answer/buyerInquiry/{buyerInquiryId}")
     public ResponseEntity<ApiResponse<BuyerInquiryResponseDTO>> answerBuyerInquiry(@PathVariable("buyerInquiryId") Long buyerInquiryId,
             Authentication authentication,
             @RequestBody AdminBuyerInquiryAnswerRequestDTO dto) {
