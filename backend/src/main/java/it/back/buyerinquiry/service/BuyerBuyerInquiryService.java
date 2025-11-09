@@ -58,7 +58,7 @@ public class BuyerBuyerInquiryService {
         BuyerEntity buyer = buyerRepository.findByBuyerId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
         Pageable pageable = pageRequestDTO.toPageable();
-        Page<BuyerInquiryEntity> page = buyerInquiryRepository.findAll(pageable);
+        Page<BuyerInquiryEntity> page = buyerInquiryRepository.findByBuyer(buyer, pageable);
         List<BuyerInquiryListResponseDTO> dtoList = page.getContent().stream()
                 .map(BuyerInquiryListResponseDTO::fromEntity)
                 .collect(Collectors.toList());

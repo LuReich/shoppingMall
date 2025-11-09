@@ -3,6 +3,7 @@ package it.back.admin.controller;
 import it.back.buyerinquiry.dto.AdminBuyerInquiryAnswerRequestDTO;
 import it.back.buyerinquiry.dto.BuyerInquiryListResponseDTO;
 import it.back.buyerinquiry.dto.BuyerInquiryResponseDTO;
+import it.back.buyerinquiry.entity.BuyerInquiryEntity;
 import it.back.buyerinquiry.service.AdminBuyerInquiryService;
 import it.back.common.dto.ApiResponse;
 import it.back.common.pagination.PageRequestDTO;
@@ -21,8 +22,10 @@ public class AdminBuyerInquiryController {
     private final AdminBuyerInquiryService adminBuyerInquiryService;
 
     @GetMapping("/buyerInquiry/list")
-    public ResponseEntity<ApiResponse<PageResponseDTO<BuyerInquiryListResponseDTO>>> getBuyerInquiryList(@ModelAttribute PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<BuyerInquiryListResponseDTO> responseDTO = adminBuyerInquiryService.getBuyerInquiryList(pageRequestDTO);
+    public ResponseEntity<ApiResponse<PageResponseDTO<BuyerInquiryListResponseDTO>>> getBuyerInquiryList(
+            @ModelAttribute PageRequestDTO pageRequestDTO,
+            @RequestParam(value = "inquiryStatus", required = false) BuyerInquiryEntity.InquiryStatus inquiryStatus) {
+        PageResponseDTO<BuyerInquiryListResponseDTO> responseDTO = adminBuyerInquiryService.getBuyerInquiryList(pageRequestDTO, inquiryStatus);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseDTO));
     }
 

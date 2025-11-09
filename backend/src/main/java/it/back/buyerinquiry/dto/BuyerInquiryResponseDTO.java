@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class BuyerInquiryResponseDTO {
 
-    private Long id;
+    private Long inquiryId;
     private String buyerNickname;
     private String adminName;
     private BuyerInquiryEntity.InquiryType inquiryType;
@@ -30,7 +30,7 @@ public class BuyerInquiryResponseDTO {
 
     public static BuyerInquiryResponseDTO fromEntity(BuyerInquiryEntity entity) {
         return BuyerInquiryResponseDTO.builder()
-                .id(entity.getId())
+                .inquiryId(entity.getId())
                 .buyerNickname(entity.getBuyer() != null ? entity.getBuyer().getNickname() : null)
                 .adminName(entity.getAdmin() != null ? entity.getAdmin().getAdminName() : null)
                 .inquiryType(entity.getInquiryType())

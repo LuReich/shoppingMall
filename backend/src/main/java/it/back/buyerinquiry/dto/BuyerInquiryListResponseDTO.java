@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BuyerInquiryListResponseDTO {
 
-    private Long id;
+    private Long inquiryId;
     private String title;
     private String buyerNickname;
     private BuyerInquiryEntity.InquiryStatus inquiryStatus;
@@ -22,7 +22,7 @@ public class BuyerInquiryListResponseDTO {
 
     public static BuyerInquiryListResponseDTO fromEntity(BuyerInquiryEntity entity) {
         return BuyerInquiryListResponseDTO.builder()
-                .id(entity.getId())
+                .inquiryId(entity.getId())
                 .title(entity.getTitle())
                 .buyerNickname(entity.getBuyer() != null ? entity.getBuyer().getNickname() : null)
                 .inquiryStatus(entity.getInquiryStatus())

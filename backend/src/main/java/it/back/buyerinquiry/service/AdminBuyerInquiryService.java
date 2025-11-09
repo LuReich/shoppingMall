@@ -7,11 +7,13 @@ import it.back.buyerinquiry.dto.BuyerInquiryListResponseDTO;
 import it.back.buyerinquiry.dto.BuyerInquiryResponseDTO;
 import it.back.buyerinquiry.entity.BuyerInquiryEntity;
 import it.back.buyerinquiry.repository.BuyerInquiryRepository;
+import it.back.buyerinquiry.specification.BuyerInquirySpecification;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +30,10 @@ public class AdminBuyerInquiryService {
     private final AdminRepository adminRepository;
 
     @Transactional(readOnly = true)
-    public PageResponseDTO<BuyerInquiryListResponseDTO> getBuyerInquiryList(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<BuyerInquiryListResponseDTO> getBuyerInquiryList(PageRequestDTO pageRequestDTO, BuyerInquiryEntity.InquiryStatus inquiryStatus) {
         Pageable pageable = pageRequestDTO.toPageable();
-        Page<BuyerInquiryEntity> page = buyerInquiryRepository.findAll(pageable);
+        Specification<BuyerInquiryEntity> spec = BuyerInquirySpecification.hasStatus(inquiryStatus);
+        Page<BuyerInquiryEntity> page = buyerInquiryRepository.findAll(spec, pageable);
         List<BuyerInquiryListResponseDTO> dtoList = page.getContent().stream()
                 .map(BuyerInquiryListResponseDTO::fromEntity)
                 .collect(Collectors.toList());
