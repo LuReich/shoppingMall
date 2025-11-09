@@ -39,10 +39,12 @@ public class AdminBuyerInquiryService {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
-        Specification<BuyerInquiryEntity> spec = Specification.where(BuyerInquirySpecification.hasStatus(inquiryStatus))
-                .and(BuyerInquirySpecification.contentContains(contentKeyword))
-                .and(BuyerInquirySpecification.nicknameContains(nickname))
-                .and(BuyerInquirySpecification.hasBuyerUid(buyerUid));
+        Specification<BuyerInquiryEntity> spec = Specification.allOf(
+                BuyerInquirySpecification.hasStatus(inquiryStatus),
+                BuyerInquirySpecification.contentContains(contentKeyword),
+                BuyerInquirySpecification.nicknameContains(nickname),
+                BuyerInquirySpecification.hasBuyerUid(buyerUid)
+        );
 
         Page<BuyerInquiryEntity> page = buyerInquiryRepository.findAll(spec, pageable);
 
