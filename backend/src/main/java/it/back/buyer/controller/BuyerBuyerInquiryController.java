@@ -28,10 +28,10 @@ public class BuyerBuyerInquiryController {
     public ResponseEntity<ApiResponse<BuyerInquiryResponseDTO>> createBuyerInquiry(
             Authentication authentication,
             @RequestPart("inquiryData") BuyerInquiryCreateRequestDTO dto,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+            @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
 
         BuyerInquiryResponseDTO responseDTO = buyerBuyerInquiryService.createBuyerInquiry(
-                authentication.getName(), dto, images);
+                authentication.getName(), dto, addImages);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(responseDTO));
     }
@@ -51,9 +51,9 @@ public class BuyerBuyerInquiryController {
     @PatchMapping("/update/buyerInquiry/{buyerInquiryId}")
     public ResponseEntity<ApiResponse<BuyerInquiryResponseDTO>> updateBuyerInquiry(@PathVariable("buyerInquiryId") Long buyerInquiryId,
             Authentication authentication,
-            @ModelAttribute BuyerInquiryUpdateRequestDTO dto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        BuyerInquiryResponseDTO responseDTO = buyerBuyerInquiryService.updateBuyerInquiry(buyerInquiryId, authentication.getName(), dto, files);
+            @RequestPart("inquiryData") BuyerInquiryUpdateRequestDTO dto,
+            @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
+        BuyerInquiryResponseDTO responseDTO = buyerBuyerInquiryService.updateBuyerInquiry(buyerInquiryId, authentication.getName(), dto, addImages);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseDTO));
     }
 
