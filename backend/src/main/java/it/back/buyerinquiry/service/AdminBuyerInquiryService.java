@@ -30,13 +30,26 @@ public class AdminBuyerInquiryService {
     private final AdminRepository adminRepository;
 
     @Transactional(readOnly = true)
-    public PageResponseDTO<BuyerInquiryListResponseDTO> getBuyerInquiryList(PageRequestDTO pageRequestDTO, BuyerInquiryEntity.InquiryStatus inquiryStatus) {
+    public PageResponseDTO<BuyerInquiryListResponseDTO> getBuyerInquiryList(
+            PageRequestDTO pageRequestDTO,
+            BuyerInquiryEntity.InquiryStatus inquiryStatus,
+            String contentKeyword,
+            String nickname,
+            Long buyerUid) {
+
         Pageable pageable = pageRequestDTO.toPageable();
-        Specification<BuyerInquiryEntity> spec = BuyerInquirySpecification.hasStatus(inquiryStatus);
+
+        Specification<BuyerInquiryEntity> spec = Specification.where(BuyerInquirySpecification.hasStatus(inquiryStatus))
+                .and(BuyerInquirySpecification.contentContains(contentKeyword))
+                .and(BuyerInquirySpecification.nicknameContains(nickname))
+                .and(BuyerInquirySpecification.hasBuyerUid(buyerUid));
+
         Page<BuyerInquiryEntity> page = buyerInquiryRepository.findAll(spec, pageable);
+
         List<BuyerInquiryListResponseDTO> dtoList = page.getContent().stream()
                 .map(BuyerInquiryListResponseDTO::fromEntity)
                 .collect(Collectors.toList());
+
         return new PageResponseDTO<>(page, dtoList);
     }
 

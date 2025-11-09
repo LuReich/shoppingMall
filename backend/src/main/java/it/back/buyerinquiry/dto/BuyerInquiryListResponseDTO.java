@@ -16,6 +16,7 @@ public class BuyerInquiryListResponseDTO {
 
     private Long inquiryId;
     private String title;
+    private Long buyerUid;
     private String buyerNickname;
     private BuyerInquiryEntity.InquiryStatus inquiryStatus;
     private LocalDateTime createdAt;
@@ -24,6 +25,7 @@ public class BuyerInquiryListResponseDTO {
         return BuyerInquiryListResponseDTO.builder()
                 .inquiryId(entity.getId())
                 .title(entity.getTitle())
+                .buyerUid(entity.getBuyer() != null ? entity.getBuyer().getBuyerUid() : null)
                 .buyerNickname(entity.getBuyer() != null ? entity.getBuyer().getNickname() : null)
                 .inquiryStatus(entity.getInquiryStatus())
                 .createdAt(entity.getCreatedAt())
