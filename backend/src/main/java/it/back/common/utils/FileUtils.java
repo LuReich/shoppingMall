@@ -73,6 +73,23 @@ public class FileUtils {
     }
 
     /**
+     * 지정된 경로의 디렉터리를 삭제합니다. 디렉터리는 비어있어야 합니다.
+     *
+     * @param directoryPath 삭제할 디렉터리 경로
+     */
+    public void deleteDirectory(String directoryPath) {
+        File directoryToDelete = new File(directoryPath);
+        if (directoryToDelete.exists() && directoryToDelete.isDirectory()) {
+            String[] files = directoryToDelete.list();
+            if (files != null && files.length == 0) {
+                if (!directoryToDelete.delete()) {
+                    throw new UncheckedIOException("디렉터리 삭제에 실패했습니다: " + directoryPath, new IOException("Failed to delete directory"));
+                }
+            }
+        }
+    }
+
+    /**
      * 썸네일 만들기
      */
     public String thumbNailFile(int width, int height, File originFile, String thumbPath) throws Exception {
