@@ -25,8 +25,14 @@ public class BuyerBuyerInquiryController {
     private final BuyerBuyerInquiryService buyerBuyerInquiryService;
 
     @PostMapping("/create/buyerInquiry")
-    public ResponseEntity<ApiResponse<BuyerInquiryResponseDTO>> createBuyerInquiry(Authentication authentication, @ModelAttribute BuyerInquiryCreateRequestDTO dto, @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        BuyerInquiryResponseDTO responseDTO = buyerBuyerInquiryService.createBuyerInquiry(authentication.getName(), dto, files);
+    public ResponseEntity<ApiResponse<BuyerInquiryResponseDTO>> createBuyerInquiry(
+            Authentication authentication,
+            @RequestPart("inquiryData") BuyerInquiryCreateRequestDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
+        BuyerInquiryResponseDTO responseDTO = buyerBuyerInquiryService.createBuyerInquiry(
+                authentication.getName(), dto, images);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(responseDTO));
     }
 
