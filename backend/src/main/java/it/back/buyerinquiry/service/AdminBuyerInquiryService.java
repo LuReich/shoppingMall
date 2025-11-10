@@ -57,13 +57,13 @@ public class AdminBuyerInquiryService {
 
     @Transactional(readOnly = true)
     public BuyerInquiryResponseDTO getBuyerInquiry(Long inquiryId) {
-        BuyerInquiryEntity inquiry = buyerInquiryRepository.findById(inquiryId)
+        BuyerInquiryEntity inquiry = buyerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
         return BuyerInquiryResponseDTO.fromEntity(inquiry);
     }
 
     public BuyerInquiryResponseDTO answerBuyerInquiry(Long inquiryId, String adminId, AdminBuyerInquiryAnswerRequestDTO dto) {
-        BuyerInquiryEntity inquiry = buyerInquiryRepository.findById(inquiryId)
+        BuyerInquiryEntity inquiry = buyerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
 
         if (inquiry.getInquiryStatus() == BuyerInquiryEntity.InquiryStatus.ANSWERED) {
