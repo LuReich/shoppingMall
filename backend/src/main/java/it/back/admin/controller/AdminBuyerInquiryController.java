@@ -34,10 +34,11 @@ public class AdminBuyerInquiryController {
             @ModelAttribute PageRequestDTO pageRequestDTO,
             @RequestParam(value = "inquiryStatus", required = false) BuyerInquiryEntity.InquiryStatus inquiryStatus,
             @RequestParam(value = "contentKeyword", required = false) String contentKeyword,
+            @RequestParam(value = "inquiryType", required = false) BuyerInquiryEntity.InquiryType inquiryType,
             @RequestParam(value = "nickname", required = false) String nickname,
             @RequestParam(value = "buyerUid", required = false) Long buyerUid) {
         PageResponseDTO<BuyerInquiryListResponseDTO> responseDTO = adminBuyerInquiryService.getBuyerInquiryList(
-                pageRequestDTO, inquiryStatus, contentKeyword, nickname, buyerUid);
+                pageRequestDTO, inquiryStatus, contentKeyword, inquiryType, nickname, buyerUid);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseDTO));
     }
 

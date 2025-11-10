@@ -34,6 +34,7 @@ public class AdminBuyerInquiryService {
             PageRequestDTO pageRequestDTO,
             BuyerInquiryEntity.InquiryStatus inquiryStatus,
             String contentKeyword,
+            BuyerInquiryEntity.InquiryType inquiryType,
             String nickname,
             Long buyerUid) {
 
@@ -41,6 +42,7 @@ public class AdminBuyerInquiryService {
 
         Specification<BuyerInquiryEntity> spec = Specification.allOf(
                 BuyerInquirySpecification.hasStatus(inquiryStatus),
+                BuyerInquirySpecification.hasInquiryType(inquiryType),
                 BuyerInquirySpecification.contentContains(contentKeyword),
                 BuyerInquirySpecification.nicknameContains(nickname),
                 BuyerInquirySpecification.hasBuyerUid(buyerUid)

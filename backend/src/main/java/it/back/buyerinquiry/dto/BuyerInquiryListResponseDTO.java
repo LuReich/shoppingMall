@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class BuyerInquiryListResponseDTO {
 
     private Long inquiryId;
+    private BuyerInquiryEntity.InquiryType inquiryType;
     private String title;
     private Long buyerUid;
     private String buyerNickname;
@@ -24,6 +25,7 @@ public class BuyerInquiryListResponseDTO {
     public static BuyerInquiryListResponseDTO fromEntity(BuyerInquiryEntity entity) {
         return BuyerInquiryListResponseDTO.builder()
                 .inquiryId(entity.getInquiryId())
+                .inquiryType(entity.getInquiryType())
                 .title(entity.getTitle())
                 .buyerUid(entity.getBuyer() != null ? entity.getBuyer().getBuyerUid() : null)
                 .buyerNickname(entity.getBuyer() != null ? entity.getBuyer().getNickname() : null)

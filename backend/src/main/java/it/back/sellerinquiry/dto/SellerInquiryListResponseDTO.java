@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class SellerInquiryListResponseDTO {
 
     private Long inquiryId;
+    private SellerInquiryEntity.InquiryType inquiryType;
     private String title;
     private Long sellerUid;
     private String sellerCompanyName;
@@ -24,6 +25,7 @@ public class SellerInquiryListResponseDTO {
     public static SellerInquiryListResponseDTO fromEntity(SellerInquiryEntity entity) {
         return SellerInquiryListResponseDTO.builder()
                 .inquiryId(entity.getInquiryId())
+                .inquiryType(entity.getInquiryType())
                 .title(entity.getTitle())
                 .sellerUid(entity.getSeller() != null ? entity.getSeller().getSellerUid() : null)
                 .sellerCompanyName(entity.getSeller() != null ? entity.getSeller().getCompanyName() : null)
