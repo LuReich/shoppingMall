@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import it.back.category.entity.CategoryEntity;
 import it.back.seller.entity.SellerEntity;
+import it.back.review.entity.ReviewEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -94,4 +95,6 @@ public class ProductEntity {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ProductDetailEntity productDetail;
 
+    @OneToMany(mappedBy = "product")
+    private List<ReviewEntity> reviews;
 }

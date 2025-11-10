@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface SellerRepository extends JpaRepository<SellerEntity, Long>, JpaSpecificationExecutor<SellerEntity> {
+public interface SellerRepository extends JpaRepository<SellerEntity, Long>, JpaSpecificationExecutor<SellerEntity>, SellerRepositoryCustom {
 
     Optional<SellerEntity> findBySellerId(String sellerId);
 
