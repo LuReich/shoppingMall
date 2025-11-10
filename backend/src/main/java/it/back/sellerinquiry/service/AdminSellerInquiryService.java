@@ -33,6 +33,7 @@ public class AdminSellerInquiryService {
     public PageResponseDTO<SellerInquiryListResponseDTO> getSellerInquiryList(
             PageRequestDTO pageRequestDTO,
             SellerInquiryEntity.InquiryStatus inquiryStatus,
+            SellerInquiryEntity.InquiryType inquiryType,
             String contentKeyword,
             String companyName,
             Long sellerUid) {
@@ -41,6 +42,7 @@ public class AdminSellerInquiryService {
 
         Specification<SellerInquiryEntity> spec = Specification.allOf(
                 SellerInquirySpecification.hasStatus(inquiryStatus),
+                SellerInquirySpecification.hasInquiryType(inquiryType),
                 SellerInquirySpecification.contentContains(contentKeyword),
                 SellerInquirySpecification.companyNameContains(companyName),
                 SellerInquirySpecification.hasSellerUid(sellerUid)

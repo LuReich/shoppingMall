@@ -33,6 +33,18 @@ public class BuyerInquirySpecification {
     }
 
     /**
+     * 문의 유형(inquiryType)으로 필터링
+     */
+    public static Specification<BuyerInquiryEntity> hasInquiryType(BuyerInquiryEntity.InquiryType inquiryType) {
+        return (root, query, criteriaBuilder) -> {
+            if (inquiryType == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("inquiryType"), inquiryType);
+        };
+    }
+
+    /**
      * 제목 또는 내용에 키워드가 포함되어 있는지 검색
      */
     public static Specification<BuyerInquiryEntity> contentContains(String keyword) {

@@ -21,6 +21,18 @@ public class SellerInquirySpecification {
     }
 
     /**
+     * 문의 유형(inquiryType)으로 필터링
+     */
+    public static Specification<SellerInquiryEntity> hasInquiryType(SellerInquiryEntity.InquiryType inquiryType) {
+        return (root, query, criteriaBuilder) -> {
+            if (inquiryType == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("inquiryType"), inquiryType);
+        };
+    }
+
+    /**
      * 판매자 UID로 필터링
      */
     public static Specification<SellerInquiryEntity> hasSellerUid(Long sellerUid) {
