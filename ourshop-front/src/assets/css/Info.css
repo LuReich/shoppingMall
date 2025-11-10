@@ -140,6 +140,14 @@
   color: #3bb320;
 }
 
+.info-btn-box{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
 .update-btn,
 .withdraw-btn
 {
@@ -178,6 +186,12 @@ input::placeholder {
 }
 
 /* 반응형 */
+
+@media (max-width: 1200px) {
+   .my-info-container {
+        margin-top: 100px;
+    }
+}
 @media (max-width: 768px) {
   .buyer-info-container {
     width: 90%;

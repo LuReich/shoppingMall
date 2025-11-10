@@ -13,12 +13,14 @@ import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,12 @@ public class BuyerBuyerInquiryService {
     private final BuyerRepository buyerRepository;
     private final FileUtils fileUtils;
 
-    private final String uploadPath = "C:/ourshop/buyerinquiry/";
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    private String getOsIndependentPath(String... paths) {
+        return String.join(File.separator, paths);
+    }
 
     public BuyerInquiryResponseDTO createBuyerInquiry(String userId, BuyerInquiryCreateRequestDTO dto, List<MultipartFile> images) {
         BuyerEntity buyer = buyerRepository.findByBuyerId(userId)
@@ -94,7 +101,7 @@ public class BuyerBuyerInquiryService {
 
         boolean addingNewImages = newImages != null && !newImages.isEmpty();
         if (!addingNewImages && inquiry.getImages().isEmpty()) {
-            String directoryPath = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getInquiryId();
+            String directoryPath = getOsIndependentPath(uploadDir, "buyerinquiry", String.valueOf(inquiry.getBuyer().getBuyerUid()), String.valueOf(inquiry.getInquiryId()));
             fileUtils.deleteDirectory(directoryPath);
         }
 
@@ -113,11 +120,11 @@ public class BuyerBuyerInquiryService {
             throw new IllegalArgumentException("문의 작성자만 삭제할 수 있습니다.");
         }
 
-        String directoryPath = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getInquiryId();
+        String directoryPath = getOsIndependentPath(uploadDir, "buyerinquiry", String.valueOf(inquiry.getBuyer().getBuyerUid()), String.valueOf(inquiry.getInquiryId()));
 
         // Delete associated images from the file system
         inquiry.getImages().forEach(image -> {
-            String filePath = directoryPath + "/" + image.getStoredName();
+            String filePath = getOsIndependentPath(directoryPath, image.getStoredName());
             fileUtils.deleteFile(filePath);
         });
 
@@ -129,7 +136,7 @@ public class BuyerBuyerInquiryService {
 
     private void saveInquiryImages(BuyerInquiryEntity inquiry, List<MultipartFile> images) {
         for (MultipartFile file : images) {
-            String path = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getInquiryId();
+            String path = getOsIndependentPath(uploadDir, "buyerinquiry", String.valueOf(inquiry.getBuyer().getBuyerUid()), String.valueOf(inquiry.getInquiryId()));
             String storedName = fileUtils.saveFile(file, path);
 
             BuyerInquiryImageEntity imageEntity = new BuyerInquiryImageEntity();
@@ -146,7 +153,7 @@ public class BuyerBuyerInquiryService {
     private void deleteInquiryImages(BuyerInquiryEntity inquiry, List<Long> deletedImageIds) {
         inquiry.getImages().removeIf(image -> {
             if (deletedImageIds.contains(image.getImageId())) {
-                String filePath = uploadPath + inquiry.getBuyer().getBuyerUid() + "/" + inquiry.getInquiryId() + "/" + image.getStoredName();
+                String filePath = getOsIndependentPath(uploadDir, "buyerinquiry", String.valueOf(inquiry.getBuyer().getBuyerUid()), String.valueOf(inquiry.getInquiryId()), image.getStoredName());
                 fileUtils.deleteFile(filePath);
                 return true;
             }
@@ -154,4 +161,3 @@ public class BuyerBuyerInquiryService {
         });
     }
 }
-

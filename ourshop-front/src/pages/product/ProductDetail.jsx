@@ -10,6 +10,9 @@ import { authStore } from '../../store/authStore';
 import { useCart } from '../../hooks/useCart';
 import LikesBtn from '../../components/common/LikesBtn';
 import RecommendBox from '../../components/recommendation/RecommendBox';
+import { IoIosArrowUp } from "react-icons/io";
+import ProductQnA from '../QnA/QnA';
+
 
 function ProductDetail() {
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
@@ -18,6 +21,7 @@ function ProductDetail() {
 
   // 하단 리뷰 탭으로 스크롤하기 위한 ref
   const reviewsRef = useRef(null);
+  const moveTop = useRef(null);
 
   const { isLogin, role } = authStore(state => state);
 
@@ -95,8 +99,17 @@ function ProductDetail() {
   // 리뷰 길이
   const reviewLength = productReviews?.length || 0;
 
+   useEffect(()=>{
+      if(product.isDeleted){
+        alert("삭제된 상품입니다.");
+      } 
+    },[]);
+
+
   if (isLoading) return <p>상품 조회중...</p>;
   if (isError) return <p>상품 조회에 실패했습니다.</p>;
+
+
 
   // 리뷰 섹션으로 스크롤하고 탭을 변경하는 함수
   const handleScrollToReviews = () => {
@@ -104,9 +117,14 @@ function ProductDetail() {
     reviewsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  //맨 위로 이동
+  const handleMoveTop = () => {
+    moveTop?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   console.log("상품", product);
 
-  // ✅ 수량 변경
+  // 수량 변경
   const handleQuantityChange = (amount) => {
     let newQuant = Number(quantity) + amount;
     if (newQuant < 1) newQuant = 1;
@@ -148,7 +166,7 @@ function ProductDetail() {
     if (e.key === 'Enter') e.currentTarget.blur();
   };
 
-  // ✅ 장바구니 담기
+  // 장바구니 담기
   const cartBtn = () => {
     if (isLogin) {
       const itemData = {
@@ -163,7 +181,7 @@ function ProductDetail() {
     }
   };
 
-  // ✅ 바로구매
+  // 바로구매
   const productData = { ...product, quantity: Number(quantity) };
 
   const orderDirectBtn = () => {
@@ -171,8 +189,8 @@ function ProductDetail() {
   };
 
   return (
-    <div className="product-detail-container">
-      {/* ✅ 카테고리 경로 */}
+    <div className="product-detail-container" ref={moveTop}>
+      {/* 카테고리 경로 */}
       <nav className="breadcrumb">
         {categoryPath.map((cat, index) => (
           <span key={cat.categoryId}>
@@ -190,6 +208,7 @@ function ProductDetail() {
       <div className="product-detail-main">
         <div className="image-gallery">
           <div className="main-image-container">
+            {product.isDeleted && <div className='deleted-product-notice'>삭제된 상품입니다.</div>}
             {activeImage ? (
               <img
                 src={
@@ -211,7 +230,23 @@ function ProductDetail() {
           </div>
 
           <div className="thumbnail-list">
-            {product.productImages?.map((img, index) => (
+            {/* 대표 이미지도 썸네일 리스트에 포함 */}
+            {product.thumbnailUrl && (
+              <div
+                className={`thumbnail-item ${product.thumbnailUrl === activeImage ? 'active' : ''}`}
+                onClick={() => setActiveImage(product.thumbnailUrl)}
+              >
+                <img
+                src={
+                      product.thumbnailUrl.startsWith('http')
+                      ? product.thumbnailUrl
+                      : `http://localhost:9090${product.thumbnailUrl}`
+                    } alt="대표 이미지"
+                />
+              </div>
+            )}
+            {/* 기존 서브 이미지 목록 */}
+           {product.productImages?.map((img, index) => (
               <div
                 key={index}
                 className={`thumbnail-item ${img.imagePath === activeImage ? 'active' : ''}`}
@@ -220,12 +255,11 @@ function ProductDetail() {
                 <img
                   src={
                     img.imagePath?.startsWith('http')
-                      ? img.imagePath
-                      : `http://localhost:9090${img.imagePath}`
-                  }
-                  alt={`상품 이미지 ${index + 1}`}
+                    ? img.imagePath
+                    : `http://localhost:9090${img.imagePath}`}
+                    alt={`상품 이미지 ${index + 1}`}
                 />
-              </div>
+            </div>
             ))}
           </div>
         </div>
@@ -271,8 +305,8 @@ function ProductDetail() {
           <div className="action-buttons">
             {!role || role === 'BUYER' ? (
               <>
-                <button type='button' className="cart-btn" onClick={cartBtn}>장바구니 담기</button>
-                <button type='button' className="buy-btn" onClick={orderDirectBtn}>바로 구매하기</button>
+                <button type='button' className= {`cart-btn ${product.isDeleted ? 'disabled' : ''}`} disabled={product.isDeleted} onClick={cartBtn}>장바구니 담기</button>
+                <button type='button' className={`buy-btn ${product.isDeleted ? 'disabled' : ''}`}  disabled={product.isDeleted} onClick={orderDirectBtn}>바로 구매하기</button>
               </>
             ) : null}
           </div>
@@ -305,6 +339,7 @@ function ProductDetail() {
           )}
         </div>
       </div>
+      <button type='button' className='move-top-btn' onClick={handleMoveTop}><IoIosArrowUp/></button>
     </div>
   );
 }

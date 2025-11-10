@@ -25,6 +25,14 @@ export const useAdmin = () => {
         });
     };
 
+    //전체 상품 리스트 조회
+    const getProductList = (params = {}) => {
+        return useQuery({
+            queryKey: ["adminProducts", params],
+            queryFn: () => adminAPI.getProduct(params),
+        });
+    };
+
     //회원 정보 수정
     const updateUser = () =>{
         return useMutation({
@@ -44,9 +52,29 @@ export const useAdmin = () => {
         });
     };
 
+    //상품 소프트 삭제 및 사유 등록
+    const deleteProduct = () => {
+        return useMutation({
+            mutationFn: ({productId, data}) => adminAPI.deleteProduct(productId, data),
+            onSuccess: (res) => {
+                qc.invalidateQueries({ queryKey: ["adminProducts"] });
+                qc.invalidateQueries({ queryKey: ["product", productId] });
+                console.log("상품 삭제 성공:", res);
+                alert("상품이 상태가 성공적으로 변경되었습니다.");
+            },
+            onError: (err) => {
+                const msg = err.response?.data?.content || "상품 삭제에 실패했습니다.";
+                console.error("상품 삭제 실패:", err);
+                alert(msg);
+            }
+        })
+    }
+
     return { 
         getUserList,
         getUserDetail,
+        getProductList,
         updateUser,  
+        deleteProduct,
      };
 }

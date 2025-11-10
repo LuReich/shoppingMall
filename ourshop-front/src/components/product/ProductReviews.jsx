@@ -83,7 +83,7 @@ function ProductReviews({product}) {
                  null
             */}
             {
-                totalPages && <Pagination page={page} totalPages={totalPages} onPageChange={(p) => setPage(p)}/>
+                totalPages ? <Pagination page={page} totalPages={totalPages} onPageChange={(p) => setPage(p)}/> : null
             }
            
             </div>

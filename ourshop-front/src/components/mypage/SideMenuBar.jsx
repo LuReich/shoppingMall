@@ -40,7 +40,7 @@ function SideMenuBar(props) {
                     </>
                     :
                     <>
-                        <Link className='side-link-btn' to='#'>관리자 정보 관리</Link>
+                        {/*<NavLink className='side-link-btn' to='#'>관리자 정보 관리</NavLink>*/}
                         <p className='side-logout-btn' onClick={handleLogout}>로그아웃</p>
                     </>
             } 

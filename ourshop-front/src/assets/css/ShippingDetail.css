@@ -16,6 +16,124 @@
   margin-bottom: 40px; /* 제목과 정렬 컴포넌트 사이 간격 */
 }
 
+
+.shipping-info-container h4{
+  color: #6a6969;
+}
+
+
+/* 검색창 스타일 */
+
+.search-seller-post-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+.seller-form-box{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  gap: 30px;
+}
+
+.seller-search-form-b{
+  display: flex;
+  gap: 10px;
+}
+
+.seller-filter-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 51px;
+
+}
+.search-seller-post-select,
+.search-seller-post-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 38px; /* 버튼과 높이 맞춤 */
+}
+
+.search-seller-post-select {
+  min-width: 120px;
+}
+
+.search-seller-post-input {
+  width: 400px;
+}
+
+.search-seller-post-btn {
+  padding: 8px 25px;
+  border: none;
+  background-color: #7cc7de;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  height: 38px;
+}
+
+.search-seller-post-btn:hover {
+  background-color: #6bbdd3;
+}
+
+/* 라디오 버튼 그룹 */
+.seller-radio-group {
+    margin: 0 10px;
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.seller-radio-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.seller-radio-wrap input[type="radio"] {
+  display: none;
+}
+
+.seller-radio-wrap span {
+    flex: 1;
+    width: 100px;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px; /* 둥근 모서리 */
+    background-color: #ffffff;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* 선택된 라디오 버튼의 라벨 스타일 */
+.seller-radio-wrap input[type="radio"]:checked + span {
+     /* 활성 색상 */
+    color: #7cc7de;
+    border-color: #7cc7de;
+    font-weight: 600;
+}
+
+
 /* 테이블 */
 .shipping-table {
   width: 100%;
@@ -39,6 +157,9 @@
   color: #555;
 }
 
+.order-detail-id:hover{
+  text-decoration: underline;
+}
 .shipping-detail-row:hover{
   background-color: aliceblue;
 }
@@ -188,9 +309,11 @@
 
 
 /* 반응형 */
-@media (max-width: 900px) {
+@media (max-width: 1400px) {
   .shipping-info-container {
     width: 95%;
+    min-width: 1000px;
+    margin-top: 90px;
   }
 
   .shipping-table th,
@@ -209,3 +332,4 @@
     font-size: 12px;
   }
 }
+

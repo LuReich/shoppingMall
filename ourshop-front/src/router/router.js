@@ -33,7 +33,14 @@ import ProductUpload from "../pages/seller/ProductUpload";
 import AdminHome from "../pages/admin/AdminHome";
 import AdminUserManage from "../pages/admin/AdminUserManage";
 import SellerShippingDetail from "../pages/seller/SellerShippingDetail";
-import SellerOrderDetailInfo from "../pages/seller/SellerOrderDetailInfo";
+import AdminProductManage from "../pages/admin/AdminProductManage";
+import Faq from "../pages/faq/FAQ";
+import UploadFaq from "../pages/faq/UploadFaq";
+import ShopList from "../pages/shop/ShopList";
+import QnA from "../pages/QnA/QnA";
+import UploadQnA from "../pages/QnA/UploadQnA";
+import QnADetail from "../pages/QnA/QnADetail";
+
 
 export const router = createBrowserRouter([
   {
@@ -46,7 +53,12 @@ export const router = createBrowserRouter([
       { path: "cart", Component: Cart },
       { path: "order", Component: Order },
       { path: "order/complete", Component: OrderComplete },
+      { path: "shop/list", Component: ShopList },
       { path: "shop", Component: ShopInfo },
+      { path: "faq", Component: Faq },
+      { path: "qna", Component: QnA },
+      { path: "qna/:inquiryId", Component: QnADetail },
+      { path: "upload/qna", Component: UploadQnA },
       {
         path: "buyer/mypage",
         Component: MyPageLayout,
@@ -68,13 +80,19 @@ export const router = createBrowserRouter([
           { path: "products/upload", Component: ProductUpload },
           { path: "products/:productId", Component: ProductUpload },
           { path: "shipping", Component: SellerShippingDetail },
-          { path: "shipping/detail", Component: SellerOrderDetailInfo },
         ],
       }
     ],
   },
   { path: "admin", Component: AdminHome,
-        children: [{ index: true, Component: AdminUserManage }],
+        children: [
+          { index: true, Component: AdminUserManage },
+          { path: "products", Component:AdminProductManage},
+          { path: "faq", Component:Faq},
+          { path: "faq/upload/", Component:UploadFaq},
+          { path: "faq/upload/:faqId", Component:UploadFaq},
+
+        ],
   },
   { path: "/login", Component: Login },
   { path: "/register/buyer", Component: BuyerRegister },

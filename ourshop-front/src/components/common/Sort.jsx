@@ -47,6 +47,12 @@ function Sort({sort, setSort, setPage, sortCateg }) {
                             <option value={`${sortCateg?.rating},asc`}>평점 낮은순</option>
                           </>  
                         }
+                        {
+                          sortCateg?.sortOrder &&
+                          <>
+                            <option value={`${sortCateg?.sortOrder},asc`}>기본순서</option>
+                          </>
+                        }
                        </select>
                    </div>
     );

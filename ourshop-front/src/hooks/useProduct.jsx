@@ -119,14 +119,14 @@ export const useProduct = () => {
 
   };
 
-  //판매자 상품 삭제 및 이유 등록
+  //판매자 상품 삭제 및 이유 
   const deleteProduct = () => {
     return useMutation({
-      mutationFn: ({productId, data}) => productAPI.deleteProduct(productId, data),
+      mutationFn: ({productId, data}) => productAPI.deleteBySeller(productId, data),
       onSuccess: (res) => {
         qc.invalidateQueries(["productList"]);
         console.log("상품 삭제", res.content);
-        alert(res.content || "상품이 성공적으로 삭제되었습니다.")
+        alert("상품이 성공적으로 삭제되었습니다.")
       
       },
       onError: (err) => {

@@ -49,7 +49,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         // 정적 리소스는 Spring Security 필터를 완전히 우회
         return (web) -> web.ignoring()
-                .requestMatchers("/product/**", "/temp/**", "/images/**");
+                .requestMatchers("/product/**", "/temp/**", "/images/**", "/buyerinquiry/**", "/sellerinquiry/**");
     }
 
     @Bean

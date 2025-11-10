@@ -91,3 +91,10 @@
 .cancel-btn:hover {
     background-color: #c2c2c2;
 }
+
+@media(max-width:1200px){
+    .review-upload-container{
+        margin-top: 100px;
+    }
+
+}

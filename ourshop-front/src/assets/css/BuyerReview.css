@@ -21,7 +21,6 @@
 .review-table table {
   width: 100%;
   border-collapse: collapse; /*thead/tbody 붙이기 */
-  table-layout: fixed;
   border-spacing: 0;
 }
 
@@ -55,6 +54,14 @@
 .review-table .product-info {
   font-size: 15px;
   line-height: 1.5;
+}
+
+.product-name{
+  padding-left: 5px;
+}
+.product-name:hover{
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .review-table .product-info .product-name {
@@ -115,7 +122,7 @@
 
 /* 버튼 영역 (선택사항) */
 .review-actions button {
-  border: 1px solid #7cc7de;
+  border:none;
   padding: 7px 30px;
   border-radius: 4px;
   font-size: 13px;
@@ -128,12 +135,19 @@
   color: white;
 }
 
-/* 반응형 (모바일) */
+/* 반응형 */
+@media (max-width: 1200px) {
+    .buyer-review-container{
+        margin-top: 100px;
+    }
+}
+
 @media (max-width: 486px) {
 
     .buyer-review-container{
         margin-top: 100px;
     }
+  
     .review-content{
         display: flex;
         flex-direction: column;

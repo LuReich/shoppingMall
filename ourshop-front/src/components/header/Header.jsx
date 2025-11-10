@@ -6,6 +6,9 @@ import { authStore } from '../../store/authStore';
 import styles from '../../assets/css/Button.module.css';
 import CategoryDropDown from './CategoryDropDown';
 import MyPageDropDown from './MyPageDropDown';
+import { RiCustomerService2Fill } from "react-icons/ri";
+import CSDropDown from './CSDropDown';
+
 
 function Header(props) {
 
@@ -18,7 +21,8 @@ function Header(props) {
     console.log(isLogin);
 
     const [isMenuOpen, setIsMenuOpen] = useState(false); //카테고리 메뉴 드롭다운
-    const [isProfileOpen, setIsProfileOpen] = useState(false); //모바일(768px 이하 메뉴 드롭다운)
+    const [isCsOpen, setIsCsOpen] = useState(false); //고객센터 드롭다운
+    const [isProfileOpen, setIsProfileOpen] = useState(false); //마이페이지 드롭다운
     const [searchInput, setSearchInput] = useState(""); //검색어
     //const [keywords, setKeywords] = useState("")
 
@@ -44,6 +48,16 @@ function Header(props) {
     //카테고리 드롭다운 close
     const handleMenuLeave = () => {
         setIsMenuOpen(false)
+    }
+
+    //고객센터 드롭다운 open
+    const handleCsEnter = () => {
+        setIsCsOpen(true);
+    }
+
+    //고객센터 드롭다운 close
+    const handleCsLeave = () => {
+        setIsCsOpen(false);
     }
 
     //마이페이지 드롭다운 open
@@ -87,7 +101,7 @@ function Header(props) {
                                 isMenuOpen && <CategoryDropDown categories={categories} />
                             }
                         </div>
-                        <Link to="/new">신규 업체</Link>
+                        <Link to="/shop/list">신규 업체</Link>
                         <Link to="/best">베스트</Link>
                     </nav>
                 </div>
@@ -111,10 +125,24 @@ function Header(props) {
                                         role=== "SELLER"? 
                                             user.content.companyName : user.content.adminName} 님
                                 </p>
+                                    {
+                                        role !== "ADMIN" &&
+                                        <div className='cs-cont'
+                                            onMouseEnter={handleCsEnter}
+                                            onMouseLeave={handleCsLeave}>
+                                        <RiCustomerService2Fill  className="icon-button" 
+                                            onMouseEnter={handleCsEnter}
+                                        />
+                                        {
+                                            isCsOpen && <CSDropDown/>
+                                        }       
+                                        </div>  
+                                    }
                                     {role === "ADMIN" ? 
                                         <button type='button' className="icon-button" onClick={()=> navigate("/admin")}>⚙️</button>
                                         :
-                                        <button type='button' className="icon-button"  onClick={()=>navigate("/cart")}>🛒</button>
+                                        role === "BUYER" &&
+                                            <button type='button' className="icon-button"  onClick={()=>navigate("/cart")}>🛒</button>
                                     }
                                 <div className='mypage-cont'
                                     onMouseEnter={handleProfileEnter}
@@ -130,6 +158,7 @@ function Header(props) {
                                 </>
                                 :
                                 <>
+                                    <RiCustomerService2Fill  className="icon-button" onClick={() => navigate("/faq")}/> 
                                     <Link to="/login" className={styles.commonBtn}>로그인</Link>
                                 </>
                         }

@@ -4,7 +4,7 @@ import "../../assets/css/ShippingDetail.css";
 import Pagination from '../../components/common/Pagenation';
 import Sort from '../../components/common/Sort';
 import { useNavigate } from 'react-router';
-import SellerOrderDetailInfo from './SellerOrderDetailInfo';
+import SellerOrderDetailInfoModal from '../../components/seller/SellerOrderDetailInfoModal';
 
 function SellerShippingDetail(props) {
 
@@ -12,14 +12,43 @@ function SellerShippingDetail(props) {
     const [sort, setSort] = useState("product.productName,desc");
     const [page, setPage] = useState(0);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [searchField, setSearchField] = useState("productName");
+    const [searchKeyword, setSearchKeyword] = useState("");
+    const [searchParams, setSearchParams] = useState({});
+    const [statusFilter, setStatusFilter] = useState(""); // 배송 상태 필터
 
+    // 배송 상태 필터가 변경되면 세팅 초기화 
+    useEffect(() => {
+        setSearchParams({});
+        setSearchKeyword("");
+    }, [searchField]);
+
+
+    useEffect(() => {
+        setPage(0);
+        setSearchParams({});
+        setSearchKeyword("");
+    }, [statusFilter]);
 
 
     const { getDeliverySellerProductList, updateDeliveryStatus } = useSeller();
-    const { data: deliverySellerProductsCont, isLoading, isError }
-        = getDeliverySellerProductList({ sort, size: 5, page });
+    const { data: deliverySellerProductsCont, isLoading, isError, refetch }
+        = getDeliverySellerProductList({ sort, size: 5, page , orderDetailStatus: statusFilter, ...searchParams});
 
     const { mutate: updateStatusMutate } = updateDeliveryStatus();
+
+    // 검색 버튼 클릭 시 검색조건 업데이트
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        setPage(0);
+        // 검색어가 있으면 검색조건 적용, 없으면 초기화
+        if (searchKeyword.trim()) {
+            setSearchParams({ [searchField]: searchKeyword });
+        } else {
+            setSearchParams({});
+        }
+
+    };
 
     if (isLoading) return <p>판매내역을 조회중입니다.</p>;
     if (isError) return <p>판매내역 조회에 실패했습니다.</p>;
@@ -61,12 +90,64 @@ function SellerShippingDetail(props) {
     return (
         <div className='shipping-info-container'>
             <h2>판매/배송 관리</h2>
+            <div className='search-seller-post-bar'>
+            <div className='seller-filter-box'>
+                <h4 className='filter-label'>배송 상태</h4>
+                <div className="seller-radio-group">
+                        <label className='seller-radio-wrap'>
+                            <input type='radio' name='status' value='' checked={statusFilter === ""} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <span>전체</span>
+                        </label>
+                        <label className='seller-radio-wrap'>
+                            <input type='radio' name='status' value='PAID' checked={statusFilter === "PAID"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <span>결제완료</span>
+                        </label>
+                        <label className='seller-radio-wrap'>
+                            <input type='radio' name='status' value='SHIPPING' checked={statusFilter === "SHIPPING"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <span>배송중</span>
+                        </label>
+                        <label className='seller-radio-wrap'>
+                            <input type='radio' name='status' value='DELIVERED' checked={statusFilter === "DELIVERED"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <span>배송완료</span>
+                        </label>
+                        <label className='seller-radio-wrap'>
+                            <input type='radio' name='status' value='CANCELED' checked={statusFilter === "CANCELED"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <span>취소</span>
+                        </label>
+                </div>
+            </div>
+            <form  className='seller-form-box' onSubmit={handleSearchSubmit}>
+                <h4>결과 내 재검색</h4>
+                <div className='seller-search-form-b'>
+                 <select className='search-seller-post-select'
+                    value={searchField}
+                    onChange={(e)=> setSearchField(e.target.value)}>
+                    <option value="productName">상품명</option>
+                    <option value="productId">상품아이디</option>
+                    <option value="recipientName">수령인 이름</option>
+                    <option value="recipientPhone">수령인 전화번호</option>
+                    <option value="recipientAddress">배송 주소</option>
+                 </select>
+                 <input
+                    type="text"
+                    placeholder="검색어를 입력하세요"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    className="search-seller-post-input"
+                 />
+                 <button type="submit" className="search-seller-post-btn">
+                    검색
+                 </button>
+                </div>
+            </form>
+            </div>
             <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg} />
             <table className='shipping-table'>
                 <thead>
                     <tr>
                         <th style={{width: "13%", paddingLeft:30}}>주문번호</th>
                         <th>주문일자</th>
+                        <th>수령인</th>
                         <th>상품정보</th>
                         <th style={{width:"13%"}}>수량</th>
                         <th>주문금액</th>
@@ -75,10 +156,13 @@ function SellerShippingDetail(props) {
                 </thead>
                 <tbody>
                     {deliverySellerProducts.length > 0 ? deliverySellerProducts.map((item) => (
-                        <tr key={item.orderDetailId} className='shipping-detail-row' 
-                            onClick={()=> setSelectedItem(item)}>
-                            <td style={{width: "10%", paddingLeft:10}}>{item.orderDetailId}</td>
-                            <td>{new Date(item.createAt).toLocaleDateString()}</td>
+                        <tr key={item.orderDetailId} className='shipping-detail-row'>
+                            <td className='order-detail-id'
+                            style={{width: "10%", paddingLeft:10}}
+                            onClick={()=> setSelectedItem(item)}
+                            >{item.orderDetailId}</td>
+                            <td>{new Date(item.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
+                            <td>{item.recipientName}</td>
                             <td>
                                 <div className="detail-info" 
                                 onClick={() => navigate(`/product/${item.productId}`)}>
@@ -112,7 +196,7 @@ function SellerShippingDetail(props) {
                 <div className='order-detail-modal' onClick={() => setSelectedItem(null)}>
                     <div className='seller-order-detail-modal-content' onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close-btn" onClick={() => setSelectedItem(null)}>×</button>
-                        <SellerOrderDetailInfo item={selectedItem}/>
+                        <SellerOrderDetailInfoModal item={selectedItem}/>
                     </div>
                 </div>
             )}

@@ -6,8 +6,13 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    overflow-x: auto; /*가로 스크롤 숨기기*/
+    white-space: nowrap; /*줄바꿈 금지*/
 }
-
+.scroll-container{
+    width: 100%;
+    min-width: 1400px;
+}
 .admin-h{
     position: fixed;
     top: 0;
@@ -32,3 +37,13 @@
     align-items: center;
 }
 
+
+@media (max-width: 1000px){
+    .admin-h{
+        height: 150px; /* Header와 높이 통일 */
+    }
+
+    .admin-outlet{
+        margin-top: 200px;
+    }
+}

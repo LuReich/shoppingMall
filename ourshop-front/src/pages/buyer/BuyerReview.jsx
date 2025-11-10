@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import Pagination from '../../components/common/Pagenation';
 import Sort from '../../components/common/Sort';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useReviews } from '../../hooks/useReview';
 import '../../assets/css/BuyerReview.css';
 
 function BuyerReview(props) {
 
+    const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [sort, setSort] = useState("createAt,desc");
     
@@ -56,8 +57,8 @@ function BuyerReview(props) {
                           reviews?.map(review => (
                             <tr key={review.reviewId}>
                                 <td className='product-info'>
-                                    <div className='product-name'>{review.productName}</div>
-                                    <div className='company-name'>{review.companyName}</div>
+                                    <div className='product-name' onClick={() => navigate(`/product/${review.productId}`)}>{review.productName}</div>
+                                    <div className='company-name' onClick={() => navigate("/shop" , { state: { sellerUid: review.sellerUid } })}>{review.companyName}</div>
                                 </td>
                                 <td className='review-content'>
                                     <div className='revie-cont'>

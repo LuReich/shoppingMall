@@ -35,7 +35,7 @@ function MyPageDropDown(props) {
                     </>
                     :
                     <>
-                        <Link className='link-btn' to='#'>관리자 정보 관리</Link>
+                        {/*<Link className='link-btn' to='#'>관리자 정보 관리</Link>*/}
                         <p className='link-btn' onClick={handleLogout}>로그아웃</p>
                     </>
             }  

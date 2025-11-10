@@ -4,7 +4,6 @@ import Sort from '../../components/common/Sort';
 import '../../assets/css/AdminUserManage.css';
 import Pagination from '../../components/common/Pagenation';
 import UserDetailModal from '../../components/admin/UserDetailModal';
-import { set } from 'react-hook-form';
 
 function AdminUserManage() {
     const [mode, setMode] = useState("buyer");
@@ -16,6 +15,10 @@ function AdminUserManage() {
     const [searchKeyword, setSearchKeyword] = useState("");
     const [searchParams, setSearchParams] = useState({});
     const [uid, setUid] = useState(null);
+    // 필터 상태 추가
+    const [isActiveFilter, setIsActiveFilter] = useState("");
+    const [withdrawalStatusFilter, setWithdrawalStatusFilter] = useState("");
+    const [isVerifiedFilter, setIsVerifiedFilter] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { getUserList } = useAdmin();
@@ -23,13 +26,28 @@ function AdminUserManage() {
     //검색 카테고리 변경시 전체 목록 나오도록
     useEffect(()=> {
          setSearchParams({});
+         setSearchKeyword("");
     }, [searchField]);
 
+    // 탭 변경 시 모든 필터와 검색어 초기화
+    useEffect(() => {
+        setPage(0);
+        setSort("createAt,desc");
+        setSearchField(mode === "buyer" ? "buyerId" : "sellerId");
+        setSearchKeyword("");
+        setSearchParams({});
+        setIsActiveFilter("");
+        setWithdrawalStatusFilter("");
+        setIsVerifiedFilter("");
+    }, [mode]);
 
     const { data: userList, isLoading, isError, refetch } = getUserList(mode, {
         page,
         size: 10,
         sort,
+        isActive: isActiveFilter,
+        withdrawalStatus: withdrawalStatusFilter,
+        isVerified: isVerifiedFilter,
         ...searchParams,
     }, true) //enable 제어;
 
@@ -83,74 +101,93 @@ function AdminUserManage() {
     return (
         <div className='admin-user-manage'>
             <h2>회원 관리</h2>
-            <div className='mode-select-box'>
-                <button type='button' className={`mode-select-btn ${mode === "buyer" ? "active" : ""}`} onClick={()=>setMode("buyer")}>구매자 회원관리</button>
-                <button type='button' className={`mode-select-btn ${mode === "seller" ? "active" : ""}`} onClick={()=>setMode("seller")}>판매자 회원관리</button>
+            <div className='admin-user-search-container'>
+                {/* 회원 유형 선택 필터 */}
+                <div className='admin-user-mode-filter-box'>
+                    <h4>회원 유형</h4>
+                    <div className='admin-user-radio-group'>
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='userMode' value='buyer' checked={mode === 'buyer'} onChange={() => setMode('buyer')} />
+                            <span>구매자</span>
+                        </label>
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='userMode' value='seller' checked={mode === 'seller'} onChange={() => setMode('seller')} />
+                            <span>판매자</span>
+                        </label>
+                    </div>
+                </div>
+
+                {/* 기존 회원 활성 상태 필터 */}
+                <div className='admin-user-filter-box'>
+                    <h4>회원 활성 상태</h4>
+                    <div className="admin-user-radio-group">
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='isActive' value='' checked={isActiveFilter === ""} onChange={(e) => setIsActiveFilter(e.target.value)} />
+                            <span>전체</span>
+                        </label>
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='isActive' value='true' checked={isActiveFilter === "true"} onChange={(e) => setIsActiveFilter(e.target.value)} />
+                            <span>활성</span>
+                        </label>
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='isActive' value='false' checked={isActiveFilter === "false"} onChange={(e) => setIsActiveFilter(e.target.value)} />
+                            <span>비활성</span>
+                        </label>
+                    </div>
+                </div>
+                {/* 기존 회원 탈퇴 상태 필터 */}
+                <div className='admin-user-filter-box'>
+                    <h4>회원 탈퇴 상태</h4>
+                    <div className="admin-user-radio-group">
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='withdrawalStatus' value='' checked={withdrawalStatusFilter === ""} onChange={(e) => setWithdrawalStatusFilter(e.target.value)} />
+                            <span>전체</span>
+                        </label>
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='withdrawalStatus' value='VOLUNTARY' checked={withdrawalStatusFilter === "VOLUNTARY"} onChange={(e) => setWithdrawalStatusFilter(e.target.value)} />
+                            <span>자발</span>
+                        </label>
+                        <label className='admin-user-radio-wrap'>
+                            <input type='radio' name='withdrawalStatus' value='FORCED_BY_ADMIN' checked={withdrawalStatusFilter === "FORCED_BY_ADMIN"} onChange={(e) => setWithdrawalStatusFilter(e.target.value)} />
+                            <span>강제</span>
+                        </label>
+                    </div>
+                </div>
+                {/* 기존 판매 승인 상태 필터 (판매자 모드에서만) */}
+                {mode === "seller" && (
+                    <div className='admin-user-filter-box'>
+                        <h4>판매 승인 상태</h4>
+                        <div className="admin-user-radio-group">
+                            <label className='admin-user-radio-wrap'>
+                                <input type='radio' name='isVerified' value='' checked={isVerifiedFilter === ""} onChange={(e) => setIsVerifiedFilter(e.target.value)} />
+                                <span>전체</span>
+                            </label>
+                            <label className='admin-user-radio-wrap'>
+                                <input type='radio' name='isVerified' value='true' checked={isVerifiedFilter === "true"} onChange={(e) => setIsVerifiedFilter(e.target.value)} />
+                                <span>인증</span>
+                            </label>
+                            <label className='admin-user-radio-wrap'>
+                                <input type='radio' name='isVerified' value='false' checked={isVerifiedFilter === "false"} onChange={(e) => setIsVerifiedFilter(e.target.value)} />
+                                <span>미인증</span>
+                            </label>
+                        </div>
+                    </div>
+                )}
+                {/* 기존 결과 내 재검색 폼 */}
+                <form className='admin-user-search-box' onSubmit={handleSearchSubmit}>
+                    <h4>결과 내 재검색</h4>
+                    <div className='admin-user-search-form-bar'>
+                        <select className='search-admin-user-select' value={searchField} onChange={(e) => setSearchField(e.target.value)}>
+                            <option value={mode === "buyer" ? "buyerId" : "sellerId"}>아이디</option>
+                            <option value={mode === "buyer" ? "nickname" : "companyName"}>{mode === "buyer" ? "닉네임" : "업체명"}</option>
+                            <option value={mode === "buyer" ? "buyerEmail" : "sellerEmail"}>이메일</option>
+                            <option value="phone">전화번호</option>
+                        </select>
+                        <input type="text" placeholder="검색어를 입력하세요" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} className="search-admin-user-input" />
+                        <button type="submit" className="search-admin-user-btn">검색</button>
+                    </div>
+                </form>
             </div>
-            {/* 검색 영역 */}
-            <form className="search-user-bar" onSubmit={handleSearchSubmit}>
-                <select
-                    value={searchField}
-                    onChange={(e) => setSearchField(e.target.value)}
-                    className="search-user-select"
-                >
-                    <option value="buyerId">아이디</option>
-                    <option value="nickname">닉네임</option>
-                    <option value="buyerEmail">이메일</option>
-                    <option value="phone">전화번호</option>
-                    <option value="isActive">회원 활성 상태</option>
-                    <option value="withdrawalStatus">회원 탈퇴 상태</option>
-                    {mode === "seller" && <option value="isVerified">판매 승인 상태</option>}
-                </select>
-                {
-                    searchField === "withdrawalStatus" ?
-                    <div class="radio-group">
-                    <label class="radio-wrap">
-                        <input type="radio" name="status" value="VOLUNTARY" onChange={(e) => setSearchKeyword(e.target.value)} />
-                        <span>자발</span>
-                    </label>
-                    <label class="radio-wrap">
-                        <input type="radio" name="status" value="FORCED_BY_ADMI" onChange={(e) => setSearchKeyword(e.target.value)} />
-                        <span>강제</span>
-                    </label>
-                    </div>
-                    :
-                    searchField === "isActive" ?
-                    <div class="radio-group">
-                    <label class="radio-wrap">
-                        <input type="radio" name="status" value={1} onChange={(e) => setSearchKeyword(e.target.value)}/>
-                        <span>활성</span>
-                    </label>
-                    <label class="radio-wrap">
-                        <input type="radio" name="status" value={0} onChange={(e) => setSearchKeyword(e.target.value)}/>
-                        <span>비활성</span>
-                    </label>
-                    </div>
-                    :
-                    searchField === "isVerified"?
-                    <div class="radio-group">
-                    <label className='radio-wrap'>
-                        <input type="radio" name="status" value={1} onChange={(e) => setSearchKeyword(e.target.value)}/>
-                        <span>인증</span>
-                    </label>
-                    <label className='radio-wrap'>
-                        <input type="radio" name="status" value={0} onChange={(e) => setSearchKeyword(e.target.value)}/>
-                        <span>미인증</span>
-                    </label>
-                    </div>
-                    :
-                    <input
-                        type="text"
-                        placeholder="검색어를 입력하세요"
-                        value={searchKeyword}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                        className="search-user-input"
-                    />
-                }
-                <button type="submit" className="search-user-btn">
-                    검색
-                </button>
-            </form>
 
             {/* 정렬 */}
             <Sort sort={sort} setPage={setPage} setSort={setSort} sortCateg={sortCateg} />
@@ -182,7 +219,7 @@ function AdminUserManage() {
                                         <td>{user.buyerEmail}</td>
                                         <td>{user.isActive ? "활성" : "비활성"}</td>
                                         <td>{user.withdrawalStatus || '-'}</td>
-                                        <td>{new Date(user.createAt).toLocaleDateString()}</td>
+                                        <td>{new Date(user.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                     </tr>
                                 ) : (
                                     <tr key={user.sellerUid} onClick={() => onpenDetailBtn(user.sellerUid)}>
@@ -192,7 +229,7 @@ function AdminUserManage() {
                                         <td>{user.sellerEmail}</td>
                                         <td>{user.isActive ? "활성" : "비활성"}</td>
                                         <td>{user.withdrawalStatus ? user.withdrawalStatus === "VOLUNTARY" ? "자발" : "강제" :'-'}</td>
-                                        <td>{new Date(user.createAt).toLocaleDateString()}</td>
+                                        <td>{new Date(user.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                         <td>{user.isVerified ? "인증" : "미인증"}</td>
                                     </tr>
                                 )

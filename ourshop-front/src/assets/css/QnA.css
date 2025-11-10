@@ -1,0 +1,87 @@
+@charset "UTF-8";
+
+.product-qna-container {
+    width: 75%;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-qna-container h2 {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.qna-btn-box{
+    width: 100%;
+    border-bottom: 2px solid #b4b4b4;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
+.qna-write-button {
+    border: 1px solid #7cc7de;
+    color: #7cc7de;
+    background-color: white;
+    padding: 10px 25px;
+    border-radius: 4px;
+}
+
+.qna-write-button:hover {
+    background-color: #7cc7de;
+    color: white;
+}
+
+.qna-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 2px solid #7cc7de;
+}
+
+.qna-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.qna-table th {
+       background-color: #7cc7de;
+    color: white;
+    font-weight: 600;
+    padding: 12px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    
+}
+
+.qna-table tbody tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.qna-table td {
+    color: #666;
+    font-size: 14px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .product-qna-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+    .product-qna-container h2 {
+        font-size: 28px;
+    }
+    .qna-table th, .qna-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+}

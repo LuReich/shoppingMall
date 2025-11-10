@@ -1,9 +1,9 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useOrder } from '../../hooks/useOrder';
-import '../../assets/css/SellerOrderDetailInfo.css';
+import '../../assets/css/SellerOrderDetailInfoModal.css';
 
-function SellerOrderDetailInfo({item}) {
+function SellerOrderDetailInfoModal({item}) {
 
   const navigate = useNavigate();
   //const location = useLocation();
@@ -39,4 +39,4 @@ function SellerOrderDetailInfo({item}) {
     );
 }
 
-export default SellerOrderDetailInfo;
+export default SellerOrderDetailInfoModal;

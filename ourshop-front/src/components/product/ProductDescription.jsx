@@ -2,7 +2,6 @@ import React from 'react';
 import '../../assets/css/ProductDescription.css';
 
 function ProductDescription({ productDescription }) {
-    
   // description 문자열에서 상대경로를 절대경로로 변환
   const fixedDescription = productDescription?.description
     ?.replaceAll('src="/temp/', 'src="http://localhost:9090/temp/')

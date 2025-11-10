@@ -68,6 +68,9 @@
   .total-payment-info {
     flex-direction: column;
   }
+  .order-complete h2{
+    font-size: 20px;
+  }
 
   .order-complete {
     padding: 30px 20px;
