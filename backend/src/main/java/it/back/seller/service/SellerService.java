@@ -112,15 +112,8 @@ public class SellerService {
     }
 
     public PageResponseDTO<SellerPublicListDTO> getSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName, String businessRegistrationNumber, String phone, String address) {
-        Pageable pageable = pageRequestDTO.toPageable();
-        Specification<SellerEntity> spec = SellerPublicSpecification.search(sellerUid, companyName, businessRegistrationNumber, phone, address);
-        Page<SellerEntity> sellers = sellerRepository.findAll(spec, pageable);
-
-        List<SellerPublicListDTO> dtoList = sellers.getContent().stream()
-                .map(this::convertToSellerPublicListDTO)
-                .collect(Collectors.toList());
-
-        return new PageResponseDTO<>(sellers, dtoList);
+        Page<SellerPublicListDTO> sellers = sellerRepository.findSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address);
+        return new PageResponseDTO<>(sellers);
     }
 
     private SellerPublicListDTO convertToSellerPublicListDTO(SellerEntity seller) {
