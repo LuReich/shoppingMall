@@ -67,13 +67,13 @@ public class SellerSellerInquiryService {
 
     @Transactional(readOnly = true)
     public SellerInquiryResponseDTO getSellerInquiry(Long inquiryId) {
-        SellerInquiryEntity inquiry = sellerInquiryRepository.findById(inquiryId)
+        SellerInquiryEntity inquiry = sellerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
         return SellerInquiryResponseDTO.fromEntity(inquiry);
     }
 
     public SellerInquiryResponseDTO updateSellerInquiry(Long inquiryId, String userId, SellerInquiryUpdateRequestDTO dto, List<MultipartFile> newImages) {
-        SellerInquiryEntity inquiry = sellerInquiryRepository.findById(inquiryId)
+        SellerInquiryEntity inquiry = sellerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
 
         if (!inquiry.getSeller().getSellerId().equals(userId)) {
@@ -94,7 +94,7 @@ public class SellerSellerInquiryService {
 
         boolean addingNewImages = newImages != null && !newImages.isEmpty();
         if (!addingNewImages && inquiry.getImages().isEmpty()) {
-            String directoryPath = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getId();
+            String directoryPath = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getInquiryId();
             fileUtils.deleteDirectory(directoryPath);
         }
 
@@ -106,14 +106,14 @@ public class SellerSellerInquiryService {
     }
 
     public void deleteSellerInquiry(Long inquiryId, String userId) {
-        SellerInquiryEntity inquiry = sellerInquiryRepository.findById(inquiryId)
+        SellerInquiryEntity inquiry = sellerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
 
         if (!inquiry.getSeller().getSellerId().equals(userId)) {
             throw new IllegalArgumentException("문의 작성자만 삭제할 수 있습니다.");
         }
 
-        String directoryPath = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getId();
+        String directoryPath = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getInquiryId();
 
         inquiry.getImages().forEach(image -> {
             String filePath = directoryPath + "/" + image.getStoredName();
@@ -127,7 +127,7 @@ public class SellerSellerInquiryService {
 
     private void saveInquiryImages(SellerInquiryEntity inquiry, List<MultipartFile> images) {
         for (MultipartFile file : images) {
-            String path = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getId();
+            String path = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getInquiryId();
             String storedName = fileUtils.saveFile(file, path);
 
             SellerInquiryImageEntity imageEntity = new SellerInquiryImageEntity();
@@ -135,7 +135,7 @@ public class SellerSellerInquiryService {
             imageEntity.setUploaderType(SellerInquiryImageEntity.UploaderType.USER);
             imageEntity.setImageName(file.getOriginalFilename());
             imageEntity.setStoredName(storedName);
-            imageEntity.setImagePath("/sellerinquiry/" + inquiry.getSeller().getSellerUid() + "/" + inquiry.getId() + "/" + storedName);
+            imageEntity.setImagePath("/sellerinquiry/" + inquiry.getSeller().getSellerUid() + "/" + inquiry.getInquiryId() + "/" + storedName);
             imageEntity.setImageSize(file.getSize());
             inquiry.getImages().add(imageEntity);
         }
@@ -143,8 +143,8 @@ public class SellerSellerInquiryService {
 
     private void deleteInquiryImages(SellerInquiryEntity inquiry, List<Long> deletedImageIds) {
         inquiry.getImages().removeIf(image -> {
-            if (deletedImageIds.contains(image.getId())) {
-                String filePath = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getId() + "/" + image.getStoredName();
+            if (deletedImageIds.contains(image.getImageId())) {
+                String filePath = uploadPath + inquiry.getSeller().getSellerUid() + "/" + inquiry.getInquiryId() + "/" + image.getStoredName();
                 fileUtils.deleteFile(filePath);
                 return true;
             }

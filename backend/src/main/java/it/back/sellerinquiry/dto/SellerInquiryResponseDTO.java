@@ -31,7 +31,7 @@ public class SellerInquiryResponseDTO {
 
     public static SellerInquiryResponseDTO fromEntity(SellerInquiryEntity entity) {
         return SellerInquiryResponseDTO.builder()
-                .inquiryId(entity.getId())
+                .inquiryId(entity.getInquiryId())
                 .sellerCompanyName(entity.getSeller() != null ? entity.getSeller().getCompanyName() : null)
                 .adminName(entity.getAdmin() != null ? entity.getAdmin().getAdminName() : null)
                 .inquiryType(entity.getInquiryType())
@@ -61,8 +61,8 @@ public class SellerInquiryResponseDTO {
 
         public static ImageInfo fromEntity(SellerInquiryImageEntity imageEntity) {
             return ImageInfo.builder()
-                    .imageId(imageEntity.getId())
-                    .inquiryId(imageEntity.getSellerInquiry().getId())
+                    .imageId(imageEntity.getImageId())
+                    .inquiryId(imageEntity.getSellerInquiry().getInquiryId())
                     .uploaderType(imageEntity.getUploaderType())
                     .imageName(imageEntity.getImageName())
                     .storedName(imageEntity.getStoredName())

@@ -23,7 +23,7 @@ public class SellerInquiryListResponseDTO {
 
     public static SellerInquiryListResponseDTO fromEntity(SellerInquiryEntity entity) {
         return SellerInquiryListResponseDTO.builder()
-                .inquiryId(entity.getId())
+                .inquiryId(entity.getInquiryId())
                 .title(entity.getTitle())
                 .sellerUid(entity.getSeller() != null ? entity.getSeller().getSellerUid() : null)
                 .sellerCompanyName(entity.getSeller() != null ? entity.getSeller().getCompanyName() : null)

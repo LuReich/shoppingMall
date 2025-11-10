@@ -20,7 +20,7 @@ public class SellerInquiryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_id")
-    private Long id;
+    private Long inquiryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_uid")
