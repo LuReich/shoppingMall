@@ -1,11 +1,13 @@
 package it.back.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "orders")
@@ -57,6 +59,7 @@ public class OrderEntity {
         this.updateAt = LocalDateTime.now();
     }
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<OrderDetailEntity> orderDetails;
