@@ -141,7 +141,7 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
                         seller.isActive.isTrue(),
                         eqSellerUid(sellerUid),
                         containsCompanyName(companyName),
-                        eqBusinessRegistrationNumber(businessRegistrationNumber),
+                        containsBusinessRegistrationNumber(businessRegistrationNumber),
                         containsPhone(phone),
                         containsAddress(address))
                 .groupBy(seller.sellerUid,
@@ -197,7 +197,7 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
                         seller.isActive.isTrue(),
                         eqSellerUid(sellerUid),
                         containsCompanyName(companyName),
-                        eqBusinessRegistrationNumber(businessRegistrationNumber),
+                        containsBusinessRegistrationNumber(businessRegistrationNumber),
                         containsPhone(phone),
                         containsAddress(address));
 
@@ -237,9 +237,9 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
         return StringUtils.hasText(companyName) ? QSellerEntity.sellerEntity.companyName.contains(companyName) : null;
     }
 
-    private BooleanExpression eqBusinessRegistrationNumber(String businessRegistrationNumber) {
+    private BooleanExpression containsBusinessRegistrationNumber(String businessRegistrationNumber) {
         return StringUtils.hasText(businessRegistrationNumber)
-                ? QSellerDetailEntity.sellerDetailEntity.businessRegistrationNumber.eq(businessRegistrationNumber)
+                ? QSellerDetailEntity.sellerDetailEntity.businessRegistrationNumber.contains(businessRegistrationNumber)
                 : null;
     }
 
