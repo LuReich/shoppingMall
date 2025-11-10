@@ -90,25 +90,8 @@ public class SellerService {
 
     // 공개용 판매자 정보 조회
     public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
-        SellerEntity seller = sellerRepository.findById(sellerUid)
+        return sellerRepository.findSellerPublicInfoById(sellerUid)
                 .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
-        SellerDetailEntity detail = seller.getSellerDetail();
-        SellerPublicDTO dto = new SellerPublicDTO();
-        dto.setSellerUid(seller.getSellerUid());
-        dto.setCompanyName(seller.getCompanyName());
-        dto.setSellerEmail(seller.getSellerEmail());
-        dto.setIsVerified(seller.isVerified());
-        dto.setIsActive(seller.isActive());
-        dto.setCreateAt(seller.getCreateAt());
-        dto.setUpdateAt(seller.getUpdateAt());
-        if (detail != null) {
-            dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
-            dto.setCompanyInfo(detail.getCompanyInfo());
-            dto.setPhone(detail.getPhone());
-            dto.setAddress(detail.getAddress());
-            dto.setAddressDetail(detail.getAddressDetail());
-        }
-        return dto;
     }
 
     public PageResponseDTO<SellerPublicListDTO> getSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName, String businessRegistrationNumber, String phone, String address) {

@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.product.entity.QProductEntity;
 import it.back.review.entity.QReviewEntity;
+import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerPublicListDTO;
 import it.back.seller.entity.QSellerDetailEntity;
 import it.back.seller.entity.QSellerEntity;
@@ -22,12 +23,85 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class SellerRepositoryImpl implements SellerRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Optional<SellerPublicDTO> findSellerPublicInfoById(Long sellerUid) {
+        QSellerEntity seller = QSellerEntity.sellerEntity;
+        QSellerDetailEntity sellerDetail = QSellerDetailEntity.sellerDetailEntity;
+        QProductEntity product = QProductEntity.productEntity;
+        QReviewEntity review = QReviewEntity.reviewEntity;
+
+        var totalLikes = product.likeCount.longValue().sum().coalesce(0L);
+        var averageRating = review.rating.avg().coalesce(0.0);
+        var totalReviews = review.count().coalesce(0L);
+
+        Tuple tuple = queryFactory
+                .select(seller.sellerUid,
+                        seller.companyName,
+                        seller.sellerEmail,
+                        sellerDetail.businessRegistrationNumber,
+                        sellerDetail.companyInfo,
+                        sellerDetail.phone,
+                        sellerDetail.address,
+                        sellerDetail.addressDetail,
+                        seller.isVerified,
+                        seller.isActive,
+                        seller.createAt,
+                        seller.updateAt,
+                        totalLikes,
+                        averageRating,
+                        totalReviews)
+                .from(seller)
+                .leftJoin(seller.sellerDetail, sellerDetail)
+                .leftJoin(seller.products, product)
+                .leftJoin(product.reviews, review)
+                .where(
+                        seller.sellerUid.eq(sellerUid),
+                        seller.isActive.isTrue())
+                .groupBy(seller.sellerUid,
+                        seller.companyName,
+                        seller.sellerEmail,
+                        sellerDetail.businessRegistrationNumber,
+                        sellerDetail.companyInfo,
+                        sellerDetail.phone,
+                        sellerDetail.address,
+                        sellerDetail.addressDetail,
+                        seller.isVerified,
+                        seller.isActive,
+                        seller.createAt,
+                        seller.updateAt)
+                .fetchOne();
+
+        if (tuple == null) {
+            return Optional.empty();
+        }
+
+        SellerPublicDTO dto = new SellerPublicDTO();
+        dto.setSellerUid(tuple.get(seller.sellerUid));
+        dto.setCompanyName(tuple.get(seller.companyName));
+        dto.setSellerEmail(tuple.get(seller.sellerEmail));
+        dto.setBusinessRegistrationNumber(tuple.get(sellerDetail.businessRegistrationNumber));
+        dto.setCompanyInfo(tuple.get(sellerDetail.companyInfo));
+        dto.setPhone(tuple.get(sellerDetail.phone));
+        dto.setAddress(tuple.get(sellerDetail.address));
+        dto.setAddressDetail(tuple.get(sellerDetail.addressDetail));
+        dto.setVerified(tuple.get(seller.isVerified));
+        dto.setActive(tuple.get(seller.isActive));
+        dto.setCreateAt(tuple.get(seller.createAt));
+        dto.setUpdateAt(tuple.get(seller.updateAt));
+        dto.setTotalLikes(tuple.get(totalLikes));
+        dto.setAverageRating(tuple.get(averageRating));
+        dto.setTotalReviews(tuple.get(totalReviews));
+
+        return Optional.of(dto);
+    }
 
     @Override
     public Page<SellerPublicListDTO> findSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid,
@@ -64,7 +138,6 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
                 .leftJoin(seller.products, product)
                 .leftJoin(product.reviews, review)
                 .where(
-                        seller.isVerified.isTrue(),
                         seller.isActive.isTrue(),
                         eqSellerUid(sellerUid),
                         containsCompanyName(companyName),
@@ -121,7 +194,6 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
                 .from(seller)
                 .leftJoin(seller.sellerDetail, sellerDetail)
                 .where(
-                        seller.isVerified.isTrue(),
                         seller.isActive.isTrue(),
                         eqSellerUid(sellerUid),
                         containsCompanyName(companyName),
@@ -139,6 +211,8 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
         String property = order.getProperty();
 
         switch (property) {
+            case "sellerUid":
+                return new OrderSpecifier<>(direction, QSellerEntity.sellerEntity.sellerUid);
             case "totalLikes":
                 return new OrderSpecifier<>(direction, QProductEntity.productEntity.likeCount.longValue().sum().coalesce(0L));
             case "averageRating":
