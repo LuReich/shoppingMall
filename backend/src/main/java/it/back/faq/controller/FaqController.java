@@ -36,9 +36,9 @@ public class FaqController {
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<FaqListResponseDTO>>> getFaqs(
             PageRequestDTO pageRequestDTO,
-            @RequestParam(required = false) FaqEntity.FaqTarget faqTarget,
-            @RequestParam(required = false) FaqEntity.FaqCategory faqCategory,
-            @RequestParam(required = false) String keyword) {
+            @RequestParam(name = "faqTarget", required = false) FaqEntity.FaqTarget faqTarget,
+            @RequestParam(name = "faqCategory", required = false) FaqEntity.FaqCategory faqCategory,
+            @RequestParam(name = "keyword", required = false) String keyword) {
 
         PageResponseDTO<FaqListResponseDTO> faqs = faqService.getFaqs(pageRequestDTO, faqTarget, faqCategory, keyword);
         return ResponseEntity.ok(ApiResponse.ok(faqs));
