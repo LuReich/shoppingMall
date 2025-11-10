@@ -25,11 +25,12 @@ public class AdminSellerInquiryController {
     public ResponseEntity<ApiResponse<PageResponseDTO<SellerInquiryListResponseDTO>>> getSellerInquiryList(
             @ModelAttribute PageRequestDTO pageRequestDTO,
             @RequestParam(value = "inquiryStatus", required = false) SellerInquiryEntity.InquiryStatus inquiryStatus,
+            @RequestParam(value = "inquiryType", required = false) SellerInquiryEntity.InquiryType inquiryType,
             @RequestParam(value = "contentKeyword", required = false) String contentKeyword,
             @RequestParam(value = "companyName", required = false) String companyName,
             @RequestParam(value = "sellerUid", required = false) Long sellerUid) {
         PageResponseDTO<SellerInquiryListResponseDTO> responseDTO = adminSellerInquiryService.getSellerInquiryList(
-                pageRequestDTO, inquiryStatus, contentKeyword, companyName, sellerUid);
+                pageRequestDTO, inquiryStatus, inquiryType, contentKeyword, companyName, sellerUid);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(responseDTO));
     }
 
