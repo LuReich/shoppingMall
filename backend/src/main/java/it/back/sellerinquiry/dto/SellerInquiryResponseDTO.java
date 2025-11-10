@@ -1,6 +1,7 @@
-package it.back.buyerinquiry.dto;
+package it.back.sellerinquiry.dto;
 
-import it.back.buyerinquiry.entity.BuyerInquiryEntity;
+import it.back.sellerinquiry.entity.SellerInquiryEntity;
+import it.back.sellerinquiry.entity.SellerInquiryImageEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,24 +15,24 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BuyerInquiryResponseDTO {
+public class SellerInquiryResponseDTO {
 
     private Long inquiryId;
-    private String buyerNickname;
+    private String sellerCompanyName;
     private String adminName;
-    private BuyerInquiryEntity.InquiryType inquiryType;
+    private SellerInquiryEntity.InquiryType inquiryType;
     private String title;
     private String questionContent;
     private String answerContent;
-    private BuyerInquiryEntity.InquiryStatus inquiryStatus;
+    private SellerInquiryEntity.InquiryStatus inquiryStatus;
     private LocalDateTime createdAt;
     private LocalDateTime answerAt;
     private List<ImageInfo> images;
 
-    public static BuyerInquiryResponseDTO fromEntity(BuyerInquiryEntity entity) {
-        return BuyerInquiryResponseDTO.builder()
+    public static SellerInquiryResponseDTO fromEntity(SellerInquiryEntity entity) {
+        return SellerInquiryResponseDTO.builder()
                 .inquiryId(entity.getInquiryId())
-                .buyerNickname(entity.getBuyer() != null ? entity.getBuyer().getNickname() : null)
+                .sellerCompanyName(entity.getSeller() != null ? entity.getSeller().getCompanyName() : null)
                 .adminName(entity.getAdmin() != null ? entity.getAdmin().getAdminName() : null)
                 .inquiryType(entity.getInquiryType())
                 .title(entity.getTitle())
@@ -51,17 +52,17 @@ public class BuyerInquiryResponseDTO {
     public static class ImageInfo {
         private Long imageId;
         private Long inquiryId;
-        private it.back.buyerinquiry.entity.BuyerInquiryImageEntity.UploaderType uploaderType;
+        private SellerInquiryImageEntity.UploaderType uploaderType;
         private String imageName;
         private String storedName;
         private String imagePath;
         private Long imageSize;
         private LocalDateTime createdAt;
 
-        public static ImageInfo fromEntity(it.back.buyerinquiry.entity.BuyerInquiryImageEntity imageEntity) {
+        public static ImageInfo fromEntity(SellerInquiryImageEntity imageEntity) {
             return ImageInfo.builder()
                     .imageId(imageEntity.getImageId())
-                    .inquiryId(imageEntity.getBuyerInquiry().getInquiryId())
+                    .inquiryId(imageEntity.getSellerInquiry().getInquiryId())
                     .uploaderType(imageEntity.getUploaderType())
                     .imageName(imageEntity.getImageName())
                     .storedName(imageEntity.getStoredName())

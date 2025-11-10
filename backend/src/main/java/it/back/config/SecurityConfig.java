@@ -85,13 +85,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/review/write").hasRole("BUYER")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/review/{reviewId}").hasRole("BUYER")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/review/{reviewId}").hasRole("BUYER")
-                // 구매자 관련 - BUYER 권한 필요 (일부는 ADMIN도 가능)
+                // 구매자 관련 - BUYER 권한 필요
                 .requestMatchers("/api/v1/cart/**").hasRole("BUYER")
                 .requestMatchers("/api/v1/orders/**").hasRole("BUYER")
-                .requestMatchers(HttpMethod.PATCH, "/api/v1/buyer/**").hasAnyRole("BUYER", "ADMIN")
                 .requestMatchers("/api/v1/buyer/**").hasRole("BUYER")
-                // 판매자 관련 - SELLER 권한 필요 (일부는 ADMIN도 가능)
-                .requestMatchers(HttpMethod.PATCH, "/api/v1/seller/**").hasAnyRole("SELLER", "ADMIN")
+                // 판매자 관련 - SELLER 권한 필요
                 .requestMatchers("/api/v1/seller/**").hasRole("SELLER")
                 // 관리자 관련 - ADMIN만 접근
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")

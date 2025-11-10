@@ -1,7 +1,7 @@
-package it.back.buyerinquiry.entity;
+package it.back.sellerinquiry.entity;
 
 import it.back.admin.entity.AdminEntity;
-import it.back.buyer.entity.BuyerEntity;
+import it.back.seller.entity.SellerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +14,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "buyer_inquiry")
-public class BuyerInquiryEntity {
+@Table(name = "seller_inquiry")
+public class SellerInquiryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +23,8 @@ public class BuyerInquiryEntity {
     private Long inquiryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_uid")
-    private BuyerEntity buyer;
+    @JoinColumn(name = "seller_uid")
+    private SellerEntity seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_uid")
@@ -54,11 +54,11 @@ public class BuyerInquiryEntity {
     @Column(name = "answer_at")
     private LocalDateTime answerAt;
 
-    @OneToMany(mappedBy = "buyerInquiry", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BuyerInquiryImageEntity> images = new ArrayList<>();
+    @OneToMany(mappedBy = "sellerInquiry", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SellerInquiryImageEntity> images = new ArrayList<>();
 
     public enum InquiryType {
-        ACCOUNT, PAYMENT, SHIPPING, ETC
+        ACCOUNT, PRODUCT, VERIFICATION, ETC
     }
 
     public enum InquiryStatus {

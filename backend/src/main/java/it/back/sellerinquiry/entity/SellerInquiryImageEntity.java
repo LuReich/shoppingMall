@@ -1,4 +1,4 @@
-package it.back.buyerinquiry.entity;
+package it.back.sellerinquiry.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "buyer_inquiry_image")
-public class BuyerInquiryImageEntity {
+@Table(name = "seller_inquiry_image")
+public class SellerInquiryImageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class BuyerInquiryImageEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inquiry_id", nullable = false)
-    private BuyerInquiryEntity buyerInquiry;
+    private SellerInquiryEntity sellerInquiry;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "uploader_type", nullable = false)

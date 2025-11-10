@@ -39,10 +39,12 @@ public class AdminBuyerInquiryService {
 
         Pageable pageable = pageRequestDTO.toPageable();
 
-        Specification<BuyerInquiryEntity> spec = Specification.where(BuyerInquirySpecification.hasStatus(inquiryStatus))
-                .and(BuyerInquirySpecification.contentContains(contentKeyword))
-                .and(BuyerInquirySpecification.nicknameContains(nickname))
-                .and(BuyerInquirySpecification.hasBuyerUid(buyerUid));
+        Specification<BuyerInquiryEntity> spec = Specification.allOf(
+                BuyerInquirySpecification.hasStatus(inquiryStatus),
+                BuyerInquirySpecification.contentContains(contentKeyword),
+                BuyerInquirySpecification.nicknameContains(nickname),
+                BuyerInquirySpecification.hasBuyerUid(buyerUid)
+        );
 
         Page<BuyerInquiryEntity> page = buyerInquiryRepository.findAll(spec, pageable);
 
@@ -55,13 +57,13 @@ public class AdminBuyerInquiryService {
 
     @Transactional(readOnly = true)
     public BuyerInquiryResponseDTO getBuyerInquiry(Long inquiryId) {
-        BuyerInquiryEntity inquiry = buyerInquiryRepository.findById(inquiryId)
+        BuyerInquiryEntity inquiry = buyerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
         return BuyerInquiryResponseDTO.fromEntity(inquiry);
     }
 
     public BuyerInquiryResponseDTO answerBuyerInquiry(Long inquiryId, String adminId, AdminBuyerInquiryAnswerRequestDTO dto) {
-        BuyerInquiryEntity inquiry = buyerInquiryRepository.findById(inquiryId)
+        BuyerInquiryEntity inquiry = buyerInquiryRepository.findByInquiryId(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없습니다."));
 
         if (inquiry.getInquiryStatus() == BuyerInquiryEntity.InquiryStatus.ANSWERED) {
