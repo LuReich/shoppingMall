@@ -160,3 +160,13 @@
 .pay-btn:hover {
   background: #e64a19;
 }
+
+@media (max-width: 768px) {
+  .enter-method{
+    flex-direction: column;
+  }
+
+  .payment-methods{
+    flex-direction: column;
+  }
+}

@@ -1,3 +1,4 @@
+import { get } from "react-hook-form";
 import api from "../axios/axios"
 
 export const adminAPI = {
@@ -14,9 +15,22 @@ export const adminAPI = {
         return res.data;
     },
 
+    //전체 상품 리스트 가져오기
+    getProduct: async (params ={}) => {
+        const res = await api.get("/admin/product/list", {params});
+        return res.data;
+    
+    },
+
     //관리자 권한 - 회원 정보 수정
     update: async (mode, uid, data) => {
         const res = await api.patch(`/admin/update/${mode}/${uid}`, data);
+        return res.data;
+    },
+
+    //상품 소프트삭제 및 삭제 사유 수정
+    deleteProduct: async (productId, data) => {
+        const res = await api.patch(`admin/product/change-deletion-status/${productId}`, data);
         return res.data;
     }
 

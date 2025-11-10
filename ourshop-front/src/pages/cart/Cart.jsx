@@ -160,6 +160,7 @@ function Cart(props) {
     return (
     <div className='cart-container'>
       <h2>장바구니</h2>
+      <div className='table-scroll-box'>
       <table>
         <thead>
           <tr>
@@ -201,6 +202,7 @@ function Cart(props) {
           ))}
         </tbody>
       </table>
+      </div>
       <div className='delete-box'>
         <button type='button' className={styles.greyBtn} onClick={deleteSelectBtn}>선택 상품 삭제</button>
         <button type='button' className={styles.greyBtn} onClick={deleteAllBtn}>전체 상품 삭제</button>

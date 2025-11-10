@@ -79,3 +79,10 @@
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+
+@media (max-width: 768px) {
+    .addrRow{
+      flex-direction: column;
+      align-items: flex-start;;
+    }
+}

@@ -12,7 +12,8 @@ const ProductCard = ({ product }) => {
 
     const { isLogin, role } = authStore(state => state);
     const {getProductReview} = useProduct();
-    const { data: ProductReview } = getProductReview();
+    const { data: ProductReview } = getProductReview(product.productId);
+    console.log("리뷰 수",ProductReview);
  
     const reviewCount = ProductReview?.content?.content?.length || 0;
 
@@ -22,6 +23,7 @@ const ProductCard = ({ product }) => {
         <Link to={`/product/${product?.productId}`} className={styles.productCard}>
             <div className={styles.productImageWrapper} >
                  {(role=="BUYER" || !isLogin) && <LikesBtn styleProps={"like-btn-on-card"} product={product}/>}
+                 {product?.isDeleted && <div className={styles.productDeleted}>삭제된 상품입니다.</div>}
                 <img src={`http://localhost:9090${product?.thumbnailUrl}`} 
                     alt={product?.productName} 
                     className={styles.productImage}

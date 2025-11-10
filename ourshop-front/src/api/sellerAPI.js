@@ -28,6 +28,12 @@ export const sellerAPI = {
     
     },
 
+    //업체 리스트 조회(공개용)
+    getPublicShopList: async(params={}) => {
+      const res = await api.get("seller/public/list", {params});
+      return res.data;
+    },
+
      //판매자 배송상태 수정
     update: async (orderDetailId, data) => {
         const res = await api.patch(`/seller/orderDetail/${orderDetailId}/delivery-status`, data);

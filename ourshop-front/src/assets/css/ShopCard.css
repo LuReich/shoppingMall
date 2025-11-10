@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+.shop-card {
+    position: relative;
+    border: 1.5px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* 카드 높이 동일 */
+}
+
+/* hover 효과 */
+.shop-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 이름 박스가 카드의 1/4 차지 */
+.shop-name-box {
+    flex: 0 0 25%; /* 전체 높이의 25% */
+    background: linear-gradient(to right, rgb(176, 196, 255), #6ac7e3, rgb(188, 146, 251));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    text-align: center;
+}
+
+.shop-name-box h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+    word-break: keep-all;
+}
+
+/* 인증표시 */
+.shop-verificaion-box {
+    position: absolute;
+    top: 15%;
+    right: 3%;
+    background-color: transparent;
+    color: #a3dff2;
+    font-weight: bold;
+    padding: 6px 12px;
+    z-index: 10;
+    font-size: 50px;
+}
+
+/* 정보 영역 */
+.shop-info-con {
+    flex: 1; /* 남은 3/4 영역 차지 */
+    justify-content: space-between;
+    text-align: center;
+    padding: 15px;
+    width: 78%;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* 소개 문구 */
+.shop-info-con > p:first-of-type {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* 카테고리 태그 */
+.category-tag-box {
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.category-tag-box span {
+    background-color: #f2f2f2;
+    color: #777;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+/* 등록일 등 하단 텍스트 */
+.shop-info-con > p:last-of-type {
+    font-size: 13px;
+    color: #999;
+    margin-top: auto;
+}

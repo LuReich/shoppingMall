@@ -8,7 +8,7 @@ export const useSeller = () => {
     //판매자 업체 정보 조회
     const getShopInfo = (sellerUid) => {
         return useQuery({
-            queryKey: ['companyInfo'],
+            queryKey: ['companyInfo', sellerUid], // sellerUid를 queryKey에 추가
             queryFn: async () => sellerAPI.get(sellerUid)
         });
     };
@@ -37,6 +37,13 @@ export const useSeller = () => {
         });
     };
 
+    //업체 리스트 공용 조회
+    const getPublicShopList = (params = {} ) => {
+        return useQuery({
+            queryKey: ["publicSellerList", params],
+            queryFn: () =>sellerAPI.getPublicShopList(params),
+        });
+    };
 
     //배송상태 수정
     const updateDeliveryStatus = () =>{
@@ -44,6 +51,7 @@ export const useSeller = () => {
             mutationFn: ({orderDetailId, data}) => sellerAPI.update(orderDetailId, data),
             onSuccess: (res, variables) => {
                 qc.invalidateQueries({ queryKey: ["deliverySellerProducts"] }); 
+                qc.invalidateQueries({ queryKey: ["orderDetail"] }); 
                 console.log("배송상태 수정 성공:", res);
                 alert("배송상태 수정되었습니다");
             },
@@ -62,6 +70,7 @@ export const useSeller = () => {
         getSellerProductList,
         getPublicSellerProductList,
         getDeliverySellerProductList,
+        getPublicShopList,
         updateDeliveryStatus
     }
 }

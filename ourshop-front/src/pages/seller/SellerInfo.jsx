@@ -400,13 +400,14 @@ function SellerInfo() {
           <label>업체 상세 정보</label>
           <textarea {...register("companyDetail")} style={{height: "100px", textAlign: "start"}}/>
         </div>
-
+        <div className="info-btn-box">
         <button className="update-btn" type="submit">
           정보 수정하기
         </button>
         <button className="withdraw-btn" type="button" onClick={handleWithdraw}>
           회원 탈퇴
         </button>
+        </div>
       </form>
 
       <WithdrawModal

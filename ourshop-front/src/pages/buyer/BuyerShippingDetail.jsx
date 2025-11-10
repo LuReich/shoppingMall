@@ -52,6 +52,18 @@ function BuyerShippingDetail(props) {
         "DELIVERED": "배송완료",
         "CANCELED": "취소"
     }
+
+    //주문한 상품 상세 페이지로 이동
+    /*const moveToDetail = (detail) => {
+      console.log("삭제됨?",detail.isDeleted);
+      if(detail.isDeleted){
+        alert("삭제된 상품입니다.");
+        navigate(`/product/${detail.productId}`);
+      }else{
+        navigate(`/product/${detail.productId}`);
+      }
+      
+    }*/
    
     
     return (
@@ -78,7 +90,7 @@ function BuyerShippingDetail(props) {
                             {
                               idx === 0 ? (
                                 <td rowSpan={order.orderDetails.length}>
-                                  {new Date(order.createAt).toLocaleDateString()}
+                                  {new Date(order.createAt).toLocaleDateString().replace(/\.$/, '')}
                                 </td>
                               ) : null
                             }
@@ -112,13 +124,13 @@ function BuyerShippingDetail(props) {
                                             <Link to="/buyer/mypage/review/upload" 
                                                   className="review-upload-link"
                                                   state={{ productId: detail.productId, orderDetailId: detail.orderDetailId }}>
-                                                  리뷰 쓰기
+                                                  리뷰쓰기
                                             </Link>
 
                                             :
                                             <Link to="/buyer/mypage/review" 
                                                   className="review-upload-link">
-                                                  리뷰 보기
+                                                  리뷰보기
                                             </Link>
 
                                           )

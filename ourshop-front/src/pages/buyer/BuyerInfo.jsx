@@ -359,8 +359,10 @@ useEffect(() => {
           <input type="text" {...register("addressDetail")} placeholder="상세 주소" />
         </div>
 
-        <button className="update-btn" type="submit">정보 수정하기</button>
-        <button className="withdraw-btn" type="button" onClick={handleWithdraw}>회원 탈퇴</button>
+        <div className="info-btn-box">
+          <button className="update-btn" type="submit">정보 수정하기</button>
+          <button className="withdraw-btn" type="button" onClick={handleWithdraw}>회원 탈퇴</button>
+        </div>
       </form>
       <WithdrawModal
         isOpen={isModalOpen}

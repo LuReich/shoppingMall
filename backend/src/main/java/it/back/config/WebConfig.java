@@ -52,6 +52,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver());
 
+        // 판매자 문의 이미지 경로: /sellerinquiry/** 요청을 C:/ourshop/sellerinquiry/ 폴더로 매핑
+        String sellerInquiryResourcePath = "file:" + uploadDir + "/sellerinquiry/";
+        registry.addResourceHandler("/sellerinquiry/**")
+                .addResourceLocations(sellerInquiryResourcePath)
+                .setCachePeriod(0)
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver());
+
     }
 
     //파일제한

@@ -30,12 +30,19 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+@media (max-width: 1400px) {
+     .side-menu-bar-wrapper{
+        display: none;
+    }
+
 }
 
 @media (max-width: 992px) {
-    .side-menu-bar-wrapper {
-        display: none;
-    }
+
     .mypage-layout {
         width: 90%;
     }
