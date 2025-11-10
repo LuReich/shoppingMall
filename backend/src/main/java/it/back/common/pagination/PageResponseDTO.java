@@ -33,6 +33,16 @@ public class PageResponseDTO<T> {
         this.totalPages = page.getTotalPages();
         this.last = page.isLast();
     }
+
+    public PageResponseDTO(Page<T> page) {
+        this.content = page.getContent();
+        this.page = page.getNumber();
+        this.size = page.getSize();
+        this.totalElements = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
+        this.last = page.isLast();
+    }
+
     public List<T> getContent() { return content; }
     public void setContent(List<T> content) { this.content = content; }
     public int getPage() { return page; }

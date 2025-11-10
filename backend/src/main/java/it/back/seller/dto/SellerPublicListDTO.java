@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @JsonPropertyOrder({"sellerUid", "companyName", "sellerEmail", "businessRegistrationNumber",
-    "companyInfo", "phone", "address", "addressDetail", "isVerified", "isActive", "createAt", "updateAt"})
+    "companyInfo", "phone", "address", "addressDetail", "isVerified", "isActive", "createAt", "updateAt", "totalLikes", "averageRating", "totalReviews"})
 @Getter
 @Setter
 public class SellerPublicListDTO {
@@ -29,4 +29,28 @@ public class SellerPublicListDTO {
     private LocalDateTime createAt;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateAt;
+    private Long totalLikes;
+    private Double averageRating;
+    private Long totalReviews;
+
+    public SellerPublicListDTO() {
+    }
+
+    public SellerPublicListDTO(Long sellerUid, String companyName, String sellerEmail, String businessRegistrationNumber, String companyInfo, String phone, String address, String addressDetail, Boolean isVerified, Boolean isActive, LocalDateTime createAt, LocalDateTime updateAt, Long totalLikes, Double averageRating, Long totalReviews) {
+        this.sellerUid = sellerUid;
+        this.companyName = companyName;
+        this.sellerEmail = sellerEmail;
+        this.businessRegistrationNumber = businessRegistrationNumber;
+        this.companyInfo = companyInfo;
+        this.phone = phone;
+        this.address = address;
+        this.addressDetail = addressDetail;
+        this.isVerified = isVerified;
+        this.isActive = isActive;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+        this.totalLikes = totalLikes;
+        this.averageRating = averageRating;
+        this.totalReviews = totalReviews;
+    }
 }

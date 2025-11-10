@@ -90,37 +90,13 @@ public class SellerService {
 
     // 공개용 판매자 정보 조회
     public SellerPublicDTO getSellerPublicInfo(Long sellerUid) {
-        SellerEntity seller = sellerRepository.findById(sellerUid)
+        return sellerRepository.findSellerPublicInfoById(sellerUid)
                 .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
-        SellerDetailEntity detail = seller.getSellerDetail();
-        SellerPublicDTO dto = new SellerPublicDTO();
-        dto.setSellerUid(seller.getSellerUid());
-        dto.setCompanyName(seller.getCompanyName());
-        dto.setSellerEmail(seller.getSellerEmail());
-        dto.setIsVerified(seller.isVerified());
-        dto.setIsActive(seller.isActive());
-        dto.setCreateAt(seller.getCreateAt());
-        dto.setUpdateAt(seller.getUpdateAt());
-        if (detail != null) {
-            dto.setBusinessRegistrationNumber(detail.getBusinessRegistrationNumber());
-            dto.setCompanyInfo(detail.getCompanyInfo());
-            dto.setPhone(detail.getPhone());
-            dto.setAddress(detail.getAddress());
-            dto.setAddressDetail(detail.getAddressDetail());
-        }
-        return dto;
     }
 
     public PageResponseDTO<SellerPublicListDTO> getSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName, String businessRegistrationNumber, String phone, String address) {
-        Pageable pageable = pageRequestDTO.toPageable();
-        Specification<SellerEntity> spec = SellerPublicSpecification.search(sellerUid, companyName, businessRegistrationNumber, phone, address);
-        Page<SellerEntity> sellers = sellerRepository.findAll(spec, pageable);
-
-        List<SellerPublicListDTO> dtoList = sellers.getContent().stream()
-                .map(this::convertToSellerPublicListDTO)
-                .collect(Collectors.toList());
-
-        return new PageResponseDTO<>(sellers, dtoList);
+        Page<SellerPublicListDTO> sellers = sellerRepository.findSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address);
+        return new PageResponseDTO<>(sellers);
     }
 
     private SellerPublicListDTO convertToSellerPublicListDTO(SellerEntity seller) {
