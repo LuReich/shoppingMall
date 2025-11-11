@@ -31,7 +31,7 @@ public class AdminOrderController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(results));
     }
 
-    @GetMapping("/orderDetail")
+    @GetMapping("/orderDetail/list")
     public ResponseEntity<ApiResponse<PageResponseDTO<AdminOrderDetailResponseDTO>>> searchOrderDetails(
             @ModelAttribute AdminOrderDetailSearchDTO searchDTO) {
 
