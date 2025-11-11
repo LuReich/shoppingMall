@@ -53,4 +53,16 @@ public class AdminOrderService {
 
         return new PageResponseDTO<>(dtoPage);
     }
+
+    public AdminOrderResponseDTO getOrderById(Long orderId) {
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
+        return AdminOrderResponseDTO.fromEntity(orderEntity);
+    }
+
+    public AdminOrderDetailResponseDTO getOrderDetailById(Long orderDetailId) {
+        OrderDetailEntity orderDetailEntity = orderDetailRepository.findById(orderDetailId)
+                .orElseThrow(() -> new IllegalArgumentException("Order Detail not found with ID: " + orderDetailId));
+        return AdminOrderDetailResponseDTO.fromEntity(orderDetailEntity);
+    }
 }

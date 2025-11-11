@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,5 +38,17 @@ public class AdminOrderController {
 
         PageResponseDTO<AdminOrderDetailResponseDTO> results = adminOrderService.searchOrderDetails(searchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(results));
+    }
+
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<ApiResponse<AdminOrderResponseDTO>> getOrderById(@PathVariable Long orderId) {
+        AdminOrderResponseDTO order = adminOrderService.getOrderById(orderId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(order));
+    }
+
+    @GetMapping("/orderDetail/{orderDetailId}")
+    public ResponseEntity<ApiResponse<AdminOrderDetailResponseDTO>> getOrderDetailById(@PathVariable Long orderDetailId) {
+        AdminOrderDetailResponseDTO orderDetail = adminOrderService.getOrderDetailById(orderDetailId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderDetail));
     }
 }
