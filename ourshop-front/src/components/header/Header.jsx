@@ -102,7 +102,7 @@ function Header(props) {
                             }
                         </div>
                         <Link to="/shop/list">신규 업체</Link>
-                        <Link to="/best">베스트</Link>
+                        <Link to="/shop/best">베스트 업체</Link>
                     </nav>
                 </div>
                 <div className="header-right">

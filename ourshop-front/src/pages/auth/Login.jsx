@@ -118,15 +118,15 @@ function Login() {
           </button>
 
           <div className="auth-btn-box">
-            <button className="find-btn">아이디 찾기</button>
+            {/*<button className="find-btn">아이디 찾기</button>
             <p>|</p>
-            <button className="find-btn">비밀번호 찾기</button>
+            <button className="find-btn">비밀번호 찾기</button>*/}
 
             {/* 관리자 모드에서는 회원가입 버튼 안보이게 */}
             {selectedMode !== "admin" && (
               <>
-                <p>|</p>
-                <button className="find-btn" onClick={registerBtn}>
+                {/*<p>|</p>*/}
+                <button type="button" className="find-btn" onClick={registerBtn}>
                   {getRegisterText()}
                 </button>
               </>

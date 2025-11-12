@@ -16,7 +16,7 @@ export const useSeller = () => {
     //판매자 상품 조회 
     const getSellerProductList = (params ={}) => {
         return useQuery({
-            queryKey: ["sellerProducts", params],
+            queryKey: ["sellerProducts"],
             queryFn: () => sellerAPI.getProduct(params),
         });
     };
@@ -32,7 +32,7 @@ export const useSeller = () => {
     //판매자 배송 상품 조회
     const getDeliverySellerProductList = (params={}) => {
         return useQuery({
-            queryKey: ["deliverySellerProducts", params],
+            queryKey: ["deliverySellerProducts"],
             queryFn: () => sellerAPI.getDeliveryProducts(params),
         });
     };
@@ -51,7 +51,7 @@ export const useSeller = () => {
             mutationFn: ({orderDetailId, data}) => sellerAPI.update(orderDetailId, data),
             onSuccess: (res, variables) => {
                 qc.invalidateQueries({ queryKey: ["deliverySellerProducts"] }); 
-                qc.invalidateQueries({ queryKey: ["orderDetail"] }); 
+                qc.invalidateQueries({ queryKey: ["buyerOrders"] }); 
                 console.log("배송상태 수정 성공:", res);
                 alert("배송상태 수정되었습니다");
             },

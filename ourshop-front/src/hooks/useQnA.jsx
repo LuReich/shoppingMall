@@ -6,25 +6,25 @@ export const useQnA = () =>{
     const qc = useQueryClient();
 
 
-    const getQnAList = (params = {}) => {
+    const getQnAList = (mode, params = {}, uid) => {
         return useQuery({
-            queryKey: ["qnaList", params],
-            queryFn: () => qnaAPI.getList()
+            queryKey: ["qnaList", mode, params, uid],
+            queryFn: () => qnaAPI.getList(mode, params)
         });
     };
 
-    const getQnADetail = (buyerInquiryId) => {
+    const getQnADetail = (mode, inquiryId) => {
         return useQuery({
-            queryKey: ["qnaDetail", buyerInquiryId],
-            queryFn: () => qnaAPI.getDetail(buyerInquiryId)
+            queryKey: ["qnaDetail", mode, inquiryId],
+            queryFn: () => qnaAPI.getDetail(mode, inquiryId)
         });
     };
 
     const createQnA = () => {
         return useMutation({
-            mutationFn: (formData) => qnaAPI.create(formData),
-            onSuccess: (res) => {
-                qc.invalidateQueries(["qnaList"]);
+            mutationFn: ({mode, formData}) => qnaAPI.create(mode, formData),
+            onSuccess: (res, {mode}) => {
+                qc.invalidateQueries(["qnaList", mode]);
                 console.log("QnA 등록 성공", res);
                 alert(res?.content?.content || "QnA 등록 성공");
             },
@@ -38,9 +38,9 @@ export const useQnA = () =>{
 
     const updateQnA = () => {
         return useMutation({
-            mutationFn: ({buyerInquiryId, formData}) => qnaAPI.update({buyerInquiryId, formData}),
-            onSuccess: (res) => {
-                qc.invalidateQueries(["qnaDetail"], buyerInquiryId);
+            mutationFn: ({mode, inquiryId, formData}) => qnaAPI.update({mode, inquiryId, formData}),
+            onSuccess: (res, {mode, inquiryId}) => {
+                qc.invalidateQueries(["qnaDetail", mode, inquiryId]);
                 console.log("QnA 수정 성공", res);
                 alert(res?.content?.content || "QnA 수정 성공");
             },
@@ -54,9 +54,9 @@ export const useQnA = () =>{
 
     const deleteQnA = () => {
         return useMutation({
-            mutationFn: (buyerInquiryId) => qnaAPI.delete(buyerInquiryId),
-            onSuccess: (res) => {
-                qc.invalidateQueries(["qnaList"]);
+            mutationFn: ({mode, inquiryId}) => qnaAPI.delete(mode, inquiryId),
+            onSuccess: (res, {mode}) => {
+                qc.invalidateQueries(["qnaList", mode]);
                 console.log("QnA 삭제 성공", res);
                 alert(res?.content || "QnA 삭제 성공");
             },

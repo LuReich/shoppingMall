@@ -40,6 +40,10 @@ import ShopList from "../pages/shop/ShopList";
 import QnA from "../pages/QnA/QnA";
 import UploadQnA from "../pages/QnA/UploadQnA";
 import QnADetail from "../pages/QnA/QnADetail";
+import AdminQnAManage from "../pages/admin/AdminQnAManage";
+import BestShopList from "../pages/shop/BestShopList";
+import AdminOrderManage from "../pages/admin/AdminOrderManage";
+import DeliveryInfo from "../pages/buyer/DeliveryInfo";
 
 
 export const router = createBrowserRouter([
@@ -48,17 +52,22 @@ export const router = createBrowserRouter([
     Component: Layout,
     children: [
       { index: true, Component: Home },
+      { path: "/login", Component: Login },
+      { path: "/register/buyer", Component: BuyerRegister },
+      { path: "/register/seller", Component: SellerRegister },
       { path: "products", Component: ProductList },
       { path: "product/:productId", Component: ProductDetail },
       { path: "cart", Component: Cart },
       { path: "order", Component: Order },
       { path: "order/complete", Component: OrderComplete },
       { path: "shop/list", Component: ShopList },
+      { path: "shop/best", Component: BestShopList },
       { path: "shop", Component: ShopInfo },
       { path: "faq", Component: Faq },
       { path: "qna", Component: QnA },
-      { path: "qna/:inquiryId", Component: QnADetail },
-      { path: "upload/qna", Component: UploadQnA },
+      { path: "/:mode/qna/:inquiryId", Component: QnADetail },
+      { path: "/:mode/qna/upload", Component: UploadQnA },
+      { path: "/:mode/qna/update/:inquiryId", Component: UploadQnA },
       {
         path: "buyer/mypage",
         Component: MyPageLayout,
@@ -69,6 +78,7 @@ export const router = createBrowserRouter([
           { path: "review/upload", Component: BuyerReviewUpload },
           { path: "review/upload/:reviewId", Component: BuyerReviewUpload },
           { path: "likes", Component: BuyerProductLiked },
+          { path: "delivery", Component: DeliveryInfo },
         ],
       },
       {
@@ -91,10 +101,10 @@ export const router = createBrowserRouter([
           { path: "faq", Component:Faq},
           { path: "faq/upload/", Component:UploadFaq},
           { path: "faq/upload/:faqId", Component:UploadFaq},
+          { path: "qna", Component:AdminQnAManage},
+          { path: "order", Component:AdminOrderManage},
 
         ],
   },
-  { path: "/login", Component: Login },
-  { path: "/register/buyer", Component: BuyerRegister },
-  { path: "/register/seller", Component: SellerRegister },
+  
 ]);

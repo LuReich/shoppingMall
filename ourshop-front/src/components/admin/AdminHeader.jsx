@@ -12,6 +12,8 @@ function AdminHeader(props) {
                 <Link className='link' to='/admin'>회원 관리</Link>
                 <Link className='link' to='/admin/products'>상품 관리</Link>
                 <Link className='link' to='/admin/faq'>FAQ 관리</Link>
+                <Link className='link' to='/admin/qna'>문의 관리</Link>
+                <Link className='link' to='/admin/order'>주문 조회</Link>
             </nav>
             <Link className='link-go-back' to='/'>나가기</Link>
         </div>

@@ -72,6 +72,12 @@
 }
 
 /* 반응형 디자인 */
+@media (max-width: 1200px) {
+    .product-qna-container {
+        width: 90%;
+        margin-top: 100px;
+    }
+}
 @media (max-width: 768px) {
     .product-qna-container {
         width: 90%;

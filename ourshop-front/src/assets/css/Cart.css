@@ -42,6 +42,9 @@
   border-bottom: 2px solid #ddd;
 }
 
+.cart-product-name:hover{
+  text-decoration: underline;
+}
 .cart-container td {
   padding: 18px 10px;
   border-bottom: 1px solid #eee;

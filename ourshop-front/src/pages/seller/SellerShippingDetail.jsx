@@ -95,23 +95,33 @@ function SellerShippingDetail(props) {
                 <h4 className='filter-label'>배송 상태</h4>
                 <div className="seller-radio-group">
                         <label className='seller-radio-wrap'>
-                            <input type='radio' name='status' value='' checked={statusFilter === ""} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <input type='radio' name='status' value='' 
+                            checked={statusFilter === ""} 
+                            onChange={(e) => setStatusFilter(e.target.value)} />
                             <span>전체</span>
                         </label>
                         <label className='seller-radio-wrap'>
-                            <input type='radio' name='status' value='PAID' checked={statusFilter === "PAID"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <input type='radio' name='status' value='PAID' 
+                            checked={statusFilter === "PAID"} 
+                            onChange={(e) => setStatusFilter(e.target.value)} />
                             <span>결제완료</span>
                         </label>
                         <label className='seller-radio-wrap'>
-                            <input type='radio' name='status' value='SHIPPING' checked={statusFilter === "SHIPPING"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <input type='radio' name='status' value='SHIPPING' 
+                            checked={statusFilter === "SHIPPING"} 
+                            onChange={(e) => setStatusFilter(e.target.value)} />
                             <span>배송중</span>
                         </label>
                         <label className='seller-radio-wrap'>
-                            <input type='radio' name='status' value='DELIVERED' checked={statusFilter === "DELIVERED"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <input type='radio' name='status' value='DELIVERED' 
+                            checked={statusFilter === "DELIVERED"} 
+                            onChange={(e) => setStatusFilter(e.target.value)} />
                             <span>배송완료</span>
                         </label>
                         <label className='seller-radio-wrap'>
-                            <input type='radio' name='status' value='CANCELED' checked={statusFilter === "CANCELED"} onChange={(e) => setStatusFilter(e.target.value)} />
+                            <input type='radio' name='status' value='CANCELED' 
+                            checked={statusFilter === "CANCELED"} 
+                            onChange={(e) => setStatusFilter(e.target.value)} />
                             <span>취소</span>
                         </label>
                 </div>
@@ -145,7 +155,7 @@ function SellerShippingDetail(props) {
             <table className='shipping-table'>
                 <thead>
                     <tr>
-                        <th style={{width: "13%", paddingLeft:30}}>주문번호</th>
+                        <th style={{width: "13%", paddingLeft:30}}>주문 아이디</th>
                         <th>주문일자</th>
                         <th>수령인</th>
                         <th>상품정보</th>
@@ -189,7 +199,7 @@ function SellerShippingDetail(props) {
                 </tbody>
             </table>
             {totalPages > 0 ? (
-                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                <Pagination page={page} totalPages={totalPages} onPageChange={(p) => setPage(p)} />
             ): null}
 
             {selectedItem && (
