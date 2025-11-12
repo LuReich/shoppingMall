@@ -42,6 +42,8 @@ import UploadQnA from "../pages/QnA/UploadQnA";
 import QnADetail from "../pages/QnA/QnADetail";
 import AdminQnAManage from "../pages/admin/AdminQnAManage";
 import BestShopList from "../pages/shop/BestShopList";
+import AdminOrderManage from "../pages/admin/AdminOrderManage";
+import DeliveryInfo from "../pages/buyer/DeliveryInfo";
 
 
 export const router = createBrowserRouter([
@@ -76,6 +78,7 @@ export const router = createBrowserRouter([
           { path: "review/upload", Component: BuyerReviewUpload },
           { path: "review/upload/:reviewId", Component: BuyerReviewUpload },
           { path: "likes", Component: BuyerProductLiked },
+          { path: "delivery", Component: DeliveryInfo },
         ],
       },
       {
@@ -99,6 +102,7 @@ export const router = createBrowserRouter([
           { path: "faq/upload/", Component:UploadFaq},
           { path: "faq/upload/:faqId", Component:UploadFaq},
           { path: "qna", Component:AdminQnAManage},
+          { path: "order", Component:AdminOrderManage},
 
         ],
   },

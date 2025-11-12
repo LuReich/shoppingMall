@@ -112,10 +112,6 @@
   transition: background-color 0.2s ease;
 }
 
-.category-tag-box span:hover {
-  background-color: #e1eaff;
-}
-
 /* 가입일 */
 .shop-info-con > p:last-of-type {
   font-size: 12px;

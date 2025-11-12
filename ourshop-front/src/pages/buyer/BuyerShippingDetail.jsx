@@ -120,7 +120,7 @@ function BuyerShippingDetail(props) {
                                     {(detail.orderDetailStatus === "SHIPPING" ||
                                         detail.orderDetailStatus === "DELIVERED") 
                                       && (
-                                           <button type="button">배송조회</button>
+                                           <button type="button" onClick={() => navigate("/buyer/mypage/delivery", {state: {order, detail}})}>배송조회</button>
                                           )
                                     }
                                     {detail.orderDetailStatus === "DELIVERED" 

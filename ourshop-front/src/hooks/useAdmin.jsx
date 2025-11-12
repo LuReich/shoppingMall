@@ -47,7 +47,22 @@ export const useAdmin = () => {
             queryFn: () => adminAPI.getQnaDetail(mode, inquiryId),
         });
     };
+
+    //주문 리스트 보기
+    const getOrderList = (params = {}) => {
+        return useQuery({
+            queryKey: ["orderList", params],
+            queryFn: () => adminAPI.getOrderList(params),
+        });
+    };
     
+    //주문 상세 정보 보기
+    const getOrderDetail = (orderId) => {
+        return useQuery({
+            queryKey: ["orderDetail", orderId],
+            queryFn: () => adminAPI.getOrderDetail(orderId),
+        });
+    };
 
     //회원 정보 수정
     const updateUser = () =>{
@@ -76,6 +91,8 @@ export const useAdmin = () => {
                 const {productId} = variables;
                 qc.invalidateQueries({ queryKey: ["adminProducts"] });
                 qc.invalidateQueries({ queryKey: ["product", productId] });
+                qc.invalidateQueries({ queryKey: ["sellerProducts"] });
+                qc.invalidateQueries({ queryKey: ["productList"] });
                 console.log("상품 삭제 성공:", res);
                 alert("상품이 상태가 성공적으로 변경되었습니다.");
             },
@@ -114,6 +131,8 @@ export const useAdmin = () => {
         getProductList,
         getQnAList,
         getAdminQnADetail,
+        getOrderList,
+        getOrderDetail,
         updateUser,  
         deleteProduct,
         answerQnA

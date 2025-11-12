@@ -22,17 +22,6 @@ export const adminAPI = {
     
     },
 
-    //관리자 권한 - 회원 정보 수정
-    update: async (mode, uid, data) => {
-        const res = await api.patch(`/admin/update/${mode}/${uid}`, data);
-        return res.data;
-    },
-
-    //상품 소프트삭제 및 삭제 사유 수정
-    deleteProduct: async (productId, data) => {
-        const res = await api.patch(`admin/product/change-deletion-status/${productId}`, data);
-        return res.data;
-    },
 
     //문의 리스트 보기
     getQnaList: async (mode, params = {}) =>{
@@ -47,12 +36,39 @@ export const adminAPI = {
         return res.data;
     },
 
+    //주문 전체 리스트 가져오기
+    getOrderList : async (params= {}) => {
+        const res = await api.get("/admin/orders/list", {params});
+        return res.data;
+    },
+
+    //주문 상세
+    getOrderInfo : async (orderId) => {
+        const res = await api.get(`admin/orders/${orderId}`);
+        return res.data;
+    },
+
+    //관리자 권한 - 회원 정보 수정
+    update: async (mode, uid, data) => {
+        const res = await api.patch(`/admin/update/${mode}/${uid}`, data);
+        return res.data;
+    },
+
+    //상품 소프트삭제 및 삭제 사유 수정
+    deleteProduct: async (productId, data) => {
+        const res = await api.patch(`admin/product/change-deletion-status/${productId}`, data);
+        return res.data;
+    },
+
+
     //문의 답변하기
     answerQna: async (mode, inquiryId, data) => {
         const res = await api.patch(`/admin/answer/${mode}Inquiry/${inquiryId}`, data);
         return res.data;
 
     },
+
+    
 
 
  

@@ -53,6 +53,13 @@ function Sort({sort, setSort, setPage, sortCateg }) {
                             <option value={`${sortCateg?.sortOrder},asc`}>기본순서</option>
                           </>
                         }
+                        {
+                          sortCateg?.orderId &&
+                          <>
+                            <option value={`${sortCateg?.orderId},asc`}>주문아이디 낮은순</option>
+                            <option value={`${sortCateg?.orderId},desc`}>주문아이디 높은순</option>
+                          </>
+                        }
                        </select>
                    </div>
     );

@@ -66,7 +66,7 @@ function ShopInfo() {
                 
                 <div className='popularity-item'>
                     <FaStar className='popularity-icon star' />
-                    <span>리뷰 {shopInfo.totalReviews?.toLocaleString()}건</span>
+                    <span>리뷰 평점 {shopInfo.averageRating} ({shopInfo.totalReviews?.toLocaleString()}건)</span>
                 </div>
                 <div className='popularity-item'>
                     <FaHeart className='popularity-icon heart' />

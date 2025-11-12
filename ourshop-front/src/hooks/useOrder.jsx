@@ -8,7 +8,7 @@ export const useOrder = () => {
     // 구매자 주문 목록 조회
   const getBuyerOrders = (params = {}) =>
     useQuery({
-      queryKey: ["buyerOrders", params],
+      queryKey: ["buyerOrders"],
       queryFn: ()=> orderAPI.getBuyerOrders(params),
     });
 
