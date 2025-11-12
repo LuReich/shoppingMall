@@ -112,6 +112,7 @@ function Faq(props) {
 
     return (
         <div className='faq-container'>
+            <div className='faq-main'>
             <h2>FAQ</h2>
             <div className='faq-create-btn-box'>
                 <button type='button' className='faq-create-btn' onClick={handleUpload}>FAQ 등록</button>
@@ -236,6 +237,7 @@ function Faq(props) {
                     onPageChange={(p) => setPage(p)}
                 /> : null
             }
+            </div>
         </div>
     );
 }

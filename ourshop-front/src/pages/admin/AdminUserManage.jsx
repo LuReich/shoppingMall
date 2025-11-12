@@ -100,6 +100,7 @@ function AdminUserManage() {
    
     return (
         <div className='admin-user-manage'>
+            <div className='admin-user-bar'>
             <h2>회원 관리</h2>
             <div className='admin-user-search-container'>
                 {/* 회원 유형 선택 필터 */}
@@ -250,6 +251,7 @@ function AdminUserManage() {
                         onPageChange={(p) => setPage(p)}
                     />) : null
                 }
+        </div>
         </div>
     ); 
 }

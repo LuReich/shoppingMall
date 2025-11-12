@@ -32,7 +32,27 @@ export const adminAPI = {
     deleteProduct: async (productId, data) => {
         const res = await api.patch(`admin/product/change-deletion-status/${productId}`, data);
         return res.data;
-    }
+    },
+
+    //문의 리스트 보기
+    getQnaList: async (mode, params = {}) =>{
+        const res = await api.get(`/admin/${mode}Inquiry/list`, {params});
+        return res.data;
+    
+    },
+
+    //문의 개별 보기
+    getQnaDetail: async (mode, inquiryId) => {
+        const res = await api.get(`/admin/${mode}Inquiry/${inquiryId}`);
+        return res.data;
+    },
+
+    //문의 답변하기
+    answerQna: async (mode, inquiryId, data) => {
+        const res = await api.patch(`/admin/answer/${mode}Inquiry/${inquiryId}`, data);
+        return res.data;
+
+    },
 
 
  

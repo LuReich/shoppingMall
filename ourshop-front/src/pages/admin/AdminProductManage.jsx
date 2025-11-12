@@ -88,6 +88,7 @@ function AdminProductManage(props) {
 
     return (
         <div className='admin-product-manage-container'>
+            <div className='admin-product-bar'>
             <h2>상품 관리</h2>
             <div className='admin-product-search-container'>
                 <div className='admin-product-filter-box'>
@@ -170,6 +171,7 @@ function AdminProductManage(props) {
                 </tbody>
             </table>
             {totalPages? <Pagination page={page} totalPages={totalPages} onPageChange={(p) => setPage(p)}/> : null } 
+        </div>
         </div>
     );
 }

@@ -1,38 +1,38 @@
 import api from "../axios/axios";
 
 export const qnaAPI = {
-    // [구매자] 본인 문의 리스트 조회
-    getList: async(params = {}) => {
-        const res = await api.get("/buyer/buyerInquiry/list", {params});
+    // 문의 리스트 조회 (mode: buyer | seller)
+    getList: async(mode, params = {}) => {
+        const res = await api.get(`/${mode}/${mode}Inquiry/list`, {params});
         return res.data;
     
     },
 
-    // [구매자] 상세 문의 조회
-    getDetail: async(buyerInquiryId) =>{
-        const res = await api.get(`/buyer/buyerInquiry/${buyerInquiryId}`);
+    // 상세 문의 조회 (mode: buyer | seller)
+    getDetail: async(mode, inquiryId) =>{
+        const res = await api.get(`/${mode}/${mode}Inquiry/${inquiryId}`);
         return res.data;
     },
 
-    // [구매자] 문의 등록 (이미지 포함)
-    create: async (formData) => {
-        const res = await api.post("/buyer/create/buyerInquiry", formData, {
+    // 문의 등록 (mode: buyer | seller)
+    create: async (mode, formData) => {
+        const res = await api.post(`/${mode}/create/${mode}Inquiry`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
         return res.data;
     },
 
-    // [구매자] 문의 수정 (이미지 포함)
-    update: async({buyerInquiryId, formData}) => {
-        const res = await api.patch(`/buyer/update/buyerInquiry/${buyerInquiryId}`, formData, {
+    // 문의 수정 (mode: buyer | seller)
+    update: async({mode, inquiryId, formData}) => {
+        const res = await api.patch(`/${mode}/update/${mode}Inquiry/${inquiryId}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
         return res.data;
     },
 
-    // [구매자] 문의 삭제
-    delete: async(buyerInquiryId) => {
-        const res = await api.delete(`/buyer/delete/buyerInquiry/${buyerInquiryId}`);
+    // 문의 삭제 (mode: buyer | seller)
+    delete: async(mode, inquiryId) => {
+        const res = await api.delete(`/${mode}/delete/${mode}Inquiry/${inquiryId}`);
         return res.data;
     }
 

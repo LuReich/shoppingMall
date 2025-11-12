@@ -178,7 +178,7 @@ function Cart(props) {
               <td>
                 <input type='checkbox' onChange={()=> handleCartArr(item.cartId)} checked={cartArr.includes(item.cartId)}/>
               </td>
-              <td>{item.productName}</td>
+              <td onClick={() => navigate(`/product/${item.productId}`)} className='cart-product-name'>{item.productName}</td>
               <td>{item.pricePerItem.toLocaleString()}원</td>
               <td className='quant-update-box'>
                 <button className='quat-btn' onClick={() => handleQuantityChange(item.cartId, item.quantity - 1)} disabled={item.quantity <=1}>-</button>

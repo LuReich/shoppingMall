@@ -1,0 +1,20 @@
+.best-shop-list-container {
+    width: 78%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.best-shop-list-container h2 {
+    font-size: 28px;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+.best-shop-list-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px 30px;
+}

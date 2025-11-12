@@ -61,8 +61,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain; /* ✅ 이미지 전체 표시 (잘리지 않음) */
-    object-position: center; /* ✅ 가운데 정렬 */
+    object-fit: contain; /* 이미지 전체 표시 (잘리지 않음) */
+    object-position: center; /* 가운데 정렬 */
 }
 
 .productInfo {

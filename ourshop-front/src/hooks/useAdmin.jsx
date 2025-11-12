@@ -5,7 +5,6 @@ import { useNavigate } from "react-router";
 export const useAdmin = () => {
 
     const qc = useQueryClient();
-    const navigate = useNavigate();
 
     //회원 리스트 조회
     const getUserList = (mode, params = {},  enabled = true) => {
@@ -33,6 +32,23 @@ export const useAdmin = () => {
         });
     };
 
+      //문의 리스트 보기
+    const getQnAList = (mode, params ={}) => {
+        return useQuery({
+            queryKey: ["qnaList", mode, params],
+            queryFn: () => adminAPI.getQnaList(mode, params),
+        });
+    };
+
+    //문의 상세 보기
+    const getAdminQnADetail = (mode, inquiryId) => {
+        return useQuery({
+            queryKey: ["qnaDetail", mode, inquiryId],
+            queryFn: () => adminAPI.getQnaDetail(mode, inquiryId),
+        });
+    };
+    
+
     //회원 정보 수정
     const updateUser = () =>{
         return useMutation({
@@ -56,7 +72,8 @@ export const useAdmin = () => {
     const deleteProduct = () => {
         return useMutation({
             mutationFn: ({productId, data}) => adminAPI.deleteProduct(productId, data),
-            onSuccess: (res) => {
+            onSuccess: (res, variables) => {
+                const {productId} = variables;
                 qc.invalidateQueries({ queryKey: ["adminProducts"] });
                 qc.invalidateQueries({ queryKey: ["product", productId] });
                 console.log("상품 삭제 성공:", res);
@@ -67,14 +84,38 @@ export const useAdmin = () => {
                 console.error("상품 삭제 실패:", err);
                 alert(msg);
             }
-        })
-    }
+        });
+    };
+
+    //문의 답변하기
+    const answerQnA = () => {
+        return useMutation({
+            mutationFn: ({mode, inquiryId, data}) => adminAPI.answerQna(mode, inquiryId, data),
+            onSuccess: (res, variables) => {
+                const { inquiryId } = variables;
+                qc.invalidateQueries({ queryKey: ["qnaDetail", inquiryId] });
+                qc.invalidateQueries({ queryKey: ["qnaList"] });
+                console.log("문의 답변 성공:", res);
+                alert("문의 답변이 성공적으로 등록되었습니다.");
+            },
+            onError: (err) => {
+                const msg = err.response?.data?.content || "문의 답변 등록에 실패했습니다.";
+                console.error("문의 답변 등록 실패:", err);
+                alert(msg);
+            }
+        });
+    };
+
+  
 
     return { 
         getUserList,
         getUserDetail,
         getProductList,
+        getQnAList,
+        getAdminQnADetail,
         updateUser,  
         deleteProduct,
+        answerQnA
      };
 }

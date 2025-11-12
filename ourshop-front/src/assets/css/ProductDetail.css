@@ -429,6 +429,12 @@
 }
 
 /* 반응형 */
+@media (max-width: 1200px) {
+    .product-detail-container {
+        width: 90%;
+        margin-top: 100px;
+    }
+}
 @media (max-width: 992px) {
     .product-detail-main {
         flex-direction: column;

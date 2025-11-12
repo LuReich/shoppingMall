@@ -2,29 +2,44 @@ import React, { useState } from 'react';
 import { useQnA } from '../../hooks/useQnA';
 import Pagenation from '../../components/common/Pagenation';
 import '../../assets/css/qna.css';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
+import { authStore } from '../../store/authStore';
 
 
 function QnA(props) {
     const navigate = useNavigate();
+    const uid = authStore(state => state.user)?.content?.buyerUid || authStore(state => state.user)?.content?.sellerUid;
+    const mode = authStore(state => state.role) === "BUYER" ? "buyer" : "seller";
     const [page, setPage] = useState(0);
 
     const {getQnAList} = useQnA();
-    const {data: QnAListData} = getQnAList({
-        size: 3,
+    const {data: QnAListData} = getQnAList(mode, {
+        size: 5,
         page
-    })
+    }, uid);
 
     const QnAList = QnAListData?.content?.content;                          
     console.log("문의 리스트", QnAListData);
 
     const totalPages = QnAListData?.content?.totalPages;
+
+    const Kor = {
+        "PAYMENT": "결제",
+        "SHIPPING": "배송",
+        "PRODUCT": "상품",
+        "VERIFICATION": "판매인증",
+        "ETC": "기타",
+        "ACCOUNT": "계정",
+        "PENDING": "미답변",
+        "ANSWERED": "답변"
+    }
+
     return (
         <div className='product-qna-container'>
             <div className='qna-header'>
                 <h2>Q&A</h2>
                 <div className='qna-btn-box'>
-                    <button type='button' className='qna-write-button' onClick={() => navigate('/upload/qna')}>문의하기</button>
+                    <button type='button' className='qna-write-button' onClick={() => navigate(`/${mode}/qna/upload`)}>문의하기</button>
                 </div>
             </div>
             <table className='qna-table'>
@@ -38,19 +53,19 @@ function QnA(props) {
                 </thead>
                 <tbody>
                     {
-                        QnAList?.map((qna) => (
-                            <tr key={qna.inquiryId} onClick={() => navigate(`/qna/${qna.inquiryId}`)}>
+                        QnAList?.length > 0? QnAList.map((qna) => (
+                            <tr key={qna.inquiryId} onClick={() => navigate(`/${mode}/qna/${qna.inquiryId}`)}>
                                     <td>{qna.inquiryId}</td>
-                                    <td>{qna.inquiryStatus}</td>
-                                    <td>{qna.inquiryType}</td>
+                                <td style={qna.inquiryStatus === "PENDING" ? {color: "red"} : {color: "green"}}>{Kor[qna.inquiryStatus]}</td>
+                                    <td>{Kor[qna.inquiryType]}</td>
                                     <td>{qna.title}</td>
                                 </tr>
-                        ))
+                        )) : <p colSpan='4' style={{textAlign: 'center'}}>등록한 문의가 없습니다.</p>
                     }
                 </tbody>
             </table>
             {
-                totalPages > 0 ? <Pagenation page={page} setPage={setPage} totalPages={totalPages}/> : null
+                totalPages > 0 ? <Pagenation page={page} totalPages={totalPages} onPageChange={(p) => setPage(p)}/> : null
             }
         </div>
     );

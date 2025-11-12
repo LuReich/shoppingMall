@@ -75,6 +75,8 @@ function BuyerShippingDetail(props) {
                 <thead>
                     <tr>
                         <th>주문일자</th>
+                        <th>주문 아이디</th>
+                        <th>주문상세 아이디 </th>
                         <th>상품정보</th>
                         <th>수량</th>
                         <th>주문금액</th>
@@ -89,12 +91,15 @@ function BuyerShippingDetail(props) {
                             <tr key={detail.orderDetailId}>
                             {
                               idx === 0 ? (
+                                <>
                                 <td rowSpan={order.orderDetails.length}>
                                   {new Date(order.createAt).toLocaleDateString().replace(/\.$/, '')}
                                 </td>
+                                <td rowSpan={order.orderDetails.length}>{order.orderId}</td>
+                                </>
                               ) : null
                             }
-
+                            <td>{detail.orderDetailId}</td>
                             <td>
                               <div className="detail-info" onClick={() => navigate(`/product/${detail.productId}`)}>
                                 <img src={detail.productThumbnailUrl} alt={detail.productName} />

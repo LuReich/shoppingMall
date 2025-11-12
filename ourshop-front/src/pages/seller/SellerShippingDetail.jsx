@@ -145,7 +145,7 @@ function SellerShippingDetail(props) {
             <table className='shipping-table'>
                 <thead>
                     <tr>
-                        <th style={{width: "13%", paddingLeft:30}}>주문번호</th>
+                        <th style={{width: "13%", paddingLeft:30}}>주문 아이디</th>
                         <th>주문일자</th>
                         <th>수령인</th>
                         <th>상품정보</th>
@@ -189,7 +189,7 @@ function SellerShippingDetail(props) {
                 </tbody>
             </table>
             {totalPages > 0 ? (
-                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                <Pagination page={page} totalPages={totalPages} onPageChange={(p) => setPage(p)} />
             ): null}
 
             {selectedItem && (
