@@ -5,10 +5,16 @@ import Pagination from '../../components/common/Pagenation';
 import Sort from '../../components/common/Sort';
 import { Link, useNavigate } from 'react-router-dom';
 import { useReviews } from '../../hooks/useReview';
+import { authStore } from '../../store/authStore';
 
 function BuyerShippingDetail(props) {
 
     const navigate = useNavigate();
+    const isLogin = authStore(state => state.isLogin);
+    if(!isLogin){
+        alert("로그인이 필요한 서비스입니다.");
+        navigate("/login");
+    }
 
     // 페이지 & 정렬 상태
     const [page, setPage] = useState(0);

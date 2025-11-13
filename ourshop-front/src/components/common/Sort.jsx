@@ -60,6 +60,13 @@ function Sort({sort, setSort, setPage, sortCateg }) {
                             <option value={`${sortCateg?.orderId},desc`}>주문아이디 높은순</option>
                           </>
                         }
+                        {
+                          sortCateg?.reviewCount &&
+                          <>
+                            <option value={`${sortCateg?.reviewCount},asc`}>리뷰 적은순</option>
+                            <option value={`${sortCateg?.reviewCount},desc`}>리뷰 많은순</option>
+                          </>
+                        }
                        </select>
                    </div>
     );

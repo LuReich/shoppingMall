@@ -41,7 +41,7 @@ function ShopCard({ shop, rank }) {
         <p>"{shop.companyInfo}"</p>
         <div className="category-tag-box">
           {categoryTag?.length > 0 ? (
-            categoryTag.map((x) => <span key={x}>#{x}</span>)
+            categoryTag.slice(0,3).map((x) => <span key={x}>#{x}</span>)
           ) : (
             <span>상품 등록 중</span>
           )}

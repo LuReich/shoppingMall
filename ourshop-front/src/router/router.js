@@ -44,6 +44,11 @@ import AdminQnAManage from "../pages/admin/AdminQnAManage";
 import BestShopList from "../pages/shop/BestShopList";
 import AdminOrderManage from "../pages/admin/AdminOrderManage";
 import DeliveryInfo from "../pages/buyer/DeliveryInfo";
+import PrivacyPolicy from "../pages/footer/PrivacyPolicy";
+import TermsOfService from "../pages/footer/TermsOfService";
+import RefundPolicy from "../pages/footer/RefundPolicy";
+import RecommendShop from "../pages/shop/RecommendShop";
+import SellerVerificationGuide from "../pages/seller/SellerVerificationGuide";
 
 
 export const router = createBrowserRouter([
@@ -60,14 +65,20 @@ export const router = createBrowserRouter([
       { path: "cart", Component: Cart },
       { path: "order", Component: Order },
       { path: "order/complete", Component: OrderComplete },
+      { path: "shop/recommend", Component: RecommendShop },
       { path: "shop/list", Component: ShopList },
       { path: "shop/best", Component: BestShopList },
       { path: "shop", Component: ShopInfo },
       { path: "faq", Component: Faq },
       { path: "qna", Component: QnA },
+      { path: "service", Component: TermsOfService },
+      { path: "refund", Component: RefundPolicy },
+      { path: "privacy", Component: PrivacyPolicy },
+      { path: "verification", Component: SellerVerificationGuide },
       { path: "/:mode/qna/:inquiryId", Component: QnADetail },
       { path: "/:mode/qna/upload", Component: UploadQnA },
       { path: "/:mode/qna/update/:inquiryId", Component: UploadQnA },
+  
       {
         path: "buyer/mypage",
         Component: MyPageLayout,

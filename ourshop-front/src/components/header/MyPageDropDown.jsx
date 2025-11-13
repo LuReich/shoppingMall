@@ -31,6 +31,7 @@ function MyPageDropDown(props) {
                         <Link className='link-btn' to='/seller/mypage/info'>업체 정보 관리</Link>
                         <Link className='link-btn' to='/seller/mypage/products'>업체 상품 관리</Link>
                         <Link className='link-btn' to='/seller/mypage/shipping'>판매 내역 관리</Link>
+                        <Link className='link-btn' to='/verification'>판매 인증 받기</Link>
                         <p className='link-btn' onClick={handleLogout}>로그아웃</p>
                     </>
                     :

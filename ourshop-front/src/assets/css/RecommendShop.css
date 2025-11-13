@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 .shop-list-container {
     display: flex;
     flex-direction: column;
@@ -15,14 +13,30 @@
     margin-bottom: 40px;
 }
 
+.shop-list-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
 .shop-list-grid {
-    width: 100%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 30px 20px;
+    margin-top: 20px;
 }
 
-/* 반응형 디자인 */
+.no-results {
+    grid-column: 1 / -1; /* Grid의 모든 컬럼을 차지하도록 설정 */
+    text-align: center;
+    padding: 80px 20px;
+    color: #888;
+    font-size: 18px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
 @media (max-width: 1200px) {
     .shop-list-container {
         width: 90%;

@@ -147,8 +147,17 @@
     font-size: 16px;
     color: #666;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
 }
 
+.product-n{
+    margin-top: 0;
+    font-size: 14px;
+}
+
+.product-n,
 .company-name{
   padding-left: 5px;
 }

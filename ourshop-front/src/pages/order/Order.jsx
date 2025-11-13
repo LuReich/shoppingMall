@@ -80,6 +80,11 @@ function Order() {
     }
   }, [deliveryType]);
 
+  const Kor = {
+    "card": "신용카드",
+    "kakao": "카카오페이",
+    "bank": "계좌이체"
+  }
 
 
   //총구매가 구하는 함수
@@ -95,6 +100,7 @@ function Order() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );;
+
 
   const handleSubmit = (e) => {
     if (!cartItems || cartItems.length === 0) {
@@ -149,7 +155,7 @@ function Order() {
 
     createOrderMutate(orderData);
 
-    alert(`${paymentMethod}로 결제가 완료되었습니다!`);
+    alert(`${Kor[paymentMethod]}로 결제가 완료되었습니다!`);
     navigate('/order/complete', {state:{paymentMethod}});
   };
 
@@ -317,7 +323,7 @@ function Order() {
         {/* 결제 버튼 */}
         <div className="payment-summary">
           <p>
-            총 결제 금액: <strong>{totalPrice?.toLocaleString()}원</strong>
+            총 결제 금액: <strong style={{color: 'red'}}>{totalPrice?.toLocaleString()}원</strong>
           </p>
           <button type="submit" className="pay-btn">
             결제하기

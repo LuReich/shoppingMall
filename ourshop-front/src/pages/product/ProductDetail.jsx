@@ -270,6 +270,7 @@ function ProductDetail() {
              {(role=="BUYER" || !isLogin) && <LikesBtn styleProps={"like-box"} product={product}/>}
           </div>
           <div className="short-desc">
+            <p className='product-n'>상품품번  {product.productId}</p>
             <p className='company-name' onClick={() => navigate('/shop',  { state: { sellerUid: product.sellerUid } })}>{product.companyName}</p>
           </div>
 

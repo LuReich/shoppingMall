@@ -26,6 +26,9 @@ function BestShopList(props) {
     return (
         <div className='best-shop-list-container'>
             <h2>베스트 업체</h2>
+             <div className="best-radio-group">
+                <label className='best-radio-wrap' onClick={() =>navigate('/shop/recommend')}>나에게 딱 맞는 업체를 추천받고 싶으신가요?</label>
+            </div>
             <div className='best-shop-list-grid'>
                 {
                     ShopList?.map((shop, idx) => (

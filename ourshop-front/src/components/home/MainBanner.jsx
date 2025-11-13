@@ -5,6 +5,7 @@ import React, { useState, useRef } from 'react';
 import Slider from 'react-slick';
 import { FaPlay } from "react-icons/fa6";
 import { TbPlayerPauseFilled } from "react-icons/tb";
+import { useNavigate } from "react-router";
 
 
 function NextArrow(props) {
@@ -17,14 +18,16 @@ function PrevArrow(props) {
 }
 
 const MainBanner = () => {
+
+    const navigate = useNavigate();
     const sliderRef = useRef(null);
     const [isPaused, setIsPaused] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const slides = [
-        { id: 1, className: 'slide-1', title: '우리샵 GRAND OPEN!', desc: '내 취향에 맞는 업체, 지금 바로 추천받으세요.' },
-        { id: 2, className: 'slide-2', title: '이번 주 특가 상품', desc: '최대 30% 할인 혜택을 놓치지 마세요!' },
-        { id: 3, className: 'slide-3', title: '정기배송 신청하고', desc: '매주 신선함을 문 앞에서 받아보세요.' }
+        { id: 1, className: 'slide-1', title: '우리샵 GRAND OPEN!', desc: '판매자와 구매자가 서로를 믿고 거래하는 공간, 우리샵에서 비즈니스의 새로운 가능성을 시작하세요.', url: '#/' },
+        { id: 2, className: 'slide-2', title: '나만의 맞춤 추천', desc: '당신이 좋아한 상품을 통해 신뢰할 수 있는 파트너를 찾아드립니다.', url: '/shop/recommend' },
+        { id: 3, className: 'slide-3', title: '판매인증 신청하고', desc: '더 많은 구매자와의 거래 기회를 잡으세요!', url: '/verification'  }
     ];
 
     const togglePlayPause = () => {
@@ -57,7 +60,7 @@ const MainBanner = () => {
         <div className="main-banner">
             <Slider ref={sliderRef} {...settings}>
                 {slides.map(slide => (
-                    <div key={slide.id} className={`slide ${slide.className}`}>
+                    <div key={slide.id} className={`slide ${slide.className}`} onClick={() => navigate(slide.url)}>
                         <h3>{slide.title}</h3>
                         <p>{slide.desc}</p>
                     </div>
