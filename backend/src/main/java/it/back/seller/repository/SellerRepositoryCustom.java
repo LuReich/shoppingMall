@@ -9,7 +9,7 @@ import it.back.seller.dto.SellerPublicListDTO;
 
 public interface SellerRepositoryCustom {
     Page<SellerPublicListDTO> findSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName,
-            String businessRegistrationNumber, String phone, String address);
+            String businessRegistrationNumber, String phone, String address, Boolean isVerified);
 
     Optional<SellerPublicDTO> findSellerPublicInfoById(Long sellerUid);
 }

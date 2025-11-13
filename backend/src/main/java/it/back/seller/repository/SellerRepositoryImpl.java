@@ -105,7 +105,7 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
 
     @Override
     public Page<SellerPublicListDTO> findSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid,
-            String companyName, String businessRegistrationNumber, String phone, String address) {
+            String companyName, String businessRegistrationNumber, String phone, String address, Boolean isVerified) {
 
         Pageable pageable = pageRequestDTO.toPageable();
         QSellerEntity seller = QSellerEntity.sellerEntity;
@@ -143,7 +143,8 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
                         containsCompanyName(companyName),
                         containsBusinessRegistrationNumber(businessRegistrationNumber),
                         containsPhone(phone),
-                        containsAddress(address))
+                        containsAddress(address),
+                        eqIsVerified(isVerified))
                 .groupBy(seller.sellerUid,
                         seller.companyName,
                         seller.sellerEmail,
@@ -199,7 +200,8 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
                         containsCompanyName(companyName),
                         containsBusinessRegistrationNumber(businessRegistrationNumber),
                         containsPhone(phone),
-                        containsAddress(address));
+                        containsAddress(address),
+                        eqIsVerified(isVerified));
 
         long total = countQuery.fetchOne();
 
@@ -249,5 +251,9 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
 
     private BooleanExpression containsAddress(String address) {
         return StringUtils.hasText(address) ? QSellerDetailEntity.sellerDetailEntity.address.contains(address) : null;
+    }
+
+    private BooleanExpression eqIsVerified(Boolean isVerified) {
+        return isVerified != null ? QSellerEntity.sellerEntity.isVerified.eq(isVerified) : null;
     }
 }
