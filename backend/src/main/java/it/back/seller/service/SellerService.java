@@ -226,13 +226,18 @@ public class SellerService {
         }
 
         Optional<SellerEntity> existing = sellerRepository.findBySellerId(sellerId);
-        if (existing.isEmpty()) {
-            return false; // 사용 가능한 새 아이디
+        if (existing.isPresent()) {
+            SellerEntity found = existing.get();
+            // ID가 존재하고, 그 ID가 현재 사용자의 ID와 동일한지 확인
+            if (sellerUid != null && sellerUid.equals(found.getSellerUid())) {
+                return true; // 현재 사용자의 아이디와 동일함
+            } else {
+                // 다른 사용자가 이미 사용 중인 아이디
+                throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+            }
         }
 
-        SellerEntity found = existing.get();
-        // If existing, check if it's the same user
-        return sellerUid != null && sellerUid.equals(found.getSellerUid());
+        return false; // 사용 가능한 새 아이디
     }
 
     /**
