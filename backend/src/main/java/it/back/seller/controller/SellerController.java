@@ -78,8 +78,9 @@ public class SellerController {
             @RequestParam(name = "companyName", required = false) String companyName,
             @RequestParam(name = "businessRegistrationNumber", required = false) String businessRegistrationNumber,
             @RequestParam(name = "phone", required = false) String phone,
-            @RequestParam(name = "address", required = false) String address) {
-        PageResponseDTO<SellerPublicListDTO> sellerList = sellerService.getSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address);
+            @RequestParam(name = "address", required = false) String address,
+            @RequestParam(name = "isVerified", required = false) Boolean isVerified) {
+        PageResponseDTO<SellerPublicListDTO> sellerList = sellerService.getSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address, isVerified);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(sellerList));
     }
 

@@ -94,8 +94,8 @@ public class SellerService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 판매자 없음: " + sellerUid));
     }
 
-    public PageResponseDTO<SellerPublicListDTO> getSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName, String businessRegistrationNumber, String phone, String address) {
-        Page<SellerPublicListDTO> sellers = sellerRepository.findSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address);
+    public PageResponseDTO<SellerPublicListDTO> getSellerPublicList(PageRequestDTO pageRequestDTO, Long sellerUid, String companyName, String businessRegistrationNumber, String phone, String address, Boolean isVerified) {
+        Page<SellerPublicListDTO> sellers = sellerRepository.findSellerPublicList(pageRequestDTO, sellerUid, companyName, businessRegistrationNumber, phone, address, isVerified);
         return new PageResponseDTO<>(sellers);
     }
 
