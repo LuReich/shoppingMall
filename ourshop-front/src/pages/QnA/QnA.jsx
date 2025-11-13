@@ -9,6 +9,7 @@ import { authStore } from '../../store/authStore';
 function QnA(props) {
     const navigate = useNavigate();
     const uid = authStore(state => state.user)?.content?.buyerUid || authStore(state => state.user)?.content?.sellerUid;
+    const isLogin = authStore(state => state.isLogin);
     const mode = authStore(state => state.role) === "BUYER" ? "buyer" : "seller";
     const [page, setPage] = useState(0);
 
@@ -34,6 +35,10 @@ function QnA(props) {
         "ANSWERED": "답변"
     }
 
+    if(!isLogin){
+        alert("로그인이 필요한 서비스입니다.");
+        navigate("/login");
+    }
     return (
         <div className='product-qna-container'>
             <div className='qna-header'>
@@ -60,7 +65,13 @@ function QnA(props) {
                                     <td>{Kor[qna.inquiryType]}</td>
                                     <td>{qna.title}</td>
                                 </tr>
-                        )) : <p colSpan='4' style={{textAlign: 'center'}}>등록한 문의가 없습니다.</p>
+                        )) : (
+                             <tr>
+                                <td colSpan="4" style={{ textAlign: "center" }}>
+                                    등록한 문의가 없습니다.
+                                </td>
+                            </tr>
+                        )
                     }
                 </tbody>
             </table>

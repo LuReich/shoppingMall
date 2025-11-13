@@ -9,12 +9,67 @@
     font-size: 28px;
     text-align: center;
     font-weight: 600;
-    margin-bottom: 40px;
 }
 
+.best-radio-group{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e3f3f8;
+    margin-bottom: 30px;
+
+}
+
+.best-radio-wrap{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    border-radius: 20px;
+    background-color: white;
+    border: 1px solid #7cc7de;
+    color:#7cc7de;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.best-radio-wrap:hover{
+    background-color: #7cc7de;
+    color: #fff;
+}
 .best-shop-list-grid {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 40px 30px;
+}
+
+@media (max-width: 1200px) {
+    .best-shop-list-container {
+        width: 90%;
+        margin-top: 100px;
+    }
+    .best-shop-list-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    
+    .best-shop-list-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .best-shop-list-grid {
+        grid-template-columns: 1fr; /* 모바일에서는 한 줄에 하나씩 표시 */
+        gap: 30px;
+    }
+    .best-shop-list-container > h2 {
+        font-size: 28px;
+    }
 }

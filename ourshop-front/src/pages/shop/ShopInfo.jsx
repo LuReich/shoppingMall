@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { FaPhone } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
 import { IoStorefrontSharp } from "react-icons/io5";
+import { IoPerson } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import { BsShieldFillCheck } from "react-icons/bs";
@@ -81,6 +82,7 @@ function ShopInfo() {
 
             {/* 상세 정보 */}
             <div className='shop-info-detail'>
+                <p><IoPerson/> UID: {shopInfo.sellerUid}</p>
                 <p><FaPhone /> {shopInfo.phone}</p>
                 <p><IoIosMail /> {shopInfo.sellerEmail}</p>
                 <p><IoStorefrontSharp /> {shopInfo.address}, {shopInfo.addressDetail}</p>

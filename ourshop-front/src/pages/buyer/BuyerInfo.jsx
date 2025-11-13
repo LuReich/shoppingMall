@@ -236,6 +236,14 @@ useEffect(() => {
       <h2>회원 정보 수정</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3>회원 정보</h3>
+        <div className="info-group">
+          <label>아이디</label>
+          <input type="text" placeholder="아이디" value={user?.buyerId} readOnly disabled/>
+        </div>
+          <div className="info-group">
+          <label>UID</label>
+          <input type="text" placeholder="아이디" value={user?.buyerUid} readOnly disabled/>
+        </div>
         {/* 닉네임 */}
         <div className="info-group">
           <label>닉네임</label>

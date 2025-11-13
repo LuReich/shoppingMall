@@ -5,11 +5,19 @@
 /* 전체 컨테이너 */
 .cart-container {
   width: 80%;
-  margin: 50px auto;
   padding: 30px 40px; 
 }
 
+.cart-list-box{
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: start;
+  justify-content: space-between;
+}
+
 .table-scroll-box{
+  flex: 4;
   overflow-x: auto;
   white-space: nowrap;
   margin-bottom: 10px;
@@ -22,12 +30,12 @@
   font-weight: 600;
   text-align: center;
   border-bottom: 2px solid #7cc7de;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 }
 
 /* 테이블 */
 .cart-container table {
-    
+
   width: 100%;
   border-collapse: collapse;
   text-align: center;
@@ -95,25 +103,83 @@
 /* 총 금액 영역 */
 .total-info-container {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   text-align: right;
   font-size: 18px;
-  margin-top: 20px;
   border-top: 2px solid #eee;
-  padding-top: 20px;
+  gap: 20px;
+  border: 1px solid #7cc7de;
+  border-radius: 10px;
+  padding: 30px 20px;
+  flex: 1.5;
+
+}
+
+.total-cart-info{
+  font-size: 18px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px
 }
 
 .total-info-container strong {
   color: #ff5722;
   font-size: 22px;
-  margin-left: 10px;
 }
 
+.order-btn-box{
+  width: 100%;
+}
+.order-delete-cart-btn{
+  padding: 10px 20px;
+  border: none;
+  background-color: #d0cece;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
 
+}
+
+.order-cart-btn{
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #7cc7de;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+}
 
 /* 반응형 */
+@media (max-width: 1400px) {
+  .cart-list-box{
+    flex-direction: column;
+  }
+
+  .table-scroll-box{
+    width: 100%;
+  }
+
+   .total-info-container{
+    width: 100%;
+  }
+}
+@media (max-width: 1200px) {
+  .cart-container {
+    width: 95%;
+    margin-top: 100px;
+  } 
+}
+
 @media (max-width: 768px) {
   .cart-container {
     width: 95%;

@@ -4,6 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -236,7 +237,26 @@ public class SellerRepositoryImpl implements SellerRepositoryCustom {
     }
 
     private BooleanExpression containsCompanyName(String companyName) {
-        return StringUtils.hasText(companyName) ? QSellerEntity.sellerEntity.companyName.contains(companyName) : null;
+        if (!StringUtils.hasText(companyName)) {
+            return null;
+        }
+
+        com.querydsl.core.types.dsl.StringExpression replacedCompanyName = Expressions.stringTemplate("REPLACE({0}, ' ', '')", QSellerEntity.sellerEntity.companyName);
+
+        String[] keywords = companyName.trim().split("\\s+");
+        
+        BooleanExpression result = null;
+        for (String keyword : keywords) {
+            if (!keyword.isEmpty()) {
+                BooleanExpression keywordExpression = replacedCompanyName.lower().contains(keyword.toLowerCase());
+                if (result == null) {
+                    result = keywordExpression;
+                } else {
+                    result = result.and(keywordExpression);
+                }
+            }
+        }
+        return result;
     }
 
     private BooleanExpression containsBusinessRegistrationNumber(String businessRegistrationNumber) {

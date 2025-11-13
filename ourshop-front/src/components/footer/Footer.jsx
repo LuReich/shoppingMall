@@ -1,7 +1,10 @@
 import React from 'react';
 import '../../assets/css/Footer.css';
+import { authStore } from '../../store/authStore';
 
 function Footer(props) {
+    const role = authStore(state => state.role);
+
     return (
         <footer className="footer">
             <div className="footer-content">
@@ -14,17 +17,18 @@ function Footer(props) {
                         <div>
                             <h4>고객센터</h4>
                             <ul>
-                                <li><a href="#/">1:1 문의</a></li>
-                                <li><a href="#/">FAQ</a></li>
-                                <li><a href="#/">배송 조회</a></li>
+                                <li><a href="/qna">1:1 문의</a></li>
+                                <li><a href="/faq">FAQ</a></li>
+                                <li><a href={role === "BUYER"? "/buyer/mypage/shipping" 
+                                    : role === "SELLER"? "/seller/mypage/shipping" : "#"}>배송 조회</a></li>
                             </ul>
                         </div>
                         <div>
                             <h4>이용안내</h4>
                             <ul>
-                                <li><a href="#/">개인정보처리방침</a></li>
-                                <li><a href="#/">이용약관</a></li>
-                                <li><a href="#/">환불정책</a></li>
+                                <li><a href="/privacy">개인정보처리방침</a></li>
+                                <li><a href="/service">이용약관</a></li>
+                                <li><a href="/refund">환불정책</a></li>
                             </ul>
                         </div>
                     </div>

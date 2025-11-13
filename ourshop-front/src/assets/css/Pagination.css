@@ -14,7 +14,7 @@
   align-items: center;
   border: none;
   border-radius: 6px;
-  background-color: #7cc7de;
+  background-color: #95d8eca8;
   color: white;
   font-size: 14px;
   cursor: pointer;
@@ -29,7 +29,7 @@
 
 /* 활성화된 페이지 */
 .pagination button.active {
-  background-color: #3c8da6;
+  background-color: #7cc7de;
   font-weight: 600;
 }
 

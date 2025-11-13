@@ -9,7 +9,7 @@ export const useProduct = () => {
   // 상품 목록 조회
   const getProductList = (params = {}) => {
     return useQuery({
-      queryKey: ["productList"],
+      queryKey: ["productList", params],
       queryFn: () => productAPI.getList(params),
     });
   };

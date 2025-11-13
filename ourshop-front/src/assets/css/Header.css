@@ -92,7 +92,9 @@
 }
 
 .nick-name {
-  font-size: 14px;
+
+  text-align: center;
+  padding-bottom: 3px;
 }
 
 .logout-btn {
@@ -103,14 +105,21 @@
   text-decoration: underline;
 }
 
-.cs-cont{
-  padding: 15px 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+/* 마이페이지 드롭다운 */
+.mypage-cont {
   position: relative;
-  z-index: 10;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
 }
+
+
+.cs-cont{
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
+}
+
 .right-box{ 
   flex: 1; 
   display: flex; 
@@ -118,7 +127,6 @@
   align-items: center; 
   justify-content: end;
   gap: 25px; 
-  padding-right: 10px;
 }
 
 .icon-button { 
@@ -126,8 +134,16 @@
   background: none; 
   font-size: 24px; 
   cursor: pointer; 
+  margin-top: 0;
 }
 
+.icon-button:hover{
+  color: #7cc7de;
+}
+
+.icon-button.active {
+  color: #7cc7de;
+}
 /* 검색창 PC에서 중앙 고정 */
 .input-box {
   position: fixed;
@@ -139,7 +155,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #ddd;
+  border: 1px solid #7cc7de;
   border-radius: 20px;
   padding: 5px 15px;
   background: white;
@@ -240,11 +256,4 @@
   .nick-name {
     font-size: 14px;
   }
-}
-
-/* 마이페이지 드롭다운 */
-.mypage-cont {
-  position: relative;
-  padding-bottom: 10px;
-  margin-bottom: -10px;
 }

@@ -281,6 +281,18 @@ function SellerInfo() {
         {/* 업체명 */}
         <h3>회원 정보</h3>
         <div className="info-group">
+          <label>아이디</label>
+          <input type="text" placeholder="아이디" value={seller?.sellerId} readOnly disabled/>
+        </div>
+          <div className="info-group">
+          <label>UID</label>
+          <input type="text" placeholder="아이디" value={seller?.sellerUid} readOnly disabled/>
+        </div>
+         <div className="info-group">
+          <label>판매인증</label>
+          <input type="text" placeholder="아이디" value={seller?.isVerified?  "인증" : "미인증"} readOnly disabled/>
+        </div>
+        <div className="info-group">
           <label>업체명</label>
           <input type="text" {...register("companyName")} />
           <p className="error">{errors.companyName?.message}</p>

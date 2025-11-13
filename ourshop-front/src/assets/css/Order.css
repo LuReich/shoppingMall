@@ -17,17 +17,18 @@
   font-size: 28px;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 40px;
   border-bottom: 2px solid #7cc7de;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 }
 
 .order-page h2 {
   font-size: 22px;
-  border-bottom: 2px solid #cccccc;
-  padding-bottom: 8px;
+  border-left: 5px solid #7cc7de;
+  padding-left: 5px;
   margin-top: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-self: center;
 }
    
 
@@ -88,7 +89,6 @@
 .order-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
 }
 
 .order-table th {
@@ -140,27 +140,38 @@
 
 /*결제 버튼*/
 .payment-summary {
-  text-align: right;
-  margin-top: 30px;
-  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 30px;
+  font-size: 23px;
+  border-top: 2px solid #7cc7de;
 }
 
 .pay-btn {
   margin-top: 15px;
-  background: #ff5722;
+  background: #7cc7de;
   color: #fff;
-  padding: 12px 30px;
+  padding: 12px 35px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 17px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .pay-btn:hover {
-  background: #e64a19;
+  background: #74bbd0;
 }
 
+@media (max-width: 1200px) {
+  .order-page {
+    width: 90%;
+    margin-top: 100px;
+  }
+}
 @media (max-width: 768px) {
   .enter-method{
     flex-direction: column;

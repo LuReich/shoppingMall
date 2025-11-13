@@ -1,0 +1,75 @@
+.verification-guide-container {
+    width: 75%;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    line-height: 1.8;
+}
+
+.verification-guide-container h2 {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+
+.policy-content {
+    color: #555;
+}
+
+.policy-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.policy-content p,
+.policy-content ul,
+.policy-content ol {
+    margin-bottom: 15px;
+}
+
+.policy-content ul,
+.policy-content ol {
+    padding-left: 25px;
+}
+
+.policy-content li {
+    margin-bottom: 12px;
+}
+
+.policy-content strong {
+    color: #444;
+    font-weight: 600;
+}
+
+.apply-button-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.apply-btn {
+    background: linear-gradient(90deg, #a3bffa, #7cc7de);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.apply-btn:hover {
+    background: linear-gradient(90deg, #6db3c8, #5ea2b8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}

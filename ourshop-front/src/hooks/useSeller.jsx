@@ -16,7 +16,7 @@ export const useSeller = () => {
     //판매자 상품 조회 
     const getSellerProductList = (params ={}) => {
         return useQuery({
-            queryKey: ["sellerProducts"],
+            queryKey: ["sellerProducts", params],
             queryFn: () => sellerAPI.getProduct(params),
         });
     };
@@ -32,7 +32,7 @@ export const useSeller = () => {
     //판매자 배송 상품 조회
     const getDeliverySellerProductList = (params={}) => {
         return useQuery({
-            queryKey: ["deliverySellerProducts"],
+            queryKey: ["deliverySellerProducts", params],
             queryFn: () => sellerAPI.getDeliveryProducts(params),
         });
     };

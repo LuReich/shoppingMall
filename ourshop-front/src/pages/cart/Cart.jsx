@@ -123,8 +123,9 @@ function Cart(props) {
       });
     };
 
-
+    const orderItems = cartItems.filter((item) => cartArr.includes(item.cartId));
     console.log("장바구니 배열",cartArr);
+    console.log("장바구니에서 주문할 아이템",orderItems);
 
     //선택 상품 삭제
     const deleteSelectBtn = () => {
@@ -160,6 +161,7 @@ function Cart(props) {
     return (
     <div className='cart-container'>
       <h2>장바구니</h2>
+      <div className='cart-list-box'>
       <div className='table-scroll-box'>
       <table>
         <thead>
@@ -202,19 +204,39 @@ function Cart(props) {
           ))}
         </tbody>
       </table>
+       <div className='delete-box'>
+          {/*<button type='button' className={styles.greyBtn} onClick={deleteSelectBtn}>선택 상품 삭제</button>*/}
+        <button type='button' className='order-delete-cart-btn' onClick={deleteAllBtn}>전체 상품 삭제</button>
       </div>
-      <div className='delete-box'>
-        <button type='button' className={styles.greyBtn} onClick={deleteSelectBtn}>선택 상품 삭제</button>
-        <button type='button' className={styles.greyBtn} onClick={deleteAllBtn}>전체 상품 삭제</button>
       </div>
+     
       <div className='total-info-container'>
-        <p>총 결제 예상 금액: <strong>{totalPrice.toLocaleString()}원</strong></p>
+        <div className='total-cart-info'>
+          <h4>주문 예정 상품</h4>
+          {
+            orderItems.length > 0 ?
+             orderItems?.map((item) => (
+              <p>{item.productName} X {item.quantity}</p>
+              ))
+             :
+             <p>선택 상품이 없습니다.</p>
+          }
+        </div>
+        <div className='total-cart-info'>
+          <h4>총 결제 예상 금액</h4>
+          <strong>{totalPrice.toLocaleString()}원</strong>
+        </div>
         <div className='order-btn-box'>
+          {/*
           <button type='button' className={styles.commonBtn} onClick={orderSelectBtn}>선택 주문하기</button>
           <button type='button' className={styles.commonBtn} onClick={orderBtn}>주문하기</button>
+          */}
+          <button type='button' className='order-cart-btn' onClick={orderSelectBtn}>주문하기</button>
         </div>
       </div>
+     </div>
     </div>
+
     );
 }
 

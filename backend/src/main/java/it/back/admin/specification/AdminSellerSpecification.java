@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import it.back.seller.entity.SellerEntity;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 
@@ -34,16 +35,25 @@ public class AdminSellerSpecification {
             if (companyName == null || companyName.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
+
+            Expression<String> replacedCompanyName = criteriaBuilder.function("REPLACE", String.class, root.get("companyName"), criteriaBuilder.literal(" "), criteriaBuilder.literal(""));
+            
             String[] keywords = companyName.trim().split("\\s+");
             List<Predicate> predicates = new ArrayList<>();
+            
             for (String keyword : keywords) {
                 if (!keyword.isEmpty()) {
-                    predicates.add(criteriaBuilder.like(root.get("companyName"), "%" + keyword + "%"));
+                    predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(replacedCompanyName), 
+                        "%" + keyword.toLowerCase() + "%"
+                    ));
                 }
             }
+            
             if (predicates.isEmpty()) {
                 return criteriaBuilder.conjunction();
             }
+            
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }

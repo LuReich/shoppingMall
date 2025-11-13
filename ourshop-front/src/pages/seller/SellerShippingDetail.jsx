@@ -5,11 +5,18 @@ import Pagination from '../../components/common/Pagenation';
 import Sort from '../../components/common/Sort';
 import { useNavigate } from 'react-router';
 import SellerOrderDetailInfoModal from '../../components/seller/SellerOrderDetailInfoModal';
+import { authStore } from '../../store/authStore';
 
 function SellerShippingDetail(props) {
 
+    const isLogin = authStore(state => state.isLogin);
+    if(!isLogin){
+        alert("로그인이 필요한 서비스입니다.");
+        navigate("/login");
+    }
+
     const navigate = useNavigate();
-    const [sort, setSort] = useState("product.productName,desc");
+    const [sort, setSort] = useState("order.createAt,desc");
     const [page, setPage] = useState(0);
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchField, setSearchField] = useState("productName");
@@ -17,7 +24,7 @@ function SellerShippingDetail(props) {
     const [searchParams, setSearchParams] = useState({});
     const [statusFilter, setStatusFilter] = useState(""); // 배송 상태 필터
 
-    // 배송 상태 필터가 변경되면 세팅 초기화 
+    //  필터가 변경되면 세팅 초기화 
     useEffect(() => {
         setSearchParams({});
         setSearchKeyword("");
@@ -155,7 +162,7 @@ function SellerShippingDetail(props) {
             <table className='shipping-table'>
                 <thead>
                     <tr>
-                        <th style={{width: "13%", paddingLeft:30}}>주문 아이디</th>
+                        <th>주문 상세아이디</th>
                         <th>주문일자</th>
                         <th>수령인</th>
                         <th>상품정보</th>
@@ -168,7 +175,6 @@ function SellerShippingDetail(props) {
                     {deliverySellerProducts.length > 0 ? deliverySellerProducts.map((item) => (
                         <tr key={item.orderDetailId} className='shipping-detail-row'>
                             <td className='order-detail-id'
-                            style={{width: "10%", paddingLeft:10}}
                             onClick={()=> setSelectedItem(item)}
                             >{item.orderDetailId}</td>
                             <td>{new Date(item.createAt).toLocaleDateString().replace(/\.$/, '')}</td>

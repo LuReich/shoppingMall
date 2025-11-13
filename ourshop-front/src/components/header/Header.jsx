@@ -8,6 +8,14 @@ import CategoryDropDown from './CategoryDropDown';
 import MyPageDropDown from './MyPageDropDown';
 import { RiCustomerService2Fill } from "react-icons/ri";
 import CSDropDown from './CSDropDown';
+import { FaSearch } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
+import { AiFillSetting } from "react-icons/ai";
+import { BsPersonFill } from "react-icons/bs";
+
+
+
+
 
 
 function Header(props) {
@@ -101,18 +109,18 @@ function Header(props) {
                                 isMenuOpen && <CategoryDropDown categories={categories} />
                             }
                         </div>
-                        <Link to="/shop/list">신규 업체</Link>
+                        <Link to="/shop/list">업체 보기</Link>
                         <Link to="/shop/best">베스트 업체</Link>
                     </nav>
                 </div>
                 <div className="header-right">
                     <form className='input-box' onSubmit={searchBtn}>
-                        <input type="text" placeholder="검색" 
+                        <input type="text" placeholder="상품과 관련된 정보를 검색해보세요." 
                             className="search-bar" 
                             value={searchInput} 
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
-                        <button type='submit' className='search-button'>🔍</button>
+                        <button type='submit' className='search-button'><FaSearch style={{color:'#7cc7de'}}/></button>
                     </form>
                     <div className='right-box'>
                         {
@@ -123,34 +131,38 @@ function Header(props) {
                                         user.content.nickname 
                                         : 
                                         role=== "SELLER"? 
-                                            user.content.companyName : user.content.adminName} 님
+                                            user.content.companyName : user.content.adminName} 님 
                                 </p>
+                                
                                     {
                                         role !== "ADMIN" &&
                                         <div className='cs-cont'
                                             onMouseEnter={handleCsEnter}
                                             onMouseLeave={handleCsLeave}>
-                                        <RiCustomerService2Fill  className="icon-button" 
+                                        <RiCustomerService2Fill 
                                             onMouseEnter={handleCsEnter}
-                                        />
+                                            className={`icon-button ${isCsOpen ? 'active' : ''}`} />
                                         {
                                             isCsOpen && <CSDropDown/>
                                         }       
                                         </div>  
                                     }
                                     {role === "ADMIN" ? 
-                                        <button type='button' className="icon-button" onClick={()=> navigate("/admin")}>⚙️</button>
+                                        <button type='button' className="icon-button" 
+                                        onClick={()=> navigate("/admin")}><AiFillSetting />
+                                        </button>
                                         :
                                         role === "BUYER" &&
-                                            <button type='button' className="icon-button"  onClick={()=>navigate("/cart")}>🛒</button>
+                                            <button type='button' className="icon-button"  
+                                            onClick={()=>navigate("/cart")}><FaShoppingCart/></button>
                                     }
                                 <div className='mypage-cont'
                                     onMouseEnter={handleProfileEnter}
                                     onMouseLeave={handleProfileLeave}>
                                   <button type='button' 
-                                    className="icon-button"
+                                    className={`icon-button ${isProfileOpen ? 'active' : ''}`}
                                     onMouseEnter={handleProfileEnter}
-                                  >👤</button>
+                                  ><BsPersonFill/></button>
                                 {
                                    isProfileOpen && <MyPageDropDown/>
                                 }

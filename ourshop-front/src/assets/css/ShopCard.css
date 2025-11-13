@@ -2,8 +2,8 @@
 
 .shop-card {
   position: relative;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
 /* hover 효과 */
 .shop-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* 랭킹 배지 */
@@ -47,7 +47,7 @@
 
 /* 상단 이름 박스 */
 .shop-name-box {
-  background: linear-gradient(to right, #a3bffa, #7cc7de, #9b8df3);
+  background: linear-gradient(90deg, #a3bffa, #7cc7de, #9b8df3);
   display: flex;
   align-items: center;
   justify-content: center;
