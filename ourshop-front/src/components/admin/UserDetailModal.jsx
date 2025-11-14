@@ -12,15 +12,41 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
   const {
     checkId,
     idMsg,
+    checkEmail,
     isIdChecked,
+    isEmailChecked,
     setIdMsg,
-    setIsIdChecked
+    setIsIdChecked,
+    setIsEmailChecked
   } = useRegister(mode);
 
   
 
   const [buyerDetail, setBuyerDetail] = useState(null);
   const [sellerDetail, setSellerDetail] = useState(null);
+
+  //휴대폰 포맷
+  const formatPhone = (value) => {
+  if (!value) return "";
+  const raw = value.replace(/\D/g, ""); // 숫자만
+
+  // 02 번호
+  if (raw.startsWith("02")) {
+    if (raw.length === 9)
+      return raw.replace(/(\d{2})(\d{3})(\d{4})/, "$1-$2-$3");
+    if (raw.length === 10)
+      return raw.replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3");
+  }
+
+  // 3자리 지역번호
+  if (raw.length === 10)
+    return raw.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+
+  if (raw.length === 11)
+    return raw.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+
+  return value;
+};
 
   useEffect(() => {
     setBuyerDetail(null);
@@ -166,11 +192,11 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                   <label>이메일</label>
                   <input type='text'
                     value={buyerDetail.buyerEmail || ''}
-                    onChange={(e) => setBuyerDetail({ ...buyerDetail, buyerEmail: e.target.value })} />
+                    onChange={(e) => setBuyerDetail({ ...buyerDetail, buyerEmail: e.target.value })} readOnly />
                 </div>
                 <div className="modal-group">
                   <label>휴대폰 번호</label>
-                  <input type='text' value={buyerDetail.phone || ''} readOnly />
+                  <input type='text' value={formatPhone(buyerDetail.phone) || ''} readOnly />
                 </div>
               </div>
               {/* 오른쪽 컬럼 */}
@@ -236,7 +262,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
       ) : (
         mode === "seller" &&
         sellerDetail && (
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-cont" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>판매자 상세 정보</h2>
               <button
@@ -268,7 +294,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                       </button>
                     </div>
                     {idMsg && (
-                      <p className={`ok ${isIdChecked ? "active" : ""}`}>{idMsg}</p>
+                      <p className={`id-ok ${isIdChecked ? "active" : ""}`}>{idMsg}</p>
                     )}
                   </div>
                   <div className="modal-group">
@@ -279,11 +305,11 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                     <label>이메일</label>
                     <input type='text'
                       value={sellerDetail.sellerEmail || ''}
-                      onChange={(e) => setSellerDetail({ ...sellerDetail, sellerEmail: e.target.value })} />
+                      onChange={(e) => setSellerDetail({ ...sellerDetail, sellerEmail: e.target.value })} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>휴대폰 번호</label>
-                    <input type='text' value={sellerDetail.phone || ''} readOnly />
+                    <input type='text' value={formatPhone(sellerDetail.phone) || ''} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>주소</label>
@@ -298,7 +324,9 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                 <div className='modal-col'>
                   <div className="modal-group">
                     <label>사업자 등록번호</label>
-                    <input type='text' value={sellerDetail.businessRegistrationNumber} readOnly />
+                    <input type='text' 
+                    value={sellerDetail.businessRegistrationNumber.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")} 
+                    readOnly />
                   </div>
                   <div className="modal-group">
                     <label>회사 소개</label>

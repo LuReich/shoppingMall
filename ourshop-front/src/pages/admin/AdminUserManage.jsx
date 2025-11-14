@@ -184,6 +184,7 @@ function AdminUserManage() {
                             <option value={mode === "buyer" ? "nickname" : "companyName"}>{mode === "buyer" ? "닉네임" : "업체명"}</option>
                             <option value={mode === "buyer" ? "buyerUid" : "sellerUid"}>UID</option>
                             <option value={mode === "buyer" ? "buyerEmail" : "sellerEmail"}>이메일</option>
+                            {mode === "seller" && <option value="businessRegistrationNumber">사업자 등록번호</option>}
                             <option value="phone">전화번호</option>
                         </select>
                         <input type="text" placeholder="검색어를 입력하세요" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} className="search-admin-user-input" />
@@ -231,7 +232,7 @@ function AdminUserManage() {
                                         <td>{user.companyName}</td>
                                         <td>{user.sellerEmail}</td>
                                         <td>{user.isActive ? "활성" : "비활성"}</td>
-                                        <td>{user.withdrawalStatus ? user.withdrawalStatus === "VOLUNTARY" ? "자발" : "강제" :'-'}</td>
+                                        <td>{user.withdrawalStatus ? user.withdrawalStatus === "VOLUNTARY" ? "탈퇴" : "추방" :'-'}</td>
                                         <td>{new Date(user.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                         <td>{user.isVerified ? "인증" : "미인증"}</td>
                                     </tr>
