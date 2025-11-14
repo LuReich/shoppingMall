@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.dto.AdminUpdateBuyerRequestDTO; // New import
+import it.back.admin.dto.AdminUpdateMeRequestDTO;
 import it.back.admin.dto.AdminUpdateSellerRequestDTO;
 import it.back.admin.entity.AdminEntity;
 import it.back.admin.service.AdminService;
@@ -58,6 +59,15 @@ public class AdminController {
         System.out.println("[AdminController] /me loginId: " + loginId);
         AdminEntity admin = adminService.getAdminEntityById(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(new AdminResponseDTO(admin)));
+    }
+
+    // 로그인 한 admin 이 자신의 정보 수정
+    @PatchMapping("/update/me")
+    public ResponseEntity<ApiResponse<AdminResponseDTO>> updateMyInfo(
+            Authentication authentication,
+            @Valid @RequestBody AdminUpdateMeRequestDTO requestDTO) {
+        AdminResponseDTO updatedAdmin = adminService.updateMyInfo(authentication.getName(), requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(updatedAdmin));
     }
 
     // admin 전용 로그인

@@ -12,7 +12,9 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.back.admin.dto.AdminResponseDTO;
 import it.back.admin.entity.AdminEntity;
+import it.back.admin.dto.AdminUpdateMeRequestDTO;
 import it.back.admin.repository.AdminRepository;
 import it.back.buyer.dto.BuyerDTO;
 import it.back.buyer.entity.BuyerEntity;
@@ -71,6 +73,39 @@ public class AdminService {
                 "ADMIN", // userRole
                 10 * 60 * 60 * 1000L // 만료(ms)
         );
+    }
+
+    @Transactional
+    public AdminResponseDTO updateMyInfo(String adminId, AdminUpdateMeRequestDTO dto) {
+        AdminEntity admin = getAdminEntityById(adminId);
+
+        // 이름 변경
+        if (dto.getAdminName() != null && !dto.getAdminName().isBlank()) {
+            admin.setAdminName(dto.getAdminName());
+        }
+
+        // 이메일 변경 (중복 체크 포함)
+        if (dto.getAdminEmail() != null && !dto.getAdminEmail().isBlank()) {
+            // 변경하려는 이메일이 현재 이메일과 다를 경우에만 중복 검사
+            if (!admin.getAdminEmail().equals(dto.getAdminEmail())) {
+                adminRepository.findByAdminEmail(dto.getAdminEmail()).ifPresent(existingAdmin -> {
+                    throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+                });
+                admin.setAdminEmail(dto.getAdminEmail());
+            }
+        }
+
+        // 비밀번호 변경
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            admin.setAdminPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        // JPA의 Dirty Checking에 의해 트랜잭션 종료 시 자동으로 update 쿼리가 실행됩니다.
+        // 명시적으로 save를 호출할 필요는 없지만, 명확성을 위해 호출할 수도 있습니다.
+        AdminEntity updatedAdmin = adminRepository.save(admin);
+
+        // DTO로 변환하여 반환
+        return new AdminResponseDTO(updatedAdmin);
     }
 
     public PageResponseDTO<BuyerDTO> findAllBuyers(PageRequestDTO pageRequestDTO, Long buyerUid, String buyerId, String nickname, String buyerEmail, String phone, Boolean isActive, String withdrawalStatus) {
