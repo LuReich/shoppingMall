@@ -265,28 +265,16 @@ function SellerInfo() {
     <div className="my-info-container">
       <h2>업체 정보 관리</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* 비밀번호 */}
-        <h3>비밀번호 변경</h3>
-        <div className="info-group">
-          <label>새 비밀번호</label>
-          <input type="password" {...register("password")} placeholder="변경할 경우 입력" />
-          <p className="error">{errors.password?.message}</p>
-        </div>
-        <div className="info-group">
-          <label>새 비밀번호 확인</label>
-          <input type="password" {...register("confirmPassword")} />
-          <p className="error">{errors.confirmPassword?.message}</p>
-        </div>
-
+    
         {/* 업체명 */}
         <h3>회원 정보</h3>
         <div className="info-group">
+          <label>판매자 UID</label>
+          <input type="text" placeholder="아이디" value={seller?.sellerUid} readOnly disabled/>
+        </div>
+        <div className="info-group">
           <label>아이디</label>
           <input type="text" placeholder="아이디" value={seller?.sellerId} readOnly disabled/>
-        </div>
-          <div className="info-group">
-          <label>UID</label>
-          <input type="text" placeholder="아이디" value={seller?.sellerUid} readOnly disabled/>
         </div>
          <div className="info-group">
           <label>판매인증</label>
@@ -393,7 +381,7 @@ function SellerInfo() {
         <div className="info-group">
           <label>주소</label>
           <div className="input-with-button">
-            <input type="text" {...register("address")} placeholder="주소" />
+            <input type="text" {...register("address")} placeholder="주소" readOnly/>
             <button type="button" onClick={openDaumPostcode}>
               주소 검색
             </button>
@@ -412,6 +400,20 @@ function SellerInfo() {
           <label>업체 상세 정보</label>
           <textarea {...register("companyDetail")} style={{height: "100px", textAlign: "start"}}/>
         </div>
+
+         {/* 비밀번호 */}
+        <h3>비밀번호 변경</h3>
+        <div className="info-group">
+          <label>새 비밀번호</label>
+          <input type="password" {...register("password")} placeholder="변경할 경우 입력" />
+          <p className="error">{errors.password?.message}</p>
+        </div>
+        <div className="info-group">
+          <label>새 비밀번호 확인</label>
+          <input type="password" {...register("confirmPassword")} />
+          <p className="error">{errors.confirmPassword?.message}</p>
+        </div>
+        
         <div className="info-btn-box">
         <button className="update-btn" type="submit">
           정보 수정하기

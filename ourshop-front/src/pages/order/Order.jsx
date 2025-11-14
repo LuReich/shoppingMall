@@ -10,8 +10,9 @@ function Order() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const {cartIds, productData} = location.state;
+  const { cartIds, productData } = location.state || {}; // location.state가 null일 경우를 대비
 
+  console.log("주문후 삭제될 아이템", cartIds);
   //바로 주문하기와 장바구니에서 주문하기 함께 사용하기 위함
   const productArr = []
   productArr.push(productData);
@@ -21,10 +22,11 @@ function Order() {
   }
 
   const {createOrder} = useOrder();
-  const {getCartList} = useCart();
+  const {getCartList, deleteSelectedCartItems} = useCart();
 
   const {mutate: createOrderMutate} = createOrder();
   const {data: cartListCont} = getCartList();
+  const {mutate: deleteItem} = deleteSelectedCartItems();
 
   const user = authStore(state => state.user?.content);
 
@@ -72,7 +74,7 @@ function Order() {
     } else if (deliveryType === "new") {
       setDeliveryInfo({
         recipient: "",
-        phone: "",
+        phone: user.phone,
         //zipcode: "",
         address: "",
         detailAddress: "",
@@ -86,6 +88,7 @@ function Order() {
     "bank": "계좌이체"
   }
 
+  console.log("수정된 배송지",deliveryInfo )
 
   //총구매가 구하는 함수
   const salePrice = (item) => {
@@ -103,6 +106,8 @@ function Order() {
 
 
   const handleSubmit = (e) => {
+    e.preventDefault();
+
     if (!cartItems || cartItems.length === 0) {
       alert("주문할 상품이 없습니다.");
       return;
@@ -132,8 +137,6 @@ function Order() {
       alert("결제수단을 선택해주세요.");
       return;
     }
-    
-    e.preventDefault();
 
     const orderData = {
       buyerUid: user?.buyerUid || user?.uid,
@@ -156,7 +159,8 @@ function Order() {
     createOrderMutate(orderData);
 
     alert(`${Kor[paymentMethod]}로 결제가 완료되었습니다!`);
-    navigate('/order/complete', {state:{paymentMethod}});
+    navigate('/buyer/mypage/shipping');
+    deleteItem(cartIds); //주문한 상품 장바구니에서 빼기
   };
 
   return (

@@ -3,22 +3,32 @@ import '../../assets/css/Cart.css';
 import styles from '../../assets/css/Button.module.css';
 import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
+import ProductSection from '../../components/home/ProductSection';
+import { useProduct } from '../../hooks/useProduct';
+import ProductCard from '../../components/product/ProductCard';
+import Loader from '../../utils/Loaders';
 
 
 function Cart(props) {
     
     const navigate = useNavigate();
 
+    const { getProductList } = useProduct(); //장바구니 비어있을시 추천
     //해당 로그인 유저의 장바구니 내역 가져오기
     const { getCartList, updateCartQuantity, deleteCartItem, deleteSelectedCartItems} = useCart();
     
 
+    const {data: productListData} = getProductList(); //장바구니 비어있을시 추천
     const { data: cartItemsCont, isLoading } = getCartList();
     const {mutate: updateQuant} = updateCartQuantity();
     const {mutate: deleteItem} = deleteCartItem();
     const {mutate: deleteSelectedItme} = deleteSelectedCartItems();
     
 
+    const productList = productListData?.content?.content || []; //장바구니 비어있을시 추천
+    //랜덤으로 4개
+    const filteredProduct = productList?.sort(() => Math.random() - 0.5).slice(0, 4);
+    
     const cartItems = cartItemsCont?.content?.content || [];
     const cartIds = cartItems?.map(x => x.cartId) || null;
 
@@ -47,13 +57,16 @@ function Cart(props) {
     }, [cartItems]);
   
 
-    if (isLoading) return <p>장바구니 불러오는 중...</p>;
-    if (!cartItems || cartItems.length === 0) return <p>장바구니가 비어 있습니다.</p>;
+  
+
+    if (isLoading) return <Loader/>;
+   
+    
 
 
     //수량 변경 시
     const handleQuantityChange = (cartId, quantity) => {
-      if(quantity <= 1){
+      if(quantity < 1){
         setIsDisabled(true);
         updateQuant({cartId, quantity: 1});
       }
@@ -149,7 +162,6 @@ function Cart(props) {
     //주문하기 버튼 클릭시
     const orderBtn = () => {
         if (!cartIds?.length) return;
-        // 상태에 의존하지 말고, 바로 최신 값으로 호출
         setCartArr(cartIds); 
         navigate('/order',{state: {cartIds}});
     }
@@ -161,7 +173,23 @@ function Cart(props) {
     return (
     <div className='cart-container'>
       <h2>장바구니</h2>
-      <div className='cart-list-box'>
+      {
+        !cartItems || cartItems.length === 0 ?
+        <>
+          <p className='cart-empty-text' style={{textAlign: 'center', fontSize: '18px'}}>장바구니가 비어있어요. 장바구니에 담을 상품을 추가하세요!</p>
+          <div className='cart-empty-recom-box'>
+            <p onClick={() => navigate('/products')}>이 상품 어때요?</p>
+             <div className='cart-product-recom'>
+              {
+                filteredProduct?.map((item) => (
+                  <ProductCard key={item.productId} product={item}/>
+                ))
+              }
+             </div>
+          </div>
+        </>
+        :
+        <div className='cart-list-box'>
       <div className='table-scroll-box'>
       <table>
         <thead>
@@ -205,8 +233,8 @@ function Cart(props) {
         </tbody>
       </table>
        <div className='delete-box'>
-          {/*<button type='button' className={styles.greyBtn} onClick={deleteSelectBtn}>선택 상품 삭제</button>*/}
-        <button type='button' className='order-delete-cart-btn' onClick={deleteAllBtn}>전체 상품 삭제</button>
+        <button type='button' className={styles.greyBtn} onClick={deleteSelectBtn}>선택 상품 삭제</button>
+        {/*<button type='button' className='order-delete-cart-btn' onClick={deleteAllBtn}>전체 상품 삭제</button>*/}
       </div>
       </div>
      
@@ -216,7 +244,7 @@ function Cart(props) {
           {
             orderItems.length > 0 ?
              orderItems?.map((item) => (
-              <p>{item.productName} X {item.quantity}</p>
+              <p className='cart-item-info'>{item.productName} X {item.quantity}</p>
               ))
              :
              <p>선택 상품이 없습니다.</p>
@@ -235,6 +263,8 @@ function Cart(props) {
         </div>
       </div>
      </div>
+      }
+      
     </div>
 
     );

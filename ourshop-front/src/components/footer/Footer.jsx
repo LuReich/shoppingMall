@@ -20,7 +20,7 @@ function Footer(props) {
                                 <li><a href="/qna">1:1 문의</a></li>
                                 <li><a href="/faq">FAQ</a></li>
                                 <li><a href={role === "BUYER"? "/buyer/mypage/shipping" 
-                                    : role === "SELLER"? "/seller/mypage/shipping" : "#"}>배송 조회</a></li>
+                                    : role === "SELLER"? "/seller/mypage/shipping" : "/#"}>배송 조회</a></li>
                             </ul>
                         </div>
                         <div>

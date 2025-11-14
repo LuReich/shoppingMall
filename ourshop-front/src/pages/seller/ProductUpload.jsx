@@ -629,7 +629,7 @@ function ProductUpload() {
       updateMutate({ productId, formData }, {
         onSuccess: () => {
           alert("상품이 성공적으로 수정되었습니다.");
-          navigate("/");
+          navigate("/seller/mypage/products");
         },
         onError: (error) => {
           console.error("상품 수정 실패:", error);
@@ -640,7 +640,7 @@ function ProductUpload() {
       createMutate(formData, {
         onSuccess: () => {
           alert("상품이 성공적으로 등록되었습니다.");
-          navigate("/");
+          navigate("/seller/mypage/products");
         },
         onError: (error) => {
           console.error("상품 등록 실패:", error);

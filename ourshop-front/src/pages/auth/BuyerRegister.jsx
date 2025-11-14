@@ -17,6 +17,7 @@ const schema = yup.object().shape({
     .matches(/^[A-Za-z0-9]+$/, "비밀번호는 영문과 숫자만 가능합니다."),
   confirmPassword: yup
     .string()
+    .required("비밀번호를 확인해주세요.")
     .oneOf([yup.ref("password"), null], "비밀번호가 일치하지 않습니다."),
   nickname: yup.string().required("닉네임을 입력해주세요."),
   buyerEmail: yup
@@ -107,7 +108,7 @@ function BuyerRegister() {
       return;
     }
     console.log("아이디", buyerId);
-    checkId.mutate(buyerId);
+    checkId.mutate({id: buyerId});
   };
 
   // 이메일 중복확인
@@ -174,8 +175,8 @@ function BuyerRegister() {
 
     console.log("백엔드 전송 데이터:", newData);
 
-    if(!isEmailChecked || !isPhoneChecked){
-      alert("이메일과 전화번호 중복체크를 진행하세요.");
+    if(!isIdChecked ||!isEmailChecked || !isPhoneChecked){
+      alert("중복확인을 완료해주세요.");
       return;
     }
     registerUser.mutate(newData);
@@ -220,7 +221,7 @@ function BuyerRegister() {
           {idMsg ? (
                 <p className={`ok ${isIdChecked ? "active" : ""}`}>{idMsg}</p>
               ) : (
-                !isIdChecked && <p className="ok">이메일 중복체크 필수</p>
+                !isIdChecked && <p className="ok">아이디 중복체크 필수</p>
               )
           }
         </div>
@@ -343,6 +344,7 @@ function BuyerRegister() {
             <option value="">성별 선택</option>
             <option value="MALE">남성</option>
             <option value="FEMALE">여성</option>
+            <option value="UNSELECTED">미선택</option>
           </select>
           <p className="error">{errors.gender?.message}</p>
         </div>
@@ -352,7 +354,7 @@ function BuyerRegister() {
           <label>주소</label>
           <div className="input-with-button">
             {/*<input type="text" {...register("zipcode")} placeholder="우편번호" readOnly />*/}
-            <input type="text" {...register("address")} placeholder="주소" />
+            <input type="text" {...register("address")} placeholder="주소" readOnly />
             <button type="button" onClick={openDaumPostcode}>
               주소 검색
             </button>
@@ -366,7 +368,7 @@ function BuyerRegister() {
           <input type="text" {...register("addressDetail")} placeholder="상세 주소" />
         </div>
 
-        <button type="submit" className="register-btn">가입하기</button>
+        <button type="submit" className="register-bb">가입하기</button>
       </form>
     </div>
   );

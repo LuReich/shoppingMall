@@ -159,7 +159,7 @@ function SellerRegister() {
   const handleCheckId = () => {
     const id = watch("seller_id");
     if (!id) return alert("아이디를 입력해주세요.");
-    checkId.mutate(id);
+    checkId.mutate({id: id});
   };
 
   const handleCheckEmail = () => {
@@ -354,7 +354,7 @@ function SellerRegister() {
           <label>주소</label>
           <div className="input-with-button">
             {/*<input type="text" {...register("zipcode")} placeholder="우편번호" readOnly />*/}
-            <input type="text" {...register("address")} placeholder="주소" />
+            <input type="text" {...register("address")} placeholder="주소" readOnly />
             <button type="button" onClick={openDaumPostcode}>
               주소 검색
             </button>

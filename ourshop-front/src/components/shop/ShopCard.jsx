@@ -50,7 +50,7 @@ function ShopCard({ shop, rank }) {
       </div>
 
       <div className="shop-info-rating">
-        <div>★ {shop.averageRating} ({shop.totalReviews.toLocaleString()}건)</div>
+        <div>★ {shop.averageRating.toFixed(1)} ({shop.totalReviews.toLocaleString()}건)</div>
         <div>
           <FaRegHeart /> ({shop.totalLikes?.toLocaleString()})
         </div>

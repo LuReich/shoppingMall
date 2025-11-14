@@ -192,6 +192,13 @@
 /* =========================
    반응형
 ========================= */
+@media (max-width: 1200px) {
+  .del-info-detail-container {
+    margin-top: 100px;
+  }
+
+}
+
 @media (max-width: 768px) {
   .del-info-detail-container {
     width: 95%;

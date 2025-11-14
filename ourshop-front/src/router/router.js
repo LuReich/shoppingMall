@@ -114,6 +114,7 @@ export const router = createBrowserRouter([
           { path: "faq/upload/:faqId", Component:UploadFaq},
           { path: "qna", Component:AdminQnAManage},
           { path: "order", Component:AdminOrderManage},
+          { path: ":mode/qna/admin/:inquiryId", Component: QnADetail },
 
         ],
   },

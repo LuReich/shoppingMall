@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Sort from '../../components/common/Sort';
 import '../../assets/css/AdminProductManage.css'; // 상품 관리 페이지 전용 스타일
 import Pagination from '../../components/common/Pagenation';
+import Loader from '../../utils/Loaders';
 
 function AdminProductManage(props) {
 
@@ -39,7 +40,7 @@ function AdminProductManage(props) {
         setSearchKeyword("");
     }, [statusFilter]);
 
-    if(isLoading) return <p>상품 리스트를 가져오는 중입니다.</p>
+    if(isLoading) return <Loader/>
     if(isError) return <p>상품 리스트 가져오기를 실패했습니다.</p>
 
     const totalPages = productList?.content?.totalPages || 0;

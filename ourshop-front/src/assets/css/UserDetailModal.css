@@ -13,7 +13,7 @@
 }
 
 /* 모달 본문 */
-.modal-content {
+.modal-cont {
   background: white;
   padding: 30px;
   border-radius: 4px;
@@ -102,6 +102,19 @@
   font-size: 14px;
   color: #495057;
 }
+
+.id-ok.active{
+  font-size: 14px;
+  color: #3bb320;
+  margin-top: 5px;
+}
+
+.id-ok{
+  font-size: 14px;
+  color: red;
+  margin-top: 5px;
+}
+
 
 .modal-with-button input,
 .modal-group input[type="text"],

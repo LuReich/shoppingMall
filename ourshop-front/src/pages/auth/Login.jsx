@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
 import "../../assets/css/Login.css";
 import { useNavigate } from "react-router";
+import Loader from "../../utils/Loaders";
 
 function Login() {
   const navigate = useNavigate();
@@ -61,6 +62,8 @@ function Login() {
     }
   };
 
+  if(isPending) return <Loader/>
+
   return (
     <div className="login-container">
       <h1>{getTitle()}</h1>
@@ -113,8 +116,7 @@ function Login() {
             type="submit"
             className="login-btn"
             disabled={isPending}
-          >
-            {isPending ? "로그인 중..." : getTitle()}
+          > 로그인
           </button>
 
           <div className="auth-btn-box">

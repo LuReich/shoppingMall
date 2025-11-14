@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { FaSearch } from "react-icons/fa";
 import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
+import Loader from '../../utils/Loaders';
 
 function RecommendShop() {
     const navigate = useNavigate();
@@ -114,7 +115,7 @@ function RecommendShop() {
     const totalPages = allShopsData?.content?.totalPages;
 
     
-    if (isLoadingLikes || isLoadingProducts || isLoadingShops) return <p>추천 업체를 찾고 있습니다...</p>;
+    if (isLoadingLikes || isLoadingProducts || isLoadingShops) return <Loader/>;
 
     return (
         <div className='shop-list-container'>

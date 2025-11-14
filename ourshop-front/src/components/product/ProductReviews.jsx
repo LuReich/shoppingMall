@@ -43,7 +43,7 @@ function ProductReviews({product}) {
         <div className="customer-reviews-section">
             <div className="section-header">
                 <div className='review-summary-box'>
-                    <p><a style={{color: '#fcc419'}}>★</a> {product?.averageRating} 점</p>
+                    <p><a style={{color: '#fcc419'}}>★</a> {product?.averageRating.toFixed(1)} 점</p>
                     <p>총 {productReviews?.length}개의 리뷰</p>
                 </div>
                 <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>

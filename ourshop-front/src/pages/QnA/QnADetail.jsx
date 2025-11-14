@@ -5,6 +5,7 @@ import '../../assets/css/QnADetail.css';
 import QnaImageModal from '../../components/qna/qnaImageModal';
 import { authStore } from '../../store/authStore';
 import { useAdmin } from '../../hooks/useAdmin';
+import Loader from '../../utils/Loaders';
 function QnADetail(props) {
     const navigate = useNavigate();
     const role = authStore(state => state.role);
@@ -15,7 +16,7 @@ function QnADetail(props) {
     const {getAdminQnADetail, answerQnA} = useAdmin();
 
     const {data: QnADetailData} = getQnADetail(mode, inquiryId);
-    const {data: adminQnADetailData} = getAdminQnADetail(mode, inquiryId);
+    const {data: adminQnADetailData, isLoading} = getAdminQnADetail(mode, inquiryId);
 
     const {mutate: deleteQnAMutate} = deleteQnA();
     const {mutate: answerQnAMutate} = answerQnA();
@@ -24,6 +25,7 @@ function QnADetail(props) {
     const [modalImage, setModalImage] = useState(null);
 
 
+    if(isLoading) return <Loader/>
 
 
     const QnADetail = isAdmin ? adminQnADetailData?.content : QnADetailData?.content;

@@ -10,6 +10,8 @@ function QnA(props) {
     const navigate = useNavigate();
     const uid = authStore(state => state.user)?.content?.buyerUid || authStore(state => state.user)?.content?.sellerUid;
     const isLogin = authStore(state => state.isLogin);
+    const role = authStore(state => state.role);
+    const isAdmin = role === "ADMIN";
     const mode = authStore(state => state.role) === "BUYER" ? "buyer" : "seller";
     const [page, setPage] = useState(0);
 

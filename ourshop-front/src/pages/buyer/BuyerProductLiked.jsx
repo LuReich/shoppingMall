@@ -4,6 +4,7 @@ import ProductCard from '../../components/product/ProductCard';
 import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
 import '../../assets/css/BuyerProductLiked.css';
+import Loader from '../../utils/Loaders';
 
 function BuyerProductLiked(props) {
 
@@ -19,7 +20,7 @@ function BuyerProductLiked(props) {
     });
 
     const {isLoading, isError} = getLikedProducts();
-    if(isLoading) return <div>로딩중...</div>;
+    if(isLoading) return <Loader/>;
     if(isError) return <div>좋아요한 상품정보 조회에 오류가 발생하였습니다.</div>;
 
     const totalPages = LikedProducts?.content?.totalPages || 0;

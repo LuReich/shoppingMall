@@ -109,9 +109,9 @@ export const useAdmin = () => {
         return useMutation({
             mutationFn: ({mode, inquiryId, data}) => adminAPI.answerQna(mode, inquiryId, data),
             onSuccess: (res, variables) => {
-                const { inquiryId } = variables;
-                qc.invalidateQueries({ queryKey: ["qnaDetail", inquiryId] });
-                qc.invalidateQueries({ queryKey: ["qnaList"] });
+                const { inquiryId, mode } = variables;
+                qc.invalidateQueries({ queryKey: ["qnaDetail" , mode, inquiryId ]});
+                qc.invalidateQueries({ queryKey: ["qnaList" , mode]});
                 console.log("문의 답변 성공:", res);
                 alert("문의 답변이 성공적으로 등록되었습니다.");
             },
