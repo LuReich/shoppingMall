@@ -7,6 +7,7 @@ import Pagination from "../../components/common/Pagenation";
 import Sort from "../../components/common/Sort";
 import { useCategory } from "../../hooks/useCategory";
 import { FaSearch } from "react-icons/fa";
+import Loader from "../../utils/Loaders";
 
 
 function ProductList() {
@@ -14,13 +15,13 @@ function ProductList() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const categoryId = params.get("categoryId");
-  const keywords = params.get("productName");
+  const keywords = params.get("productName"); //헤더 검색바 검색어 가져오기
   const categoryName = location.state?.categoryName;
 
 
   // 페이지 & 정렬 상태
   const [page, setPage] = useState(0);
-  const [sort, setSort] = useState("price,desc");
+  const [sort, setSort] = useState("likeCount,desc");
 
   //검색
   const [searchField, setSearchField] = useState("productName");
@@ -58,6 +59,13 @@ function ProductList() {
     setPage(0);
   }, [categoryId]);
 
+  //헤더의 검색바 내용 변경되면 상품리스트페이지 검색바 초기화
+  useEffect(() => {
+    setPage(0);
+    setSearchParams({});
+    setSearchKeyword("");
+  },[keywords])
+
   // 상품 리스트 가져오기
   const { getProductList } = useProduct();
   const { data: products, isLoading, isError } = getProductList({
@@ -65,12 +73,13 @@ function ProductList() {
     size: 8,
     sort,
     categoryId: categoryFilter? categoryFilter : categoryId ? Number(categoryId) : null,
+    productName: keywords,
     ...searchParams,
   });
 
 
 
-  if (isLoading) return <p>상품리스트 가져오는 중...</p>;
+  if (isLoading) return <Loader/>;
   if (isError) return <p>상품리스트 가져오기 실패</p>;
 
   // 상품 데이터
@@ -159,6 +168,7 @@ function ProductList() {
                   onChange={(e)=> setSearchField(e.target.value)}>
                   <option value="productName">상품명</option>
                   <option value="companyName">업체명</option>
+                  <option value="productId">상품 아이디</option>
                 </select>
                 <input
                     type="text"

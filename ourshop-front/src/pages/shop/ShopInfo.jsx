@@ -12,6 +12,7 @@ import ProductCard from '../../components/product/ProductCard';
 import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
 import '../../assets/css/ShopInfo.css';
+import Loader from '../../utils/Loaders';
 
 function ShopInfo() {
 
@@ -32,7 +33,7 @@ function ShopInfo() {
         sort,
     });
 
-    if (isLoading) return <p>로딩 중...</p>;
+    if (isLoading) return <Loader/>;
     if (isError) return <p>업체 정보를 가져오지 못했습니다.</p>;
 
     
@@ -67,7 +68,7 @@ function ShopInfo() {
                 
                 <div className='popularity-item'>
                     <FaStar className='popularity-icon star' />
-                    <span>리뷰 평점 {shopInfo.averageRating} ({shopInfo.totalReviews?.toLocaleString()}건)</span>
+                    <span>리뷰 평점 {shopInfo.averageRating.toFixed(1)} ({shopInfo.totalReviews?.toLocaleString()}건)</span>
                 </div>
                 <div className='popularity-item'>
                     <FaHeart className='popularity-icon heart' />
@@ -83,7 +84,7 @@ function ShopInfo() {
             {/* 상세 정보 */}
             <div className='shop-info-detail'>
                 <p><IoPerson/> UID: {shopInfo.sellerUid}</p>
-                <p><FaPhone /> {shopInfo.phone}</p>
+                <p><FaPhone /> {shopInfo.phone.replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3")}</p>
                 <p><IoIosMail /> {shopInfo.sellerEmail}</p>
                 <p><IoStorefrontSharp /> {shopInfo.address}, {shopInfo.addressDetail}</p>
             </div>

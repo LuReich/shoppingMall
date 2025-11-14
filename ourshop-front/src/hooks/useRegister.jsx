@@ -19,22 +19,27 @@ export const useRegister = (mode) => {
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isPhoneChecked, setIsPhoneChecked] = useState(false);
   const [isBusinessNumberChecked, setIsBusinessNumberChecked] = useState(false);
+// 아이디 중복확인
+const checkId = useMutation({
+  // ✅ mutationFn에서 전달받는 변수들을 객체로 구조분해
+  mutationFn: ({ id, isAdmin = false, uid = null }) =>
+    registerAPI.checkId(mode, id, isAdmin, uid),
 
-  // 아이디 중복확인
-  const checkId = useMutation({
-    mutationFn: (id) => registerAPI.checkId(mode, id),
-    onSuccess: (res) => {
-      const msg = res.content;
-      setIdMsg(msg);
-      setIsIdChecked(true);
-    },
-    onError: (err) => { 
-      const msg = err.response?.data?.content;
-      console.error("아이디 중복확인 실패:", err);
-      setIdMsg(msg);
-      setIsIdChecked(false);
-    },
-  })
+  onSuccess: (res) => {
+    const msg = res?.content;
+    console.log("아이디 중복확인 성공:", res);
+    setIdMsg(msg);
+    setIsIdChecked(true);
+  },
+
+  onError: (err) => {
+    const msg = err.response?.data?.content;
+    console.error("아이디 중복확인 실패:", err);
+    setIdMsg(msg);
+    setIsIdChecked(false);
+  },
+});
+
 
   // 이메일 중복확인
   const checkEmail = useMutation({

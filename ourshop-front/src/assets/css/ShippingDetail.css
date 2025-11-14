@@ -310,7 +310,7 @@
 /* ===== 테이블 열 너비 조정 ===== */
 .shipping-table th:nth-child(1), /* 주문일자 */
 .shipping-table td:nth-child(1) {
-  width: 15%;
+  width: 13%;
 }
 
 .shipping-table th:nth-child(2), /* 주문 아이디 */
@@ -320,17 +320,17 @@
 
 .shipping-table th:nth-child(3), /* 주문상세 아이디 */
 .shipping-table td:nth-child(3) {
-  width: 15%;
+  width: 12%;
 }
 
 .shipping-table th:nth-child(4), /* 상품정보 */
 .shipping-table td:nth-child(4) {
-  width: 23%; /* 상품정보 넓게 */
+  width: 30%; /* 상품정보 넓게 */
 }
 
 .shipping-table th:nth-child(5), /* 수량 */
 .shipping-table td:nth-child(5) {
-  width: 8%;
+  width: 5%;
 }
 
 .shipping-table th:nth-child(6), /* 주문금액 */

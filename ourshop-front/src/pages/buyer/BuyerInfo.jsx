@@ -353,7 +353,7 @@ useEffect(() => {
         <div className="form-group">
           <label>주소</label>
           <div className="input-with-button">
-            <input type="text" {...register("address")} placeholder="주소" />
+            <input type="text" {...register("address")} placeholder="주소" readOnly/>
             <button type="button" onClick={openDaumPostcode}>
               주소 검색
             </button>

@@ -8,7 +8,7 @@ export const useOrder = () => {
     // 구매자 주문 목록 조회
   const getBuyerOrders = (params = {}) =>
     useQuery({
-      queryKey: ["buyerOrders"],
+      queryKey: ["buyerOrders", params],
       queryFn: ()=> orderAPI.getBuyerOrders(params),
     });
 
@@ -27,6 +27,7 @@ export const useOrder = () => {
       onSuccess: (data) => {
         console.log("주문 생성 완료:", data);
         qc.invalidateQueries(["buyerOrders"]);
+        qc.invalidateQueries(["cartList"]);
         alert("결제가 완료되었습니다.")
       },
       onError: (err) => {

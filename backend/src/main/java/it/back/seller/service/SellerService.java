@@ -24,6 +24,8 @@ import it.back.common.utils.JWTUtils;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.dto.SellerPublicDTO;
 import it.back.seller.dto.SellerPublicListDTO;
+import it.back.product.entity.ProductEntity;
+import it.back.product.repository.ProductRepository;
 import it.back.seller.dto.SellerRegisterDTO; // New import
 import it.back.seller.dto.SellerResponseDTO;
 import it.back.seller.dto.SellerUpdateRequestDTO;
@@ -44,6 +46,7 @@ public class SellerService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
     private final Validator validator;
+    private final ProductRepository productRepository;
 
 
     public String login(LoginRequestDTO dto) {
@@ -380,6 +383,8 @@ public class SellerService {
         SellerEntity seller = sellerRepository.findById(sellerUid)
                 .orElseThrow(() -> new IllegalArgumentException("Seller not found with uid: " + sellerUid));
 
+        boolean previousIsActive = seller.isActive();
+
         // Update sellerId
         if (dto.getSellerId() != null && !dto.getSellerId().isBlank()) {
             if (!seller.getSellerId().equals(dto.getSellerId())) { // Only check uniqueness if ID is actually changed
@@ -425,6 +430,24 @@ public class SellerService {
 
         // Update withdrawalReason
         seller.setWithdrawalReason(dto.getWithdrawalReason());
+
+        // === Product status update logic based on isActive change ===
+        if (dto.getIsActive() != null && previousIsActive != dto.getIsActive()) {
+            List<ProductEntity> products = productRepository.findAllBySellerSellerUid(sellerUid);
+            if (dto.getIsActive()) { // Status changed to Active (false -> true)
+                seller.setWithdrawalStatus(null); // Clear withdrawal status on restoration
+                for (ProductEntity product : products) {
+                    product.setIsDeleted(false);
+                    product.setDeletedByAdminReason(null);
+                    product.setDeletedBySellerReason(null);
+                }
+            } else { // Status changed to Inactive (true -> false)
+                seller.setWithdrawalStatus(SellerEntity.WithdrawalStatus.FORCED_BY_ADMIN);
+                for (ProductEntity product : products) {
+                    product.setIsDeleted(true);
+                }
+            }
+        }
 
         // Update SellerDetailEntity fields
         SellerDetailEntity detail = seller.getSellerDetail();
@@ -474,5 +497,11 @@ public class SellerService {
         seller.setWithdrawalStatus(SellerEntity.WithdrawalStatus.VOLUNTARY);
         seller.setWithdrawalReason(withdrawalReason);
         sellerRepository.save(seller);
+
+        List<ProductEntity> products = productRepository.findAllBySellerSellerUid(seller.getSellerUid());
+        for (ProductEntity product : products) {
+            product.setIsDeleted(true);
+            product.setDeletedBySellerReason("자진 탈퇴로 인한 상품 삭제");
+        }
     }
 }

@@ -42,11 +42,13 @@ export const useCart = () => {
   const deleteCartItem = () => {
     return useMutation({
       mutationFn: (cartId) => cartAPI.deleteItem(cartId),
-      onSuccess: () => {
+      onSuccess: (res) => {
         qc.invalidateQueries(["cartList"]);
-        alert("상품이 장바구니에서 삭제되었습니다.");
+        console.log("삭제 성공",res);
       },
-      onError: () => alert("삭제 실패"),
+      onError: (err) => {
+        console.log("삭제 실패", err)
+      },
     });
   };
 
@@ -56,9 +58,9 @@ export const useCart = () => {
       mutationFn: (cartIds) => cartAPI.deleteSelectedItems(cartIds),
       onSuccess: () => {
         qc.invalidateQueries(["cartList"]);
-        alert("상품이 삭제되었습니다.");
+        console.log("삭제 성공",res);
       },
-      onError: () => alert("선택 삭제 실패"),
+      onError: (err) => console.log("삭제 실패", err)
     });
   };
 

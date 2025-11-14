@@ -123,6 +123,11 @@ function BuyerShippingDetail(props) {
                               <div className="status-box">
                                   <p>{statusKor[detail.orderDetailStatus]}</p>
                                   <div className="status-btn-box">
+                                    {(detail.orderDetailStatus === "PAID") 
+                                      && (
+                                           <button type="button" onClick={() => navigate("/buyer/mypage/delivery", {state: {order, detail}})}>주문 조회</button>
+                                          )
+                                    }
                                     {(detail.orderDetailStatus === "SHIPPING" ||
                                         detail.orderDetailStatus === "DELIVERED") 
                                       && (

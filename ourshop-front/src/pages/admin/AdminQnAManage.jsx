@@ -4,6 +4,7 @@ import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
 import '../../assets/css/AdminQnAManage.css';
 import { useNavigate } from 'react-router';
+import Loader from '../../utils/Loaders';
 
 function AdminQnAManage(props) {
 
@@ -65,7 +66,7 @@ function AdminQnAManage(props) {
         refetch();
     };
 
-    if (isLoading) return <p>로딩중...</p>;
+    if (isLoading) return <Loader/>;
     if (isError) return <p>회원 리스트를 불러올 수 없습니다.</p>;
  
     const userList = userListData?.content?.content;
@@ -212,7 +213,7 @@ function AdminQnAManage(props) {
                     <tbody>
                         {
                             userList?.length > 0 ? userList.map(u => (
-                                <tr key={u.inquiryId} onClick={() => navigate(`/${mode}/qna/${u.inquiryId}`)}>
+                                <tr key={u.inquiryId} onClick={() => navigate(`/admin/${mode}/qna/admin/${u.inquiryId}`)}>
                                     <td>{u.inquiryId}</td>
                                     <td>{u.buyerNickname || u.sellerCompanyName}</td>
                                     <td style={u.inquiryStatus === "PENDING" ? {color: "red"} : {color: "green"}}>{Kor[u.inquiryStatus]}</td>

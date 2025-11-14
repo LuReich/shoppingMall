@@ -4,6 +4,7 @@ import Sort from '../../components/common/Sort';
 import '../../assets/css/AdminUserManage.css';
 import Pagination from '../../components/common/Pagenation';
 import UserDetailModal from '../../components/admin/UserDetailModal';
+import Loader from '../../utils/Loaders';
 
 function AdminUserManage() {
     const [mode, setMode] = useState("buyer");
@@ -69,7 +70,7 @@ function AdminUserManage() {
         refetch();
     };
 
-    if (isLoading) return <p>로딩중...</p>;
+    if (isLoading) return <Loader/>;
     if (isError) return <p>회원 리스트를 불러올 수 없습니다.</p>;
  
 
@@ -146,11 +147,11 @@ function AdminUserManage() {
                         </label>
                         <label className='admin-user-radio-wrap'>
                             <input type='radio' name='withdrawalStatus' value='VOLUNTARY' checked={withdrawalStatusFilter === "VOLUNTARY"} onChange={(e) => setWithdrawalStatusFilter(e.target.value)} />
-                            <span>자발</span>
+                            <span>탈퇴</span>
                         </label>
                         <label className='admin-user-radio-wrap'>
                             <input type='radio' name='withdrawalStatus' value='FORCED_BY_ADMIN' checked={withdrawalStatusFilter === "FORCED_BY_ADMIN"} onChange={(e) => setWithdrawalStatusFilter(e.target.value)} />
-                            <span>강제</span>
+                            <span>추방</span>
                         </label>
                     </div>
                 </div>
@@ -181,6 +182,7 @@ function AdminUserManage() {
                         <select className='search-admin-user-select' value={searchField} onChange={(e) => setSearchField(e.target.value)}>
                             <option value={mode === "buyer" ? "buyerId" : "sellerId"}>아이디</option>
                             <option value={mode === "buyer" ? "nickname" : "companyName"}>{mode === "buyer" ? "닉네임" : "업체명"}</option>
+                            <option value={mode === "buyer" ? "buyerUid" : "sellerUid"}>UID</option>
                             <option value={mode === "buyer" ? "buyerEmail" : "sellerEmail"}>이메일</option>
                             <option value="phone">전화번호</option>
                         </select>

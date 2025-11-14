@@ -6,6 +6,7 @@ import Pagination from '../../components/common/Pagenation';
 import { FaSearch } from "react-icons/fa";
 import Sort from '../../components/common/Sort';
 import { Navigate, useNavigate } from 'react-router';
+import Loader from '../../utils/Loaders';
 
 
 function ShopList(props) {
@@ -42,7 +43,7 @@ function ShopList(props) {
       }, [verificationFilter]);
       
       
-    if(isLoading) return <p>업체 리스트를 가져오는 중입니다.</p>
+    if(isLoading) return <Loader/>;
     if(isError) return <p>업체 리스트 가져오기를 실패했습니다.</p>
 
     const ShopList = PublicShopListData?.content?.content;
@@ -85,13 +86,13 @@ function ShopList(props) {
                       <input type='radio' name='status' value={true} 
                         checked={verificationFilter === "true"} 
                         onChange={(e) => setVerificationFilter(e.target.value)} />
-                      <span>판매인증</span>
+                      <span>판매 인증</span>
                     </label>
                     <label className='product-radio-wrap'>
                       <input type='radio' name='status' value={false} 
                         checked={verificationFilter === "false"} 
                         onChange={(e) => setVerificationFilter(e.target.value)} />
-                      <span>판매미인증</span>
+                      <span>판매 미인증</span>
                     </label>
                     <label className='product-radio-wrap' onClick={() =>navigate('/shop/recommend')}>나에게 딱 맞는 업체를 추천받고 싶으신가요?</label>
                  </div>

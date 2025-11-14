@@ -8,7 +8,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
   const { data: detailData, isLoading, isError } = getUserDetail(mode, uid);
   const { mutate: mutateUpdateUser } = updateUser();
 
-  // ✅ useRegister 훅 연결
+  // useRegister 훅 연결
   const {
     checkId,
     idMsg,
@@ -16,6 +16,8 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
     setIdMsg,
     setIsIdChecked
   } = useRegister(mode);
+
+  
 
   const [buyerDetail, setBuyerDetail] = useState(null);
   const [sellerDetail, setSellerDetail] = useState(null);
@@ -34,7 +36,13 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
         nickname: detail.nickname,
         buyerEmail: detail.buyerEmail,
         phone: detail.phone,
+        birth: detail.birth, // 추가
+        gender: detail.gender, // 추가
+        address: detail.address, // 추가
+        addressDetail: detail.addressDetail, // 추가
         isActive: detail.isActive,
+        withdrawalStatus: detail.withdrawalStatus, // 추가
+        withdrawalReason: detail.withdrawalReason, // 추가
       });
     }
   }, [detailData, mode]);
@@ -48,13 +56,19 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
         companyName: detail.companyName,
         sellerEmail: detail.sellerEmail,
         phone: detail.phone,
+        businessRegistrationNumber: detail.businessRegistrationNumber, // 추가
+        address: detail.address, // 추가
+        addressDetail: detail.addressDetail, // 추가
+        companyInfo: detail.companyInfo, // 추가
         isVerified: detail.isVerified,
         isActive: detail.isActive,
+        withdrawalStatus: detail.withdrawalStatus, // 추가
+        withdrawalReason: detail.withdrawalReason, // 추가
       });
     }
   }, [detailData, mode]);
 
-  // ✅ 아이디 값 변경 시 중복확인 초기화 or 자동통과
+  // 아이디 값 변경 시 중복확인 초기화 or 자동통과
   useEffect(() => {
     const currentId =
       mode === "buyer" ? buyerDetail?.buyerId : sellerDetail?.sellerId;
@@ -66,7 +80,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
     if (!currentId) return;
     if (currentId === originalId) {
       setIsIdChecked(true);
-      setIdMsg("기존 아이디 그대로입니다.");
+      setIdMsg("이전과 동일한 아이디입니다.");
     } else {
       setIsIdChecked(false);
       setIdMsg("");
@@ -76,14 +90,15 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
   if (isLoading) return <p>로딩중...</p>;
   if (isError) return <p>회원 상세 정보를 불러올 수 없습니다.</p>;
 
-  // ✅ 아이디 중복확인 핸들러
+  console.log("회원정보" ,detailData );
+  // 아이디 중복확인 핸들러
   const handleCheckId = () => {
     const id = mode === "buyer" ? buyerDetail?.buyerId : sellerDetail?.sellerId;
     if (!id) return alert("아이디를 입력해주세요.");
-    checkId.mutate(id);
+    checkId.mutate({ id: id, isAdmin: true, uid: uid });
   };
 
-  // ✅ 수정 시 중복확인 검증
+  // 수정 시 중복확인 검증
   const handleUpdate = (e) => {
     e.preventDefault();
 
@@ -108,7 +123,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
   return (
     <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}>
       {mode === "buyer" && buyerDetail ? (
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-cont" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
             <h2>구매자 상세 정보</h2>
             <button onClick={() => setIsModalOpen(false)} className="close-btn">X</button>
@@ -132,30 +147,30 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                     </button>
                   </div>
                   {idMsg && (
-                    <p className={`ok ${isIdChecked ? "active" : ""}`}>{idMsg}</p>
+                    <p className={`id-ok ${isIdChecked ? "active" : ""}`}>{idMsg}</p>
                   )}
                 </div>
                 <div className="modal-group">
                   <label>닉네임</label>
-                  <input type='text' value={buyerDetail.nickname} readOnly />
+                  <input type='text' value={buyerDetail.nickname || ''} readOnly />
                 </div>
                 <div className="modal-group">
                   <label>생년월일</label>
-                  <input type='text' value={buyerDetail.birth} readOnly />
+                  <input type='text' value={buyerDetail.birth || ''} readOnly />
                 </div>
                 <div className="modal-group">
                   <label>성별</label>
-                  <input type='text' value={buyerDetail.gender} readOnly />
+                  <input type='text' value={buyerDetail.gender || ''} readOnly />
                 </div>
                 <div className="modal-group">
                   <label>이메일</label>
                   <input type='text'
-                    value={buyerDetail.buyerEmail}
+                    value={buyerDetail.buyerEmail || ''}
                     onChange={(e) => setBuyerDetail({ ...buyerDetail, buyerEmail: e.target.value })} />
                 </div>
                 <div className="modal-group">
                   <label>휴대폰 번호</label>
-                  <input type='text' value={buyerDetail.phone} readOnly />
+                  <input type='text' value={buyerDetail.phone || ''} readOnly />
                 </div>
               </div>
               {/* 오른쪽 컬럼 */}
@@ -166,7 +181,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                 </div>
                 <div className="modal-group">
                   <label>상세주소</label>
-                  <input type='text' value={buyerDetail.addressDetail} readOnly />
+                  <input type='text' value={buyerDetail.addressDetail || ''} readOnly />
                 </div>
                 <div className="modal-group">
                   <label>계정 활성 상태</label>
@@ -200,7 +215,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                 </div>
                 <div className="modal-group">
                   <label>탈퇴 상태</label>
-                  <input type='text' value={buyerDetail.withdrawalStatus || '-'} readOnly />
+                  <input type='text' value={buyerDetail.withdrawalStatus || ''} readOnly />
                 </div>
                 <div className="modal-group">
                   <label>탈퇴 사유</label>
@@ -258,25 +273,25 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                   </div>
                   <div className="modal-group">
                     <label>회사명</label>
-                    <input type='text' value={sellerDetail.companyName} readOnly />
+                    <input type='text' value={sellerDetail.companyName || ''} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>이메일</label>
                     <input type='text'
-                      value={sellerDetail.sellerEmail}
+                      value={sellerDetail.sellerEmail || ''}
                       onChange={(e) => setSellerDetail({ ...sellerDetail, sellerEmail: e.target.value })} />
                   </div>
                   <div className="modal-group">
                     <label>휴대폰 번호</label>
-                    <input type='text' value={sellerDetail.phone} readOnly />
+                    <input type='text' value={sellerDetail.phone || ''} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>주소</label>
-                    <input type='text' value={sellerDetail.address} readOnly />
+                    <input type='text' value={sellerDetail.address || ''} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>상세주소</label>
-                    <input type='text' value={sellerDetail.addressDetail} readOnly />
+                    <input type='text' value={sellerDetail.addressDetail || ''} readOnly />
                   </div>
                 </div>       
                 {/* 오른쪽 컬럼 */}
@@ -287,7 +302,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                   </div>
                   <div className="modal-group">
                     <label>회사 소개</label>
-                    <textarea value={sellerDetail.companyInfo} readOnly />
+                    <textarea value={sellerDetail.companyInfo || ''} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>판매 승인</label>
@@ -342,7 +357,7 @@ function UserDetailModal({ uid, mode, setIsModalOpen }) {
                   </div>
                   <div className="modal-group">
                     <label>탈퇴 상태</label>
-                    <input type='text' value={sellerDetail.withdrawalStatus || '-'} readOnly />
+                    <input type='text' value={sellerDetail.withdrawalStatus || ''} readOnly />
                   </div>
                   <div className="modal-group">
                     <label>탈퇴 사유</label>

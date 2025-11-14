@@ -74,10 +74,14 @@
 
 .productName {
     font-size: 16px;
-    margin: 0 0 10px 0;
     line-height: 1.4;
     flex-grow: 1;
-    /* 이름이 길어도 가격이 아래에 붙도록 */
+}
+
+.productId{
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 10px;
 }
 
 .productPrice {

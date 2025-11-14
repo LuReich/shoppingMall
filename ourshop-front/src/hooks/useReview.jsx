@@ -24,6 +24,9 @@ export const useReviews = () =>{
                 console.log("리뷰 등록 성공 res", res);
                 const msg = res?.content?.content || "리뷰가 성공적으로 등록되었습니다.";
                 qc.invalidateQueries(["reviews"]);
+                qc.invalidateQueries(["productList"]);
+                qc.invalidateQueries(["product"]);
+       
                 alert(msg);
                 navigate('/buyer/mypage/review');
             },

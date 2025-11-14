@@ -16,7 +16,7 @@ function ProductSection() {
   const { data, isLoading, isError } = getProductList({ page: 0, size: 8 });
   const { data: PublicShopListData } = getPublicShopList({ size: 8, sort: "createAt,desc" });
   
-  const products = data?.content?.content || [];
+  const products = data?.content?.content.sort(() => Math.random() - 0.5).slice(0, 8)|| [];
   const shops = PublicShopListData?.content?.content || [];
 
   // 페이지 상태 (0 -> 첫 4개, 1 -> 다음 4개)

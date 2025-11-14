@@ -3,12 +3,21 @@ import api from "../axios/axios";
 export const registerAPI = {
 
   // 아이디 중복 확인  (판매자, 구매자)
-  checkId: async (mode, id) => {
-    console.log("[API] 아이디 중복확인 요청:", { id });
-    const response = await api.post(`/${mode}/check-${mode}Id`, { [`${mode}Id`]: id });
-    return response.data; // { success, message, data }
-  
-  },
+ checkId: async (mode, id, isAdmin = false, uid = null) => {
+  console.log("[API] 아이디 중복확인 요청:", { mode, id, isAdmin, uid });
+
+  // 기본 요청 데이터 (buyerId 또는 sellerId)
+  const payload = { [`${mode}Id`]: id };
+
+  // 관리자일 경우 buyerUid / sellerUid 추가
+  if (isAdmin && uid) {
+    payload[`${mode}Uid`] = uid;
+  }
+
+  const response = await api.post(`/${mode}/check-${mode}Id`, payload);
+  return response.data; // { success, message, data }
+},
+
   // 이메일 중복 확인 (판매자, 구매자)
   checkEmail: async (mode, email) => {
     console.log("[API] 이메일 중복확인 요청:", { email });

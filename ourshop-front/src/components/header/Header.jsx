@@ -14,10 +14,6 @@ import { AiFillSetting } from "react-icons/ai";
 import { BsPersonFill } from "react-icons/bs";
 
 
-
-
-
-
 function Header(props) {
 
     const navigate = useNavigate();

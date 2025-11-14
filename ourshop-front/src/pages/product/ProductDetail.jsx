@@ -12,6 +12,7 @@ import LikesBtn from '../../components/common/LikesBtn';
 import RecommendBox from '../../components/recommendation/RecommendBox';
 import { IoIosArrowUp } from "react-icons/io";
 import ProductQnA from '../QnA/QnA';
+import Loader from '../../utils/Loaders';
 
 
 function ProductDetail() {
@@ -106,7 +107,7 @@ function ProductDetail() {
     },[]);
 
 
-  if (isLoading) return <p>상품 조회중...</p>;
+  if (isLoading) return <Loader/>;
   if (isError) return <p>상품 조회에 실패했습니다.</p>;
 
 
@@ -270,13 +271,13 @@ function ProductDetail() {
              {(role=="BUYER" || !isLogin) && <LikesBtn styleProps={"like-box"} product={product}/>}
           </div>
           <div className="short-desc">
-            <p className='product-n'>상품품번  {product.productId}</p>
+            <p className='product-n'>상품 아이디  {product.productId}</p>
             <p className='company-name' onClick={() => navigate('/shop',  { state: { sellerUid: product.sellerUid } })}>{product.companyName}</p>
           </div>
 
           <div className="review-summary" onClick={handleScrollToReviews} style={{cursor: 'pointer'}}>
             <span className="stars">{'★'.repeat(Math.round(product.averageRating))}</span>
-            <span className="rating">{product.averageRating} ({reviewLength}개 리뷰)</span>
+            <span className="rating">{product.averageRating.toFixed(1)} ({reviewLength}개 리뷰)</span>
           </div>
 
           <div className="price-section">

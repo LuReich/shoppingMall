@@ -22,6 +22,8 @@ import it.back.common.dto.LoginRequestDTO;
 import it.back.common.pagination.PageRequestDTO;
 import it.back.common.pagination.PageResponseDTO;
 import it.back.common.utils.JWTUtils;
+import it.back.product.entity.ProductEntity;
+import it.back.product.repository.ProductRepository;
 import it.back.seller.dto.SellerDTO;
 import it.back.seller.entity.SellerEntity;
 import it.back.seller.repository.SellerRepository;
@@ -46,6 +48,7 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
     private final Validator validator;
+    private final ProductRepository productRepository;
 
     public AdminEntity getAdminEntityById(String adminId) {
         return adminRepository.findByAdminId(adminId)

@@ -35,7 +35,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
     @Query("UPDATE ProductEntity p SET p.likeCount = p.likeCount + :amount WHERE p.productId = :productId")
     void updateLikeCount(@Param("productId") Long productId, @Param("amount") int amount);
 
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("UPDATE ProductEntity p SET p.averageRating = :averageRating WHERE p.productId = :productId")
     void updateAverageRating(@Param("productId") Long productId, @Param("averageRating") double averageRating);
+
+    List<ProductEntity> findAllBySellerSellerUid(Long sellerUid);
 }

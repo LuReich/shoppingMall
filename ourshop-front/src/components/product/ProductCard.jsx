@@ -31,6 +31,8 @@ const ProductCard = ({ product }) => {
             </div>
             <div className={styles.productInfo}>
                 <h3 className={styles.productName}>{product?.productName}</h3>
+                {/*<p className={styles.productId}>상품 아이디{product?.productId}</p>*/}
+                <p className={styles.productId}>{product?.companyName}</p>
                 <div className={styles.productPrice}>
                     {product?.originalPrice && (
                         <span className={styles.originalPrice}>{product?.originalPric?.toLocaleString()}원</span>
@@ -38,7 +40,7 @@ const ProductCard = ({ product }) => {
                     <span className={styles.salePrice}>{product?.price?.toLocaleString()}원</span>
                 </div>
                 <div className={styles.productRatingLike}>
-                    <div>★ {product.averageRating} ({reviewCount.toLocaleString()} 건)</div>
+                    <div>★ {product.averageRating.toFixed(1)} ({reviewCount.toLocaleString()} 건)</div>
                     <div>
                         <FaRegHeart/> ({product.likeCount?.toLocaleString()})
                     </div> 

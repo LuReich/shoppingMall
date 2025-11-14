@@ -3,6 +3,7 @@ import ShopCard from '../../components/shop/ShopCard';
 import { useSeller } from '../../hooks/useSeller';
 import '../../assets/css/BestShopList.css';
 import Pagination from '../../components/common/Pagenation';
+import Loader from '../../utils/Loaders';
 
 function BestShopList(props) {
 
@@ -15,7 +16,7 @@ function BestShopList(props) {
         sort: "averageRating,desc" // 평점 높은 순으로 변경
     });
 
-    if(isLoading) return <p>업체 리스트를 가져오는 중입니다.</p>
+    if(isLoading) return <Loader/>
     if(isError) return <p>업체 리스트 가져오기를 실패했습니다.</p>
 
     const ShopList = PublicShopListData?.content?.content;

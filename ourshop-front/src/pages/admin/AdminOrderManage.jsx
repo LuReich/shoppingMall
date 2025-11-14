@@ -8,6 +8,7 @@ import Pagination from '../../components/common/Pagenation';
 import '../../assets/css/AdminOrderManage.css';
 import { date } from 'yup';
 import SellerOrderDetailInfoModal from '../../components/seller/SellerOrderDetailInfoModal';
+import Loader from '../../utils/Loaders';
 
 function AdminOrderManage(props) {
     
@@ -109,7 +110,7 @@ function AdminOrderManage(props) {
     };
 
 
-    if (isLoading) return <p>판매내역을 조회중입니다.</p>;
+    if (isLoading) return <Loader/>;
     if (isError) return <p>판매내역 조회에 실패했습니다.</p>;
 
     const orderList = orderListData?.content?.content || [];
