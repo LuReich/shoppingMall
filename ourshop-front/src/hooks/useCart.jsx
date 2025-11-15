@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cartAPI } from "../api/cartAPI";
+import { useNavigate } from "react-router";
 
 export const useCart = () => {
   const qc = useQueryClient();
+  const navigate = useNavigate();
 
   /* ------------------------------ QUERY ------------------------------ */
   // 장바구니 목록 조회
@@ -21,6 +23,12 @@ export const useCart = () => {
       onSuccess: () => {
         qc.invalidateQueries(["cartList"]);
         alert("상품이 장바구니에 추가되었습니다.");
+
+        if(confirm("장바구니로 이동하시겠습니까?")){
+          navigate('/cart');
+        }else{
+          navigate(-1);
+        }
       },
       onError: () => alert("장바구니 추가 실패"),
     });

@@ -8,6 +8,7 @@ import { IoPerson } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import { BsShieldFillCheck } from "react-icons/bs";
+import { FaIdCard } from "react-icons/fa";
 import ProductCard from '../../components/product/ProductCard';
 import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
@@ -87,6 +88,7 @@ function ShopInfo() {
                 <p><FaPhone /> {shopInfo.phone.replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3")}</p>
                 <p><IoIosMail /> {shopInfo.sellerEmail}</p>
                 <p><IoStorefrontSharp /> {shopInfo.address}, {shopInfo.addressDetail}</p>
+                <p><FaIdCard/> 사업자 등록번호: {shopInfo.businessRegistrationNumber.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")}</p>
             </div>
 
             {/* 판매 상품 영역 */}

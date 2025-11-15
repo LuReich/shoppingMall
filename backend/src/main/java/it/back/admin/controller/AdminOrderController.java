@@ -41,13 +41,13 @@ public class AdminOrderController {
     }
 
     @GetMapping("/orders/{orderId}")
-    public ResponseEntity<ApiResponse<AdminOrderResponseDTO>> getOrderById(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<AdminOrderResponseDTO>> getOrderById(@PathVariable("orderId") Long orderId) {
         AdminOrderResponseDTO order = adminOrderService.getOrderById(orderId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(order));
     }
 
     @GetMapping("/orderDetail/{orderDetailId}")
-    public ResponseEntity<ApiResponse<AdminOrderDetailResponseDTO>> getOrderDetailById(@PathVariable Long orderDetailId) {
+    public ResponseEntity<ApiResponse<AdminOrderDetailResponseDTO>> getOrderDetailById(@PathVariable("orderDetailId") Long orderDetailId) {
         AdminOrderDetailResponseDTO orderDetail = adminOrderService.getOrderDetailById(orderDetailId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.ok(orderDetail));
     }

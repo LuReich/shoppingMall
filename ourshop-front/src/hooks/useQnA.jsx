@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { qnaAPI } from "../api/qnaAPI";
+import { useNavigate } from "react-router";
 
 
 export const useQnA = () =>{
     const qc = useQueryClient();
-
+    const navigate = useNavigate();
 
     const getQnAList = (mode, params = {}, uid) => {
         return useQuery({
@@ -40,9 +41,12 @@ export const useQnA = () =>{
         return useMutation({
             mutationFn: ({mode, inquiryId, formData}) => qnaAPI.update({mode, inquiryId, formData}),
             onSuccess: (res, {mode, inquiryId}) => {
-                qc.invalidateQueries(["qnaDetail", mode, inquiryId]);
+                qc.invalidateQueries({ queryKey: ["qnaDetail"], exact: false });
+                 qc.invalidateQueries({ queryKey: ["qnaList"], exact: false });
+
                 console.log("QnA 수정 성공", res);
                 alert(res?.content?.content || "QnA 수정 성공");
+                navigate(-1);
             },
             onError: (err) => {
                 console.error(err);

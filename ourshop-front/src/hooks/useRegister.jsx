@@ -21,7 +21,7 @@ export const useRegister = (mode) => {
   const [isBusinessNumberChecked, setIsBusinessNumberChecked] = useState(false);
 // 아이디 중복확인
 const checkId = useMutation({
-  // ✅ mutationFn에서 전달받는 변수들을 객체로 구조분해
+  //  mutationFn에서 전달받는 변수들을 객체로 구조분해
   mutationFn: ({ id, isAdmin = false, uid = null }) =>
     registerAPI.checkId(mode, id, isAdmin, uid),
 
@@ -112,7 +112,7 @@ const checkId = useMutation({
       console.log(res);
       updateUser(variables.data);
       alert(res.message || "회원정보가 수정되었습니다!");
-      navigate('/');
+      navigate(`/${mode}/mypage/info`);
     },
     onError: (err) => {
       console.error("회원정보 수정 실패:", err);

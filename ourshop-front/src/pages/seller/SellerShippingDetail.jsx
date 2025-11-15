@@ -144,6 +144,8 @@ function SellerShippingDetail(props) {
                     <option value="recipientName">수령인 이름</option>
                     <option value="recipientPhone">수령인 전화번호</option>
                     <option value="recipientAddress">배송 주소</option>
+                    <option value="order.orderId">주문 아이디</option>
+                    <option value="orderDetailId">주문상세 아이디</option>
                  </select>
                  <input
                     type="text"

@@ -318,7 +318,7 @@
   width: 10%;
 }
 
-.shipping-table th:nth-child(3), /* 주문상세 아이디 */
+.shipping-table th:nth-child(3), /* 주문 상태 */
 .shipping-table td:nth-child(3) {
   width: 12%;
 }
@@ -330,7 +330,7 @@
 
 .shipping-table th:nth-child(5), /* 수량 */
 .shipping-table td:nth-child(5) {
-  width: 5%;
+  width: 10%;
 }
 
 .shipping-table th:nth-child(6), /* 주문금액 */
@@ -342,6 +342,8 @@
 .shipping-table td:nth-child(7) {
   width: 15%;
 }
+
+
 
 
 /* 반응형 */

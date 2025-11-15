@@ -33,6 +33,15 @@ function DeliveryInfo() {
         <h4>배송지 정보</h4>
         <p>{order.recipientName} ({order.buyerPhone.replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3")})</p>
         <p>{order.recipientAddress} {order.recipientAddressDetail}</p>
+        <h4 style={{ marginTop: "20px" }}>주문 정보</h4>
+        <p>주문 상세 아이디: {detail.orderDetailId}</p>
+        {
+          detail.orderDetailStatus === "CANCELED" &&
+          <>
+            <h4 style={{ marginTop: "20px", color: "red", borderLeft: "4px solid red" }}>취소 사유</h4>
+            <p>{detail.orderDetailStatusReason}</p>
+          </>
+        }
       </div>
       <div className="del-card">
         {/* 상품 정보 */}

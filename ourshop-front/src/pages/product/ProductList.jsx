@@ -21,7 +21,7 @@ function ProductList() {
 
   // 페이지 & 정렬 상태
   const [page, setPage] = useState(0);
-  const [sort, setSort] = useState("likeCount,desc");
+  const [sort, setSort] = useState("averageRating,desc");
 
   //검색
   const [searchField, setSearchField] = useState("productName");

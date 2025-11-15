@@ -102,6 +102,7 @@ function ShopList(props) {
                             value={searchField}
                             onChange={(e)=> setSearchField(e.target.value)}>
                             <option value="companyName">업체명</option>
+                            <option value="businessRegistrationNumber">사업자 등록번호</option>
                         </select>
                         <input
                             type="text"

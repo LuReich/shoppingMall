@@ -28,7 +28,7 @@ export const useOrder = () => {
         console.log("주문 생성 완료:", data);
         qc.invalidateQueries(["buyerOrders"]);
         qc.invalidateQueries(["cartList"]);
-        alert("결제가 완료되었습니다.")
+        console.log("결제가 완료되었습니다.")
       },
       onError: (err) => {
         alert("결제가 실패하였습니다.")

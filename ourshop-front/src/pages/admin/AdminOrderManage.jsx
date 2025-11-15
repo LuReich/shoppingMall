@@ -155,7 +155,7 @@ function AdminOrderManage(props) {
                             </div>
                     </div>
                     <div className='admin-order-filter-box'>
-                        <h4 className='order-label'>배송 상태</h4>
+                        <h4 className='order-label'>주문 상태</h4>
                         <div className="admin-order-radio-group">
                             <label className='admin-order-radio-wrap'>
                                 <input type='radio' name='status' value='' 
@@ -221,11 +221,12 @@ function AdminOrderManage(props) {
                             <th>수령인</th>
                             <th>수령주소</th>
                             <th>주문금액</th>
+                            <th>주문상태</th>
                             <th>주문상세 아이디</th>
                             <th>상품정보</th>
                             <th>수량</th>
                             <th>상품주문금액</th>
-                            <th>배송상태</th>
+                            <th>상품상태</th>
                         </tr>
                     </thead>
                      {orderList.map((order) => (
@@ -243,6 +244,7 @@ function AdminOrderManage(props) {
                                     {order.recipientAddress} {order.recipientAddressDetail}
                                 </td>
                                 <td rowSpan={order.orderDetail.length}>{order.totalPrice.toLocaleString()}원</td>
+                                <td rowSpan={order.orderDetail.length}>{statusKor[order.orderStatus]}</td>
                             </>
                         )}
                         <td>{detail.orderDetailId}</td>

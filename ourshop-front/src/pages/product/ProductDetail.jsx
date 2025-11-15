@@ -174,8 +174,9 @@ function ProductDetail() {
         productId: product.productId,
         quantity: quantity
       };
+
       addToCart(itemData);
-      navigate('/cart');
+      
     } else {
       alert("로그인이 필요한 서비스 입니다.");
       navigate('/login');

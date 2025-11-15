@@ -82,11 +82,12 @@ function BuyerShippingDetail(props) {
                     <tr>
                         <th>주문일자</th>
                         <th>주문 아이디</th>
-                        <th>주문상세 아이디 </th>
+                        <th>주문 상태</th>
+                        {/*<th>주문상세 아이디 </th>*/}
                         <th>상품정보</th>
                         <th>수량</th>
                         <th>주문금액</th>
-                        <th>상태</th>
+                        <th>주문상세 상태</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,10 +103,11 @@ function BuyerShippingDetail(props) {
                                   {new Date(order.createAt).toLocaleDateString().replace(/\.$/, '')}
                                 </td>
                                 <td rowSpan={order.orderDetails.length}>{order.orderId}</td>
+                                <td rowSpan={order.orderDetails.length}>{statusKor[order.status]}</td>
                                 </>
                               ) : null
                             }
-                            <td>{detail.orderDetailId}</td>
+                            {/*<td>{detail.orderDetailId}</td>*/}
                             <td>
                               <div className="detail-info" onClick={() => navigate(`/product/${detail.productId}`)}>
                                 <img src={detail.productThumbnailUrl} alt={detail.productName} />
@@ -132,6 +134,11 @@ function BuyerShippingDetail(props) {
                                         detail.orderDetailStatus === "DELIVERED") 
                                       && (
                                            <button type="button" onClick={() => navigate("/buyer/mypage/delivery", {state: {order, detail}})}>배송조회</button>
+                                          )
+                                    }
+                                    {(detail.orderDetailStatus === "CANCELED") 
+                                      && (
+                                           <button type="button" onClick={() => navigate("/buyer/mypage/delivery", {state: {order, detail}})}>취소 정보</button>
                                           )
                                     }
                                     {detail.orderDetailStatus === "DELIVERED" 

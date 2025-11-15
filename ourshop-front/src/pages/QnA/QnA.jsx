@@ -18,7 +18,8 @@ function QnA(props) {
     const {getQnAList} = useQnA();
     const {data: QnAListData} = getQnAList(mode, {
         size: 5,
-        page
+        page,
+        sort: "createdAt,desc"
     }, uid);
 
     const QnAList = QnAListData?.content?.content;                          
@@ -69,7 +70,7 @@ function QnA(props) {
                                 </tr>
                         )) : (
                              <tr>
-                                <td colSpan="4" style={{ textAlign: "center" }}>
+                                <td colSpan="5" style={{ textAlign: "center" }}>
                                     등록한 문의가 없습니다.
                                 </td>
                             </tr>

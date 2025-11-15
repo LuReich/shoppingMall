@@ -225,6 +225,13 @@
   font-size: 16px;
 }
 
+
+.admin-order-manage-table td:nth-child(5) {
+  white-space: normal !important;
+  word-break: break-all;
+  text-align: left;
+}
+
 /* 반응형 */
 @media (max-width: 1200px) {
   .admin-order-manage-container {
