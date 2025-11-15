@@ -13,7 +13,7 @@ const schema = yup.object().shape({
     .string()
     .transform((v) => (v === "" ? undefined : v)) //공백 undefined로 처리해줘야 입력안할때도 수정됨
     .min(4, "비밀번호는 최소 4자 이상이어야 합니다.")
-    .matches(/^[0-9]+$/, "비밀번호는 숫자만 가능합니다.")
+    .matches(/^[A-Za-z0-9]+$/, "비밀번호는 영문과 숫자만 가능합니다.")
     .notRequired(),
   confirmPassword: yup.string().when("password", {
     is: (val) => val && val.length > 0, // 비밀번호를 입력한 경우
@@ -82,6 +82,30 @@ function SellerInfo() {
   const [selectedDomain, setSelectedDomain] = useState("");
   const [customDomain, setCustomDomain] = useState("");
 
+  
+  //휴대폰 포맷
+  const formatPhone = (value) => {
+    if (!value) return "";
+    const raw = value.replace(/\D/g, ""); // 숫자만
+
+    // 02 번호
+    if (raw.startsWith("02")) {
+      if (raw.length === 9)
+        return raw.replace(/(\d{2})(\d{3})(\d{4})/, "$1-$2-$3");
+      if (raw.length === 10)
+        return raw.replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3");
+    }
+
+    // 3자리 지역번호
+    if (raw.length === 10)
+      return raw.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+
+    if (raw.length === 11)
+      return raw.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+
+    return value;
+  };
+  
   // 기본값 세팅
   useEffect(() => {
     if (seller) {
@@ -91,7 +115,7 @@ function SellerInfo() {
         "businessRegistrationNumber",
         seller.businessRegistrationNumber?.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")
       );
-      setValue("phone", seller.phone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
+      setValue("phone", formatPhone(seller.phone));
       setValue("address", seller.address);
       setValue("addressDetail", seller.addressDetail);
       setValue("companyDetail", seller.companyInfo);
@@ -202,6 +226,8 @@ function SellerInfo() {
     }
   }, [businessValue, seller]);
 
+  
+
   // 중복확인 핸들러
   const handleCheckEmail = () => {
     const email = watch("sellerEmail");
@@ -227,8 +253,7 @@ function SellerInfo() {
   const onSubmit = (data) => {
     if (seller.sellerEmail !== data.sellerEmail && !isEmailChecked)
       return alert("이메일 중복확인을 해주세요.");
-    if (seller.phone !== data.phone.replace(/-/g, "") && !isPhoneChecked)
-      return alert("전화번호 중복확인을 해주세요.");
+
     if (
       seller.businessRegistrationNumber !==
         data.businessRegistrationNumber.replace(/-/g, "") &&
@@ -374,7 +399,7 @@ function SellerInfo() {
             />
           </div>
           <p className="error">{errors.phone?.message}</p>
-          {phoneMsg && <p className={`ok ${isPhoneChecked ? "active" : ""}`}>{phoneMsg}</p>}
+          
         </div>
 
         {/* 주소 */}

@@ -72,6 +72,7 @@ export const useAdmin = () => {
                 const { mode, uid } = variables;
                 qc.invalidateQueries({ queryKey: ["userDetail", mode, uid] }); 
                 qc.invalidateQueries({ queryKey: ["userList", mode] });
+                qc.invalidateQueries({ queryKey: ["productList"] });
                 console.log("회원정보 수정 성공:", res);
                 alert("회원정보가 수정되었습니다");
             },

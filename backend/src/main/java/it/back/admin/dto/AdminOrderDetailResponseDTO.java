@@ -19,6 +19,7 @@ public class AdminOrderDetailResponseDTO {
     private Integer quantity;
     private Integer pricePerItem;
     private String orderDetailStatus;
+    private String orderDetailStatusReason;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
@@ -32,6 +33,7 @@ public class AdminOrderDetailResponseDTO {
                 .quantity(entity.getQuantity())
                 .pricePerItem(entity.getPricePerItem())
                 .orderDetailStatus(entity.getOrderDetailStatus().name())
+                .orderDetailStatusReason(entity.getOrderDetailStatusReason())
                 .createAt(entity.getCreateAt())
                 .updateAt(entity.getUpdateAt())
                 .build();

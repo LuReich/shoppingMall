@@ -115,7 +115,11 @@ function Faq(props) {
             <div className='faq-main'>
             <h2>FAQ</h2>
             <div className='faq-create-btn-box'>
-                <button type='button' className='faq-create-btn' onClick={handleUpload}>FAQ 등록</button>
+                {
+                    role === "ADMIN" && (
+                        <button type='button' className='faq-create-btn' onClick={handleUpload}>FAQ 등록</button>
+                    )
+                }   
             </div>
             <div className='faq-search-container'>
                 <div className='faq-filter-box'>

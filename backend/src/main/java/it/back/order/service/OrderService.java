@@ -180,24 +180,7 @@ public class OrderService {
     }
 
     // toDTO, toDetailDTO 제거: 변환 책임을 DTO로 이동
-    /**
-     * 주문상세 전체가 DELIVERED면 주문도 DELIVERED로 상태 변경 판매자가 주문 상태 변경 시 자동으로 체크
-     */
     @Transactional
-    public void updateOrderStatusIfAllDelivered(Long orderId) {
-        List<OrderDetailEntity> details = orderDetailRepository.findByOrderOrderId(orderId);
-        boolean allDelivered = details.stream()
-                .allMatch(d -> d.getOrderDetailStatus() == OrderDetailEntity.OrderDetailStatus.DELIVERED);
-        if (allDelivered && !details.isEmpty()) {
-            OrderEntity order = orderRepository.findById(orderId).orElse(null);
-            if (order != null && order.getOrderStatus() != OrderEntity.OrderStatus.DELIVERED) {
-                order.setOrderStatus(OrderEntity.OrderStatus.DELIVERED);
-                orderRepository.save(order);
-            }
-        }
-    }
-
-    @Transactional(readOnly = true)
     public PageResponseDTO<it.back.order.dto.OrderDetailSellerResponseDTO> getSellerOrderDetails(
             Long sellerUid,
             Pageable pageable,
@@ -293,7 +276,7 @@ public class OrderService {
         orderDetailRepository.save(orderDetail);
 
         // 메인 주문 상태 업데이트 확인
-        updateOrderStatusIfAllDelivered(orderDetail.getOrder().getOrderId());
+        updateParentOrderStatus(orderDetail.getOrder());
 
         // 업데이트된 OrderDetailSellerResponseDTO 반환
         OrderDetailSellerResponseDTO dto = new OrderDetailSellerResponseDTO();
@@ -328,5 +311,35 @@ public class OrderService {
         dto.setUpdateAt(orderDetail.getUpdateAt());
 
         return dto;
+    }
+
+    /**
+     * 주문 상세(OrderDetail)의 상태 변경에 따라 부모 주문(Order)의 전체 상태를 업데이트합니다.
+     * 우선순위: CANCELLED > PAID > SHIPPING > DELIVERED
+     */
+    private void updateParentOrderStatus(OrderEntity order) {
+        List<OrderDetailEntity> details = orderDetailRepository.findByOrderOrderId(order.getOrderId());
+        if (details == null || details.isEmpty()) {
+            return; // 업데이트할 상세 정보가 없으면 종료
+        }
+
+        List<OrderDetailEntity.OrderDetailStatus> statuses = details.stream()
+                .map(OrderDetailEntity::getOrderDetailStatus)
+                .collect(Collectors.toList());
+
+        // 우선순위에 따라 부모 주문의 상태를 결정
+        if (statuses.contains(OrderDetailEntity.OrderDetailStatus.CANCELED)) {
+            order.setOrderStatus(OrderEntity.OrderStatus.CANCELED);
+        } else if (statuses.contains(OrderDetailEntity.OrderDetailStatus.PAID)) {
+            order.setOrderStatus(OrderEntity.OrderStatus.PAID);
+        } else if (statuses.contains(OrderDetailEntity.OrderDetailStatus.SHIPPING)) {
+            order.setOrderStatus(OrderEntity.OrderStatus.SHIPPING);
+        } else if (statuses.stream().allMatch(s -> s == OrderDetailEntity.OrderDetailStatus.DELIVERED)) {
+            order.setOrderStatus(OrderEntity.OrderStatus.DELIVERED);
+        }
+        // 다른 모든 경우는 현재 상태를 유지하거나 기본 상태(예: ORDERED)로 설정할 수 있습니다.
+        // 여기서는 명시된 조건 외에는 변경하지 않습니다.
+
+        orderRepository.save(order);
     }
 }

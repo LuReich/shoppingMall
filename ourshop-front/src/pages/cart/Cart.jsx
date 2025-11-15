@@ -233,7 +233,7 @@ function Cart(props) {
         </tbody>
       </table>
        <div className='delete-box'>
-        <button type='button' className={styles.greyBtn} onClick={deleteSelectBtn}>선택 상품 삭제</button>
+        <button type='button' className="order-delete-cart-btn" onClick={deleteSelectBtn}>선택 상품 삭제</button>
         {/*<button type='button' className='order-delete-cart-btn' onClick={deleteAllBtn}>전체 상품 삭제</button>*/}
       </div>
       </div>

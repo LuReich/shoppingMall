@@ -4,9 +4,10 @@ import { useSeller } from '../../hooks/useSeller';
 import '../../assets/css/BestShopList.css';
 import Pagination from '../../components/common/Pagenation';
 import Loader from '../../utils/Loaders';
+import { useNavigate } from 'react-router';
 
 function BestShopList(props) {
-
+     const navigate = useNavigate();
      const [page, setPage] = useState(0);
     
     const {getPublicShopList} = useSeller();

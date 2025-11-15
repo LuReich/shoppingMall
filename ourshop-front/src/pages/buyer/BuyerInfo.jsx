@@ -10,6 +10,20 @@ import WithdrawModal from "../../components/common/WithdrawModal";
 
 
 const schema = yup.object().shape({
+  password: yup
+    .string()
+    .transform((v) => (v === "" ? undefined : v)) //공백 undefined로 처리해줘야 입력안할때도 수정됨
+    .min(4, "비밀번호는 최소 4자 이상이어야 합니다.")
+    .matches(/^[A-Za-z0-9]+$/, "비밀번호는 영문과 숫자만 가능합니다.")
+    .notRequired(),
+  confirmPassword: yup.string().when("password", {
+    is: (val) => val && val.length > 0, // 비밀번호를 입력한 경우
+    then: (schema) =>
+      schema
+        .required("비밀번호 확인을 입력해주세요.")
+        .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
+    otherwise: (schema) => schema.notRequired(), // 입력 안 했을 때는 검사 안 함
+  }),
   nickname: yup.string().required("닉네임을 입력해주세요."),
   buyerEmail: yup
     .string()
@@ -209,6 +223,12 @@ function BuyerInfo() {
       birth: data.birth,
       gender: data.gender.toUpperCase(),
     };
+
+    // 새 비밀번호가 입력된 경우에만 추가
+    if (data.password && data.password.trim() !== "") {
+      newData.password = data.password;
+    }
+
     console.log("수정 데이터:", newData);
     updateUserInfo.mutate({ buyerUid, data: newData });
   };
@@ -237,12 +257,12 @@ useEffect(() => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3>회원 정보</h3>
         <div className="info-group">
+          <label>구매자 UID</label>
+          <input type="text" placeholder="아이디" value={user?.buyerUid} readOnly disabled/>
+        </div>
+        <div className="info-group">
           <label>아이디</label>
           <input type="text" placeholder="아이디" value={user?.buyerId} readOnly disabled/>
-        </div>
-          <div className="info-group">
-          <label>UID</label>
-          <input type="text" placeholder="아이디" value={user?.buyerUid} readOnly disabled/>
         </div>
         {/* 닉네임 */}
         <div className="info-group">
@@ -341,9 +361,9 @@ useEffect(() => {
         <div className="form-group">
           <label>성별</label>
           <select {...register("gender")}>
-            <option value="">성별 선택</option>
             <option value="MALE">남성</option>
             <option value="FEMALE">여성</option>
+            <option value="UNSELECTED">미선택</option>
           </select>
           <p className="error">{errors.gender?.message}</p>
         </div>
@@ -365,6 +385,19 @@ useEffect(() => {
         <div className="form-group">
           <label>상세 주소</label>
           <input type="text" {...register("addressDetail")} placeholder="상세 주소" />
+        </div>
+
+        {/* 비밀번호 */}
+        <h3>비밀번호 변경</h3>
+        <div className="form-group">
+          <label>새 비밀번호</label>
+          <input type="password" {...register("password")} placeholder="변경할 경우 입력" />
+          <p className="error">{errors.password?.message}</p>
+        </div>
+        <div className="form-group">
+          <label>새 비밀번호 확인</label>
+          <input type="password" {...register("confirmPassword")} />
+          <p className="error">{errors.confirmPassword?.message}</p>
         </div>
 
         <div className="info-btn-box">
