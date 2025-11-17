@@ -45,7 +45,7 @@ function BuyerReview(props) {
             <h2>나의 리뷰</h2>
             <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
             <div className='review-table'>
-                <table >
+                <table className='buyer-review-table' >
                     <thead>
                         <tr>
                             <th style={{width: "30%"}}>상품</th>

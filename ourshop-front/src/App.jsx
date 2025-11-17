@@ -5,27 +5,26 @@ import './App.css';
 
 function App() {
 
-  //react-query 설정
+  // react-query 설정
   const queryClient = new QueryClient({
-    defaultOptions:{
-    queries: {
-      retry: 1, //응답이 없으면 1번 다시 시도
-      staleTime: 1*60*1000, //1분, 얼마나 refresh 기간을 짧게 줄거냐
-      gcTime: 1*60*1000, //1분, 컴포넌트가 사라졌다면 그 이후에도 얼마나 데이터를 유지할 것이냐
-      refetchOnWindowFocus: true, //포커스를 다시 받았을 떄 재실행 여부
-
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        staleTime: 1 * 60 * 1000,
+        gcTime: 1 * 60 * 1000,
+        refetchOnWindowFocus: true,
+      }
     }
-  }
-});
-
+  });
 
   return (
-    <>
+    // 🟦 전체 1700px 고정 레이아웃
+    <div className="layout-wrapper">
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router}/>
-      </QueryClientProvider> 
-    </>
+      </QueryClientProvider>
+    </div>
   )
 }
 
-export default App
+export default App;

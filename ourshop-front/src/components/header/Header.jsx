@@ -82,7 +82,7 @@ function Header(props) {
             navigate("/products");
         }; // 빈값 방지
         navigate(`/products?productName=${searchInput}`);
-        //setSearchInput("");
+        setSearchInput("");
     };
 
  

@@ -19,7 +19,9 @@ const schema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "비밀번호가 일치하지 않습니다."),
-  company_name: yup.string().required("업체명을 입력해주세요."),
+  company_name: yup.string()
+    .required("업체명을 입력해주세요.")
+    .max(16, "업체명은 최대 16자까지 가능합니다."),
   seller_email: yup
     .string()
     .email("올바른 이메일 형식이 아닙니다.")

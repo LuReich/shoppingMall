@@ -1,12 +1,19 @@
-
-/* 앱 전체 화면을 1900px 이상으로 강제 */
-.layout-container, html, body, #root {
+/* ===== 기본 리셋 ===== */
+html, body {
   margin: 0;
   padding: 0;
-
-  min-width: 1200px !important;
   width: 100%;
-  height: 100%;
-  overflow-x: auto !important;
+  height: 100vh;
+  overflow-x: auto;   /* 필요하다면 html만 */
+  overflow-y: visible;
+  background-color: #fff;
 }
 
+/* 전체 앱 고정 레이아웃 */
+.layout-wrapper {
+  width: 1700px;
+  min-width: 1700px;
+  max-width: 1700px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}

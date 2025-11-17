@@ -11,6 +11,9 @@ function SellerOrderDetailInfoModal({item}) {
   const isAdminMode = item?.orderDetailId ? false : true;
 
 
+  const cancledItems = item?.orderDetail?.filter((i) => i.orderDetailStatus === "CANCELED");
+
+  console.log("취소된 상품", cancledItems);
 
    if(item){
     console.log("배송상품 상세 정보", item);
@@ -61,6 +64,26 @@ function SellerOrderDetailInfoModal({item}) {
                   </div>
                   <div>주소: {item.recipientAddress}, {item.recipientAddressDetail}</div>
                 </div>
+                {
+                  isAdminMode && cancledItems.length >0 && 
+                  <div className='seller-addr-info'>
+                  <h3 style={{color:"red", borderBottom:"2px solid red"}}>취소 상품</h3>
+                  {cancledItems?.map((i,idx) => (
+                    <>
+                    <div>취소된 상품 {idx+1}: {i.productName}({i.quantity}개)</div>
+                    <div style={{paddingBottom:"10px", borderBottom:"1px solid #ccc"}}>취소 사유: {i.orderDetailStatusReason}</div>
+                    </>
+                  ))}
+                </div>
+                }
+                {
+                  (!isAdminMode&& item.orderDetailStatus === "CANCELED") && 
+                  <div className='seller-addr-info'>
+                    <h3 style={{color:"red", borderBottom:"2px solid red"}}>취소 사유</h3>
+                    <div>{item.orderDetailStatusReason}</div>
+                </div>
+                }
+                
               </div>
           }
         </div>

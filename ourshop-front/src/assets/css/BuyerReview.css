@@ -135,7 +135,15 @@
   color: white;
 }
 
+.buyer-review-table td:nth-child(2) {
+  white-space: normal !important;
+  word-break: break-all;
+  text-align: left;
+}
+
+
 /* 반응형 */
+/*
 @media (max-width: 1200px) {
     .buyer-review-container{
         margin-top: 100px;
@@ -168,3 +176,4 @@
     
     }
 }
+*/

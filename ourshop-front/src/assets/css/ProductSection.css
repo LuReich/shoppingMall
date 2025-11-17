@@ -99,6 +99,7 @@
 }
 
 /* 반응형 */
+/*
 @media (max-width: 992px) {
   .carousel-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -122,3 +123,4 @@
     right: -25px;
   }
 }
+*/

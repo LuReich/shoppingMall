@@ -64,6 +64,7 @@
 }
 
 /* 반응형 */
+/*
 @media (max-width: 768px) {
   .total-payment-info {
     flex-direction: column;
@@ -75,4 +76,4 @@
   .order-complete {
     padding: 30px 20px;
   }
-}
+}*/

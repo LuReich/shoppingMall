@@ -78,6 +78,7 @@ export const useProduct = () => {
       mutationFn: (formData) => productAPI.createProduct(formData),
       onSuccess: () => {
         qc.invalidateQueries(["productList"]);
+        qc.invalidateQueries(["publicSellerList"]);
       },
       onError: (err) => {
         console.error(err);

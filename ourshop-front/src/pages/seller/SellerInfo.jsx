@@ -23,7 +23,9 @@ const schema = yup.object().shape({
         .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
     otherwise: (schema) => schema.notRequired(), // 입력 안 했을 때는 검사 안 함
   }),
-  companyName: yup.string().required("업체명을 입력해주세요."),
+  companyName: yup.string()
+    .required("업체명을 입력해주세요.")
+    .max(16, "업체명은 최대 16자까지 가능합니다."),
   sellerEmail: yup
     .string()
     .email("올바른 이메일 형식이 아닙니다.")
@@ -46,7 +48,7 @@ function SellerInfo() {
   const { user } = authStore();
   const seller = user?.content;
   const sellerUid = seller?.sellerUid;
-
+  const maxLength = 16;
   const {
     register,
     handleSubmit,
@@ -268,7 +270,7 @@ function SellerInfo() {
       businessRegistrationNumber: data.businessRegistrationNumber.replace(/-/g, ""),
       address: data.address,
       addressDetail: data.addressDetail,
-      companyDetail: data.companyDetail,
+      companyInfo: data.companyDetail,
     };
 
     // 새 비밀번호가 입력된 경우에만 추가

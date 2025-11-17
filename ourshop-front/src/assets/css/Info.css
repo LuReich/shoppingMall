@@ -186,8 +186,7 @@ input::placeholder {
   color: #bbb;
 }
 
-/* 반응형 */
-
+/*
 @media (max-width: 1200px) {
    .my-info-container {
         margin-top: 100px;
@@ -212,3 +211,4 @@ input::placeholder {
     height: 42px;
   }
 }
+*/

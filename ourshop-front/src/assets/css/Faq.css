@@ -250,10 +250,10 @@
     border-radius: 4px;
     white-space: pre-wrap; /* 줄바꿈 및 공백 유지 */
 }
-
+/*
 @media (max-width: 1200px) {
     .faq-container {
         width: 90%;
         margin-top: 100px;
     }
-}
+}*/

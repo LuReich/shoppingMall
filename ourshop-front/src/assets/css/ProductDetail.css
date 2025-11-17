@@ -438,6 +438,7 @@
 }
 
 /* 반응형 */
+/*
 @media (max-width: 1200px) {
     .product-detail-container {
         width: 90%;
@@ -458,4 +459,4 @@
         height: auto;
         aspect-ratio: 1/1;
     }
-}
+}*/

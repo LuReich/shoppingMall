@@ -41,7 +41,7 @@
   border-radius: 20px;
   background-color: white;
   border: 1px solid #7cc7de;
-  color:#7cc7de;
+  color:black;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -100,7 +100,7 @@
   border: 1px solid #7cc7de;
   border-radius: 8px;
   font-size: 15px;
-  color: #7cc7de;
+  color: black;
   background-color: #fff;
   outline: none;
   transition: border 0.2s ease;
@@ -127,9 +127,9 @@
 }
 
 /* placeholder 색상 */
-.product-search-form-b input::placeholder {
-  color: #7cc7de8c;
-}
+/*.product-search-form-b input::placeholder {
+  color: #333;
+}*/
 
 /*  검색 버튼 */
 .product-search-btn {
@@ -155,7 +155,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 30px 20px;
 }
-
+/*
 @media (max-width: 1200px) {
     .product-list-container{
         margin-top: 100px;
@@ -175,12 +175,12 @@
 
     .product-search-form-b {
         flex-direction: column;
-        align-items: stretch; /* 내부 아이템들을 꽉 채움 */
+        align-items: stretch; 
     }
 
     .search-product-select,
     .search-product-post-input,
     .product-search-btn {
-        width: 100%; /* 모든 요소를 100% 너비로 설정 */
+        width: 100%; 
     }
-}
+}*/

@@ -25,6 +25,7 @@ function BuyerReviewUpload(props) {
 
     const filteredReview = reviewData?.content?.content?.find(review => review.reviewId === parseInt(reviewId));
     
+    const maxLength = 250;
     console.log("기존 리뷰리스트",reviewData);
     console.log("해당 리뷰",filteredReview);
 
@@ -83,10 +84,17 @@ function BuyerReviewUpload(props) {
                     <textarea
                         id="review-content"
                         value={content}
-                        onChange={(e) => setContent(e.target.value)}
+                        onChange={(e) => {
+                            if (e.target.value.length <= maxLength) {
+                                setContent(e.target.value);
+                            }
+                        }}
                         placeholder="상품에 대한 솔직한 리뷰를 남겨주세요."
                         rows="10"
                     />
+                    <div className="char-count">
+                        {content.length} / {maxLength}자
+                    </div>
                 </div>
                 <div className="review-form-btns">
                     <button type="button" className="cancel-b" onClick={() => navigate(-1)}>취소</button>

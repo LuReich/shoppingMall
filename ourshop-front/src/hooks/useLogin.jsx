@@ -35,7 +35,7 @@ export const useLogin = () => {
         // Zustand에 user + token 저장
         setLogin(user, token);
 
-        alert("로그인 성공!");
+        console.log("로그인 성공!");
         if (variables.mode === "admin") navigate("/");
         else if (variables.mode === "seller") navigate("/");
         else navigate(-1);
