@@ -24,7 +24,10 @@ const schema = yup.object().shape({
         .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
     otherwise: (schema) => schema.notRequired(), // 입력 안 했을 때는 검사 안 함
   }),
-  nickname: yup.string().required("닉네임을 입력해주세요."),
+  nickname: yup
+    .string()
+    .required("닉네임을 입력해주세요.")
+    .max(16, "닉네임은 최대 16자까지 가능합니다."),
   buyerEmail: yup
     .string()
     .email("올바른 이메일 형식이 아닙니다.")
