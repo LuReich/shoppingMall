@@ -118,7 +118,7 @@ function ShopList(props) {
                 </form>
             </div>
             <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
-            <div className='shop-list-grid'>
+            <div className='shop-list-g'>
                 {
                     ShopList?.map(shop => (
                         <ShopCard shop={shop}/>

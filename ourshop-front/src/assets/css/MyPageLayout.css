@@ -34,7 +34,7 @@
     overflow-x: auto;
     white-space: nowrap;
 }
-
+/*
 @media (max-width: 1400px) {
      .side-menu-bar-wrapper{
         display: none;
@@ -47,4 +47,4 @@
     .mypage-layout {
         width: 90%;
     }
-}
+}*/

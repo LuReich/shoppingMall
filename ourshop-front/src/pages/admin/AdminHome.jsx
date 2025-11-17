@@ -7,7 +7,6 @@ import Footer from '../../components/footer/Footer';
 function AdminHome(props) {
     return (
         <div className='admin-home-container'>
-            <div className='scroll-container'>
                 <header className='admin-h'>
                     <AdminHeader/>
                 </header>
@@ -16,7 +15,6 @@ function AdminHome(props) {
                 </section>
                 <Footer/>
             </div>
-        </div>
     );
 }
 

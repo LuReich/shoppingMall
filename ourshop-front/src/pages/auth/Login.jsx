@@ -128,6 +128,7 @@ function Login() {
             {selectedMode !== "admin" && (
               <>
                 {/*<p>|</p>*/}
+                <p>계정이 없으신가요?</p> 
                 <button type="button" className="find-btn" onClick={registerBtn}>
                   {getRegisterText()}
                 </button>

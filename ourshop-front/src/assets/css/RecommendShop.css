@@ -19,11 +19,12 @@
     font-size: 16px;
 }
 
-.shop-list-grid {
+.rec-shop-list-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px 20px;
     margin-top: 20px;
+    width: 100%;
 }
 
 .no-results {
@@ -37,6 +38,7 @@
     margin-top: 20px;
 }
 
+/*
 @media (max-width: 1200px) {
     .shop-list-container {
         width: 90%;
@@ -55,10 +57,10 @@
 
 @media (max-width: 768px) {
     .shop-list-grid {
-        grid-template-columns: 1fr; /* 모바일에서는 한 줄에 하나씩 표시 */
+        grid-template-columns: 1fr; 
         gap: 30px;
     }
     .shop-list-container > h2 {
         font-size: 28px;
     }
-}
+}*/

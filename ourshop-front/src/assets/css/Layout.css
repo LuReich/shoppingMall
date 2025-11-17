@@ -22,9 +22,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 130px 50px;
+  padding: 50px;
 }
-
+/*
 @media (max-width: 992px) {
     .layout-container main {
       padding: 130px 0px;
@@ -35,4 +35,4 @@
     .layout-container main {
       padding: 180px 0px;
     }
-}
+}*/

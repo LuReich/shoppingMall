@@ -42,7 +42,7 @@
     background-color: #fcfcfc;
     border: 1px solid #eeeeee;
     border-radius: 4px;
-    padding: 50px 30px;
+    padding: 20px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -71,15 +71,15 @@
 .review-star-and-info{
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 5px;
 }
 
 .date-box{
     font-size: 13px;
     color: #aaa;
     display: flex;
-    justify-self: end;
-    margin-top: 40px;
+    justify-self: start;
+    margin-top: 10px;
 }
 
 .review-placeholder {
@@ -103,4 +103,11 @@
 .more-reviews:hover{
     color: #7cc7de;
     font-weight: bolder;
+}
+
+.product-review-content-b{
+    white-space: normal !important;
+    word-break: break-all;
+    text-align: left;
+    padding-right: 70px;
 }

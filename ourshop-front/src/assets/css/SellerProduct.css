@@ -235,7 +235,7 @@
 .seller-product-update:hover{
     background-color: #6ab8d0;
 }
-
+/*
 @media (max-width: 1200px) {
     .seller-product-container{
         margin-top: 100px;
@@ -264,4 +264,4 @@
     .seller-product {
         grid-template-columns: repeat(1, 1fr);
     }
-}
+}*/

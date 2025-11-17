@@ -6,6 +6,7 @@ import Sort from '../../components/common/Sort';
 import { useNavigate } from 'react-router';
 import SellerOrderDetailInfoModal from '../../components/seller/SellerOrderDetailInfoModal';
 import { authStore } from '../../store/authStore';
+import Loader from '../../utils/Loaders';
 
 function SellerShippingDetail(props) {
 
@@ -57,7 +58,7 @@ function SellerShippingDetail(props) {
 
     };
 
-    if (isLoading) return <p>판매내역을 조회중입니다.</p>;
+    if (isLoading) return <Loader/>;
     if (isError) return <p>판매내역 조회에 실패했습니다.</p>;
 
     const deliverySellerProducts = deliverySellerProductsCont?.content?.content || [];
@@ -202,7 +203,7 @@ function SellerShippingDetail(props) {
                             </td>
                         </tr>
                     )) : (
-                        <tr><td colSpan="6" className="no-results">판매 내역이 없습니다.</td></tr>
+                        <tr><td colSpan="7" className="no-results">판매 내역이 없습니다.</td></tr>
                     )}
                 </tbody>
             </table>

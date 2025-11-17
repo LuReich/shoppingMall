@@ -55,6 +55,7 @@ function ProductReviews({product}) {
                             <div className='review-box' key={idx}>
                                 <div className='nickname-box'>
                                     <p>{x.buyerNickname}</p>
+                                    <p className='date-box'>{new Date(x.createAt).toLocaleString()}</p>
                                 </div>
                                 <div className='review-info-box'>
                                     <div className='review-star-and-info'>
@@ -63,9 +64,10 @@ function ProductReviews({product}) {
                                         <p>[{x.productName}]</p>
                                         <p>{x.sellerCompanyName}</p>
                                     </div>
-                                    <p>{x.content}</p>
+                                    <p style={{marginTop: '5px'}} 
+                                    className='product-review-content-b'>{x.content}</p>
                                     </div>
-                                    <p className='date-box'>{new Date(x.createAt).toLocaleString()}</p>
+                                    {/*<p className='date-box'>{new Date(x.createAt).toLocaleString()}</p>*/}
                                 </div>
                             </div>
                         ))

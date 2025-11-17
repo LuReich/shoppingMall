@@ -1,11 +1,11 @@
 @charset 'UTF-8';
 
-.admin-header-container{
-    width: 75%; /* Header와 너비 통일 */
+.admin-header-container {
+    width: 1350px;
+    margin: 0 auto;
     display: flex;
-    flex-direction: row;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 }
 
 .admin-header-container h2{
@@ -68,31 +68,31 @@
 
 /* 반응형 추가 */
 
-
+/*
 @media (max-width: 1000px) {
 
  .admin-header-container {
     width: 90%;
     flex-direction: column;
-    align-items: flex-start; /* 왼쪽 정렬 */
+    align-items: flex-start; 
     gap: 10px;
   }
   .admin-nav {
     font-size: 13px;
     gap: 15px;
-    position: static; /* absolute 해제 */
+    position: static; 
     transform: none;
-    justify-content: flex-start; /* 왼쪽 정렬 */
+    justify-content: flex-start; 
     gap: 20px;
   }
 
-  /* 텍스트 축약 버전 */
+  
   .link[data-short="true"] span {
-    display: none; /* 긴 텍스트 숨기기 */
+    display: none; 
   }
 
   .link[data-short="true"]::after {
-    content: attr(data-short-text); /* 짧은 텍스트 표시 */
+    content: attr(data-short-text); 
   }
 }
-
+*/

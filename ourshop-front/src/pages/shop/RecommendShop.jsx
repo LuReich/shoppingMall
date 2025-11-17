@@ -163,7 +163,7 @@ function RecommendShop() {
                         </div>
             <p className='shop-list-subtitle'>회원님께서 좋아하신 상품들을 기반으로 맞춤 업체를 추천해 드립니다.</p>
             <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
-            <div className='shop-list-grid'>
+            <div className='rec-shop-list-grid'>
                 {recommendedShops.length > 0 ? (
                     recommendedShops.map(shop => <ShopCard key={shop.sellerUid} shop={shop} />)
                 ) : (
