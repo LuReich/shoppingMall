@@ -115,7 +115,7 @@ function AdminProductManage(props) {
                         <select className='search-admin-product-select'
                             value={searchField}
                             onChange={(e) => setSearchField(e.target.value)}>
-                            <option value="productId">상품번호</option>
+                            <option value="productId">상품 아이디</option>
                             <option value="productName">상품명</option>
                             <option value="companyName">업체명</option>
                         </select>
@@ -132,7 +132,7 @@ function AdminProductManage(props) {
             <table>
                 <thead>
                     <tr>
-                        <th>상품번호</th>
+                        <th>상품 아이디</th>
                         <th>등록일</th>
                         <th>상품</th>
                         <th>업체명</th>

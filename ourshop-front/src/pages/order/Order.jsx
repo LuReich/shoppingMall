@@ -274,7 +274,7 @@ function Order() {
             {cartItems?.map((item) => (
               <tr key={item.productId}>
                 <td className="item-info">
-                  <img src={item.thumbnailUrl} alt={item.productName} />
+                  <img src={`http://localhost:9090${item?.thumbnailUrl}`} alt={item.productName} />
                   <div>
                     <p className="item-name">{item.productName}</p>
                   </div>

@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useReviews } from '../../hooks/useReview';
 import '../../assets/css/BuyerReviewUpload.css';
+import { useOrder } from '../../hooks/useOrder';
 
 function BuyerReviewUpload(props) {
     const { reviewId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
     const isEditMode = !!reviewId;
-    const { productId, orderDetailId } = location.state || {};
+    const { productId, orderDetailId, productName } = location.state || {};
 
     // useReview 훅에서 필요한 함수들 가져오기
     const { createReview, updateReview, getReviews } = useReviews();
     const { mutate: createMutate } = createReview();
     const { mutate: updateMutate } = updateReview();
-
     
     // 리뷰 데이터 상태
     const [rating, setRating] = useState(5);
@@ -63,6 +63,8 @@ function BuyerReviewUpload(props) {
             <h2>{isEditMode ? '리뷰 수정' : '리뷰 작성'}</h2>
             <form onSubmit={handleSubmit} className="review-form">
                 <div className="form-group">
+                    <label>상품</label>
+                        <div style={{marginBottom: "30px"}}>{isEditMode? filteredReview?.productName : productName}</div>
                     <label>별점</label>
                      <div className="star-rating">
                         {[...Array(5)].map((_, index) => {

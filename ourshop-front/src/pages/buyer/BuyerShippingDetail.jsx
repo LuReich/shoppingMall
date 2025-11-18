@@ -110,7 +110,7 @@ function BuyerShippingDetail(props) {
                             {/*<td>{detail.orderDetailId}</td>*/}
                             <td>
                               <div className="detail-info" onClick={() => navigate(`/product/${detail.productId}`)}>
-                                <img src={detail.productThumbnailUrl} alt={detail.productName} />
+                                <img src={`http://localhost:9090${detail?.productThumbnailUrl}`} alt={detail.productName} />
                                 <div>
                                   <p>{detail.productName}</p>
                                   <p>{detail.companyName}</p>
@@ -146,7 +146,7 @@ function BuyerShippingDetail(props) {
 
                                             <Link to="/buyer/mypage/review/upload" 
                                                   className="review-upload-link"
-                                                  state={{ productId: detail.productId, orderDetailId: detail.orderDetailId }}>
+                                                  state={{ productId: detail.productId, orderDetailId: detail.orderDetailId, productName: detail.productName}}>
                                                   리뷰쓰기
                                             </Link>
 

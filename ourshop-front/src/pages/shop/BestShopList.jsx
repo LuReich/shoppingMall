@@ -13,7 +13,7 @@ function BestShopList(props) {
     const {getPublicShopList} = useSeller();
     const {data: PublicShopListData, isLoading, isError} = getPublicShopList({ // 오타 수정: getPublicShopList
         page,
-        size:8,
+        size:9,
         sort: "averageRating,desc" // 평점 높은 순으로 변경
     });
 

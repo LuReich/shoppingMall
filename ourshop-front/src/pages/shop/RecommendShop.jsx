@@ -10,6 +10,7 @@ import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
 import Loader from '../../utils/Loaders';
 
+
 function RecommendShop() {
     const navigate = useNavigate();
     const { getLikedProducts, getProductList } = useProduct();
@@ -167,7 +168,10 @@ function RecommendShop() {
                 {recommendedShops.length > 0 ? (
                     recommendedShops.map(shop => <ShopCard key={shop.sellerUid} shop={shop} />)
                 ) : (
-                    <p className='no-results'>추천할 업체가 없습니다. 마음에 드는 상품에 '좋아요'를 눌러보세요!</p>
+                    <div className='no-results'>
+                        <img src='/heart.png' alt='heart' className='heart-icon' onClick={() => navigate('/products')}/>
+                        <p>추천할 업체가 없습니다. 마음에 드는 상품에 '좋아요'를 눌러보세요!</p>
+                    </div>
                 )}
             </div>
 

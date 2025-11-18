@@ -36,7 +36,10 @@ const schema = yup.object().shape({
     .matches(/^[0-9-]+$/, "숫자만 입력해주세요."),
   address: yup.string().required("주소를 입력해주세요."),
   address_detail: yup.string(),
-  company_detail: yup.string().required("업체 상세 정보를 입력해주세요."),
+  company_detail: yup
+    .string()
+    .required("업체 상세 정보를 입력해주세요.")
+    .max(250, "업체 상세 정보는 최대 250자까지 가능합니다.")
 });
 
 function SellerRegister() {
@@ -237,8 +240,9 @@ function SellerRegister() {
           <label>아이디</label>
           <div className="input-with-button">
             <input type="text" {...register("seller_id")} 
+            placeholder="아이디"
             />
-            <button type="button" onClick={handleCheckId}>중복확인</button>
+            <button type="button" onClick={handleCheckId}>아이디 중복확인</button>
           </div>
           <p className="error">{errors.seller_id?.message}</p>
           {idMsg ? <p className={`ok ${isIdChecked ? "active" : ""}`}>{idMsg}</p>
@@ -248,21 +252,24 @@ function SellerRegister() {
         {/* 비밀번호 */}
         <div className="form-group">
           <label>비밀번호</label>
-          <input type="password" {...register("password")} />
+          <input type="password" {...register("password")} 
+          placeholder="비밀번호"/>
           <p className="error">{errors.password?.message}</p>
         </div>
 
         {/* 비밀번호 확인 */}
         <div className="form-group">
           <label>비밀번호 확인</label>
-          <input type="password" {...register("confirmPassword")} />
+          <input type="password" {...register("confirmPassword")} 
+          placeholder="입력한 비밀번호와 동일한 비밀번호로 입력하세요."/>
           <p className="error">{errors.confirmPassword?.message}</p>
         </div>
 
         {/* 업체명 */}
         <div className="form-group">
           <label>업체명</label>
-          <input type="text" {...register("company_name")} />
+          <input type="text" {...register("company_name")} 
+          placeholder="업체명"/>
           <p className="error">{errors.company_name?.message}</p>
         </div>
 
@@ -294,7 +301,7 @@ function SellerRegister() {
               <option value="custom">직접입력</option>
             </select>
             <button type="button" onClick={handleCheckEmail}>
-              중복확인
+              이메일 중복확인
             </button>
           </div>
           {selectedDomain === "custom" && (
@@ -323,8 +330,9 @@ function SellerRegister() {
             <input type="text" 
               {...register("business_registration_number")} 
               onChange={handleBusinessNumberChange}
+              placeholder="사업자등록번호 10자리"
             />
-            <button type="button" onClick={handleCheckBusinessNumber}>중복확인</button>
+            <button type="button" onClick={handleCheckBusinessNumber}>사업자번호 중복확인</button>
           </div>
           <p className="error">{errors.business_registration_number?.message}</p>
           {businessNumberMsg && (
@@ -341,6 +349,7 @@ function SellerRegister() {
               {...register("phone")}
               onChange={handlePhoneChange}
               maxLength="13"
+              placeholder="업체 전화번호"
             />
             {/*<button type="button" onClick={handleCheckPhone}>
               중복확인
@@ -367,15 +376,18 @@ function SellerRegister() {
         {/* 상세 주소 */}
         <div className="form-group">
           <label>상세 주소</label>
-          <input type="text" {...register("address_detail")} />
+          <input type="text" {...register("address_detail")} 
+          placeholder="상세 주소"/>
         </div>
 
         {/* 업체 상세 정보 */}
         <div className="form-group">
           <label>업체 상세 정보</label>
-          <input type="text" {...register("company_detail")} />
+          <textarea type="text" {...register("company_detail")} 
+          placeholder="업체와 관련된 정보를 입력해주세요"/>
+          <p className="error">{errors.company_detail?.message}</p>
         </div>
-
+        
         <button type="submit" className="register-seller-btn">가입하기</button>
       </form>
     </div>

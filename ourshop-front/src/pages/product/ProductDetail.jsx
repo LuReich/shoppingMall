@@ -187,7 +187,13 @@ function ProductDetail() {
   const productData = { ...product, quantity: Number(quantity) };
 
   const orderDirectBtn = () => {
-    navigate('/order', { state: { productData } });
+    if (isLogin){
+      navigate('/order', { state: { productData } });
+    } else {
+      alert("로그인이 필요한 서비스 입니다.");
+      navigate('/login');
+    }
+
   };
 
   return (

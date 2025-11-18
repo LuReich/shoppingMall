@@ -13,7 +13,7 @@ function ProductReviews({product}) {
     const [sort, setSort] = useState("rating,desc");
     const productId = product?.productId;
     const { getProductReview } = useProduct();
-    const { data: productReviewCont } = getProductReview(productId, {page, sort});
+    const { data: productReviewCont } = getProductReview(productId, {page, size: 5, sort});
 
 
     const productReviews = productReviewCont?.content?.content || [];

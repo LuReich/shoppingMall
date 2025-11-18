@@ -11,6 +11,8 @@ import Loader from '../../utils/Loaders';
 function SellerShippingDetail(props) {
 
     const isLogin = authStore(state => state.isLogin);
+    
+    
     if(!isLogin){
         alert("로그인이 필요한 서비스입니다.");
         navigate("/login");
@@ -165,11 +167,11 @@ function SellerShippingDetail(props) {
             <table className='shipping-table'>
                 <thead>
                     <tr>
-                        <th>주문 상세아이디</th>
+                        <th>주문상세 아이디</th>
                         <th>주문일자</th>
                         <th>수령인</th>
                         <th>상품정보</th>
-                        <th style={{width:"13%"}}>수량</th>
+                        <th>수량</th>
                         <th>주문금액</th>
                         <th>배송상태</th>
                     </tr>
@@ -203,7 +205,7 @@ function SellerShippingDetail(props) {
                             </td>
                         </tr>
                     )) : (
-                        <tr><td colSpan="7" className="no-results">판매 내역이 없습니다.</td></tr>
+                        <tr><td colSpan={7} className="n-results">판매 내역이 없습니다.</td></tr>
                     )}
                 </tbody>
             </table>

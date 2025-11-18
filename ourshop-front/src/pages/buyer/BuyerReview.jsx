@@ -16,7 +16,7 @@ function BuyerReview(props) {
 
     const {data: reviewsCont} = getReviews({
       page,
-      size: 5,
+      size: 3,
       sort,
     });
 

@@ -27,7 +27,7 @@ function DeliveryInfo() {
 
   return (
     <div className="del-info-detail-container">
-      <h2>{(order?.status === "PAID")? "주문 조회" :"배송 조회"}</h2>
+      <h2>{(detail?.orderDetailStatus === "PAID")? "주문 조회" : detail?.orderDetailStatus === "CANCELED" ? "취소 정보" : "배송 조회"}</h2>
 
       <div className="del-address-box">
         <h4>배송지 정보</h4>
