@@ -3,7 +3,7 @@ import { authStore } from "../store/authStore";
 
 // axios 기본 설정
 const api = axios.create({
-  baseURL: "http://localhost:9090/api/v1",
+  baseURL: "http://3.25.69.110:9090/api/v1",
   withCredentials: false,
 });
 

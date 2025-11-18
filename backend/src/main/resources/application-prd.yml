@@ -11,7 +11,7 @@ server:
 
 # 파일 업로드 경로 설정
 file:
-  upload-dir: /home/Loute/ourshop
+  upload-dir: /home/Loute/ourshop/
 
 spring:
   main:
@@ -79,3 +79,12 @@ logging:
             sql : trace
   config : classpath:logback.xml
 
+# Swagger (Springdoc) 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html   # Swagger UI 접속 경로
+    enabled: true            # Swagger UI 활성화 여부 (운영에서는 false 권장)
+  api-docs:
+    path: /v3/api-docs       # API 문서(JSON) 경로
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
