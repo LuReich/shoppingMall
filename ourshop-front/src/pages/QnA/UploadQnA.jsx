@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../assets/css/UploadQnA.css';
 import { useQnA } from '../../hooks/useQnA';
 import { useParams } from 'react-router';
+import { SERVER_URL } from '../../axios/axios';
 
 function UploadQnA() {
     
@@ -12,7 +13,7 @@ function UploadQnA() {
     const { mutate: updateQnAMutate } = updateQnA();
 
     // 🔥 수정 모드일 때만 상세 조회
-    const { data: QnADetaiData } = inquiryId
+    const { data: QnaDetailData } = inquiryId
         ? getQnADetail(mode, inquiryId)
         : { data: null };
 
@@ -25,8 +26,8 @@ function UploadQnA() {
     const [addImages, setAddImages] = useState([]);
     const [deletedImageIds, setDeletedImageIds] = useState([]);
 
-    console.log("기존 qna 상세",QnADetaiData)
-    const QnADetail  = QnADetaiData?.content;
+    console.log("기존 qna 상세",QnaDetailData)
+    const QnADetail  = QnaDetailData?.content;
     // 🔥 상세 데이터 들어오면 state 초기화
     useEffect(() => {
         if (!QnADetail) return;
@@ -40,10 +41,10 @@ function UploadQnA() {
         setAddImages(
             QnADetail.images?.map(img => ({
                 ...img,
-                url: `http://localhost:9090${img.imagePath}`,
+                url: `${SERVER_URL}${img.imagePath}`,
             })) || []
         );
-    }, [QnADetaiData?.content]);
+    }, [QnaDetailData?.content]);
     
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);

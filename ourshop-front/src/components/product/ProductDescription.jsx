@@ -1,11 +1,12 @@
 import React from 'react';
 import '../../assets/css/ProductDescription.css';
+import { SERVER_URL } from '../../axios/axios';
 
 function ProductDescription({ productDescription }) {
   // description 문자열에서 상대경로를 절대경로로 변환
   const fixedDescription = productDescription?.description
-    ?.replaceAll('src="/temp/', 'src="http://localhost:9090/temp/')
-    ?.replaceAll('src="/product/', 'src="http://localhost:9090/product/')
+    ?.replaceAll('src="/temp/', `src="${SERVER_URL}/temp/`)
+    ?.replaceAll('src="/product/', `src="${SERVER_URL}/product/`)
     || '';
 
   return (

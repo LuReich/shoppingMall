@@ -5,6 +5,7 @@ import Sort from '../../components/common/Sort';
 import '../../assets/css/AdminProductManage.css'; // 상품 관리 페이지 전용 스타일
 import Pagination from '../../components/common/Pagenation';
 import Loader from '../../utils/Loaders';
+import { SERVER_URL } from '../../axios/axios';
 
 function AdminProductManage(props) {
 
@@ -149,7 +150,7 @@ function AdminProductManage(props) {
                                 <td>{new Date(p.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                 <td>
                                     <div className="detail-info" onClick={() => navigate(`/product/${p.productId}`)}>
-                                        <img src={`http://localhost:9090${p.thumbnailUrl}`} alt={p.productName} style={{width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px'}} />
+                                        <img src={`${SERVER_URL}${p.thumbnailUrl}`} alt={p.productName} style={{width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px'}} />
                                         <div>
                                             <p>{p.productName}</p>
                                         </div>

@@ -12,6 +12,7 @@ import { useCategory } from "../../hooks/useCategory";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { SERVER_URL } from "../../axios/axios";
 
 function ProductUpload() {
   const navigate = useNavigate();
@@ -110,17 +111,17 @@ function ProductUpload() {
         price: p.price,
         stock: p.stock,
         shippingInfo: pd.shippingInfo,
-        description: pd.description?.replaceAll('src="/temp/', 'src="http://localhost:9090/temp/')
-          ?.replaceAll('src="/product/', 'src="http://localhost:9090/product/')
+        description: pd.description?.replaceAll('src="/temp/', `src="${SERVER_URL}/temp/`)
+          ?.replaceAll('src="/product/', `src="${SERVER_URL}/product/`)
           || '',
         categoryId: p.categoryId,
         parentCategoryId: subCategory?.parentId,
       });
 
-      setMainImageUrl(`http://localhost:9090${p.thumbnailUrl}`);
+      setMainImageUrl(`${SERVER_URL}${p.thumbnailUrl}`);
       // 기존 서브 이미지를 상태에 저장
       const existingImages = p.productImages?.map(img => ({
-        url: `http://localhost:9090${img.imagePath}`,
+        url: `${SERVER_URL}${img.imagePath}`,
         isNew: false,
         imageId: img.imageId // 올른 필드명: imageId
       })) || [];
@@ -585,8 +586,8 @@ function ProductUpload() {
     const existingImages = doc.querySelectorAll('img:not([data-image-id])');
     existingImages.forEach(img => {
       const src = img.getAttribute('src');
-      if (src && src.startsWith('http://localhost:9090')) {
-        img.setAttribute('src', src.replace('http://localhost:9090', ''));
+      if (src && src.startsWith(SERVER_URL)) {
+        img.setAttribute('src', src.replace(SERVER_URL, ''));
       }
     });
 
