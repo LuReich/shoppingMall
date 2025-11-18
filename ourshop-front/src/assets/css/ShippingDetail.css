@@ -254,6 +254,10 @@
 }
 
 
+.n-results{
+  text-align: center;
+  width: 100%;
+}
 /* SelleShippingDetail 모달 스타일 */
 .order-detail-modal {
   position: fixed;
@@ -267,6 +271,7 @@
   align-items: center;
   z-index: 1000;
 }
+
 
 .seller-order-detail-modal-content {
   position: relative;
@@ -310,7 +315,7 @@
 /* ===== 테이블 열 너비 조정 ===== */
 .shipping-table th:nth-child(1), /* 주문일자 */
 .shipping-table td:nth-child(1) {
-  width: 13%;
+  width: 16%;
 }
 
 .shipping-table th:nth-child(2), /* 주문 아이디 */
@@ -320,17 +325,17 @@
 
 .shipping-table th:nth-child(3), /* 주문 상태 */
 .shipping-table td:nth-child(3) {
-  width: 12%;
+  width: 14%;
 }
 
 .shipping-table th:nth-child(4), /* 상품정보 */
 .shipping-table td:nth-child(4) {
-  width: 30%; /* 상품정보 넓게 */
+  width: 26%; /* 상품정보 넓게 */
 }
 
 .shipping-table th:nth-child(5), /* 수량 */
 .shipping-table td:nth-child(5) {
-  width: 10%;
+  width: 9%;
 }
 
 .shipping-table th:nth-child(6), /* 주문금액 */

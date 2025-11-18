@@ -5,8 +5,11 @@ import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
 import '../../assets/css/BuyerProductLiked.css';
 import Loader from '../../utils/Loaders';
+import { useNavigate } from 'react-router';
 
 function BuyerProductLiked(props) {
+
+    const navigate = useNavigate();
 
     // 페이지 & 정렬 상태
     const [page, setPage] = useState(0);
@@ -15,7 +18,7 @@ function BuyerProductLiked(props) {
     const {getLikedProducts} = useProduct();
     const {data: LikedProducts} = getLikedProducts({
         sort,
-        size:8,
+        size:6,
         page,
     });
 
@@ -45,7 +48,10 @@ function BuyerProductLiked(props) {
                     <ProductCard key={product.productId} product={product}/>
                 ))
                 :
-                <p>좋아요한 상품이 없습니다.</p>
+                <div className='no-results'>
+                    <img src='/heart.png' alt='heart' className='heart-icon' onClick={() => navigate('/products')} />
+                    <p>'좋아요'한 상품이 없습니다. 마음에 드는 상품에 '좋아요'를 눌러보세요!</p>
+                </div>
             }
             </div>
             {

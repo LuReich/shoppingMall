@@ -5,6 +5,7 @@ import { authStore } from '../../store/authStore';
 import { useProduct } from '../../hooks/useProduct';
 import { FaRegHeart } from "react-icons/fa";
 import LikesBtn from '../common/LikesBtn';
+import { SERVER_URL } from '../../axios/axios';
 
 
 
@@ -24,7 +25,7 @@ const ProductCard = ({ product }) => {
             <div className={styles.productImageWrapper} >
                  {(role=="BUYER" || !isLogin) && <LikesBtn styleProps={"like-btn-on-card"} product={product}/>}
                  {product?.isDeleted && <div className={styles.productDeleted}>삭제된 상품입니다.</div>}
-                <img src={`http://localhost:9090${product?.thumbnailUrl}`} 
+                <img src={`${SERVER_URL}${product?.thumbnailUrl}`} 
                     alt={product?.productName} 
                     className={styles.productImage}
                 />

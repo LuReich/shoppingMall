@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import '../../assets/css/QnaImagesModal.css';
+import { SERVER_URL } from '../../axios/axios';
 
 function QnaImageModal({image, setIsModalOpen}) {
 
@@ -9,7 +10,7 @@ function QnaImageModal({image, setIsModalOpen}) {
             <div className='qna-image-box'>
                 <button type='button' className='qna-close-button' onClick={() => setIsModalOpen(false)}>X</button>
                 <img key={image.imageId}
-                    src={`http://localhost:9090${image.imagePath}`}
+                    src={`${SERVER_URL}${image.imagePath}`}
                     alt={image.imageName}
                 />
             </div>

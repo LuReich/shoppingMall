@@ -1,9 +1,21 @@
 import React from 'react';
 import '../../assets/css/Footer.css';
 import { authStore } from '../../store/authStore';
+import { useNavigate } from 'react-router';
 
 function Footer(props) {
+    const navigate = useNavigate();
     const role = authStore(state => state.role);
+    const handleShippingDetail = () => {
+       if(role === "BUYER"){
+        navigate("/buyer/mypage/shipping" );   
+       }else if(role === "SELLER"){
+        navigate("/seller/mypage/shipping");
+       }else{
+        alert("로그인이 필요한 서비스입니다.");
+        navigate("/login");
+       }
+    }
 
     return (
         <footer className="footer">
@@ -19,8 +31,7 @@ function Footer(props) {
                             <ul>
                                 <li><a href="/qna">1:1 문의</a></li>
                                 <li><a href="/faq">FAQ</a></li>
-                                <li><a href={role === "BUYER"? "/buyer/mypage/shipping" 
-                                    : role === "SELLER"? "/seller/mypage/shipping" : "/#"}>배송 조회</a></li>
+                                <li><a onClick={handleShippingDetail} >배송 조회</a></li>
                             </ul>
                         </div>
                         <div>

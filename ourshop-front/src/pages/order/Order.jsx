@@ -5,6 +5,7 @@ import { useOrder } from '../../hooks/useOrder';
 import { authStore } from "../../store/authStore";
 import { useLocation, useNavigate } from "react-router";
 import { useCart } from "../../hooks/useCart";
+import { SERVER_URL } from "../../axios/axios";
 
 function Order() {
 
@@ -274,7 +275,7 @@ function Order() {
             {cartItems?.map((item) => (
               <tr key={item.productId}>
                 <td className="item-info">
-                  <img src={item.thumbnailUrl} alt={item.productName} />
+                  <img src={`${SERVER_URL}${item?.thumbnailUrl}`} alt={item.productName} />
                   <div>
                     <p className="item-name">{item.productName}</p>
                   </div>

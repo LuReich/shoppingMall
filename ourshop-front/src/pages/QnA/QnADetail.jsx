@@ -6,6 +6,7 @@ import QnaImageModal from '../../components/qna/qnaImageModal';
 import { authStore } from '../../store/authStore';
 import { useAdmin } from '../../hooks/useAdmin';
 import Loader from '../../utils/Loaders';
+import { SERVER_URL } from '../../axios/axios';
 function QnADetail(props) {
     const navigate = useNavigate();
     const role = authStore(state => state.role);
@@ -83,7 +84,7 @@ function QnADetail(props) {
                     {QnADetail.images?.map((image) => ( // Optional chaining for safety
                         <img
                             key={image.imageId}
-                            src={`http://localhost:9090${image.imagePath}`}
+                            src={`${SERVER_URL}${image.imagePath}`}
                             alt={image.imageName}
                             onClick={() => {
                                 setModalImage(image);

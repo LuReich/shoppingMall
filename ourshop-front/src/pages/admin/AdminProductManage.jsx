@@ -5,6 +5,7 @@ import Sort from '../../components/common/Sort';
 import '../../assets/css/AdminProductManage.css'; // 상품 관리 페이지 전용 스타일
 import Pagination from '../../components/common/Pagenation';
 import Loader from '../../utils/Loaders';
+import { SERVER_URL } from '../../axios/axios';
 
 function AdminProductManage(props) {
 
@@ -115,7 +116,7 @@ function AdminProductManage(props) {
                         <select className='search-admin-product-select'
                             value={searchField}
                             onChange={(e) => setSearchField(e.target.value)}>
-                            <option value="productId">상품번호</option>
+                            <option value="productId">상품 아이디</option>
                             <option value="productName">상품명</option>
                             <option value="companyName">업체명</option>
                         </select>
@@ -132,7 +133,7 @@ function AdminProductManage(props) {
             <table>
                 <thead>
                     <tr>
-                        <th>상품번호</th>
+                        <th>상품 아이디</th>
                         <th>등록일</th>
                         <th>상품</th>
                         <th>업체명</th>
@@ -149,7 +150,7 @@ function AdminProductManage(props) {
                                 <td>{new Date(p.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                 <td>
                                     <div className="detail-info" onClick={() => navigate(`/product/${p.productId}`)}>
-                                        <img src={`http://localhost:9090${p.thumbnailUrl}`} alt={p.productName} style={{width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px'}} />
+                                        <img src={`${SERVER_URL}${p.thumbnailUrl}`} alt={p.productName} style={{width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px'}} />
                                         <div>
                                             <p>{p.productName}</p>
                                         </div>

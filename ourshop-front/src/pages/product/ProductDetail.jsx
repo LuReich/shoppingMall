@@ -13,6 +13,7 @@ import RecommendBox from '../../components/recommendation/RecommendBox';
 import { IoIosArrowUp } from "react-icons/io";
 import ProductQnA from '../QnA/QnA';
 import Loader from '../../utils/Loaders';
+import { SERVER_URL } from '../../axios/axios.js';
 
 
 function ProductDetail() {
@@ -187,7 +188,13 @@ function ProductDetail() {
   const productData = { ...product, quantity: Number(quantity) };
 
   const orderDirectBtn = () => {
-    navigate('/order', { state: { productData } });
+    if (isLogin){
+      navigate('/order', { state: { productData } });
+    } else {
+      alert("로그인이 필요한 서비스 입니다.");
+      navigate('/login');
+    }
+
   };
 
   return (
@@ -216,7 +223,7 @@ function ProductDetail() {
                 src={
                   activeImage.startsWith('http')
                     ? activeImage
-                    : `http://localhost:9090${activeImage}`
+                    : `${SERVER_URL}${activeImage}`
                 }
                 alt={product.productName || "상품 이미지"}
                 className="main-image"
@@ -242,7 +249,7 @@ function ProductDetail() {
                 src={
                       product.thumbnailUrl.startsWith('http')
                       ? product.thumbnailUrl
-                      : `http://localhost:9090${product.thumbnailUrl}`
+                      : `${SERVER_URL}${product.thumbnailUrl}`
                     } alt="대표 이미지"
                 />
               </div>
@@ -258,7 +265,7 @@ function ProductDetail() {
                   src={
                     img.imagePath?.startsWith('http')
                     ? img.imagePath
-                    : `http://localhost:9090${img.imagePath}`}
+                    : `${SERVER_URL}${img.imagePath}`}
                     alt={`상품 이미지 ${index + 1}`}
                 />
             </div>

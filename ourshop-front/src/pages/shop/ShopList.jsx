@@ -24,7 +24,7 @@ function ShopList(props) {
     const {getPublicShopList} = useSeller();
     const {data: PublicShopListData, isLoading, isError} = getPublicShopList({
         page,
-        size:8,
+        size:9,
         sort,
         isVerified: verificationFilter,
         ...searchParams

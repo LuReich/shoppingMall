@@ -222,7 +222,7 @@ function AdminUserManage() {
                                         <td>{user.nickname}</td>
                                         <td>{user.buyerEmail}</td>
                                         <td>{user.isActive ? "활성" : "비활성"}</td>
-                                        <td>{user.withdrawalStatus || '-'}</td>
+                                        <td>{user.withdrawalStatus ? user.withdrawalStatus === "VOLUNTARY" ? "탈퇴" : "추방" :'-'}</td>
                                         <td>{new Date(user.createAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                     </tr>
                                 ) : (

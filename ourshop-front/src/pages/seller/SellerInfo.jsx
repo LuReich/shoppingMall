@@ -40,7 +40,10 @@ const schema = yup.object().shape({
     .matches(/^[0-9-]+$/, "숫자만 입력해주세요."),
   address: yup.string().required("주소를 입력해주세요."),
   addressDetail: yup.string(),
-  companyDetail: yup.string().required("업체 상세 정보를 입력해주세요."),
+  companyDetail: yup
+    .string()
+    .required("업체 상세 정보를 입력해주세요.")
+    .max(250, "업체 상세 정보는 최대 250자까지 가능합니다."),
 });
 
 function SellerInfo() {
@@ -426,6 +429,7 @@ function SellerInfo() {
         <div className="info-group">
           <label>업체 상세 정보</label>
           <textarea {...register("companyDetail")} style={{height: "100px", textAlign: "start"}}/>
+          <p className="error">{errors.companyDetail?.message}</p>
         </div>
 
          {/* 비밀번호 */}

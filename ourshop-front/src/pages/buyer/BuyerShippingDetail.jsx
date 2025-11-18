@@ -6,6 +6,7 @@ import Sort from '../../components/common/Sort';
 import { Link, useNavigate } from 'react-router-dom';
 import { useReviews } from '../../hooks/useReview';
 import { authStore } from '../../store/authStore';
+import { SERVER_URL } from '../../axios/axios';
 
 function BuyerShippingDetail(props) {
 
@@ -94,7 +95,9 @@ function BuyerShippingDetail(props) {
                     {buyerOrders?.map((order) => (
                         <Fragment key={order.orderId}>
                         {/* 주문일자 한 번만 표시 */}
-                        {order.orderDetails?.map((detail, idx) => (
+                        {order.orderDetails?.map((detail, idx) => {
+                            console.log("Image URL check:", detail?.productThumbnailUrl);
+                            return (
                             <tr key={detail.orderDetailId}>
                             {
                               idx === 0 ? (
@@ -110,7 +113,7 @@ function BuyerShippingDetail(props) {
                             {/*<td>{detail.orderDetailId}</td>*/}
                             <td>
                               <div className="detail-info" onClick={() => navigate(`/product/${detail.productId}`)}>
-                                <img src={detail.productThumbnailUrl} alt={detail.productName} />
+                                <img src={`${SERVER_URL}${detail?.productThumbnailUrl}`} alt={detail.productName} />
                                 <div>
                                   <p>{detail.productName}</p>
                                   <p>{detail.companyName}</p>
@@ -146,7 +149,7 @@ function BuyerShippingDetail(props) {
 
                                             <Link to="/buyer/mypage/review/upload" 
                                                   className="review-upload-link"
-                                                  state={{ productId: detail.productId, orderDetailId: detail.orderDetailId }}>
+                                                  state={{ productId: detail.productId, orderDetailId: detail.orderDetailId, productName: detail.productName}}>
                                                   리뷰쓰기
                                             </Link>
 
@@ -162,7 +165,8 @@ function BuyerShippingDetail(props) {
                               </div>
                             </td>
                         </tr>
-                      ))}
+                      )})
+                      }
                   </Fragment>
                 ))}
               </tbody>

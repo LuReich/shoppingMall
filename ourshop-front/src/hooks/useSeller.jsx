@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sellerAPI } from "../api/sellerAPI"
+import { authStore } from "../store/authStore";
 
 export const useSeller = () => {
 
     const qc = useQueryClient();
-
+    const sellerUid = authStore(state => state.user?.content?.sellerUid);
+    
     //판매자 업체 정보 조회
     const getShopInfo = (sellerUid) => {
         return useQuery({
@@ -16,8 +18,9 @@ export const useSeller = () => {
     //판매자 상품 조회 
     const getSellerProductList = (params ={}) => {
         return useQuery({
-            queryKey: ["sellerProducts", params],
+            queryKey: ["sellerProducts", sellerUid, params], // queryKey에 sellerUid를 포함하여 사용자별로 캐시를 분리합니다.
             queryFn: () => sellerAPI.getProduct(params),
+            enabled: !!sellerUid, // sellerUid가 있을 때만 쿼리를 실행합니다.
         });
     };
 

@@ -12,12 +12,13 @@ function RecommendBox({product}) {
     const {getCategoryList} = useCategory();
     const {data: categoryData} = getCategoryList();
     //현재 상품의 카테고리의 부모 카테고리 아이디 찾기
-    const parantCategoryId = categoryData?.content.find(cate => cate.id === product.categoryId)?.parentId;
+    const parantCategoryId = categoryData?.content.find(cate => cate.categoryId === product.categoryId)?.parentId;
     //같은 부모 카테고리의 상품 리스트 조회
     const {data: productListData} = getProductList({categoryId: parantCategoryId, sort: "likeCount,desc", size: 8});
 
     const recommendedProducts = productListData?.content?.content.filter(p => p.productId !== product.productId);
      //디버깅
+     console.log("부모 카테고리 아이디", parantCategoryId);
     console.log("카테고리 데이터", categoryData?.content);
     console.log("추천 상품", recommendedProducts);
 

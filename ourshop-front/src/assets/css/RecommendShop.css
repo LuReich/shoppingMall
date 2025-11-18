@@ -36,8 +36,22 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
 }
 
+.heart-icon{
+    width: 50px;
+    transition: width 0.2s ease-in-out;
+}
+
+.heart-icon:hover{
+    width: 60px;
+    cursor: pointer;
+}
 /*
 @media (max-width: 1200px) {
     .shop-list-container {

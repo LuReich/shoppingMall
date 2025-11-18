@@ -103,6 +103,8 @@
   line-height: 1.4;
   font-weight: 500;
   width: 100%;
+  white-space: normal !important;
+  word-break:break-all;
 }
 
 /* 카테고리 태그 */

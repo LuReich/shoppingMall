@@ -14,6 +14,7 @@ import Sort from '../../components/common/Sort';
 import Pagination from '../../components/common/Pagenation';
 import '../../assets/css/ShopInfo.css';
 import Loader from '../../utils/Loaders';
+import { FaSearch } from "react-icons/fa";
 
 function ShopInfo() {
 
@@ -24,6 +25,9 @@ function ShopInfo() {
     const [page, setPage] = useState(0);
     const [sort, setSort] = useState("price,desc");
 
+    const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 입력 상태
+    const [submittedKeyword, setSubmittedKeyword] = useState(""); // 제출된 검색어 상태
+
     const sellerUid = location.state?.sellerUid;
 
     const { getShopInfo, getPublicSellerProductList } = useSeller();
@@ -32,6 +36,7 @@ function ShopInfo() {
         page,
         size: 8,
         sort,
+        productName: submittedKeyword,
     });
 
     if (isLoading) return <Loader/>;
@@ -51,6 +56,12 @@ function ShopInfo() {
         "productName": "productName",
         "likeCount": "likeCount",
         "rating": "averageRating"
+    };
+
+    //검색 버튼 클릭시
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setSubmittedKeyword(searchKeyword);
     };
 
     return (
@@ -79,7 +90,7 @@ function ShopInfo() {
 
             {/* 소개 문구 */}
             <div className='shop-info-box'>
-                <p>"{shopInfo.companyInfo}"</p>
+                <p className='shop-introduce'>"{shopInfo.companyInfo}"</p>
             </div>
 
             {/* 상세 정보 */}
@@ -95,8 +106,18 @@ function ShopInfo() {
             <div className='shop-product-box'>
                 <div className='shop-product-header'>
                     <h2>{shopInfo.companyName}의 판매 상품</h2>
-                    <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg} />
+                  
                 </div>
+                <div className='shop-porduct-form-box'>
+                    <form className='product-search-form-b' onSubmit={handleSearch}>
+                        <input type='text' placeholder={`${shopInfo.companyName}의 상품을 검색해보세요`} 
+                        value={searchKeyword}
+                        className='search-product-post-input'
+                        onChange={(e) => setSearchKeyword(e.target.value)}/>
+                        <button type='submit' className="product-search-btn"><FaSearch/></button>
+                    </form>
+                </div>
+                  <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg} />
                 <div className='shop-product-grid'>
                     {
                         products?.length > 0 ? (
