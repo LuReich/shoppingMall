@@ -1,0 +1,77 @@
+sudo vim etcnginxconf.dfront-app.conf
+
+# HTTP 80 포트 - HTTPS로 리다이렉트
+server {
+    listen 80;
+    server_name ourshop.monster www.ourshop.monster;
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS 443 포트 - React 앱 + API
+server {
+    server_name ourshop.monster www.ourshop.monster;
+
+    # 배포파일 위치
+    root /usr/share/nginx/html/front-app;
+    index index.html;
+
+    # SPA용
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # API용
+    location /api/v1/ {
+        proxy_pass http://127.0.0.1:9090/api/v1/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+     location /img/  {
+        proxy_pass http://127.0.0.1:9090/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/ourshop.monster/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ourshop.monster/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+# HTTPS 9090 포트 - 이미지/파일 서버
+server {
+    listen 8443 ssl;
+    server_name ourshop.monster www.ourshop.monster;
+
+    ssl_certificate /etc/letsencrypt/live/ourshop.monster/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ourshop.monster/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # 모든 요청을 localhost:9090으로 프록시
+    location / {
+        proxy_pass http://localhost:9090/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
