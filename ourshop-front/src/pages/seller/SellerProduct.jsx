@@ -156,7 +156,7 @@ function SellerProduct(props) {
              <Sort sort={sort} setSort={setSort} setPage={setPage} sortCateg={sortCateg}/>
             <div className='seller-product'>
                 {
-                    products.length > 0 ? products?.map(x => (
+                    products?.map(x => (
                         <div key={x.productId} className='seller-product-item'>
                             {/*<input type="checkbox" 
                                 className='seller-product-checkbox'
@@ -175,7 +175,7 @@ function SellerProduct(props) {
                             </div>
                             
                         </div>
-                    )) : <p className='no-results'>등록한 상품이 없습니다.</p>
+                    )) 
                 }
                
             </div>
