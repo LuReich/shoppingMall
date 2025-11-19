@@ -5,7 +5,7 @@ import Quill from "quill";
 import ImageResize from 'quill-image-resize-module-react';
 import "quill/dist/quill.snow.css";
 
-Quill.register('modules/imageResize', ImageResize);
+// Quill.register('modules/imageResize', ImageResize);
 import { useProduct } from "../../hooks/useProduct";
 import "../../assets/css/ProductUpload.css";
 import { useCategory } from "../../hooks/useCategory";
@@ -343,167 +343,148 @@ function ProductUpload() {
     }, 100);
   }, []);
 
-  // 드래그/붙여넣기 이미지 업로드 
+  // [수정] 에디터 핸들러 설정 (초기화 오류 방지)
   useEffect(() => {
-    const editor = quillRef.current?.getEditor();
-    if (!editor) return;
-    const el = editor.root;
+    let cleanupFunctions = [];
 
-    const handleDrop = async (e) => {
-      e.preventDefault();
-      const files = e.dataTransfer?.files;
-      if (files && files.length > 0) {
-        for (const file of files) {
-          if (file.type.startsWith("image/")) {
-            try {
-              const { imageId, dataUrl } = await uploadFile(file);
-              insertImage(imageId, dataUrl);
-            } catch (error) {
-              console.error("Drop image upload failed", error);
-              break;
-            }
-          }
-        }
-      }
-    };
-
-    const handlePaste = async (e) => {
-      const item = [...e.clipboardData.items].find((i) =>
-        i.type.startsWith("image/")
-      );
-      if (item) {
-        e.preventDefault();
-        const file = item.getAsFile();
-        const { imageId, dataUrl } = await uploadFile(file);
-        insertImage(imageId, dataUrl);
-      }
-    };
-
-    el.addEventListener("drop", handleDrop);
-    el.addEventListener("paste", handlePaste);
-    return () => {
-      el.removeEventListener("drop", handleDrop);
-      el.removeEventListener("paste", handlePaste);
-    };
-  }, [uploadFile, insertImage]);
-
-  // ==================================================================
-  // =========== 이미지 드래그/드롭 (위치 변경) - 개선된 로직 ===========
-  // ==================================================================
-  useEffect(() => {
-    const editor = quillRef.current?.getEditor();
-    if (!editor) return;
-
-    const el = editor.root;
-    let selectedImg = null;
-    let isDragging = false;
-    let dragGhost = null; // 드래그하는 동안 보여줄 반투명 이미지
-
-    const handleMouseDown = (e) => {
-      // 리사이즈 핸들을 클릭한 경우는 무시
-      if (e.target.classList.contains('ql-resize-handle')) {
+    const timerId = setTimeout(() => {
+      if (!quillRef.current) {
         return;
       }
-      const img = e.target.closest("img");
-      if (img) {
-        isDragging = true;
-        selectedImg = img;
-
-        // 드래그 시작 시 반투명 '고스트' 이미지 생성
-        dragGhost = img.cloneNode();
-        dragGhost.style.position = 'absolute';
-        dragGhost.style.opacity = '0.5';
-        dragGhost.style.pointerEvents = 'none'; // 마우스 이벤트 방해 방지
-        document.body.appendChild(dragGhost);
-
-        // 고스트 위치 업데이트
-        dragGhost.style.left = `${e.clientX - dragGhost.width / 2}px`;
-        dragGhost.style.top = `${e.clientY - dragGhost.height / 2}px`;
-
-        e.preventDefault();
-      }
-    };
-
-    const handleMouseMove = (e) => {
-      if (isDragging && selectedImg) {
-        // 고스트 이미지 위치를 마우스 따라 이동
-        if (dragGhost) {
-          dragGhost.style.left = `${e.clientX - dragGhost.width / 2}px`;
-          dragGhost.style.top = `${e.clientY - dragGhost.height / 2}px`;
-        }
-        e.preventDefault();
-      }
-    };
-
-    const handleMouseUp = (e) => {
-      if (isDragging && selectedImg) {
-        isDragging = false;
-
-        // 고스트 이미지 제거
-        if (dragGhost) {
-          document.body.removeChild(dragGhost);
-          dragGhost = null;
-        }
-
+      
+      try {
         const editor = quillRef.current.getEditor();
-        const blot = Quill.find(selectedImg, true);
-        if (!blot) {
-          selectedImg = null;
-          return;
-        }
+        const el = editor.root;
 
-        const originalIndex = editor.getIndex(blot);
-        const imageSrc = blot.domNode.src;
-        const imageId = blot.domNode.getAttribute('data-image-id');
-
-        // ==== 핵심 개선: 마우스 좌표로 정확한 텍스트 위치 찾기 ====
-        let targetIndex = 0;
-        // document.caretRangeFromPoint는 Firefox/Chrome에서 지원
-        // 일부 브라우저에서는 caretPositionFromPoint 사용
-        const range = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
-
-        if (range && editor.root.contains(range.startContainer)) {
-          const targetBlot = Quill.find(range.startContainer, true);
-          if (targetBlot) {
-            targetIndex = editor.getIndex(targetBlot) + range.startOffset;
-          }
-        } else {
-          // 에디터 밖에서 드롭하거나, 범위를 찾지 못하면 이동하지 않음
-          selectedImg = null;
-          return;
-        }
-        // =========================================================
-
-        // 위치가 실제로 변경되었을 때만 DOM 조작
-        const newIndex = originalIndex < targetIndex ? targetIndex - 1 : targetIndex;
-        if (newIndex !== originalIndex) {
-          editor.deleteText(originalIndex, 1, 'user');
-          editor.insertEmbed(newIndex, 'image', imageSrc, 'user');
-
-          // data-image-id를 다시 적용
-          setTimeout(() => {
-            const [newBlot] = editor.getLeaf(newIndex);
-            if (newBlot && newBlot.statics.blotName === 'image') {
-              newBlot.domNode.setAttribute('data-image-id', imageId);
+        // 1. 드래그/붙여넣기 이미지 업로드 핸들러
+        const handleDrop = async (e) => {
+          e.preventDefault();
+          const files = e.dataTransfer?.files;
+          if (files && files.length > 0) {
+            for (const file of files) {
+              if (file.type.startsWith("image/")) {
+                try {
+                  const { imageId, dataUrl } = await uploadFile(file);
+                  insertImage(imageId, dataUrl);
+                } catch (error) {
+                  console.error("Drop image upload failed", error);
+                  break;
+                }
+              }
             }
-          }, 100);
-        }
+          }
+        };
 
-        selectedImg = null;
+        const handlePaste = async (e) => {
+          const item = [...e.clipboardData.items].find((i) =>
+            i.type.startsWith("image/")
+          );
+          if (item) {
+            e.preventDefault();
+            const file = item.getAsFile();
+            const { imageId, dataUrl } = await uploadFile(file);
+            insertImage(imageId, dataUrl);
+          }
+        };
+
+        el.addEventListener("drop", handleDrop);
+        el.addEventListener("paste", handlePaste);
+        cleanupFunctions.push(() => {
+          el.removeEventListener("drop", handleDrop);
+          el.removeEventListener("paste", handlePaste);
+        });
+
+        // 2. 이미지 드래그/드롭 (위치 변경) 핸들러
+        let selectedImg = null;
+        let isDragging = false;
+        let dragGhost = null;
+
+        const handleMouseDown = (e) => {
+          if (e.target.classList.contains('ql-resize-handle')) return;
+          const img = e.target.closest("img");
+          if (img) {
+            isDragging = true;
+            selectedImg = img;
+            dragGhost = img.cloneNode();
+            dragGhost.style.position = 'absolute';
+            dragGhost.style.opacity = '0.5';
+            dragGhost.style.pointerEvents = 'none';
+            document.body.appendChild(dragGhost);
+            dragGhost.style.left = `${e.clientX - dragGhost.width / 2}px`;
+            dragGhost.style.top = `${e.clientY - dragGhost.height / 2}px`;
+            e.preventDefault();
+          }
+        };
+
+        const handleMouseMove = (e) => {
+          if (isDragging && selectedImg && dragGhost) {
+            dragGhost.style.left = `${e.clientX - dragGhost.width / 2}px`;
+            dragGhost.style.top = `${e.clientY - dragGhost.height / 2}px`;
+            e.preventDefault();
+          }
+        };
+
+        const handleMouseUp = (e) => {
+          if (isDragging && selectedImg) {
+            isDragging = false;
+            if (dragGhost) {
+              document.body.removeChild(dragGhost);
+              dragGhost = null;
+            }
+            const editor = quillRef.current.getEditor();
+            const blot = Quill.find(selectedImg, true);
+            if (!blot) {
+              selectedImg = null;
+              return;
+            }
+            const originalIndex = editor.getIndex(blot);
+            const imageSrc = blot.domNode.src;
+            const imageId = blot.domNode.getAttribute('data-image-id');
+            const range = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
+            let targetIndex = 0;
+            if (range && editor.root.contains(range.startContainer)) {
+              const targetBlot = Quill.find(range.startContainer, true);
+              if (targetBlot) {
+                targetIndex = editor.getIndex(targetBlot) + range.startOffset;
+              }
+            } else {
+              selectedImg = null;
+              return;
+            }
+            const newIndex = originalIndex < targetIndex ? targetIndex - 1 : targetIndex;
+            if (newIndex !== originalIndex) {
+              editor.deleteText(originalIndex, 1, 'user');
+              editor.insertEmbed(newIndex, 'image', imageSrc, 'user');
+              setTimeout(() => {
+                const [newBlot] = editor.getLeaf(newIndex);
+                if (newBlot && newBlot.statics.blotName === 'image') {
+                  newBlot.domNode.setAttribute('data-image-id', imageId);
+                }
+              }, 100);
+            }
+            selectedImg = null;
+          }
+        };
+
+        el.addEventListener("mousedown", handleMouseDown);
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+        cleanupFunctions.push(() => {
+          el.removeEventListener("mousedown", handleMouseDown);
+          document.removeEventListener("mousemove", handleMouseMove);
+          document.removeEventListener("mouseup", handleMouseUp);
+        });
+
+      } catch (error) {
+        console.error("에디터 핸들러 설정 중 오류 발생:", error);
       }
-    };
-
-    // document에 이벤트를 등록하여 에디터 밖으로 마우스가 나가도 추적
-    el.addEventListener("mousedown", handleMouseDown);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    }, 500); // 500ms 지연으로 초기화 시간 확보
 
     return () => {
-      el.removeEventListener("mousedown", handleMouseDown);
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      clearTimeout(timerId);
+      cleanupFunctions.forEach(cleanup => cleanup());
     };
-  }, []);
+  }, [uploadFile, insertImage]); // 원래 의존성 유지
 
   const filteredSubCategories = useMemo(
     () => subCategories.filter((sub) => sub.parentId === Number(parentCategoryId)),
@@ -550,10 +531,10 @@ function ProductUpload() {
           },
         },
       },
-      imageResize: {
+      /* imageResize: {
         parchment: Quill.import('parchment'),
         modules: ['Resize', 'DisplaySize']
-      }
+      } */
     }),
     [uploadFile, insertImage] // insertImage를 의존성 배열에 추가
   );
