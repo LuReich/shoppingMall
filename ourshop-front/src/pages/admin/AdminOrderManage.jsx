@@ -137,7 +137,7 @@ function AdminOrderManage(props) {
     return (
         <div className='admin-order-manage-container'>
            <div className='admin-order-manage-bar'>
-                <h2>주문 조회</h2>
+                <h2>거래 조회</h2>
                 <div className='admin-order-manage-search-container'>
                     <div className='admin-order-manage-date-box'>
                         <h4 className='order-label'>주문일자</h4>
@@ -196,7 +196,7 @@ function AdminOrderManage(props) {
                                 value={searchField}
                                 onChange={(e)=> setSearchField(e.target.value)}>
                                 <option value="orderId">주문아이디</option>
-                                <option value="buyerUid">구매자 식별번호</option>
+                                <option value="buyerUid">구매자 UID</option>
                                 <option value="recipientName">수령인</option>
                                 <option value="recipientAddress">배송주소</option>
                             </select>
@@ -217,7 +217,7 @@ function AdminOrderManage(props) {
                         <tr>
                             <th>주문일자</th>
                             <th>주문 아이디</th>
-                            <th>구매자 식별번호</th>
+                            <th>구매자 UID</th>
                             <th>수령인</th>
                             <th>수령주소</th>
                             <th>주문금액</th>

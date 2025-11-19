@@ -21,7 +21,7 @@ function SellerOrderDetailInfoModal({item}) {
    
     return (
         <div className='seller-order-detail-modal-container'>
-          <h2>배송 상세 정보</h2>
+          <h2>{isAdminMode? "주문 상세 정보" : "배송 상세 정보"}</h2>
           {
             item && 
               <div className='total-post-info'>

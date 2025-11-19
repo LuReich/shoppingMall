@@ -1,11 +1,12 @@
 import axios from "axios";
 import { authStore } from "../store/authStore";
 
-export const SERVER_URL = "http://3.25.69.110:9090";
-// export const SERVER_URL="http://localhost:9090";
+export const SERVER_URL = "http://3.105.143.5:9090";
+//export const SERVER_URL="http://localhost:9090";
 
 // axios 기본 설정
 const api = axios.create({
+  //baseURL: `/api/v1`,
   baseURL: `${SERVER_URL}/api/v1`,
   withCredentials: false,
 });

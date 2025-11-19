@@ -48,7 +48,7 @@ function CategoryDropDown({ categories, handleMenuLeave }) {
     <div className="mega-menu">
       {/* 1차 메뉴 */}
       <div className="menu-column">
-        {categoryTree.map((l1) => (
+        {categoryTree?.map((l1) => (
           <button
             key={l1.categoryId}
             className={`menu-item ${
