@@ -64,6 +64,29 @@ function ShopInfo() {
         setSubmittedKeyword(searchKeyword);
     };
 
+    //휴대폰 포맷
+  const formatPhone = (value) => {
+    if (!value) return "";
+    const raw = value.replace(/\D/g, ""); // 숫자만
+
+    // 02 번호
+    if (raw.startsWith("02")) {
+      if (raw.length === 9)
+        return raw.replace(/(\d{2})(\d{3})(\d{4})/, "$1-$2-$3");
+      if (raw.length === 10)
+        return raw.replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3");
+    }
+
+    // 3자리 지역번호
+    if (raw.length === 10)
+      return raw.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+
+    if (raw.length === 11)
+      return raw.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+
+    return value;
+  };
+  
     return (
         <div className='shop-info-container'>
             <h2>{shopInfo.companyName}</h2>
@@ -80,7 +103,7 @@ function ShopInfo() {
                 
                 <div className='popularity-item'>
                     <FaStar className='popularity-icon star' />
-                    <span>리뷰 평점 {shopInfo.averageRating.toFixed(1)} ({shopInfo.totalReviews?.toLocaleString()}건)</span>
+                    <span>리뷰 평점 {shopInfo.averageRating?.toFixed(1)} ({shopInfo.totalReviews?.toLocaleString()}건)</span>
                 </div>
                 <div className='popularity-item'>
                     <FaHeart className='popularity-icon heart' />
@@ -96,7 +119,7 @@ function ShopInfo() {
             {/* 상세 정보 */}
             <div className='shop-info-detail'>
                 <p><IoPerson/> UID: {shopInfo.sellerUid}</p>
-                <p><FaPhone /> {shopInfo.phone.replace(/^(\d{3})(\d{3,4})(\d{4})$/, "$1-$2-$3")}</p>
+                <p><FaPhone /> {formatPhone(shopInfo.phone)}</p>
                 <p><IoIosMail /> {shopInfo.sellerEmail}</p>
                 <p><IoStorefrontSharp /> {shopInfo.address}, {shopInfo.addressDetail}</p>
                 <p><FaIdCard/> 사업자 등록번호: {shopInfo.businessRegistrationNumber.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3")}</p>

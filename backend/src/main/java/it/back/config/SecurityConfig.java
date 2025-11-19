@@ -104,7 +104,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:4000")); // Add
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", 
+                              "http://localhost:4000", "http://3.105.143.5:4000",
+                               "http://ourshop.monster:4000")); // Add
         // frontend
         // dev
         // server
