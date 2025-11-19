@@ -229,7 +229,7 @@ function AdminOrderManage(props) {
                             <th>상품상태</th>
                         </tr>
                     </thead>
-                     {orderList.map((order) => (
+                     {orderList?.length > 0 ? orderList.map((order) => (
                         <tbody key={order.orderId} className='admin-order-manage-tbody'
                          onClick={() => setSelectedItem(order)}>
                         {order.orderDetail.map((detail, index) => (
@@ -253,9 +253,9 @@ function AdminOrderManage(props) {
                         <td>{(detail.pricePerItem * detail.quantity).toLocaleString()}원</td>
                         <td>{statusKor[detail.orderDetailStatus]}</td>
                      </tr>
-                    ))}
+                    )) }
                   </tbody>
-                ))}
+                )): <tr><td colSpan="12" className="noo-results">검색 결과가 없습니다.</td></tr>}
                 </table>
                 {
                     totalPages > 0 ? (

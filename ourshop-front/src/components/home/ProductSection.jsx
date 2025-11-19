@@ -6,6 +6,7 @@ import { useSeller } from '../../hooks/useSeller';
 import ShopCard from '../shop/ShopCard';
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from 'react-router';
+import Loader from '../../utils/Loaders';
 
 
 function ProductSection() {
@@ -48,7 +49,7 @@ function ProductSection() {
     );
   };
 
-  if (isLoading) return <p>상품을 불러오는 중입니다...</p>;
+  if (isLoading) return <Loader/>;
   if (isError) return <p>상품 정보를 불러오는 중 오류가 발생했습니다.</p>;
   if (!products.length) return <p>등록된 상품이 없습니다.</p>;
 
