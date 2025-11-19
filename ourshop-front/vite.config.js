@@ -9,7 +9,7 @@ export default defineConfig({
     port:4000,
     proxy: {
       '/api/v1':{
-        target :'http://localhost:9090',
+        target :'https://ourshop.moster',
         changeOrigin: true
       }
     }

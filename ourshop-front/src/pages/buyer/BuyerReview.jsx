@@ -54,7 +54,7 @@ function BuyerReview(props) {
                     </thead>
                     <tbody>
                         {
-                          reviews?.map(review => (
+                          reviews?.length > 0 ? reviews?.map(review => (
                             <tr key={review.reviewId}>
                                 <td className='product-info'>
                                     <div className='product-name' onClick={() => navigate(`/product/${review.productId}`)}>{review.productName}</div>
@@ -74,7 +74,7 @@ function BuyerReview(props) {
                                     </div> 
                                 </td>
                             </tr>
-                          ))  
+                          )) : <tr><td colSpan="2" className='noo-results'>등록한 리뷰가 없습니다.</td></tr>  
                         }
                     </tbody>
                 </table>

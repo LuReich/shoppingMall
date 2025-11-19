@@ -92,7 +92,7 @@ function BuyerShippingDetail(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {buyerOrders?.map((order) => (
+                    {buyerOrders?.length > 0 ?buyerOrders?.map((order) => (
                         <Fragment key={order.orderId}>
                         {/* 주문일자 한 번만 표시 */}
                         {order.orderDetails?.map((detail, idx) => {
@@ -168,7 +168,7 @@ function BuyerShippingDetail(props) {
                       )})
                       }
                   </Fragment>
-                ))}
+                )): <tr><td colSpan="7" className='noo-results'>주문 기록이 없습니다.</td></tr>}
               </tbody>
             </table>
             {totalPages? (

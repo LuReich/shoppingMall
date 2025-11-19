@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import '../../assets/css/UploadQnA.css';
 import { useQnA } from '../../hooks/useQnA';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { SERVER_URL } from '../../axios/axios';
 
 function UploadQnA() {
-    
+    const navigate = useNavigate();
     const { mode, inquiryId } = useParams();
 
     const { getQnADetail, createQnA, updateQnA } = useQnA();

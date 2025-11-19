@@ -222,7 +222,7 @@ function AdminQnAManage(props) {
                                     <td>{new Date(u.createdAt).toLocaleDateString().replace(/\.$/, '')}</td>
                                 </tr>
                             ))
-                                : <tr><td colSpan="6" className="no-results">검색 결과가 없습니다.</td></tr>
+                                : <tr><td colSpan="6" className="noo-results">검색 결과가 없습니다.</td></tr>
                         }
                     </tbody>
                 </table>

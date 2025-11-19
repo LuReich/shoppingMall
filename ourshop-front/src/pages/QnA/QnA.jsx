@@ -70,7 +70,7 @@ function QnA(props) {
                                 </tr>
                         )) : (
                              <tr>
-                                <td colSpan="5" style={{ textAlign: "center" }}>
+                                <td colSpan="4" style={{ textAlign: "center" }}>
                                     등록한 문의가 없습니다.
                                 </td>
                             </tr>
