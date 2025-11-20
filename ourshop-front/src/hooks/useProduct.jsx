@@ -7,13 +7,16 @@ export const useProduct = () => {
   /* ------------------------------ QUERY ------------------------------ */
 
   // 상품 목록 조회
-  const getProductList = (params = {}) => {
+   const getProductList = (params = {}) => {
+    const { page, size, sort, categoryId, productName, ...rest } = params;
+
     return useQuery({
-      queryKey: ["productList", params],
+      queryKey: ["productList", page, size, sort, categoryId, productName, rest],
       queryFn: () => productAPI.getList(params),
+      keepPreviousData: true,
     });
   };
-
+  
   // 상품 상세 정보
   const getProductDetail = (productId) => {
     return useQuery({

@@ -18,7 +18,10 @@ const ProductCard = ({ product }) => {
  
     const reviewCount = ProductReview?.content?.content?.length || 0;
 
-   
+    const cutName = (name, limit = 20) => {
+        if (!name) return "";
+        return name?.length > limit ? name?.slice(0, limit) + "..." : name;
+    };
 
     return (
         <Link to={`/product/${product?.productId}`} className={styles.productCard}>
@@ -31,7 +34,7 @@ const ProductCard = ({ product }) => {
                 />
             </div>
             <div className={styles.productInfo}>
-                <h3 className={styles.productName}>{product?.productName}</h3>
+                <h3 className={styles.productName}>{cutName(product?.productName)}</h3>
                 {/*<p className={styles.productId}>상품 아이디{product?.productId}</p>*/}
                 <p className={styles.productId}>{product?.companyName}</p>
                 <div className={styles.productPrice}>

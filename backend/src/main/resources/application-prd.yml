@@ -27,7 +27,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     url : jdbc:mariadb://aws-db.c3gyyy2swtvg.ap-southeast-2.rds.amazonaws.com/sample
     username: root
-    password: 12345678
+    password: itkoreateam3
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       connection-timeout: 60000
