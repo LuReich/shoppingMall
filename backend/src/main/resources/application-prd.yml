@@ -14,6 +14,10 @@ file:
   upload-dir: /home/Loute/ourshop/
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 105MB
   main:
     allow-bean-definition-overriding: true
   jwt:
