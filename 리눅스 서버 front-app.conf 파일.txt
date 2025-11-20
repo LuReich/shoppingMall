@@ -1,4 +1,4 @@
-sudo vim etcnginxconf.dfront-app.conf
+sudo vim /etc/nginx/conf.d/front-app.conf
 
 # HTTP 80 포트 - HTTPS로 리다이렉트
 server {
@@ -10,6 +10,8 @@ server {
 # HTTPS 443 포트 - React 앱 + API
 server {
     server_name ourshop.monster www.ourshop.monster;
+
+    client_max_body_size 100M;
 
     # 배포파일 위치
     root /usr/share/nginx/html/front-app;
