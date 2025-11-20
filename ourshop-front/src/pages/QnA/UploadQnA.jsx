@@ -86,6 +86,7 @@ function UploadQnA() {
             .forEach(img => formData.append("addImages", img.file));
 
         createQnAMutate({ mode, formData });
+        navigate(-1);
     
     };
 
