@@ -70,7 +70,7 @@
     text-align: center;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px; /* 둥근 모서리 */
+    border-radius: 4px;
     background-color: #ffffff;
     color: #495057;
     cursor: pointer;
@@ -80,7 +80,6 @@
 } 
 
 .admin-product-radio-wrap input[type="radio"]:checked + span {
-     /* 활성 색상 */
     color: #7cc7de;
     border-color: #7cc7de;
     font-weight: 600;
@@ -92,7 +91,6 @@
     justify-content: center;
     gap: 30px;
 }
-
 
 .admin-product-search-form-bar {
     display: flex;
@@ -110,7 +108,6 @@
     font-size: 14px;
     height: 38px;
 }
-
 
 .search-admin-product-select{
     min-width: 120px;
@@ -138,13 +135,26 @@
   background-color:#6db3c8;
 }
 
-/* 테이블 스타일 */
+
+/* ----------------------------- */
+/* 테이블 비율 조정 (추가 코드) */
+/* ----------------------------- */
+.admin-product-manage-container table th:nth-child(1) { width: 8%; }   /* 상품 아이디 */
+.admin-product-manage-container table th:nth-child(2) { width: 10%; }  /* 등록일 */
+.admin-product-manage-container table th:nth-child(3) { width: 30%; }  /* 상품 */
+.admin-product-manage-container table th:nth-child(4) { width: 12%; }  /* 업체명 */
+.admin-product-manage-container table th:nth-child(5) { width: 10%; }  /* 상태 */
+.admin-product-manage-container table th:nth-child(6) { width: 15%; }  /* 처리 사유 */
+.admin-product-manage-container table th:nth-child(7) { width: 15%; }  /* 삭제 사유 */
+
+
+ /* 테이블 스타일 */
 .admin-product-manage-container table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
     margin-top: 20px;
-    table-layout: fixed;
+    table-layout: fixed; /* 🔥 비율 고정 */
 }
 
 .admin-product-manage-container th {
@@ -161,7 +171,10 @@
     vertical-align: middle;
     border-bottom: 1px solid #eee;
     color: #555;
-    word-break: break-all;
+
+    /* 🔥 자동 줄바꿈 적용 */
+    white-space: normal;
+    word-break: break-word;
 }
 
 .admin-product-manage-container tbody tr:hover {
@@ -175,7 +188,10 @@
     justify-content: flex-start;
     gap: 15px;
     text-align: left;
-    cursor: pointer;
+
+    /* 🔥 줄바꿈 */
+    white-space: normal;
+    word-break: break-word;
 }
 
 .admin-product-manage-container .detail-info:hover {
@@ -192,6 +208,10 @@
 .admin-product-manage-container .detail-info p {
     font-weight: 500;
     color: #333;
+
+    /* 🔥 줄바꿈 */
+    white-space: normal;
+    word-break: break-word;
 }
 
 /* 상태 변경 select */
@@ -208,7 +228,7 @@
     border-color: #7cc7de;
 }
 
-/* AdminUserManage.css 와 동일한 라디오 버튼 스타일을 사용합니다. */
+/* AdminUserManage.css 동일 스타일 */
 .radio-group {
     display: flex;
     align-items: center;

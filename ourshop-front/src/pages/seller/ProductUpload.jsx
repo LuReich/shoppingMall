@@ -13,6 +13,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { SERVER_URL } from "../../axios/axios";
+import Loader from "../../utils/Loaders";
 
 function ProductUpload() {
   const navigate = useNavigate();
@@ -22,8 +23,8 @@ function ProductUpload() {
   const { createProduct, updateProduct, getProductDetail, getProductDescription } = useProduct();
 
   const { data: categoryData } = getCategoryList();
-  const { mutate: createMutate } = createProduct();
-  const { mutate: updateMutate } = updateProduct();
+  const { mutate: createMutate, isPending: isCreating} = createProduct();
+  const { mutate: updateMutate, isPending: isUpdating} = updateProduct();
   const { data: initialProductData } = getProductDetail(productId);
   const { data: productDescriptionData } = getProductDescription(productId);
 
@@ -631,6 +632,9 @@ function ProductUpload() {
       });
     }
   };
+
+  if(isCreating)return <Loader/>
+  if(isUpdating)return <Loader/>
 
   return (
     <div className="product-upload-container">
