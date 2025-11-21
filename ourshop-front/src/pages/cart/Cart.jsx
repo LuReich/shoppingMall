@@ -27,23 +27,22 @@ function Cart(props) {
 
     const productList = productListData?.content?.content || []; //장바구니 비어있을시 추천
     //랜덤으로 4개
-    const filteredProduct = [...productList].sort(() => Math.random() - 0.5).slice(0, 4);
+    const filteredProduct = productList?.sort(() => Math.random() - 0.5).slice(0, 4);
     
-    const cartItems = Array.isArray(cartItemsCont?.content?.content) ? cartItemsCont.content.content : [];
-    const cartIds = cartItems.map(x => x.cartId);
+    const cartItems = cartItemsCont?.content?.content || [];
+    const cartIds = cartItems?.map(x => x.cartId) || null;
 
     console.log("cartItemsCont:", cartItemsCont);
 
     //장바구니 리스트 배열
     const [cartArr, setCartArr] = useState([]);
-    const [isDisabled, setIsDisabled] = useState(false);
     
 
     const [quantities, setQuantities] = useState({});
 
     // 장바구니 불러오면 로컬 입력값 초기화
     useEffect(() => {
-      if (cartItems.length > 0) {
+      if (cartItems?.length > 0) {
         setQuantities(Object.fromEntries(cartItems.map(it => [it.cartId, String(it.quantity)])));
       } else {
         setQuantities({});
@@ -52,8 +51,8 @@ function Cart(props) {
 
     // 데이터 로드 후 전체 선택 상태로 세팅
     useEffect(() => {
-      if (cartItems.length > 0) {
-        setCartArr(cartItems.map((item) => item.cartId));
+      if (cartItems?.length > 0) {
+        setCartArr(cartItems?.map((item) => item.cartId) || null);
       }
     }, [cartItems]);
   
