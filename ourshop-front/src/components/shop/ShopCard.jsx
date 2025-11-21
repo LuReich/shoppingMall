@@ -36,9 +36,10 @@ function ShopCard({ shop, rank }) {
    //카테고리별 아이콘
   const CategIcons = {
     1 : "phone.png",
-    5 : "apple.png",
-    9 : "t-shirt.png",
-    13: "books.png"
+    2 : "apple.png",
+    3 : "t-shirt.png",
+    4: "books.png",
+    5:"shop.png"
   };
 
   //부모 카테고리 아이콘 가져오기

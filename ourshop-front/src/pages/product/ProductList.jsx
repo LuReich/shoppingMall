@@ -57,6 +57,9 @@ function ProductList() {
   // categoryId 변경 시 첫 페이지로 초기화
   useEffect(() => {
     setPage(0);
+    setCategoryFilter("");   
+    setSearchParams({});
+    setSearchKeyword("");
   }, [categoryId]);
 
   //헤더의 검색바 내용 변경되면 상품리스트페이지 검색바 초기화

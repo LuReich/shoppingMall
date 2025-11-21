@@ -4,6 +4,7 @@ import Pagenation from '../../components/common/Pagenation';
 import '../../assets/css/qna.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authStore } from '../../store/authStore';
+import Loader from '../../utils/Loaders';
 
 
 function QnA(props) {
@@ -15,13 +16,15 @@ function QnA(props) {
     const mode = authStore(state => state.role) === "BUYER" ? "buyer" : "seller";
     const [page, setPage] = useState(0);
 
-    const {getQnAList} = useQnA();
+    const {getQnAList, isLoading} = useQnA();
     const {data: QnAListData} = getQnAList(mode, {
         size: 5,
         page,
         sort: "createdAt,desc"
     }, uid);
 
+    if(isLoading) return <Loader/>;
+    
     const QnAList = QnAListData?.content?.content;                          
     console.log("문의 리스트", QnAListData);
 

@@ -76,6 +76,9 @@
     font-size: 16px;
     line-height: 1.4;
     flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* 줄바꿈 금지 */
 }
 
 .productId{

@@ -64,7 +64,7 @@ export const useCart = () => {
   const deleteSelectedCartItems = () => {
     return useMutation({
       mutationFn: (cartIds) => cartAPI.deleteSelectedItems(cartIds),
-      onSuccess: () => {
+      onSuccess: (res) => {
         qc.invalidateQueries(["cartList"]);
         console.log("삭제 성공",res);
       },

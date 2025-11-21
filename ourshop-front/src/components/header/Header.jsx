@@ -12,6 +12,7 @@ import { FaSearch } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
 import { AiFillSetting } from "react-icons/ai";
 import { BsPersonFill } from "react-icons/bs";
+import Loader from '../../utils/Loaders';
 
 
 function Header(props) {
@@ -30,7 +31,7 @@ function Header(props) {
     const [searchInput, setSearchInput] = useState(""); //검색어
     //const [keywords, setKeywords] = useState("")
 
-    if (isLoading) return <p>카테고리를 불러오는 중입니다...</p>;
+    if (isLoading) return <Loader/>;
     if (isError) return <p>카테고리를 불러오는 중 오류가 발생했습니다.</p>;
     if (!categories || categories.length === 0) return <p>등록된 카테고리가 없습니다.</p>;
      
