@@ -46,12 +46,6 @@ function BuyerShippingDetail(props) {
       return reviews?.find(x => x.orderDetailId === orderDetailId)? true : false;
     } 
 
-    //글자 수 길면 ...처리
-    const cutText = (text, maxLen = 12) => {
-      if (!text) return "";
-      return text?.length > maxLen ? text.slice(0, maxLen) + "..." : text;
-    };
-
     const sortCateg = {
       "price": "totalPrice",
       "createAt": "createAt",
@@ -121,7 +115,7 @@ function BuyerShippingDetail(props) {
                               <div className="detail-info" onClick={() => navigate(`/product/${detail.productId}`)}>
                                 <img src={`${SERVER_URL}${detail?.productThumbnailUrl}`} alt={detail.productName} />
                                 <div>
-                                  <p>{cutText(detail.productName)}</p>
+                                  <p>{detail.productName}</p>
                                   <p>{detail.companyName}</p>
                                 </div>
                               </div>

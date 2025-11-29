@@ -2,9 +2,8 @@ import React from 'react';
 import "../../assets/css/MyPageDropDown.css"
 import { Link, useNavigate } from 'react-router';
 import { authStore } from '../../store/authStore';
-import { useQueryClient } from '@tanstack/react-query';
 function MyPageDropDown(props) {
-    const queryClient = useQueryClient();
+    
     const navigate = useNavigate();
 
     const {setLogout, role} = authStore(state => state);
@@ -12,7 +11,6 @@ function MyPageDropDown(props) {
     //로그아웃
     const handleLogout = () => {
         setLogout();
-        queryClient.clear();
         navigate("/");
     }
 

@@ -80,12 +80,6 @@ function SellerShippingDetail(props) {
         "CANCELED": "취소"
     };
 
-    //글자 수 길면 ...처리
-    const cutText = (text, maxLen = 15) => {
-      if (!text) return "";
-      return text?.length > maxLen ? text.slice(0, maxLen) + "..." : text;
-    };
-
     // 배송 상태 변경 핸들러
     const handleStatusChange = (orderDetailId, newStatus) => {
 
@@ -193,7 +187,7 @@ function SellerShippingDetail(props) {
                             <td>
                                 <div className="detail-info" 
                                 onClick={() => navigate(`/product/${item.productId}`)}>
-                                    <p>{cutText(item.productName)}</p>
+                                    <p>{item.productName}</p>
                                 </div>
                             </td>
                             <td>{item.quantity}</td>

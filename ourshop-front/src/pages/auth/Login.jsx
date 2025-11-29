@@ -4,7 +4,6 @@ import "../../assets/css/Login.css";
 import { useNavigate } from "react-router";
 import Loader from "../../utils/Loaders";
 
-
 function Login() {
   const navigate = useNavigate();
   const [selectedMode, setSelectedMode] = useState("buyer");

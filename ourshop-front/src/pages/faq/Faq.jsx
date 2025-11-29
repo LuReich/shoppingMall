@@ -7,7 +7,6 @@ import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { authStore } from '../../store/authStore';
 import { useNavigate } from 'react-router';
-import Loader from '../../utils/Loaders';
 
 
 
@@ -71,7 +70,7 @@ function Faq(props) {
     };
     
 
-    if(isLoading) return <Loader/>
+    if(isLoading) return <p>FAQ 리스트를 가져오는 중입니다.</p>
     if(isError) return <p>FAQ 리스트 가져오기를 실패했습니다.</p>
 
     const totalPages = faqListData?.content?.totalPages || 0;
@@ -231,7 +230,7 @@ function Faq(props) {
                             )}
                         </Fragment>
                     ))
-                    : <tr><td colSpan="4" className="no-res">등록된 FAQ가 없습니다.</td></tr>
+                    : <tr><td colSpan="4" className="no-results">등록된 FAQ가 없습니다.</td></tr>
                 }
                 </tbody>
             </table>

@@ -3,12 +3,12 @@ import { authStore } from "../store/authStore";
 
 export const SERVER_URL = "https://ourshop.monster/img";
 export const API_URL = "https://ourshop.monster";
-//export const SERVER_URL="http://localhost:9090";
+export const BASE_URL="http://localhost:9090";
 
 // axios 기본 설정
 const api = axios.create({
- // baseURL: `/api/v1`,
-  baseURL: `${API_URL}/api/v1`,
+ baseURL: `${BASE_URL}/api/v1`,
+  // baseURL: `${API_URL}/api/v1`,
   withCredentials: false,
 });
 

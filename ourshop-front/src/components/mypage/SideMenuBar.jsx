@@ -2,10 +2,9 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { authStore } from '../../store/authStore';
 import '../../assets/css/SideMenuBar.css';
-import { useQueryClient } from "@tanstack/react-query";
 
 function SideMenuBar(props) {
-    const queryClient = useQueryClient();
+
     const navigate = useNavigate();
 
     const {setLogout, role} = authStore(state => state);
@@ -13,7 +12,6 @@ function SideMenuBar(props) {
     //로그아웃
     const handleLogout = () => {
         setLogout();
-        queryClient.clear();
         alert("로그아웃 되었습니다.");
         navigate("/");
     }
