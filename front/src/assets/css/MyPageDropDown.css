@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+.mypage-drop-down{
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래 */
+    right: 0;  /* 사람 아이콘 기준 오른쪽 정렬 */
+    background-color: white;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-width: 160px; /* 메뉴가 좁지 않게 */
+    z-index: 999;
+    margin-right: -10px;
+}
+
+.mypage-drop-down p, .link-btn{
+    width: 100%;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    text-align: start;
+    background-color: white;
+    border: none;
+    color: #333;
+    white-space: nowrap;
+    display: block;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.mypage-drop-down p:hover,
+.link-btn:hover {
+    background-color: #f5f5f5;
+    
+}
+
+.link-btn:hover{
+    color: #2193b0;
+}
+
+.mypage-drop-down p:hover{
+    color: red;
+}

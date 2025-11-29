@@ -1,0 +1,176 @@
+@charset "UTF-8";
+
+/* ===== 전체 고정 레이아웃 설정 ===== */
+.layout-wrapper {
+  width: 1700px;
+  min-width: 1700px;
+  max-width: 1700px;
+  margin: 0 auto;
+}
+
+/* ===== 헤더 ===== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+  height: 85px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;   /* 뷰포트 전체 */
+  display: flex;
+  align-items: center;
+  justify-content: center 
+}
+
+
+/* ===== 헤더 내부 콘텐 (1700px 고정) ===== */
+.header-content {
+  width: 1350px;
+  max-width: 1350px;
+  min-width: 1350px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ===== 상단 라인(로그아웃 등 필요 시) ===== */
+.logout-btn {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 14px;
+  padding-top: 7px;
+  color: #757474;
+}
+
+.logout-btn:hover {
+  text-decoration: underline;
+}
+
+/* ===== 네비게이션 영역 ===== */
+.nav-total-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex: 1;
+}
+
+/* 로고 */
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #2193b0;
+  white-space: nowrap;
+}
+
+/* 네비 */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  white-space: nowrap;
+}
+
+.nav a,
+.category-button {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 5px;
+}
+
+.nav a:hover,
+.category-button:hover {
+  color: #2193b0;
+}
+
+/* 카테고리 버튼 */
+.category-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* ===== 오른쪽 영역 ===== */
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 40px;
+}
+
+/* ===== 검색창 (header 안에서 relative) ===== */
+.input-box {
+  position: relative;
+  width: 400px;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #7cc7de;
+  border-radius: 20px;
+  padding: 5px 15px;
+  background: white;
+}
+
+.search-bar {
+  border: none;
+  padding: 5px 10px;
+  width: 100%;
+  font-size: 15px;
+}
+
+.search-bar:focus {
+  outline: none;
+}
+
+.search-button {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ===== 우측 버튼 영역 ===== */
+.right-box {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.icon-button {
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  color: #7cc7de;
+}
+
+.icon-button.active {
+  color: #7cc7de;
+}
+
+.nick-name {
+  padding-bottom: 3px;
+  text-align: center;
+}
+
+/* 드롭다운 공통 */
+.mypage-cont,
+.cs-cont {
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
+}

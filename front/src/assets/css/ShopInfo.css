@@ -1,0 +1,179 @@
+@charset "UTF-8";
+
+.shop-info-container {
+  width: 78%;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* 업체명 */
+.shop-info-container > h2 {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.shop-introduce{
+    white-space: normal !important;
+    word-break: break-all;
+    text-align: center;
+}
+/* ⭐❤️ 인기도 박스 */
+.shop-popularity-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 10px;
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.popularity-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #555;
+  font-weight: 500;
+}
+
+.popularity-icon {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.popularity-icon.verification{
+  color: #6ac7e3;
+}
+.popularity-icon.star {
+  color: #f9c74f; /* 별색 */
+}
+
+.popularity-icon.heart {
+  color: #ff7b9c; /* 하트색 */
+}
+
+/* 소개 문구 */
+.shop-info-box {
+  background: linear-gradient(to right, rgb(176, 196, 255), #6ac7e3, rgb(188, 146, 251));
+  padding: 25px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 20px;
+  color: white;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+/* 상세 정보 */
+.shop-info-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px 40px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.shop-info-detail p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #444;
+}
+
+.shop-info-detail p svg {
+  font-size: 18px;
+  color: #7cc7de;
+}
+
+.shop-porduct-form-box{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+
+}
+
+/* 상품 영역 */
+.shop-product-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.shop-product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.shop-product-header h2 {
+  width:100%;
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.shop-product-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px 20px;
+  margin-bottom: 40px;
+}
+
+.shop-product-grid .no-products {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px 0;
+  color: #888;
+  font-size: 16px;
+}
+
+/* 반응형 */
+/*
+@media (max-width: 1200px) {
+  .shop-info-container {
+    width: 90%;
+    margin-top: 100px;
+  }
+}
+
+@media (max-width: 992px) {
+  .shop-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}*/
+
+/* 등장 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

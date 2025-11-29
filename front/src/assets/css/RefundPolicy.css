@@ -1,0 +1,50 @@
+.refund-policy-container {
+    width: 75%;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    line-height: 1.7;
+}
+
+.refund-policy-container h2 {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+
+.policy-content {
+    color: #555;
+}
+
+.policy-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.policy-content p {
+    margin-bottom: 15px;
+}
+
+.policy-content ol {
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+.policy-content li {
+    margin-bottom: 10px;
+}
+
+.policy-content strong {
+    color: #444;
+    font-weight: 600;
+}

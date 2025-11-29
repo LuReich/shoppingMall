@@ -1,0 +1,231 @@
+@charset "UTF-8";
+
+.del-info-detail-container {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.del-info-detail-container h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* =========================
+   배송지 정보
+========================= */
+.del-address-box {
+  width: 100%;
+  max-width: 800px;
+  background-color: #f8fdff;
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  line-height: 1.6;
+}
+
+.del-address-box h4 {
+  color: #57b1ce;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  border-left: 4px solid #7cc7de;
+  padding-left: 10px;
+}
+
+.del-address-box p {
+  color: #555;
+  font-size: 15px;
+  margin: 5px 0;
+}
+
+/* =========================
+   카드 전체
+========================= */
+.del-card {
+  width: 100%;
+  max-width: 800px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 35px 30px;
+  
+}
+
+/* =========================
+   상품 정보
+========================= */
+.del-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  justify-content: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 18px;
+  margin-bottom: 30px;
+}
+
+.del-product-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.del-product-company {
+  font-size: 14px;
+  color: #777;
+}
+
+.del-product-address {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* =========================
+   진행 바 (Progress Bar)
+========================= */
+.del-progress-bar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.del-step {
+  position: relative;
+  text-align: center;
+  flex: 1;
+}
+
+/* 연결 바 */
+.del-bar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 3px;
+  background-color: #e2e2e2;
+  z-index: 1;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.del-bar.active {
+  background-color: #7cc7de;
+}
+
+/* 원 */
+.del-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background-color: #f8f8f8;
+  color: #999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+.del-circle.active {
+  background-color: #7cc7de;
+  color: #fff;
+  border-color: #7cc7de;
+  box-shadow: 0 0 8px rgba(124, 199, 222, 0.4);
+}
+
+.del-circle.canceled {
+  background-color: #ff6961;
+  border-color: #ff6961;
+  color: #fff;
+}
+
+/* 상태 라벨 */
+.del-label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* =========================
+   상태 텍스트 & 예상 도착일
+========================= */
+.del-status {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 15px;
+  color: #333;
+}
+
+.del-status b {
+  color: #7cc7de;
+}
+
+.del-status.canceled {
+  color: #ff6961;
+  font-weight: 600;
+}
+
+.del-expected-date {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #444;
+  margin-top: 10px;
+}
+
+/* =========================
+   반응형
+========================= */
+/*
+@media (max-width: 1200px) {
+  .del-info-detail-container {
+    margin-top: 100px;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .del-info-detail-container {
+    width: 95%;
+  }
+
+  .del-card,
+  .del-address-box {
+    padding: 20px;
+  }
+
+  .del-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .del-label {
+    font-size: 12px;
+  }
+
+  .del-address-box h4 {
+    font-size: 16px;
+  }
+
+  .del-address-box p {
+    font-size: 13px;
+  }
+}
+*/

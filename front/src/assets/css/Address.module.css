@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  border-top: 1px solid #eee;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid #eee;
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table th {
+  width: 120px;
+  background: #f9f9f9;
+  font-weight: 600;
+}
+
+/* input 공통 */
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* 주소 영역 */
+.addressArea {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addrRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/*.zipcodeInput {
+  width: 120px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}*/
+
+/* 버튼 */
+.searchBtn {
+  background-color: #7cc7de;
+  color: #fff;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.searchBtn:hover {
+  background-color: #63c6e4;
+}
+
+/* 주소 입력창 */
+.addressInput {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.detailAddrInput{
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/*@media (max-width: 768px) {
+    .addrRow{
+      flex-direction: column;
+      align-items: flex-start;;
+    }
+}*/
